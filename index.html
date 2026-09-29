@@ -2606,7 +2606,7 @@ function renderHub(){
   $('#h-studio').onclick=()=>{STUDIOTAB='Übersicht';renderStudio();show('studio')};
   $('#h-menu').onclick=hubMenu;
   if(pend)$('#h-pub').onclick=()=>openPublish();
-  $$('[data-w]').forEach(b=>b.onclick=()=>waitDays(+b.dataset.w));
+  $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hub';waitDays(+b.dataset.w)});
   $$('[data-up]').forEach(b=>b.onclick=()=>{if(G.sp>0&&G.stats[b.dataset.up]<STAT_MAX){G.sp--;G.stats[b.dataset.up]++;G.xp[b.dataset.up]=0;save();sfx('success');renderHub()}});
   $$('[data-fix]').forEach(b=>b.onclick=()=>workshop(b.dataset.fix,b.dataset.how));
 }
@@ -2616,10 +2616,11 @@ function hubMenu(){
     {label:'📖 Spielprinzip',fn:showHowTo},{label:'📱 Vollbild / Querformat',fn:goFullscreen},
     {label:'🏠 Hauptmenü',fn:()=>{save();renderMenu();show('menu')}},{label:'Schließen'}]});
 }
+let WAITCTX='hub';
 function waitDays(n){
   const s0=G.subs,m0=G.money,v0=G.totalViews;let paid=0,notes=[],inc=0;
   for(let i=0;i<n;i++){G.day++;const r=advanceDay();paid+=r.paid||0;inc+=r.income||0;(r.notes||[]).forEach(x=>notes.push(x));G.begHeat=Math.max(0,G.begHeat-0.25)}
-  save();renderHub();
+  save();if(WAITCTX==='hikes')renderHikes();else renderHub();
   showModal({title:'⏳ '+n+(n===1?' Tag':' Tage')+' später – '+dateStr(G.day),html:`<p>Aufrufe: <b>+${fmtInt(G.totalViews-v0)}</b><br>Abonnenten: <b>${G.subs>=s0?'+':''}${fmtInt(G.subs-s0)}</b><br>Neue Einnahmen (gutgeschrieben, noch nicht ausgezahlt): <b>${eur(inc)}</b><br>Ausgezahlt aufs Konto: <b>${eur(paid)}</b></p>${notes.length?'<ul style="padding-left:18px">'+notes.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':''}`});
   if(paid>0)sfx('coin');
 }
@@ -2695,6 +2696,8 @@ let SELHIKE=null;
 function renderHikes(){
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
+   <div class="card" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Die Jahreszeit ändert Wetter, Kälte und Tageslicht der Touren, und Einnahmen deiner Videos kommen erst über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'} Wenn du wartest, ändert sich also das Risiko in den Karten unten.</p>
+    <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
    <div class="grid">${HIKES.map(hk=>{const b=briefing(hk);const bad=b.w.filter(x=>x.l==='bad').length;
      return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
@@ -2703,6 +2706,7 @@ function renderHikes(){
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht${hk.villageEvery?' · 🏪 alle ~'+hk.villageEvery+' km':' · keine Läden'}</span>
       <span>Risiko jetzt: <span class="risk" style="background:${b.col}">${b.lbl}</span>${bad?` <span class="badtxt">${bad}× Warnung</span>`:''}</span></div>
       <button class="primary" data-hk="${hk.id}">Briefing & Start</button></div>`}).join('')}</div></div>`;
+  $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
 }
