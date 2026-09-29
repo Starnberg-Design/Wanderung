@@ -1221,10 +1221,10 @@ function stepSleep(h){
   H.body.energy=lerp(S.startE,100-H.fatigue,clamp(S.p,0,1));
   if(S.p>=1||S.elapsed>14*60)wakeUp();
 }
-function wakeUp(){
+function wakeUp(early){
   const S=H.sleep;const hrs=S.elapsed/60,avg=S.qsum/Math.max(1,S.elapsed);
   H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;H.sleptTonight=true;
-  toast('☀️ Aufgewacht nach '+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
+  toast((early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
   if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,100-H.fatigue,clamp(S.p,0,1)));
   if(H.autoNight){H.autoWake=true;if(!H.camp.pitched)H.walking=true}
 }
@@ -2037,13 +2037,13 @@ function drawTerrain(g,tm){
   // Grashalme, die im Wind wehen
   if(sn<0.5){
     g.strokeStyle=tc('#3a7a35');g.lineWidth=1.4;
-    for(let x=x0;x<camX+CW;x+=17){
-      const r=hash(Math.floor(x/17)*3+9);if(r>0.6)continue;
-      const sx=x+r*10-camX,y=groundY(x+r*10)+3,sw=Math.sin(tm*2+x*0.07)*(1+env.wind*0.25);
+    for(let ci=Math.floor(camX/17)-1;ci<=Math.floor((camX+CW)/17)+1;ci++){
+      const r=hash(ci*3+9);if(r>0.6)continue;
+      const wx=ci*17+r*10,sx=wx-camX,y=groundY(wx)+3,sw=Math.sin(tm*2+wx*0.07)*(1+env.wind*0.25);
       g.beginPath();g.moveTo(sx,y);g.lineTo(sx+sw,y-7);g.moveTo(sx+2,y);g.lineTo(sx+3+sw,y-9);g.stroke();
     }
   }
-  if(wet&&env.rainI>0.1){g.fillStyle='rgba(150,180,210,0.28)';for(let i=0;i<5;i++){const x=camX+((hash(i*7)*CW+Math.floor(camX/300)*80)%CW);g.beginPath();g.ellipse(x-camX,groundY(x)+6,26,3,0,0,7);g.fill()}}
+  if(wet&&env.rainI>0.1){g.fillStyle='rgba(150,180,210,0.28)';for(let ci=Math.floor(camX/110)-1;ci<=Math.floor((camX+CW)/110)+1;ci++){if(hash(ci*7+2)>0.4)continue;const x=ci*110+hash(ci*5+1)*90;g.beginPath();g.ellipse(x-camX,groundY(x)+6,26,3,0,0,7);g.fill()}}
 }
 function tree(g,sx,y,sc,kind,sway,sn,dim){
   if(kind==='leaf'){
@@ -2344,7 +2344,7 @@ function drawLighting(g,tm,dt){
     L.globalCompositeOperation='destination-out';
     const punch=(x,y,r,a,inner=0.15)=>{const gr=L.createRadialGradient(x,y,r*inner,x,y,r);gr.addColorStop(0,`rgba(0,0,0,${a})`);gr.addColorStop(1,'rgba(0,0,0,0)');L.fillStyle=gr;L.fillRect(x-r,y-r,r*2,r*2)};
     // Feuer
-    if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.85+0.15*Math.sin(tm*17)+0.06*Math.sin(tm*41);punch(fx,fy,300*fl,0.95);}
+    if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.9+0.07*Math.sin(tm*3.1)+0.03*Math.sin(tm*7.3);punch(fx,fy,300*fl,0.95);}
     // Zelt-Glimmen
     if(H.camp.pitched&&(H.sleep.active||env.dark>0.5)&&H.g.shelter){const tx=H.camp.x-70-camX;punch(tx,groundY(H.camp.x-70)-24,H.sleep.active?70:110,0.5)}
     // Stirnlampe: Lichtkegel nach vorn
@@ -2360,7 +2360,7 @@ function drawLighting(g,tm,dt){
     g.drawImage(LC,0,0);
     // Warmes Leuchten der Lichtquellen (additiv)
     g.save();g.globalCompositeOperation='lighter';
-    if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.85+0.15*Math.sin(tm*17);const gr=g.createRadialGradient(fx,fy,4,fx,fy,190*fl);gr.addColorStop(0,`rgba(255,150,60,${0.5*dark+0.12})`);gr.addColorStop(1,'rgba(255,110,30,0)');g.fillStyle=gr;g.fillRect(fx-200,fy-200,400,400)}
+    if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.9+0.07*Math.sin(tm*3.1)+0.03*Math.sin(tm*7.3);const gr=g.createRadialGradient(fx,fy,4,fx,fy,190*fl);gr.addColorStop(0,`rgba(255,150,60,${0.5*dark+0.12})`);gr.addColorStop(1,'rgba(255,110,30,0)');g.fillStyle=gr;g.fillRect(fx-200,fy-200,400,400)}
     if(lamp){const y=groundY(H.x)-58;const gr=g.createRadialGradient(sx0+110,y+20,6,sx0+110,y+20,200);gr.addColorStop(0,`rgba(255,244,205,${0.2*dark})`);gr.addColorStop(1,'rgba(255,244,205,0)');g.fillStyle=gr;g.fillRect(sx0-100,y-180,420,380)}
     g.restore();
   }
@@ -2868,7 +2868,7 @@ function buildHikeDOM(){
   $('#b-pack').onclick=()=>{sfx('click');openPack()};
   $('#b-map').onclick=()=>{sfx('click');openMap()};
   $('#b-camp').onclick=()=>actClick('tent');
-  $('#b-sleep').onclick=()=>{if(H.sleep.active){toast('Du schläfst schon.');return}actClick(H.camp.pitched||!H.g.shelter?'sleep':'sleep')};
+  $('#b-sleep').onclick=()=>{if(H.sleep.active){wakeUp(true);sfx('click');updateHUD(true);return}actClick(H.camp.pitched||!H.g.shelter?'sleep':'sleep')};
   $('#b-menu').onclick=()=>{buildDrawer();$('#drawer').classList.toggle('open');sfx('click')};
   buildDrawer();
 }
@@ -2940,7 +2940,7 @@ function updateHUD(force){
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
   {const kn=$('#sknob');if(kn)kn.style.top=((2-H.speed)/2*100)+'%';$$('#slab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.speed))}
   {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
-  $('#b-camp').classList.toggle('act',H.camp.pitched);$('#b-sleep').classList.toggle('act',H.sleep.active);
+  $('#b-camp').classList.toggle('act',H.camp.pitched);$('#b-sleep').classList.toggle('act',H.sleep.active);{const sb=$('#b-sleep');sb.innerHTML=H.sleep.active?'<span>⏰</span><small>Aufwachen</small>':'<span>😴</span><small>Schlaf</small>'}
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
   drawProfile($('#prof'));
