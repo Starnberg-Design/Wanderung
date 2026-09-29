@@ -2191,11 +2191,7 @@ function drawDecor(g,tm,pass){
     if(pass===0&&!forest)continue;
     if(featsIn(wx-60,wx+60).some(f=>f.type!=='junction'&&f.type!=='animal'&&f.type!=='hiker'))continue;
     const y=groundY(wx)+(pass===0?-9:0);
-    // Freihaltezone um Wanderer/Hund und vor ihm: Deko blendet dort aus
-    const cxs=CHAR_SX(),dz=sx-cxs;let fade=1;
-    { const d=dz<-170?-170-dz:dz>240?dz-240:0;fade=clamp(d/90,0,1); }
-    const zs=pass===1?(dz<=0?0.3+0.7*clamp(-dz/90,0,1):0.3+0.7*fade):1; // Vordergrund-Baeume werden in der Freihaltezone klein, nie transparent
-    const r=hash(cx*13+1+pass*5),sc=(0.75+hash(cx*5+3)*0.75)*(pass===0?0.72:1)*zs;
+    const r=hash(cx*13+1+pass*5),sc=(0.75+hash(cx*5+3)*0.75)*(pass===0?0.72:1);
     const sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
     if(r<B.tree){
       if(st.b==='wald'){
@@ -2211,7 +2207,7 @@ function drawDecor(g,tm,pass){
         if(st.b==='wiese'&&hash(cx*11)<0.5){g.fillStyle=['#fff','#f7d84a','#e57ab8'][cx&3&&(cx%3)];g.fillRect(sx+3,y-9*sc,2.5,2.5)}
       }
     }
-    if(pass===1&&st.b==='wald'&&hash(cx*19)<0.5&&fade>0.5){ // Farn/Unterholz
+    if(pass===1&&st.b==='wald'&&hash(cx*19)<0.5){ // Farn/Unterholz
       g.strokeStyle=tc('#2d6a2f',sn);g.lineWidth=1.6;const fy=groundY(wx+9)+3;
       for(let k=-2;k<=2;k++){g.beginPath();g.moveTo(sx+9,fy);g.quadraticCurveTo(sx+9+k*4,fy-8,sx+9+k*7+sway*0.3,fy-14+Math.abs(k)*3);g.stroke()}
     }
