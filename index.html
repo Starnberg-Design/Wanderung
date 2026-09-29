@@ -576,11 +576,16 @@ function loadSave(){
   return null;
 }
 function wipeSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
-function ES(id){ // effektive Fähigkeit (mit Körperbau/Talent)
+function ES(id){ // effektive Fähigkeit (mit Körperbau/Talent, Streckenkenntnis)
   let v=G.stats[id]+((BUILD_BONUS[G.look.build]||{})[id]||0);
+  if(id==='nav'&&typeof H!=='undefined'&&H&&H.hk)v+=famBonus(H.hk);
   const t=G.talent&&TALENT_BONUS[G.talent];if(t&&t[id])v+=t[id];
   return Math.max(0.5,v);
 }
+const SKILL_REQ=[0,2,3,4.5,6,7.5,8.5];
+function famBonus(hk){const rc=(G.routeN&&G.routeN[hk.id])||0,rg=((G.regN&&G.regN[hk.reg])||0)-rc;return Math.min(3,rc*1.0+Math.max(0,rg)*0.4)}
+function skillAvg(hk){const ids=['trag','aus','tempo','kalt','nav'];let s=0;ids.forEach(i=>{s+=ES(i)+(i==='nav'&&hk?famBonus(hk):0)});return s/ids.length}
+function skillGap(hk){return Math.max(0,SKILL_REQ[hk.diff]-skillAvg(hk))}
 const hasT=t=>!!G&&G.talent===t;
 const priceMod=()=>hasT('spar')?0.88:1;
 const dogSize=()=>G&&G.dog?DOG_SIZES.find(d=>d.id===G.dog.size):null;
@@ -758,6 +763,7 @@ const SPEEDS=[0,1,2,4,6,16];
 
 function xpAdd(stat,amt){
   if(!amt||amt<=0)return;
+  if(H&&H.hk)amt*=0.6+0.4*H.hk.diff;   // anspruchsvollere Touren geben mehr Erfahrung
   G.xp[stat]=(G.xp[stat]||0)+amt;
   const need=55*G.stats[stat];
   if(G.xp[stat]>=need&&G.stats[stat]<STAT_MAX){
@@ -791,7 +797,8 @@ function startHike(hikeId){
   const cond={};gear.forEach(x=>{cond[x.id]=G.cond[x.id]===undefined?100:G.cond[x.id]});
   const ds=dogSize();
   let startRisk=3;try{startRisk=briefing(hk).score}catch(e){}
-  H={startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,repairs:g.tools.repair?3:0,
+  const gap0=skillGap(hk);
+  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,repairs:g.tools.repair?3:0,
     x:0,km:0,phase:0,t:startH*60,dayIdx:0,awakeSince:startH*60-60,cond,startDay:G.day,
     speed:1,wood:0,woodX:0,thrill:0,flags:{},walking:true,auto:true,autoStop:true,autoNight:hk.km>=60,autoWake:false,sleptTonight:false,
     body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},fatigue:0,
@@ -1337,13 +1344,13 @@ function bodyTick(mode,hr){
     d*=lerp(1,hk.hard,0.5)*stimDrain();
     if(H.dog)d*=H.dog.mood>60?0.96:H.dog.mood<30?1.03:1;
     if(H.stalker)d*=1.08;
-    B.energy-=d*hr;
+    B.energy-=d*(1+0.08*H.gap)*hr;
   }else if(mode==='rest'){
     let r=14;if(B.sat<10||B.hyd<10)r*=0.4;if(sick)r*=0.6;
     B.energy+=r*hr;
   }
   B.energy=clamp(B.energy,0,100-H.fatigue);
-  if(mode==='walk')H.fatigue=Math.min(45,H.fatigue+hr*0.26*hk.hard*(B.sat<30?1.4:1));
+  if(mode==='walk')H.fatigue=Math.min(45+Math.min(30,8*H.gap),H.fatigue+hr*(0.26*hk.hard*(B.sat<30?1.4:1)+0.10*H.gap));
   else if(mode==='rest')H.fatigue=Math.max(0,H.fatigue-hr*0.05);
   const fm=1.35-0.1*ES('food'),wm=1.35-0.1*ES('water');
   const heat=env.temp>24?1+(env.temp-24)*0.04:1;
@@ -1375,7 +1382,7 @@ function bodyTick(mode,hr){
     if(!blister&&Math.random()<0.02*shoeF*(1+B.wet/50)*(0.85+0.15*hk.hard)*hr){H.inj.blister=H.t+(hasT('zaeh')?900:1440);toast('🩹 Du hast dir eine Blase gelaufen – das kostet spürbar Energie und Tempo.','bad');sfx('bad')}
     const ls=lightSource();
     const risky=(gr<-0.12?1:0)+(env.dark>0.6?(ls==='lamp'?0.2:ls==='phone'?0.9:1.8):0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
-    if(!sprain&&Math.random()<0.018*risky*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
+    if(!sprain&&Math.random()<0.018*risky*(1+0.12*H.gap)*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
   }
   let dhp=0;
   if(B.sat<=0)dhp-=3;if(B.hyd<=0)dhp-=6;if(B.warm<15)dhp-=4;if(B.warm<=0)dhp-=6;if(sick)dhp-=0.8;
@@ -1640,6 +1647,7 @@ function walkSpeedKmh(){
   const gr=env.grade;let m;
   if(gr>=0)m=1-2.3*gr;else m=gr>-0.1?1-gr:1.1-2.2*(-gr-0.1);
   m=clamp(m,0.3,1.15);
+  m*=Math.max(0.65,1-0.03*H.gap);   // zu wenig Fähigkeiten für die Route
   const lf=loadKg()/capacityKg();
   m*=1-clamp(lf-0.45,0,1.2)*0.5*(1-0.5*(g.pack?g.pack.comfort:0));
   m*=clamp(1.1-0.012*loadKg(),0.78,1.1); // leichter Rucksack = schneller
@@ -1704,7 +1712,7 @@ function stepSim(h){
          if(H.g.mid&&(env.precip||env.wind>10)&&!H.g.shell)wear(H.g.mid.id,dkm*0.09*ROUGH*wx);
          else if(H.g.mid)wear(H.g.mid.id,dkm*0.012*ROUGH);
          if(H.g.shell&&(env.precip||env.wind>10))wear(H.g.shell.id,dkm*0.05*ROUGH*wx);}
-        xpAdd('aus',dkm);
+        xpAdd('aus',dkm*(1+5*Math.max(0,env.grade)));xpAdd('nav',dkm*0.3*(1+0.3*famBonus(H.hk)));
         const lf=loadKg()/capacityKg();if(lf>0.7)xpAdd('trag',dkm);else if(lf>0.5)xpAdd('trag',dkm*0.4);
         if(env.grade<0.03)xpAdd('tempo',dkm*0.6);
         if(B.sat<35||B.hyd<35){xpAdd('food',dkm*0.3);xpAdd('water',dkm*0.3)}
@@ -1754,8 +1762,8 @@ function endHike(reason){
   }
   H.reason=reason;
   const frac=H.km/H.route.totalKm;
-  let sp=reason==='goal'?SP_REWARD[hk.diff]:Math.floor(SP_REWARD[hk.diff]*frac*0.8+0.0001);
-  G.sp+=sp;H.spGain=sp;G.km+=H.km;
+  G.km+=H.km;
+  if(frac>=0.3){G.routeN=G.routeN||{};G.regN=G.regN||{};G.routeN[hk.id]=(G.routeN[hk.id]||0)+1;G.regN[hk.reg]=(G.regN[hk.reg]||0)+1;xpAdd('nav',H.km*0.1)}
   // Zustand der Ausrüstung dauerhaft speichern
   for(const id in H.cond)G.cond[id]=Math.round(H.cond[id]*10)/10;
   for(const id in H.dev){
@@ -2731,10 +2739,11 @@ function renderHub(){
   H=null;
   const d=dateOf(G.day),s=seasonOfM(d.m),pend=G.pending;
   const stalePct=pend?clamp((G.day-pend.day-10)*1,0,40):0;
-  const xpRow=STAT_DEFS.map(s=>{const v=G.stats[s.id],need=55*v,xp=G.xp[s.id]||0;return `<div class="stat"><div style="flex:1"><b>${s.name}</b> <small>Stufe ${v}${v>=STAT_MAX?' (max)':''}</small>${v<STAT_MAX?barHTML(xp/need*100,'var(--acc)',5):''}</div><button data-up="${s.id}" ${G.sp<1||v>=STAT_MAX?'disabled':''}>+ ⭐</button></div>`}).join('');
+  while(G.sp>0){const lo=STAT_DEFS.filter(x=>G.stats[x.id]<STAT_MAX).sort((a,b)=>G.stats[a.id]-G.stats[b.id])[0];if(!lo)break;G.stats[lo.id]++;G.sp--}
+  const xpRow=STAT_DEFS.map(s=>{const v=G.stats[s.id],need=55*v,xp=G.xp[s.id]||0;return `<div class="stat"><div style="flex:1"><b>${s.name}</b> <small>Stufe ${v}${v>=STAT_MAX?' (max)':''}</small>${v<STAT_MAX?barHTML(xp/need*100,'var(--acc)',5):''}</div></div>`}).join('');
   $('#s-hub').innerHTML=`<div class="wrap">
    <div class="topbar"><div><h2>${esc(G.chan)}</h2><small>${esc(G.name)} · ${dateStr(G.day)} · ${SEASON_E[s]} ${s}</small></div>
-    <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${fmtInt(G.subs)} Abos</span><span class="chip">⭐ ${G.sp} Fähigkeitspunkte</span><button id="h-menu">☰ Menü</button></div></div>
+    <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${fmtInt(G.subs)} Abos</span><button id="h-menu">☰ Menü</button></div></div>
    ${pend?`<div class="card" style="border-color:var(--warn);margin-bottom:14px"><h3>🎬 Unveröffentlichtes Material</h3><p>${esc(pend.name)} · ${fmtN(pend.km)} km · ${pend.clips.length} Clips${stalePct>0?' · <span class="badtxt">Material wird alt (−'+Math.round(stalePct)+' % Wirkung)</span>':''}</p><button class="primary" id="h-pub">Video veröffentlichen</button></div>`:''}
    <div class="grid">
     <div class="card"><h3>🥾 Nächste Tour</h3><p class="hint">Wähle Tour und Startzeit. Die Jahreszeit entscheidet über Wetter, Kälte und Tageslicht.</p><button class="primary" id="h-hikes">Touren ansehen</button></div>
@@ -2744,7 +2753,7 @@ function renderHub(){
     <div class="card"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
       <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div>
 </div>
-    <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Bilden sich durch Benutzung. Punkte sind selten: 1 Punkt = 1 Stufe.</p>${xpRow}</div>
+    <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Wachsen von selbst mit deiner Erfahrung: Je weiter und anspruchsvoller die Touren, desto schneller. Wer eine Strecke oder ähnliche Gegenden öfter geht, orientiert sich besser. Schwere Routen kannst du nur mit genug Fähigkeiten meistern – gute Ausrüstung allein reicht nicht.</p>${xpRow}</div>
    </div><p class="hint" style="margin-top:14px">Touren gesamt: ${G.hikes} · Kilometer: ${fmtInt(G.km)} · Einnahmen gesamt: ${eur(G.earned)}</p></div>`;
   $('#h-hikes').onclick=()=>{renderHikes();show('hikes')};
   $('#h-shop').onclick=()=>{SHOPTAB='Rucksack';renderShop();show('shop')};
@@ -2753,7 +2762,6 @@ function renderHub(){
   $('#h-menu').onclick=hubMenu;
   if(pend)$('#h-pub').onclick=()=>openPublish();
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hub';waitDays(+b.dataset.w)});
-  $$('[data-up]').forEach(b=>b.onclick=()=>{if(G.sp>0&&G.stats[b.dataset.up]<STAT_MAX){G.sp--;G.stats[b.dataset.up]++;G.xp[b.dataset.up]=0;save();sfx('success');renderHub()}});
   $$('[data-fix]').forEach(b=>b.onclick=()=>workshop(b.dataset.fix,b.dataset.how));
 }
 function hubMenu(){
@@ -2820,6 +2828,10 @@ function briefing(hk){
   if(R.lat>66&&dl<4)w.push({l:'warn',t:'Polarnacht: fast kein Tageslicht. Stirnlampe und Powerbank sind lebenswichtig.'});
   const stormM=(dm.m>=5&&dm.m<=8&&R.mod&&R.mod.gewitter>1.4);
   if(stormM)w.push({l:'warn',t:'Sommer im Hochgebirge: nachmittags oft Gewitter.'});
+  {const gap=skillGap(hk),avg=skillAvg(hk);
+   if(gap>=2.5){w.push({l:'bad',t:`Deine Fähigkeiten (Ø ${fmtN(avg,1)}) sind für diese Route viel zu niedrig (empfohlen Ø ${SKILL_REQ[hk.diff]}). Du wirst schnell erschöpfen und kaum vorankommen – auch mit bester Ausrüstung.`});score+=gap*0.45}
+   else if(gap>0.4){w.push({l:'warn',t:`Deine Fähigkeiten (Ø ${fmtN(avg,1)}) liegen unter dem Empfohlenen (Ø ${SKILL_REQ[hk.diff]}): mehr Erschöpfung und langsameres Tempo.`});score+=gap*0.35}
+   else if(famBonus(hk)>=1)w.push({l:'info',t:'Du kennst diese Strecke oder ähnliche Gegenden – das hilft bei der Orientierung.'})}
   // Proviant
   const satStock=CONS.filter(f=>f.sat).reduce((a,f)=>a+f.sat*(G.cons[f.id]||0),0);
   const perDay=65*Math.max(0.5,1.35-0.1*ES('food'))/1.0;
@@ -2863,6 +2875,7 @@ function hikeCard(hk){
       <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} · Gebühr ${eur0(hk.permit)}</span>
       <span>⛰️ <span class="risk" style="background:${DIFF_COL[hk.diff]}">${DIFF_NAMES[hk.diff]}</span> · Erlös-Faktor ×${hk.mult}</span>
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
+      <span>💪 Empfohlene Fähigkeiten Ø ${SKILL_REQ[hk.diff]} · du: Ø ${fmtN(skillAvg(hk),1)}</span>
       <span>🏪 ${f.towns?esc(f.towns):'keine Läden am Weg'}</span>
       <span>🚰 ${f.wi.lbl}${f.wi.dry?' · '+f.wi.dry+' trockene Abschnitte (bis '+fmtN(f.wi.maxDry,0)+' km)':''}</span>
       <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
@@ -3322,7 +3335,6 @@ function renderResult(){
     <div class="stat"><span>Orte besucht · Lager</span><b>${st.villages} · ${st.camps}</b></div>
     <div class="stat"><span>Gesammelt · gefangen</span><b>${st.forage} · ${st.fish}</b></div>
     <div class="stat"><span>Livestreams · Spenden</span><b>${st.streams} · ${eur(st.donations)}</b></div>
-    <div class="stat"><span>⭐ Fähigkeitspunkte</span><b class="${h.spGain?'goodtxt':''}">+${h.spGain}</b></div>
     ${ups.length?`<div class="stat"><span>💪 Aufgestiegen</span><b class="goodtxt">${ups.join(', ')}</b></div>`:''}
     ${h.damaged&&h.damaged.length?`<div class="warnbox warn">🔧 Beschädigt oder defekt: ${h.damaged.map(esc).join(', ')} – in der Werkstatt reparieren oder ersetzen!</div>`:''}
    </div><div class="card"><h3>🎬 Beste Clips</h3><div class="cliplist">${top.map(c=>`<div class="clip"><span>${c.e} ${esc(c.name)}${c.rar>=0?`<i class="rar" style="background:${RARITY[c.rar].color}">${RARITY[c.rar].name}</i>`:''}</span><span>Qualität ${Math.round(c.q*100)} %</span></div>`).join('')||'<p class="hint">Keine Clips aufgenommen – ohne Material kein Video.</p>'}</div></div></div>
