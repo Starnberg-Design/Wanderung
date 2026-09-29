@@ -2520,6 +2520,7 @@ function ctxBubble(g,tm,x,y,e,label,fn,on=true){
   if(on)HITS.push({fn,x,y,r:36,ic:null});
 }
 function drawCtx(g,tm,sx,gy){
+  if(H.sleep.active&&!H.ended){const ax=H.camp.x-camX,ay=groundY(H.camp.x);ctxBubble(g,tm,clamp(ax+58,60,CW-60),ay-42,'⏰','Aufwachen',()=>{wakeUp(true);sfx('click');updateHUD(true)},true);return}
   if(H.action||H.sleep.active||H.ended||H.live||H.moving||H.walking){H.eatMenu=false;return}
   const row=[];const y=gy-150;const B=H.body;
   if(H.lost.on)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
