@@ -72,13 +72,13 @@ input[type=range]{accent-color:var(--acc)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
 .pill{background:rgba(8,16,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
-#h-tl{left:calc(6px + var(--sl));top:calc(6px + var(--st))}
+#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:4px 6px}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 #h-tr{right:calc(6px + var(--sr));top:calc(6px + var(--st));text-align:right;max-width:34vw}
-.sb{display:grid;grid-template-columns:repeat(2,auto);gap:3px 9px}
-.st{display:flex;align-items:center;gap:4px;width:86px;font-size:13px}
-.st .ic{width:19px;text-align:center;font-size:15px}
-.st .tr{flex:1;height:11px;background:#0008;border-radius:5px;overflow:hidden}
+.sb{display:grid;grid-template-columns:repeat(2,auto);gap:2px 6px}
+.st{display:flex;align-items:center;gap:3px;width:62px;font-size:11px}
+.st .ic{width:14px;text-align:center;font-size:12px}
+.st .tr{flex:1;height:7px;background:#0008;border-radius:5px;overflow:hidden}
 .st .fl{display:block;height:100%;border-radius:5px;transition:width .3s}
 .st.low .ic{animation:blink .9s infinite}.st.low .fl{animation:blink .9s infinite}
 @keyframes blink{50%{opacity:.35}}
@@ -109,8 +109,9 @@ input[type=range]{accent-color:var(--acc)}
 #spdctl{display:flex;align-items:center;gap:2px;background:#0a1410b0;border:1px solid #ffffff22;border-radius:14px;padding:2px 3px}
 #spdctl button{background:transparent;border:0;color:#fff;font-size:15px;width:26px;height:44px;padding:0;cursor:pointer}
 #sp-v{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:38px;color:#fff;font-size:19px;line-height:1}#sp-v small{font-size:11px;margin-top:2px}
+.ctry{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.cbtn{display:flex;flex-direction:column;align-items:flex-start;padding:8px 14px}.cbtn.on{background:var(--acc);color:#04120a}.cbtn small{opacity:.8}
 .grp{margin:16px 0 6px;font-size:16px;color:var(--acc)}
-.dogb{display:grid;grid-template-columns:repeat(2,auto);gap:3px 9px;margin-top:6px;padding-top:5px;border-top:1px solid #ffffff22}
+.dogb{display:grid;grid-template-columns:repeat(2,auto);gap:2px 6px;margin-top:4px;padding-top:4px;border-top:1px solid #ffffff22}
 #rlab{display:flex;flex-direction:column;justify-content:space-between;height:112px;font-size:12px;text-align:right;color:#fff9}
 #rlab span{cursor:pointer;line-height:1}#rlab span.on{color:#fff;font-weight:700}
 #rtrk{position:relative;width:30px;height:112px;touch-action:none;cursor:pointer;flex:none}
@@ -161,7 +162,7 @@ canvas.chart{width:100%;height:140px;display:block}
  #modal .box{padding:12px}
  h2{font-size:1.15em}
 }
-@media(max-height:430px){.st{width:77px;font-size:12px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(66px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
+@media(max-height:430px){.st{width:56px;font-size:10px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(66px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
 </style>
 </head>
 <body>
@@ -2496,6 +2497,13 @@ function drawLighting(g,tm,dt){
 }
 
 /* ---------- Aktions-Blasen direkt an der passenden Stelle ---------- */
+function ctxSmall(g,tm,x,y,e,cnt,fn){
+  g.save();g.translate(x,y);
+  g.fillStyle='rgba(255,246,205,0.97)';g.beginPath();g.arc(0,0,17,0,7);g.fill();g.strokeStyle='#c48a10';g.lineWidth=2;g.stroke();
+  g.font='17px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#333';g.fillText(e,0,1);
+  g.fillStyle='#2b7a3f';g.beginPath();g.arc(12,-12,8,0,7);g.fill();g.fillStyle='#fff';g.font='bold 10px sans-serif';g.fillText(cnt,12,-11);g.textBaseline='alphabetic';
+  g.restore();HITS.push({fn,x,y,r:26,ic:null});
+}
 function ctxBubble(g,tm,x,y,e,label,fn,on=true){
   const pulse=1+Math.sin(tm*5+x)*0.05;
   g.save();g.translate(x,y);g.scale(pulse,pulse);g.globalAlpha=on?1:0.5;
@@ -2507,7 +2515,7 @@ function ctxBubble(g,tm,x,y,e,label,fn,on=true){
   if(on)HITS.push({fn,x,y,r:36,ic:null});
 }
 function drawCtx(g,tm,sx,gy){
-  if(H.action||H.sleep.active||H.ended||H.live)return;
+  if(H.action||H.sleep.active||H.ended||H.live||H.moving||H.walking){H.eatMenu=false;return}
   const row=[];const y=gy-150;const B=H.body;
   if(H.lost.on)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
   const w=nearWater();
@@ -2517,7 +2525,8 @@ function drawCtx(g,tm,sx,gy){
     if(H.water.dirty>0.05)row.push(['♨️','Behandeln',()=>actClick('treat'),true]);
   }
   if(H.water.clean>0.05&&B.hyd<88)row.push(['💧','Trinken',()=>actClick('drink'),true]);
-  if(B.sat<85){const f=FOODS.filter(f=>!f.cook&&!f.stim&&(H.food[f.id]||0)>0).sort((a,b)=>b.sat-a.sat)[0];if(f)row.push([f.e,'Essen',()=>actClick('eat',f.id),true])}
+  const eatList=FOODS.filter(f=>!f.cook&&(H.food[f.id]||0)>0);
+  if(eatList.length)row.push(['🍽️',H.eatMenu?'Schließen':'Essen',()=>{H.eatMenu=!H.eatMenu},true]);else H.eatMenu=false;
   const resting=!H.moving;
   if(H.camp.pitched&&H.g.shelter){
     row.push(['😴','Schlafen',()=>actClick('sleep'),true]);
@@ -2534,8 +2543,13 @@ function drawCtx(g,tm,sx,gy){
   }
   if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
   const n=row.length,gap=n>7?54:62;
-  const x0=Math.max(sx-(n-1)/2*gap,H.dog?200:150);
+  const x0=Math.max(sx-(n-1)/2*gap,H.dog?175:135);
   row.forEach((r,i)=>ctxBubble(g,tm,x0+i*gap,y,r[0],r[1],r[2],r[3]));
+  if(H.eatMenu&&eatList.length){ // kleine Symbole: was aus dem Rucksack gegessen werden soll
+    const ei=row.findIndex(r=>r[1]==='Schließen'),ex=x0+ei*gap,m=eatList.length,sp=44;
+    const sx0=Math.max(30,Math.min(CW-30-(m-1)*sp,ex-(m-1)*sp/2));
+    eatList.forEach((f,i)=>ctxSmall(g,tm,sx0+i*sp,y-58,f.e,H.food[f.id],()=>{H.eatMenu=false;actClick('eat',f.id)}));
+  }
 }
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
@@ -2866,6 +2880,7 @@ function routeFacts(hk){
   return {wi,fishOK,beeren:fo('beeren'),pilze:fo('pilze'),nuesse:fo('nuesse'),terr,towns};
 }
 let SELHIKE=null;
+let HIKECTRY=null;
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
 function hikeCard(hk){
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
@@ -2887,7 +2902,8 @@ function renderHikes(){
   let body='';
   if(HIKEVIEW==='land'){
     const groups={};HIKES.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
-    body=Object.keys(groups).sort().map(c=>`<h3 class="grp">🌍 ${esc(c)}</h3><div class="grid">${groups[c].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`).join('');
+    body=`<div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>🌍 ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
+      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">🌍 ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
   }else body=`<div class="grid">${[...HIKES].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`;
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
@@ -2896,6 +2912,7 @@ function renderHikes(){
     <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
    ${body}</div>`;
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
+  $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
   $$('[data-hv]').forEach(b=>b.onclick=()=>{HIKEVIEW=b.dataset.hv;try{localStorage.setItem('wk_hv',HIKEVIEW)}catch(e){}renderHikes()});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
@@ -2946,10 +2963,9 @@ function renderShop(){
        <button class="primary big" id="d-buy" ${G.money<DOG_SIZES.find(s=>s.id===sel.size).price*priceMod()?'disabled':''}>Hund adoptieren</button></div>`;
     }else{
       const dp=gearById('dogpack'),owns=G.owned.dogpack;
-      dogHTML=`<div class="card"><h3>🐕 ${esc(G.dog.name)}</h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Vertrauen ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
+      dogHTML=`<div class="card"><h3>🐕 <span id="d-name-h" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.dog.name)}</span></h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Vertrauen ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
         <div class="item ${G.packed.dogpack?'packed':''}"><div class="ico">🎒</div><div class="inf"><b>Hunderucksack</b><small>Trägt bis ${ds.packCap} kg – nimmt dir Last ab, aber der Hund braucht sein Futter zuerst darin.</small></div><div class="seg">${owns?`<button data-pack="dogpack" class="${G.packed.dogpack?'on':''}">${G.packed.dogpack?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buydp ${G.money<ds.packPrice*priceMod()?'disabled':''}>${eur0(ds.packPrice*priceMod())}</button>`}</div></div>
-        <div class="row"><span class="lbl">Name</span><input id="d-rename" value="${esc(G.dog.name)}" maxlength="14"><button id="d-rn">Umbenennen</button></div>
-        <div class="row"><button id="d-sell" class="warnb">Hund verkaufen (${eur0(Math.round(ds.price*priceMod()*0.35))})</button></div>
+                <div class="row"><button id="d-sell" class="warnb">Hund verkaufen (${eur0(Math.round(ds.price*priceMod()*0.35))})</button></div>
         <p class="hint">Futterbedarf: ca. ${fmtN(ds.food,2)} kg pro Tag. Nimm genug Hundefutter mit!</p></div>`;
     }
   }
@@ -2978,7 +2994,7 @@ function renderShop(){
     const dpb=$('[data-dpatch]');if(dpb)dpb.onclick=()=>{SHOPTAB_DOG.name=$('#d-name').value;SHOPTAB_DOG.patch=!SHOPTAB_DOG.patch;renderShop()};
     const db=$('#d-buy');if(db)db.onclick=()=>{const s=DOG_SIZES.find(x=>x.id===SHOPTAB_DOG.size),p=s.price*priceMod();if(G.money<p)return;G.money-=p;
       G.dog={name:($('#d-name').value||'Bello').trim(),size:s.id,color:SHOPTAB_DOG.color,patch:SHOPTAB_DOG.patch,bond:0};sfx('success');save();renderShop()};
-    const rn=$('#d-rn');if(rn)rn.onclick=()=>{const v=($('#d-rename').value||'').trim().slice(0,14);if(!v){toast('Bitte einen Namen eingeben.');return}G.dog.name=v;sfx('success');save();renderShop()};
+    const rn=$('#d-name-h');if(rn)rn.onclick=()=>{let nv=G.dog.name;showModal({title:'Hund umbenennen',html:'<input id="d-rename" maxlength="14" style="width:100%" value="'+esc(G.dog.name)+'">',buttons:[{label:'Speichern',primary:1,fn:()=>{nv=(nv||'').trim().slice(0,14);if(!nv){toast('Bitte einen Namen eingeben.');return}G.dog.name=nv;sfx('success');save();renderShop()}},{label:'Abbrechen'}],onOpen:m=>{$('#d-rename',m).oninput=e=>nv=e.target.value}})};
     const sl=$('#d-sell');if(sl)sl.onclick=()=>showModal({title:'Hund verkaufen?',text:'Willst du '+G.dog.name+' wirklich verkaufen? Das lässt sich nicht rückgängig machen.',buttons:[{label:'Ja, verkaufen',fn:()=>sellDog()},{label:'Abbrechen'}]});
     const bd=$('[data-buydp]');if(bd)bd.onclick=()=>{const p=ds.packPrice*priceMod();if(G.money<p)return;G.money-=p;G.owned.dogpack=1;G.packed.dogpack=1;G.cond.dogpack=100;sfx('coin');save();renderShop()};
     const dv=$('#dogprev');if(dv){const dg=dv.getContext('2d');const dd=G.dog?dogSize():DOG_SIZES.find(s=>s.id===SHOPTAB_DOG.size);const gd=G.dog||SHOPTAB_DOG;
@@ -3603,7 +3619,7 @@ function renderStudio(){
     body=G.lives.length?`<div class="kpis"><div class="kpi">Livestreams<b>${G.lives.length}</b></div><div class="kpi">Spenden gesamt<b>${eur(G.liveEarned)}</b></div><div class="kpi">Ruf<b>${G.begHeat>4?'😠 schlecht':G.begHeat>1.5?'😐 angekratzt':'😊 gut'}</b></div></div>`+[...G.lives].reverse().map(l=>`<div class="cmt"><b>${dateStr(l.day)}</b> · Ø ${fmtN(l.avg,0)} Zuschauer (Spitze ${Math.round(l.peak)}) · Spenden ${eur(l.don)} · +${l.gain}${l.loss?' / −'+l.loss:''} Abos${l.begs>1?' · <span class="badtxt">'+l.begs+'× gebettelt</span>':''}</div>`).join(''):'<p class="hint">Noch kein Livestream. Beim Rasten unterwegs: Menü ☰ → Livestream. Kleine Kanäle haben sehr wenige Zuschauer. Ein Spendenaufruf pro Stream reicht.</p>';
   }
   $('#s-studio').innerHTML=`<div class="wrap"><div class="topbar"><h2>📺 Studio</h2><button id="st-back">◀ Zentrale</button></div>
-   <div class="yt"><div class="ytban"></div><div class="ythead"><div class="ytav" style="background:${jk}">${esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0">${esc(G.chan)} <button id="ch-rn" style="font-size:12px;padding:2px 8px">✏️ Umbenennen</button></h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small></div></div>
+   <div class="yt"><div class="ytban"></div><div class="ythead"><div class="ytav" style="background:${jk}">${esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small></div></div>
     <div class="tabs" style="padding:0 16px">${tabs.map(t=>`<button data-stt="${t}" class="${STUDIOTAB===t?'on':''}">${t}</button>`).join('')}</div>
     <div style="padding:6px 16px 16px">${body}</div></div></div>`;
   $('#st-back').onclick=()=>{renderHub();show('hub')};
