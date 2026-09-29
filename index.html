@@ -71,33 +71,33 @@ input[type=range]{accent-color:var(--acc)}
 #stage{position:absolute;inset:0;user-select:none;-webkit-user-select:none;touch-action:none}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
-.pill{background:rgba(8,16,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid #ffffff1c;border-radius:12px;padding:4px 8px;font-size:12px;color:#fff;line-height:1.35}
+.pill{background:rgba(8,16,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
 #h-tl{left:calc(6px + var(--sl));top:calc(6px + var(--st))}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 #h-tr{right:calc(6px + var(--sr));top:calc(6px + var(--st));text-align:right;max-width:34vw}
 .sb{display:grid;grid-template-columns:repeat(2,auto);gap:3px 9px}
-.st{display:flex;align-items:center;gap:4px;width:86px;font-size:11px}
-.st .ic{width:15px;text-align:center;font-size:12px}
-.st .tr{flex:1;height:8px;background:#0008;border-radius:5px;overflow:hidden}
+.st{display:flex;align-items:center;gap:4px;width:108px;font-size:13px}
+.st .ic{width:19px;text-align:center;font-size:15px}
+.st .tr{flex:1;height:11px;background:#0008;border-radius:5px;overflow:hidden}
 .st .fl{display:block;height:100%;border-radius:5px;transition:width .3s}
 .st.low .ic{animation:blink .9s infinite}.st.low .fl{animation:blink .9s infinite}
 @keyframes blink{50%{opacity:.35}}
-.dev{display:inline-flex;align-items:center;gap:3px;margin-left:6px;font-size:11px}
-.dev .bt{display:inline-block;width:22px;height:8px;border:1px solid #fff9;border-radius:2px;position:relative}
+.dev{display:inline-flex;align-items:center;gap:3px;margin-left:6px;font-size:13px}
+.dev .bt{display:inline-block;width:28px;height:10px;border:1px solid #fff9;border-radius:2px;position:relative}
 .dev .bt i{position:absolute;left:0;top:0;bottom:0;background:var(--c-batt)}
 .dev.low .bt i{background:var(--bad)}.dev.dead{color:var(--bad)}
 #toasts{position:absolute;left:calc(8px + var(--sl));bottom:calc(52px + var(--sb));display:flex;flex-direction:column;gap:3px;max-width:46%;pointer-events:none;z-index:3}
-.toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:4px 8px;border-radius:6px;font-size:12px;animation:in .25s;transition:opacity .6s}
+.toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:4px 8px;border-radius:6px;font-size:14px;animation:in .25s;transition:opacity .6s}
 .toast.good{border-color:var(--acc)}.toast.bad{border-color:var(--bad)}.toast.warn{border-color:var(--warn)}.toast.out{opacity:0}
 @keyframes in{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
 #h-mid{left:50%;transform:translateX(-50%);top:calc(58px + var(--st));text-align:center}
 #h-bot{left:calc(6px + var(--sl));right:calc(6px + var(--sr));bottom:calc(4px + var(--sb));display:flex;gap:8px;align-items:center;pointer-events:none}
 #h-bot .prow{flex:1;display:flex;gap:8px;align-items:center;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:12px;padding:3px 8px}
-#prof{flex:1;min-width:0;height:34px}
-#ptxt{font-size:11px;white-space:nowrap;text-align:right;color:#fff}
+#prof{flex:1;min-width:0;height:40px}
+#ptxt{font-size:13px;white-space:nowrap;text-align:right;color:#fff}
 #dock{display:flex;gap:6px;pointer-events:auto}
-.rb{width:44px;height:44px;border-radius:50%;padding:0;font-size:19px;display:flex;align-items:center;justify-content:center;background:rgba(8,16,12,.72);border:1px solid #ffffff33;position:relative;color:#fff;flex-direction:column;line-height:1}
-.rb small{font-size:9px;color:#fff;margin-top:1px}
+.rb{width:54px;height:54px;border-radius:50%;padding:0;font-size:23px;display:flex;align-items:center;justify-content:center;background:rgba(8,16,12,.72);border:1px solid #ffffff33;position:relative;color:#fff;flex-direction:column;line-height:1}
+.rb small{font-size:10.5px;color:#fff;margin-top:1px}
 .rb.act{background:var(--acc2);border-color:var(--acc)}
 .rb .bdg{position:absolute;top:-3px;right:-3px;background:var(--warn);color:#000;border-radius:9px;font-size:9px;padding:0 4px;font-weight:700}
 #drawer{position:absolute;right:0;top:0;bottom:0;width:min(62vw,400px);transform:translateX(102%);transition:transform .2s;background:rgba(10,20,15,.95);z-index:6;overflow:auto;padding:8px 10px calc(8px + var(--sb)) 10px;border-left:1px solid var(--line)}
@@ -105,6 +105,13 @@ input[type=range]{accent-color:var(--acc)}
 #drawer h4{margin:8px 0 4px;font-size:.9em;color:var(--dim)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.acts button{font-size:.85em;padding:7px 6px}
 .chk{display:flex;gap:6px;align-items:center;font-size:.9em;margin:5px 0}
+#recsl{right:calc(8px + var(--sr));top:calc(50% + 8px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 8px 26px 10px;pointer-events:auto;flex-wrap:nowrap}
+#rlab{display:flex;flex-direction:column;justify-content:space-between;height:112px;font-size:12px;text-align:right;color:#fff9}
+#rlab span{cursor:pointer;line-height:1}#rlab span.on{color:#fff;font-weight:700}
+#rtrk{position:relative;width:30px;height:112px;touch-action:none;cursor:pointer;flex:none}
+#rtrk:before{content:"";position:absolute;left:12px;width:6px;top:0;bottom:0;background:#0009;border:1px solid #fff4;border-radius:4px}
+#rknob{position:absolute;left:3px;width:24px;height:24px;margin-top:-12px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:top .12s}
+.rcam{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:17px}
 #livepanel{position:absolute;right:calc(8px + var(--sr));bottom:calc(58px + var(--sb));width:min(46vw,310px);z-index:4;pointer-events:auto}
 #rot{display:none;position:absolute;inset:0;z-index:9;background:#000d;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:10px;font-size:1.2em}
 @media(orientation:portrait){#s-hike.active #rot{display:flex}}
@@ -149,7 +156,7 @@ canvas.chart{width:100%;height:140px;display:block}
  #modal .box{padding:12px}
  h2{font-size:1.15em}
 }
-@media(max-height:430px){.st{width:74px}.pill{font-size:11px;padding:3px 6px}.rb{width:40px;height:40px;font-size:17px}#h-mid{top:calc(50px + var(--st))}}
+@media(max-height:430px){.st{width:96px;font-size:12px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(66px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
 </style>
 </head>
 <body>
@@ -2375,6 +2382,7 @@ function drawScene(g,tm,dt){
   drawTerrain(g,tm);
   drawDecor(g,tm,0);
   drawFeatures(g,tm);
+  drawDecor(g,tm,1);
   drawCamp(g,tm,dt);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
@@ -2383,7 +2391,7 @@ function drawScene(g,tm,dt){
   const limp=H.inj.blister>H.t||H.inj.sprain>H.t;
   if(H.dog&&G.dog){
     const dm=H.sleep.active?'sleep':(H.moving?'walk':(H.dog.fat>60||true?'sit':'idle'));
-    const off=H.moving?58+Math.sin(tm*0.9)*10:(H.fire.lit&&nearFire()?-46:-58);
+    const off=H.moving?100+Math.sin(tm*0.9)*14:(H.fire.lit&&nearFire()?-46:-70);
     const dx=H.moving?sx-off:sx-off;
     const px=H.x-(H.moving?off:off);
     drawDog(g,H.sleep.active?H.camp.x-camX+20:dx,groundY(H.sleep.active?H.camp.x+20:px)+2,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
@@ -2394,7 +2402,6 @@ function drawScene(g,tm,dt){
     const ay=groundY(H.sleep.active?H.camp.x:H.x)+2;
     drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
-  drawDecor(g,tm,1);
   drawIcons(g,tm);
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
   drawWeatherFx(g,tm,dt);
@@ -2763,12 +2770,12 @@ function buildHikeDOM(){
     <div id="dock">
      <button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button>
      <button class="rb" id="b-spd"><span>⏩</span><small>1×</small></button>
-     <button class="rb" id="b-rec"><span>📷</span><small>Gering</small></button>
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
      <button class="rb" id="b-camp"><span>⛺</span><small>Lager</small></button>
      <button class="rb" id="b-sleep"><span>😴</span><small>Schlaf</small></button>
      <button class="rb" id="b-menu"><span>☰</span><small>Mehr</small></button></div></div>
+   <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
    <div id="rot">📱<br>Bitte das Gerät quer halten</div></div>`;
   const cv=$('#cv');
@@ -2782,7 +2789,12 @@ function buildHikeDOM(){
   });
   $('#b-walk').onclick=()=>actClick('walk');
   $('#b-spd').onclick=()=>{const cyc=[1,2,3,4,5,0];H.speed=cyc[(cyc.indexOf(H.speed)+1)%cyc.length];sfx('click');updateHUD(true)};
-  $('#b-rec').onclick=()=>{setRec((H.rec+1)%4);sfx('click');toast('📷 Aufnahme: '+REC_LEVELS[H.rec]+(H.rec>0?' – mehr Clips, mehr Akkuverbrauch':' – keine Clips, kein Verbrauch'));updateHUD(true)};
+  const trk=$('#rtrk');let dragging=false;
+  const setFromY=e=>{const r=trk.getBoundingClientRect();const l=Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*3);if(l!==H.rec){setRec(l);sfx('click');updateHUD(true)}};
+  trk.addEventListener('pointerdown',e=>{dragging=true;trk.setPointerCapture(e.pointerId);setFromY(e);e.preventDefault()});
+  trk.addEventListener('pointermove',e=>{if(dragging)setFromY(e)});
+  trk.addEventListener('pointerup',()=>{dragging=false;toast('📷 Aufnahme: '+REC_LEVELS[H.rec]+(H.rec>0?' – mehr Clips, mehr Akkuverbrauch':' – keine Clips, kein Verbrauch'))});
+  $('#rlab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!==''){setRec(+l);sfx('click');updateHUD(true)}});
   $('#b-pack').onclick=()=>{sfx('click');openPack()};
   $('#b-map').onclick=()=>{sfx('click');openMap()};
   $('#b-camp').onclick=()=>actClick('tent');
@@ -2857,7 +2869,7 @@ function updateHUD(force){
   $('#b-walk').innerHTML=`<span>${H.walking&&!H.camp.pitched?'⏸':'▶'}</span><small>${H.walking&&!H.camp.pitched?'Halt':'Gehen'}</small>`;
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
   $('#b-spd').innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`;
-  $('#b-rec').innerHTML=`<span>${H.rec?'📷':'🚫'}</span><small>${REC_LEVELS[H.rec]}</small>`;$('#b-rec').classList.toggle('act',H.rec>0);
+  {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('.rcam');if(rc)rc.style.opacity=H.rec?1:.45}
   $('#b-camp').classList.toggle('act',H.camp.pitched);$('#b-sleep').classList.toggle('act',H.sleep.active);
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
@@ -2905,15 +2917,19 @@ function frame(ts){
     let mult=SPEEDS[H.speed];
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
     accum+=dt*TIME_SCALE*mult;
-    let n=0;
+    let n=0;const x0=H.x,ph0=H.phase;
     while(accum>=1/6&&n<70&&!MODAL&&!H.ended){stepSim(1/6);accum-=1/6;n++}
+    if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n}
     if(accum>2)accum=0;
     updateIcons(dt*Math.min(SPEEDS[H.speed],4));
     if(H.speed>0&&!H.sleep.active)ambientUpdate(dt);
   }
   if(!H)return;
   H.camElev+=(elevAt(H.x)-H.camElev)*Math.min(1,dt*2.2);
+  const rx=H.x,rph=H.phase;
+  if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=4&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
   drawScene(cv.getContext('2d'),tm,dt);
+  H.x=rx;H.phase=rph;
   hudT-=dt;if(hudT<=0){hudT=0.2;updateHUD()}
   if(Math.floor(tm*0.2)%15===0&&Math.floor(tm)%25===0&&!H.ended&&!H._sv){H._sv=1;save()}else if(Math.floor(tm)%25===1)H._sv=0;
 }
