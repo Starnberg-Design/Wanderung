@@ -1492,6 +1492,13 @@ function liveStart(mins){
   liveMsg('🔴 Stream gestartet!','sys');
   beginAction('live','Livestream läuft …',mins,()=>liveEnd(),{tick:h=>liveTick(h)});
 }
+/* Spendenbereitschaft: normal sehr gering (klein am Anfang); in echter Notlage deutlich mehr – wird dem Spieler nicht verraten */
+function donF(){
+  const B=H.body;
+  const emerg=B.hyd<25||B.sat<20||B.warm<40||B.hp<45||(B.hyd<45&&B.warm<55);
+  const size=clamp(0.2+G.subs/3000,0.2,1);
+  return emerg?Math.sqrt(size)*0.6:size*0.08;
+}
 function liveMsg(t,cls){const L=H.live;if(!L)return;L.chat.push({t,cls:cls||''});if(L.chat.length>40)L.chat.shift()}
 function liveBase(){
   const hour=env.hour;
@@ -1505,7 +1512,7 @@ function liveTick(h){
   L.viewers+=(tgt-L.viewers)*clamp(h*0.12,0,1)+rnd(-0.3,0.3)*Math.sqrt(tgt+1)*h*0.1;
   L.viewers=Math.max(0,L.viewers);L.peak=Math.max(L.peak,L.viewers);L.sumV+=L.viewers*h;L.n+=h;
   L.mood+=(60-L.mood)*h*0.004;L.mood=clamp(L.mood,0,100);
-  if(Math.random()<0.0025*L.viewers*(L.mood/70)*h){const a=+(rnd(1,4)).toFixed(2);L.donations+=a;G.money+=a;G.liveEarned+=a;liveMsg('💶 Kleine Spende: '+eur(a),'don');sfx('coin')}
+  if(Math.random()<0.0025*L.viewers*(L.mood/70)*h*Math.min(1,donF()*3)){const a=+(rnd(1,4)*Math.max(0.15,donF()*2)).toFixed(2);L.donations+=a;G.money+=a;G.liveEarned+=a;liveMsg('💶 Kleine Spende: '+eur(a),'don');sfx('coin')}
   L.msgCd-=h;
   if(L.msgCd<=0){L.msgCd=rnd(2.5,5);if(L.viewers>=0.6)liveMsg((L.viewers<3?pick(CHAT_SMALL):pick(CHAT_GOOD)))}
 }
@@ -1520,7 +1527,7 @@ function liveCall(){
   if(H.t-L.lastCall<6){toast('Warte einen Moment, bevor du erneut aufrufst.');return}
   const since=H.t-L.lastCall;L.lastCall=H.t;L.begs++;
   G.begHeat=Math.min(20,G.begHeat+1.2);
-  let amt=L.viewers*rnd(0.05,0.13)*rnd(1.6,5.5)*(L.mood/65);
+  let amt=L.viewers*rnd(0.05,0.13)*rnd(1.6,5.5)*(L.mood/65)*donF();
   if(L.begs>1){
     amt*=Math.pow(0.45,L.begs-1);L.mood=Math.max(0,L.mood-18);L.begMul=(L.begMul||1)*0.84;
     const loss=Math.max(0,Math.round(L.viewers*0.08*(L.begs-1)+(since<20?1:0)));
