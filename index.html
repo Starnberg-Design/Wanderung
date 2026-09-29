@@ -390,10 +390,10 @@ const GEAR=[
   {id:'pack_pro',cat:'pack',name:'Expeditionsrucksack 65 L',e:'🎒',price:230,kg:2.3,max:26,comfort:1,color:'#e67e22',desc:'Max. 26 kg, bester Tragekomfort.'},
   {id:'pack_exp',cat:'pack',name:'Winter-Expedition 85 L',e:'🎒',price:340,kg:3.0,max:34,comfort:1.2,color:'#8e44ad',desc:'Max. 34 kg für lange Touren ohne Laden.'},
 
-  {id:'tarp',cat:'shelter',name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:15,desc:'Leicht, schützt teils vor Regen (70 %), wenig Wind- und Wärmeschutz.'},
-  {id:'tent1',cat:'shelter',name:'1-Personen-Zelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,desc:'Regendicht, +4 °C Wärme, guter Windschutz.'},
-  {id:'tentUL',cat:'shelter',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:4,wind:0.6,setup:15,desc:'Wie das 1-Personen-Zelt, aber halb so schwer und schneller aufgebaut.'},
-  {id:'tentW',cat:'shelter',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,desc:'+8 °C Wärme, trotzt Sturm. Schwer.'},
+  {id:'tarp',cat:'shelter',name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:8,down:4,desc:'Leicht, schützt teils vor Regen (70 %), wenig Wind- und Wärmeschutz. Am schnellsten auf- und abgebaut.'},
+  {id:'tent1',cat:'shelter',name:'1-Personen-Zelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Regendicht, +4 °C Wärme, guter Windschutz.'},
+  {id:'tentUL',cat:'shelter',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:4,wind:0.6,setup:14,down:7,desc:'Wie das 1-Personen-Zelt, aber halb so schwer, deutlich schneller auf- und abgebaut.'},
+  {id:'tentW',cat:'shelter',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'+8 °C Wärme, trotzt Sturm. Schwer.'},
   {id:'bag_s',cat:'bag',name:'Sommerschlafsack (+8 °C)',e:'🛌',price:40,kg:0.9,rating:8,desc:'Komfort bis +8 °C.'},
   {id:'bag_3',cat:'bag',name:'3-Jahreszeiten-Schlafsack (0 °C)',e:'🛌',price:110,kg:1.4,rating:0,desc:'Komfort bis 0 °C.'},
   {id:'bag_w',cat:'bag',name:'Winterschlafsack (−12 °C)',e:'🛌',price:230,kg:2.1,rating:-12,desc:'Komfort bis −12 °C.'},
@@ -1015,7 +1015,7 @@ function act(kind,arg){
       if(H.body.energy<=0){toast('Du bist zu erschöpft – rasten oder schlafen!','bad');return}
       H.stopReason=null;H.walking=!H.walking;break;
     case 'tent':
-      if(H.camp.pitched){beginAction('tent','Baut Lager ab …',15,()=>{H.camp.pitched=false;toast('Lager abgebaut.');if(H.autoNight&&!H.sleep.active)H.walking=true});sfx('tent');return}
+      if(H.camp.pitched){beginAction('tent','Baut Lager ab …',(H.g.shelter&&H.g.shelter.down)||15,()=>{H.camp.pitched=false;toast('Lager abgebaut.');if(H.autoNight&&!H.sleep.active)H.walking=true});sfx('tent');return}
       if(!g.shelter){toast('Du hast keine Unterkunft dabei.');return}
       if(Math.abs(env.grade)>0.09){toast('Hier ist es zu steil zum Zelten.','bad');return}
       beginAction('tent','Baut '+g.shelter.name+' auf …',g.shelter.setup,()=>{H.camp.pitched=true;H.camp.x=H.x;H.stats.camps++;toast('⛺ Lager steht.','good')});sfx('tent');break;
@@ -2398,6 +2398,9 @@ function drawCtx(g,tm,sx,gy){
     row.push(['⛺','Abbauen',()=>actClick('tent'),true]);
   }else if(resting&&H.g.shelter&&Math.abs(env.grade)<0.09)row.push(['⛺','Zelt',()=>actClick('tent'),true]);
   if(resting&&H.g.tools.fire&&H.fireUses>0&&!H.fire.lit)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
+  if(resting&&H.fire.lit&&nearFire()){
+    FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,4).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
+  }
   const n=row.length;
   row.forEach((r,i)=>ctxBubble(g,tm,sx+(i-(n-1)/2)*62,y,r[0],r[1],r[2],r[3]));
 }
@@ -2748,7 +2751,7 @@ function renderShop(){
   const itemHTML=g=>{
     const own=!!G.owned[g.id],packed=!!G.packed[g.id],br=own&&G.cond[g.id]!==undefined&&G.cond[g.id]<=0;
     const excl=EXCLUSIVE.includes(g.cat);
-    return `<div class="item ${packed?'packed':''} ${br?'broken':''}"><div class="ico">${g.e}</div><div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small></div>
+    return `<div class="item ${packed?'packed':''} ${br?'broken':''}"><div class="ico">${g.e}</div><div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small></div>
      <div class="seg">${own?`<button data-pack="${g.id}" class="${packed?'on':''}" ${br?'disabled':''}>${packed?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${g.id}" ${G.money<gearPrice(g)?'disabled':''}>${g.price?eur0(gearPrice(g)):'Kostenlos'}</button>`}</div></div>`};
   const consHTML=c=>{const n=G.cons[c.id]||0,p=(c.price*priceMod());
     const info=c.sat?`Sättigung +${c.sat}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':'für den Hund, 1 kg';
