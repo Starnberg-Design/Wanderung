@@ -106,6 +106,12 @@ input[type=range]{accent-color:var(--acc)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.acts button{font-size:.85em;padding:7px 6px}
 .chk{display:flex;gap:6px;align-items:center;font-size:.9em;margin:5px 0}
 #recsl{right:calc(8px + var(--sr));top:calc(50% + 8px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 8px 26px 10px;pointer-events:auto;flex-wrap:nowrap}
+#spdsl{left:calc(8px + var(--sl,0px));top:calc(50% + 24px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 10px 26px 8px;pointer-events:auto;flex-wrap:nowrap}
+#slab{display:flex;flex-direction:column;justify-content:space-between;height:84px;font-size:12px;color:#fff9}
+#slab span{cursor:pointer;line-height:1}#slab span.on{color:#fff;font-weight:700}
+#strk{position:relative;width:30px;height:84px;touch-action:none;cursor:pointer;flex:none}
+#strk:before{content:"";position:absolute;left:12px;width:6px;top:0;bottom:0;background:#0009;border:1px solid #fff4;border-radius:4px}
+#sknob{position:absolute;left:3px;width:24px;height:24px;margin-top:-12px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:top .12s}
 #rlab{display:flex;flex-direction:column;justify-content:space-between;height:112px;font-size:12px;text-align:right;color:#fff9}
 #rlab span{cursor:pointer;line-height:1}#rlab span.on{color:#fff;font-weight:700}
 #rtrk{position:relative;width:30px;height:112px;touch-action:none;cursor:pointer;flex:none}
@@ -2820,12 +2826,12 @@ function buildHikeDOM(){
    <div class="hud" id="h-bot"><div class="prow"><canvas id="prof"></canvas><span id="ptxt"></span></div>
     <div id="dock">
      <button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button>
-     <button class="rb" id="b-spd"><span>⏩</span><small>1×</small></button>
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
      <button class="rb" id="b-camp"><span>⛺</span><small>Lager</small></button>
      <button class="rb" id="b-sleep"><span>😴</span><small>Schlaf</small></button>
      <button class="rb" id="b-menu"><span>☰</span><small>Mehr</small></button></div></div>
+   <div class="hud" id="spdsl"><div class="rlab" id="slab"><span data-l="2">2×</span><span data-l="1">1×</span><span data-l="0">Pause</span></div><div id="strk"><i id="sknob"></i></div><div class="rcam">⏱️</div></div>
    <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
    <div id="rot">📱<br>Bitte das Gerät quer halten</div></div>`;
@@ -2839,7 +2845,13 @@ function buildHikeDOM(){
     else if($('#drawer').classList.contains('open'))$('#drawer').classList.remove('open');
   });
   $('#b-walk').onclick=()=>actClick('walk');
-  $('#b-spd').onclick=()=>{const cyc=[1,2,3,4,5,0];H.speed=cyc[(cyc.indexOf(H.speed)+1)%cyc.length];sfx('click');updateHUD(true)};
+  {const st=$('#strk');let dr=false;
+   const setSp=l=>{if(l!==H.speed){H.speed=l;sfx('click');updateHUD(true)}};
+   const fromY=e=>{const r=st.getBoundingClientRect();setSp(Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*2))};
+   st.addEventListener('pointerdown',e=>{dr=true;st.setPointerCapture(e.pointerId);fromY(e);e.preventDefault()});
+   st.addEventListener('pointermove',e=>{if(dr)fromY(e)});
+   st.addEventListener('pointerup',()=>{dr=false});
+   $('#slab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!=='')setSp(+l)});}
   const trk=$('#rtrk');let dragging=false;
   const setFromY=e=>{const r=trk.getBoundingClientRect();const l=Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*3);if(l!==H.rec){setRec(l);sfx('click');updateHUD(true)}};
   trk.addEventListener('pointerdown',e=>{dragging=true;trk.setPointerCapture(e.pointerId);setFromY(e);e.preventDefault()});
@@ -2919,8 +2931,8 @@ function updateHUD(force){
   // Dock
   $('#b-walk').innerHTML=`<span>${H.walking&&!H.camp.pitched?'⏸':'▶'}</span><small>${H.walking&&!H.camp.pitched?'Halt':'Gehen'}</small>`;
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
-  $('#b-spd').innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`;
-  {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('.rcam');if(rc)rc.style.opacity=H.rec?1:.45}
+  {const kn=$('#sknob');if(kn)kn.style.top=((2-H.speed)/2*100)+'%';$$('#slab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.speed))}
+  {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
   $('#b-camp').classList.toggle('act',H.camp.pitched);$('#b-sleep').classList.toggle('act',H.sleep.active);
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
@@ -2964,6 +2976,7 @@ function frame(ts){
   tm+=dt;
   if(screen!=='hike'||!H)return;
   const cv=$('#cv');if(!cv)return;
+  if(H.speed>2)H.speed=2;
   if(!H.ended&&!MODAL){
     let mult=SPEEDS[H.speed];
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
@@ -2988,7 +3001,7 @@ window.addEventListener('keydown',e=>{
   if(screen!=='hike'||!H)return;
   if(e.key==='Escape'){if(MODAL&&!MODAL.locked)closeModal();else $('#drawer').classList.remove('open')}
   else if(e.key===' '&&!MODAL){e.preventDefault();actClick('walk')}
-  else if((e.key==='+'||e.key==='.')&&!MODAL){H.speed=H.speed>=5?5:H.speed+1;updateHUD(true)}
+  else if((e.key==='+'||e.key==='.')&&!MODAL){H.speed=Math.min(2,H.speed+1);updateHUD(true)}
   else if((e.key==='-'||e.key===',')&&!MODAL){H.speed=Math.max(1,H.speed-1);updateHUD(true)}
 });
 
