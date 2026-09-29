@@ -86,8 +86,8 @@ input[type=range]{accent-color:var(--acc)}
 .dev .bt{display:inline-block;width:28px;height:10px;border:1px solid #fff9;border-radius:2px;position:relative}
 .dev .bt i{position:absolute;left:0;top:0;bottom:0;background:var(--c-batt)}
 .dev.low .bt i{background:var(--bad)}.dev.dead{color:var(--bad)}
-#toasts{position:absolute;left:calc(8px + var(--sl));bottom:calc(52px + var(--sb));display:flex;flex-direction:column;gap:3px;max-width:46%;pointer-events:none;z-index:3}
-.toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:4px 8px;border-radius:6px;font-size:14px;animation:in .25s;transition:opacity .6s}
+#toasts{position:absolute;left:calc(8px + var(--sl));bottom:calc(52px + var(--sb));display:flex;flex-direction:column;gap:2px;max-width:40%;max-height:20%;overflow:hidden;justify-content:flex-end;pointer-events:none;z-index:3}
+.toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:3px 6px;border-radius:5px;font-size:11.2px;line-height:1.25;animation:in .25s;transition:opacity .6s}
 .toast.good{border-color:var(--acc)}.toast.bad{border-color:var(--bad)}.toast.warn{border-color:var(--warn)}.toast.out{opacity:0}
 @keyframes in{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
 #h-mid{left:50%;transform:translateX(-50%);top:calc(58px + var(--st));text-align:center}
@@ -1189,6 +1189,7 @@ function breakGear(id){
   toast('💥 '+def.name+' ist kaputt!'+(H.repairs>0?' Mit dem Reparaturset kannst du es flicken.':''),'bad');sfx('bad');
 }
 function wear(id,amt){
+  if(H&&H.hk&&H.hk.km<=30)amt*=0.1;   // kleine Wanderungen: kaum Verschleiß
   if(!id||H.cond[id]===undefined||H.cond[id]<=0)return;
   H.cond[id]=Math.max(0,H.cond[id]-amt);
   if(H.cond[id]<=0)breakGear(id);
@@ -1765,11 +1766,13 @@ function endHike(reason){
   const frac=H.km/H.route.totalKm;
   G.km+=H.km;
   if(frac>=0.3){G.routeN=G.routeN||{};G.regN=G.regN||{};G.routeN[hk.id]=(G.routeN[hk.id]||0)+1;G.regN[hk.reg]=(G.regN[hk.reg]||0)+1;xpAdd('nav',H.km*0.1)}
-  // Zustand der Ausrüstung dauerhaft speichern
-  for(const id in H.cond)G.cond[id]=Math.round(H.cond[id]*10)/10;
-  for(const id in H.dev){
-    if(H.dev[id].broken)G.cond[id]=0;
-    else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
+  // Zustand der Ausrüstung dauerhaft speichern – nach kleinen Wanderungen entsteht kein Schaden
+  if(hk.km>30){
+    for(const id in H.cond)G.cond[id]=Math.round(H.cond[id]*10)/10;
+    for(const id in H.dev){
+      if(H.dev[id].broken)G.cond[id]=0;
+      else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
+    }
   }
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
   if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
@@ -2672,7 +2675,7 @@ function toast(msg,cls=''){
   if(screen!=='hike')return;
   const box=$('#toasts');if(!box)return;
   const el=document.createElement('div');el.className='toast '+cls;el.textContent=msg;box.appendChild(el);
-  while(box.children.length>(window.innerHeight<450?3:5))box.removeChild(box.firstChild);
+  while(box.children.length>2)box.removeChild(box.firstChild);
   setTimeout(()=>el.classList.add('out'),cls==='bad'||cls==='warn'?6500:4500);
   setTimeout(()=>el.remove(),7200);
 }
@@ -2917,6 +2920,7 @@ function renderHikes(){
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
 }
+let BACKHIKE=null;
 function openBriefing(id){
   const hk=HIKES.find(h=>h.id===id),b=briefing(hk);
   const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<hk.permit;
@@ -2926,7 +2930,7 @@ function openBriefing(id){
    ${b.w.length?b.w.map(x=>`<div class="warnbox ${x.l}">${ic[x.l]} ${esc(x.t)}</div>`).join(''):'<div class="warnbox info">Keine besonderen Warnungen – gute Vorbereitung.</div>'}
    <p class="hint">Gebühr/Anreise: ${eur0(hk.permit)} (wird beim Start abgezogen). Kaputte Ausrüstung wird nicht mitgenommen.${G.money<hk.permit?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
    buttons:[{label:'🥾 Losziehen',primary:1,fn:()=>{if(blocked){toast('');return}
-      G.money-=hk.permit;startHikeUI(id)}},{label:'🛒 Zum Shop',fn:()=>{SHOPTAB='Rucksack';renderShop();show('shop')}},{label:'Zurück'}]});
+      G.money-=hk.permit;startHikeUI(id)}},{label:'🛒 Zum Shop',fn:()=>{BACKHIKE=id;SHOPTAB='Rucksack';renderShop();show('shop')}},{label:'Zurück'}]});
   if(blocked){const bt=$$('#modal .btns button')[0];bt.disabled=true}
 }
 
@@ -2963,7 +2967,7 @@ function renderShop(){
        <button class="primary big" id="d-buy" ${G.money<DOG_SIZES.find(s=>s.id===sel.size).price*priceMod()?'disabled':''}>Hund adoptieren</button></div>`;
     }else{
       const dp=gearById('dogpack'),owns=G.owned.dogpack;
-      dogHTML=`<div class="card"><h3>🐕 <span id="d-name-h" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.dog.name)}</span></h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Vertrauen ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
+      dogHTML=`<div class="card"><h3>🐕 <span id="d-name-h" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.dog.name)}</span></h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Bindung ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
         <div class="item ${G.packed.dogpack?'packed':''}"><div class="ico">🎒</div><div class="inf"><b>Hunderucksack</b><small>Trägt bis ${ds.packCap} kg – nimmt dir Last ab, aber der Hund braucht sein Futter zuerst darin.</small></div><div class="seg">${owns?`<button data-pack="dogpack" class="${G.packed.dogpack?'on':''}">${G.packed.dogpack?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buydp ${G.money<ds.packPrice*priceMod()?'disabled':''}>${eur0(ds.packPrice*priceMod())}</button>`}</div></div>
                 <div class="row"><button id="d-sell" class="warnb">Hund verkaufen (${eur0(Math.round(ds.price*priceMod()*0.35))})</button></div>
         <p class="hint">Futterbedarf: ca. ${fmtN(ds.food,2)} kg pro Tag. Nimm genug Hundefutter mit!</p></div>`;
@@ -2982,7 +2986,7 @@ function renderShop(){
     <div class="hint">Wasserkapazität: ${fmtN(waterCapL())} L${waterCapL()<2?' <span class="badtxt">(wenig!)</span>':''}</div>
     <button class="primary" id="sh-hikes" style="margin-top:8px;width:100%">Touren ansehen ▶</button></div></div></div>`;
   $$('[data-tab]').forEach(b=>b.onclick=()=>{SHOPTAB=b.dataset.tab;renderShop()});
-  $('#sh-back').onclick=()=>{renderHub();show('hub')};$('#sh-hikes').onclick=()=>{renderHikes();show('hikes')};
+  $('#sh-back').onclick=()=>{if(BACKHIKE){const id=BACKHIKE;BACKHIKE=null;renderHikes();show('hikes');openBriefing(id)}else{renderHub();show('hub')}};$('#sh-hikes').onclick=()=>{if(BACKHIKE){const id=BACKHIKE;BACKHIKE=null;renderHikes();show('hikes');openBriefing(id)}else{renderHikes();show('hikes')}};
   $$('[data-buy]').forEach(b=>b.onclick=()=>{const g=gearById(b.dataset.buy),p=gearPrice(g);if(G.money<p)return;G.money-=p;G.owned[g.id]=1;G.cond[g.id]=100;
     if(EXCLUSIVE.includes(g.cat)||g.cat==='rec'&&false)unpackCat(g.cat);G.packed[g.id]=1;sfx('coin');save();renderShop()});
   $$('[data-pack]').forEach(b=>b.onclick=()=>{const g=gearById(b.dataset.pack);if(G.packed[g.id]){delete G.packed[g.id]}else{if(EXCLUSIVE.includes(g.cat))unpackCat(g.cat);G.packed[g.id]=1}sfx('click');save();renderShop()});
@@ -3017,7 +3021,7 @@ function unpackCat(cat){GEAR.filter(g=>g.cat===cat).forEach(g=>delete G.packed[g
    Teil 7: Wander-Oberfläche – HUD, Schleife, Rucksack, Karte, Ortsladen
    ===================================================================== */
 let lastTs=0,accum=0,hudT=0,fps=0,wake=null,livePanelOn=false;
-const DOG_BARS=[['dh','🍖','Hunger','--c-sat'],['dt','💧','Durst','--c-hyd'],['de','🐾','Ausdauer','--c-en'],['dm','😊','Laune','--c-warm'],['dv','🤝','Vertrauen','--c-hp']];
+const DOG_BARS=[['dh','🍖','Hunger','--c-sat'],['dt','💧','Durst','--c-hyd'],['de','🐾','Ausdauer','--c-en']];
 const HUD_BARS=[['en','⚡','Energie','--c-en'],['sat','🍽️','Nahrung','--c-sat'],['hyd','💧','Wasser','--c-hyd'],['warm','🌡️','Wärme','--c-warm'],['wet','💦','Nässe','--c-wet'],['hp','❤️','Gesundheit','--c-hp']];
 function actClick(k,a){auUnlock();sfx('click');act(k,a);updateHUD(true)}
 function startHikeUI(id){
@@ -3139,7 +3143,7 @@ function updateHUD(force){
   $('#b-walk').innerHTML=`<span>${H.walking&&!H.camp.pitched?'⏸':'▶'}</span><small>${H.walking&&!H.camp.pitched?'Halt':'Gehen'}</small>`;
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
   {const sv=$('#sp-v');if(sv)sv.innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`}
-  if(H.dog){const D=H.dog;const sd=(k,v,low)=>{const el=$('#st-'+k);if(!el)return;$('.fl',el).style.width=clamp(v,0,100)+'%';el.classList.toggle('low',low);el.title=DOG_BARS.find(b=>b[0]===k)[2]+' ('+G.dog.name+'): '+Math.round(v)+' %'};sd('dh',D.hunger,D.hunger<25);sd('dt',D.thirst,D.thirst<25);sd('de',100-D.fat,D.fat>85);sd('dm',D.mood,D.mood<30);sd('dv',D.trust,false)}
+  if(H.dog){const D=H.dog;const sd=(k,v,low)=>{const el=$('#st-'+k);if(!el)return;$('.fl',el).style.width=clamp(v,0,100)+'%';el.classList.toggle('low',low);el.title=DOG_BARS.find(b=>b[0]===k)[2]+' ('+G.dog.name+'): '+Math.round(v)+' %'};sd('dh',D.hunger,D.hunger<25);sd('dt',D.thirst,D.thirst<25);sd('de',100-D.fat,D.fat>85)}
   {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
   $('#b-sleep').classList.toggle('act',H.sleep.active);{const sb=$('#b-sleep');sb.innerHTML=H.sleep.active?'<span>⏰</span><small>Aufwachen</small>':'<span>😴</span><small>Schlaf</small>'}
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
