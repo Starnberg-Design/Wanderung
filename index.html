@@ -2543,7 +2543,7 @@ function renderHub(){
     <div class="card"><h3>🔧 Werkstatt</h3>${workshopHTML()}</div>
     <div class="card"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
       <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div>
-      <p style="margin-top:8px"><button id="h-job">🧑‍🔧 Aushilfsjob (1 Tag): +48 €</button></p></div>
+</div>
     <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Bilden sich durch Benutzung. Punkte sind selten: 1 Punkt = 1 Stufe.</p>${xpRow}</div>
    </div><p class="hint" style="margin-top:14px">Touren gesamt: ${G.hikes} · Kilometer: ${fmtInt(G.km)} · Einnahmen gesamt: ${eur(G.earned)}</p></div>`;
   $('#h-hikes').onclick=()=>{renderHikes();show('hikes')};
@@ -2553,7 +2553,6 @@ function renderHub(){
   $('#h-menu').onclick=hubMenu;
   if(pend)$('#h-pub').onclick=()=>openPublish();
   $$('[data-w]').forEach(b=>b.onclick=()=>waitDays(+b.dataset.w));
-  $('#h-job').onclick=()=>{G.money+=48;G.day++;const r=advanceDay();G.begHeat=Math.max(0,G.begHeat-0.25);save();renderHub();sfx('coin');if(r.paid>0)showModal({title:'💶 Auszahlung',text:'Vom Kanal: +'+eur(r.paid)})};
   $$('[data-up]').forEach(b=>b.onclick=()=>{if(G.sp>0&&G.stats[b.dataset.up]<STAT_MAX){G.sp--;G.stats[b.dataset.up]++;G.xp[b.dataset.up]=0;save();sfx('success');renderHub()}});
   $$('[data-fix]').forEach(b=>b.onclick=()=>workshop(b.dataset.fix,b.dataset.how));
 }
