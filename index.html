@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wanderkanal – Prototyp</title>
+<style>
+:root{--bg:#0e1b15;--panel:#16281f;--panel2:#1d3529;--line:#2c4a3a;--txt:#e8f1ea;--dim:#9db5a5;--acc:#4cc38a;--acc2:#2f9e6b;--warn:#ffb54a;--bad:#ff7a59;--blue:#4aa8e8}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px}
+h1,h2,h3,h4{margin:0 0 .5em}h2{font-size:1.35em}h3{font-size:1.1em}
+small,.dim{color:var(--dim)}
+button,select,input{font:inherit;color:var(--txt)}
+button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--acc)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:var(--acc2);border-color:var(--acc);color:#fff;font-weight:600}
+button.on{background:var(--acc2);border-color:var(--acc)}
+button.hl{box-shadow:0 0 0 2px var(--blue)}
+button.big{padding:12px 18px;font-size:1.05em}
+input[type=text],input:not([type]),select{background:#0f2018;border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+.screen{display:none;min-height:100vh}.screen.active{display:block}
+.center{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:20px}
+.center h1{font-size:2.6em}.sub{color:var(--dim)}
+.col{display:flex;flex-direction:column;gap:10px;min-width:240px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+.row{display:flex;align-items:center;gap:8px;margin:8px 0}.row.gap{gap:8px;flex-wrap:wrap}
+.lbl{min-width:100px;color:var(--dim)}.val{min-width:70px;text-align:center}
+.sw{display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid #fff3;vertical-align:middle}
+.stat{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.ctl{display:flex;align-items:center;gap:6px}.pips{letter-spacing:2px;color:var(--acc);min-width:100px;text-align:center}
+.hint{color:var(--dim);font-size:.9em}
+#prev{display:block;margin:0 auto 10px;border-radius:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.hike .facts{display:flex;flex-direction:column;gap:3px;margin:8px 0 12px;font-size:.9em;color:var(--dim)}
+.vid{padding:8px 0;border-bottom:1px solid var(--line)}.vbar{height:6px;background:#0f2018;border-radius:4px;margin:5px 0;overflow:hidden}.vbar i{display:block;height:100%;background:var(--acc)}.vnum{font-size:.9em}
+/* Shop */
+.shopgrid{display:grid;grid-template-columns:1fr 340px;gap:14px}@media(max-width:900px){.shopgrid{grid-template-columns:1fr}}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.items{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
+.item.packed{border-color:var(--acc)}
+.ico{font-size:2em;width:48px;text-align:center}.ico img{width:44px;height:44px;object-fit:contain}
+.inf{flex:1;display:flex;flex-direction:column;gap:2px}
+.qty{min-width:24px;text-align:center}
+.side{position:sticky;top:10px;align-self:start}
+.pl{list-style:none;padding:0;margin:8px 0;max-height:230px;overflow:auto;font-size:.92em}.pl li{padding:2px 0}
+.meter{margin-bottom:8px}.mbar{position:relative;height:12px;background:#0f2018;border-radius:6px;overflow:visible;margin:4px 0}.mbar i{display:block;height:100%;background:var(--acc);border-radius:6px}.mbar i.warn{background:var(--warn)}.mbar i.bad{background:var(--bad)}.mbar b{position:absolute;top:-3px;width:2px;height:18px;background:#fff}
+.warnbox{border-radius:8px;padding:7px 10px;margin:6px 0;font-size:.88em;border:1px solid var(--line)}
+.warnbox.bad{background:#4a1f17;border-color:var(--bad)}.warnbox.warn{background:#4a3a17;border-color:var(--warn)}.warnbox.info{background:#173a4a;border-color:var(--blue)}
+.badtxt{color:var(--bad);font-weight:600}
+/* Hike */
+#s-hike{background:#08110d}
+.stagewrap{max-width:1000px;margin:0 auto;padding:8px}
+#stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;user-select:none}
+#cv{width:100%;height:100%;display:block;cursor:crosshair}
+.ov{position:absolute;pointer-events:none}
+#tl{left:10px;top:10px}#bars{left:10px;top:108px;width:170px}#tr{right:10px;top:10px}#actline{left:50%;top:10px;transform:translateX(-50%)}
+.tbox{background:rgba(10,20,15,.68);backdrop-filter:blur(3px);border:1px solid #ffffff22;border-radius:10px;padding:7px 10px;font-size:.82em;line-height:1.5}
+.tbox.r{text-align:right}.tbox.mid{font-size:.95em;font-weight:600}
+.b{display:flex;align-items:center;gap:6px;margin:3px 0;font-size:.95em}.b span{width:74px}.b div{flex:1;height:9px;background:#0009;border-radius:5px;overflow:hidden}.b i{display:block;height:100%;background:var(--acc)}
+.b.low i{background:var(--bad)}.b.wet i{background:var(--blue)}
+#toasts{position:absolute;left:10px;bottom:10px;display:flex;flex-direction:column;gap:4px;max-width:58%;pointer-events:none}
+.toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:5px 9px;border-radius:6px;font-size:.82em;animation:in .25s;transition:opacity .6s}
+.toast.good{border-color:var(--acc)}.toast.bad{border-color:var(--bad)}.toast.out{opacity:0}
+@keyframes in{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
+#dock{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.prow{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px}.prow canvas{flex:1;min-width:0;height:56px}#ptxt{min-width:120px;font-size:.9em;text-align:right}
+.ctrls{display:grid;grid-template-columns:1fr 1.15fr 1.5fr;gap:8px}@media(max-width:860px){.ctrls{grid-template-columns:1fr}}
+.cbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px}.cbox>b{display:block;margin-bottom:6px}
+.chk{display:flex;gap:6px;align-items:center;font-size:.86em;margin:3px 0}
+.rec input[type=range]{width:100%;accent-color:var(--acc)}.rlabels{display:flex;justify-content:space-between;font-size:.75em;color:var(--dim)}#rechint{font-size:.82em;margin:4px 0;color:var(--dim);min-height:2.4em}
+.dv{font-size:.8em;background:#0f2018;border-radius:10px;padding:2px 7px}.dv.low{color:var(--warn)}.dv.dead{color:var(--bad)}
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:5px}.acts button{font-size:.83em;padding:6px 6px}
+/* Modal */
+#modal{display:none;position:fixed;inset:0;background:#000a;align-items:center;justify-content:center;z-index:50;padding:14px}
+#modal.open{display:flex}
+#modal .box{background:var(--panel);border:1px solid var(--acc);border-radius:14px;padding:18px;max-width:480px;width:100%;max-height:90vh;overflow:auto}
+#modal .btns{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.cliplist{max-height:320px;overflow:auto}.clip{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:.9em}
+.rar{font-style:normal;font-size:.72em;padding:1px 6px;border-radius:8px;color:#fff;margin-left:4px}
+.forecast{background:var(--panel2);border-radius:8px;padding:10px;margin:10px 0}
+</style>
+</head>
+<body>
+<section id="s-menu" class="screen active"></section>
+<section id="s-char" class="screen"></section>
+<section id="s-hub" class="screen"></section>
+<section id="s-hikes" class="screen"></section>
+<section id="s-shop" class="screen"></section>
+<section id="s-hike" class="screen"></section>
+<section id="s-result" class="screen"></section>
+<div id="modal"></div>
+<script>
+'use strict';
+/* =====================================================================
+   WANDERKANAL – Prototyp
+   Teil 1: Daten (Ausrüstung, Tiere, Biome, Wetter, Wanderungen)
+   Alle Zahlen sind Startwerte zum Balancen.
+   ===================================================================== */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rnd=(a=0,b=1)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const hash=n=>{n=Math.imul((n|0)^0x9e3779b9,0x85ebca6b);n^=n>>>13;n=Math.imul(n,0xc2b2ae35);n^=n>>>16;return (n>>>0)/4294967295};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const eur=v=>v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const fmtTime=t=>{const m=Math.floor(((t%1440)+1440)%1440);return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+
+/* ---- Optionale eigene Grafiken: assets/<pfad>.png – fehlt die Datei, wird der Platzhalter (Emoji/Form) genutzt ---- */
+const IMG={};
+function img(path){
+  if(!(path in IMG)){IMG[path]=null;const i=new Image();i.onload=()=>{IMG[path]=i};i.onerror=()=>{IMG[path]=false};i.src='assets/'+path+'.png';}
+  return IMG[path]||null;
+}
+
+/* ---- Charakter ---- */
+const STAT_DEFS=[
+  {id:'trag',name:'Tragkraft',desc:'Wie viel Gewicht du bequem trägst.'},
+  {id:'aus',name:'Ausdauer',desc:'Weniger Energieverbrauch beim Gehen.'},
+  {id:'tempo',name:'Tempo',desc:'Höchstgeschwindigkeit auf ebenem Weg.'},
+  {id:'kalt',name:'Kälteresistenz',desc:'Du frierst später.'},
+  {id:'food',name:'Nahrungsbedarf',desc:'Mehr Punkte = du brauchst weniger Essen.'},
+  {id:'water',name:'Wasserbedarf',desc:'Mehr Punkte = du brauchst weniger Wasser.'},
+  {id:'nav',name:'Orientierung',desc:'Du verläufst dich seltener.'}];
+const STAT_POOL=24,STAT_MIN=1,STAT_MAX=6;
+const LOOKS={
+  skin:['#f6d3b3','#e8b98f','#c68b59','#8d5a35','#5a3921'],
+  hair:['#2b1d12','#6b4423','#c98a3c','#e8d18b','#a3361f','#8a8f96'],
+  jacket:['#d9534f','#f0ad4e','#2e86c1','#27ae60','#8e44ad','#2c3e50'],
+  styles:['Kurz','Lang','Mütze']};
+
+/* ---- Seltenheit & Tiere ---- */
+const RARITY=[
+  {name:'Gewöhnlich',color:'#9aa5b1',base:3},
+  {name:'Ungewöhnlich',color:'#4caf50',base:8},
+  {name:'Selten',color:'#2196f3',base:20},
+  {name:'Episch',color:'#a855f7',base:45},
+  {name:'Legendär',color:'#ff9800',base:120}];
+// w = Gewicht der Auftrittswahrscheinlichkeit, danger = Angriffswahrscheinlichkeit
+const ANIMALS=[
+  {id:'squirrel',name:'Eichhörnchen',e:'🐿️',r:0,b:['wald'],w:3},
+  {id:'hare',name:'Feldhase',e:'🐇',r:0,b:['wiese','wald','tal'],w:3},
+  {id:'marmot',name:'Murmeltier',e:'🐹',r:0,b:['berg'],w:3},
+  {id:'deer',name:'Reh',e:'🦌',r:1,b:['wald','wiese','tal'],w:2},
+  {id:'fox',name:'Rotfuchs',e:'🦊',r:1,b:['wald','wiese','tal','fjaell'],w:2},
+  {id:'reindeer',name:'Rentier',e:'🦌',r:1,b:['fjaell'],w:2.4},
+  {id:'ibex',name:'Steinbock',e:'🐐',r:2,b:['berg'],w:1.4},
+  {id:'moose',name:'Elch',e:'🫎',r:2,b:['wald','fjaell','tal'],w:1.0},
+  {id:'lynx',name:'Luchs',e:'🐈',r:2,b:['wald','berg'],w:0.7},
+  {id:'eagle',name:'Steinadler',e:'🦅',r:3,b:['berg','fjaell'],w:0.7},
+  {id:'wolf',name:'Wolf',e:'🐺',r:3,b:['wald','fjaell'],w:0.45,danger:0.12},
+  {id:'bear',name:'Braunbär',e:'🐻',r:4,b:['wald','berg','fjaell'],w:0.28,danger:0.35}];
+
+/* ---- Biome ---- */
+const BIOMES={
+  wald:{name:'Wald',wind:0.35,net:0.55,rain:0.5,scenic:0.9,animal:1.2,tree:0.75,ground:'#3f7d3a',far:'#2f5f3c',noise:12},
+  wiese:{name:'Offenes Land',wind:1.0,net:0.9,rain:1,scenic:0.8,animal:0.9,tree:0.06,ground:'#7cb342',far:'#5f8f6a',noise:5},
+  tal:{name:'Tal',wind:0.55,net:0.3,rain:0.9,scenic:1.0,animal:0.9,tree:0.35,ground:'#5f9e46',far:'#4a7d5a',noise:8},
+  berg:{name:'Gebirge',wind:1.6,net:0.25,rain:1,scenic:1.35,animal:0.6,tree:0,ground:'#8a8d84',far:'#707a8c',noise:40},
+  fjaell:{name:'Fjäll',wind:1.4,net:0.4,rain:1,scenic:1.4,animal:0.7,tree:0.04,ground:'#98996a',far:'#7b8a86',noise:22}};
+
+/* ---- Wetter ---- */
+const WEATHER={
+  klar:{name:'Klar',e:'☀️',dT:1,wind:2,rain:0,dim:1},
+  wolkig:{name:'Wolkig',e:'⛅',dT:0,wind:3.5,rain:0,dim:0.9},
+  nebel:{name:'Nebel',e:'🌫️',dT:-1,wind:1.5,rain:0,dim:0.75},
+  regen:{name:'Regen',e:'🌧️',dT:-2,wind:5,rain:0.55,dim:0.7},
+  gewitter:{name:'Gewitter',e:'⛈️',dT:-3,wind:9,rain:1,dim:0.5},
+  sturm:{name:'Sturm',e:'💨',dT:-3,wind:15,rain:0.25,dim:0.65}};
+
+/* ---- Sehenswürdigkeiten ---- */
+const SIGHTS={
+  wald:[{n:'Burgruine',e:'🏰',v:18},{n:'Wasserfall',e:'🏞️',v:22}],
+  wiese:[{n:'Aussichtsturm',e:'🗼',v:14},{n:'Burgruine',e:'🏰',v:18}],
+  tal:[{n:'Wasserfall',e:'🏞️',v:24},{n:'Alte Steinbrücke',e:'🌉',v:12}],
+  berg:[{n:'Gipfelkreuz',e:'⛰️',v:28},{n:'Bergsee',e:'🏞️',v:26}],
+  fjaell:[{n:'Bergsee',e:'🏞️',v:26},{n:'Samische Hütte',e:'🛖',v:16}]};
+
+/* ---- Wanderungen (alt = Höhe am Ende der Etappe in m) ---- */
+const HIKES=[
+  {id:'wald',name:'Waldpfad im Harzvorland',region:'Deutschland · Sommer',diff:1,mult:1.0,permit:0,
+   desc:'Gemütliche Einsteigertour durch Wälder und Wiesen. Mildes Wetter, viele Quellen.',
+   startAlt:300,refAlt:300,temp:16,amp:6,sunrise:5.5,sunset:21,wind:0.6,extreme:0.3,rough:1,startHour:7,
+   weather:{klar:3,wolkig:3,regen:2,nebel:0.6,gewitter:0.3},
+   stages:[{b:'wald',km:8,alt:400},{b:'wiese',km:6,alt:300},{b:'wald',km:6,alt:450},{b:'tal',km:4,alt:320}]},
+  {id:'mittel',name:'Mittelgebirgs-Kammweg',region:'Deutschland · Herbst',diff:2,mult:1.2,permit:10,
+   desc:'Auf und ab über bewaldete Kuppen bis auf den offenen Kamm. Herbstwetter mit Regen und Wind.',
+   startAlt:400,refAlt:500,temp:9,amp:5,sunrise:7,sunset:19,wind:0.9,extreme:0.5,rough:1.1,startHour:7,
+   weather:{klar:2,wolkig:3,regen:3,nebel:1.5,gewitter:0.6,sturm:0.4},
+   stages:[{b:'wald',km:9,alt:700},{b:'wiese',km:6,alt:650},{b:'berg',km:10,alt:1150},{b:'wald',km:8,alt:600},{b:'tal',km:6,alt:350},{b:'wiese',km:6,alt:300}]},
+  {id:'alpen',name:'Alpenüberquerung',region:'Alpen · Spätsommer',diff:3,mult:1.5,permit:25,
+   desc:'Steile Anstiege, Gipfelgrate, wenig Netz. Kalte Nächte und plötzliche Gewitter.',
+   startAlt:850,refAlt:1500,temp:14,amp:7,sunrise:6.5,sunset:20,wind:1.1,extreme:0.8,rough:1.2,startHour:6.5,
+   weather:{klar:2.5,wolkig:2.5,regen:2,nebel:1.5,gewitter:1.2,sturm:1},
+   stages:[{b:'tal',km:6,alt:900},{b:'wald',km:9,alt:1600},{b:'berg',km:8,alt:2550},{b:'berg',km:10,alt:2100},{b:'berg',km:9,alt:2750},{b:'wald',km:12,alt:1300},{b:'tal',km:10,alt:780},{b:'wiese',km:6,alt:700}]},
+  {id:'fjaell',name:'Kungsleden-Fjäll',region:'Schweden · Herbst',diff:4,mult:1.8,permit:40,
+   desc:'Endlose Weite im Norden: Wind, Regen, Schnee, Flussfurten und kaum Empfang. Für Profis.',
+   startAlt:600,refAlt:800,temp:4,amp:5,sunrise:7,sunset:18,wind:1.3,extreme:0.9,rough:1,startHour:7.5,
+   weather:{klar:1.5,wolkig:3,regen:3,nebel:1,gewitter:0.3,sturm:2},
+   stages:[{b:'wald',km:10,alt:650},{b:'fjaell',km:14,alt:900},{b:'fjaell',km:12,alt:1100},{b:'tal',km:10,alt:700},{b:'fjaell',km:16,alt:1000},{b:'wald',km:8,alt:600},{b:'fjaell',km:12,alt:850},{b:'tal',km:8,alt:500}]}
+];
+
+/* ---- Ausrüstung ---- */
+const TABS=['Rucksack','Schlafen','Kleidung','Ausrüstung','Navigation','Technik','Proviant'];
+const TAB_OF={pack:'Rucksack',shelter:'Schlafen',bag:'Schlafen',mat:'Schlafen',mid:'Kleidung',shell:'Kleidung',shoes:'Kleidung',tool:'Ausrüstung',water:'Ausrüstung',nav:'Navigation',rec:'Technik',power:'Technik',food:'Proviant',gas:'Proviant'};
+const EXCLUSIVE=['pack','shelter','bag','mat','mid','shell','shoes'];
+const GEAR=[
+  {id:'pack_basic',cat:'pack',name:'Standard-Rucksack 35 L',e:'🎒',price:0,kg:1.4,max:11,comfort:0,color:'#7f8c8d',desc:'Trägt max. 11 kg, kaum Komfort.'},
+  {id:'pack_trek',cat:'pack',name:'Trekkingrucksack 50 L',e:'🎒',price:95,kg:1.9,max:17,comfort:0.5,color:'#c0392b',desc:'Max. 17 kg, gutes Tragesystem.'},
+  {id:'pack_pro',cat:'pack',name:'Expeditionsrucksack 65 L',e:'🎒',price:230,kg:2.3,max:26,comfort:1,color:'#e67e22',desc:'Max. 26 kg, bester Tragekomfort.'},
+
+  {id:'tarp',cat:'shelter',name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:15,desc:'Leicht, schützt teils vor Regen (70 %), wenig Wind- und Wärmeschutz.'},
+  {id:'tent1',cat:'shelter',name:'1-Personen-Zelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,desc:'Regendicht, +4 °C Wärme, guter Windschutz.'},
+  {id:'tentUL',cat:'shelter',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:4,wind:0.6,setup:15,desc:'Wie das 1-Personen-Zelt, aber halb so schwer und schneller aufgebaut.'},
+  {id:'tentW',cat:'shelter',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,desc:'+8 °C Wärme, trotzt Sturm. Schwer.'},
+  {id:'bag_s',cat:'bag',name:'Sommerschlafsack (+8 °C)',e:'🛌',price:40,kg:0.9,rating:8,desc:'Komfort bis +8 °C.'},
+  {id:'bag_3',cat:'bag',name:'3-Jahreszeiten-Schlafsack (0 °C)',e:'🛌',price:110,kg:1.4,rating:0,desc:'Komfort bis 0 °C.'},
+  {id:'bag_w',cat:'bag',name:'Winterschlafsack (−12 °C)',e:'🛌',price:230,kg:2.1,rating:-12,desc:'Komfort bis −12 °C.'},
+  {id:'mat_foam',cat:'mat',name:'Isomatte',e:'🟧',price:20,kg:0.5,warm:2,desc:'Dämmt vom kalten Boden (+2 °C).'},
+  {id:'mat_air',cat:'mat',name:'Luftmatratze',e:'🟦',price:75,kg:0.6,warm:4,desc:'Bessere Dämmung (+4 °C), packt klein.'},
+
+  {id:'mid_fleece',cat:'mid',name:'Fleecejacke',e:'🧥',price:45,kg:0.5,ins:4,desc:'+4 °C Isolation.'},
+  {id:'mid_down',cat:'mid',name:'Daunenjacke',e:'🧥',price:140,kg:0.6,ins:8,desc:'+8 °C Isolation, leicht. Nass weniger wirksam.'},
+  {id:'shell_rain',cat:'shell',name:'Regenjacke',e:'🧥',price:45,kg:0.4,rain:0.6,ins:1,wind:0.3,desc:'Hält 60 % des Regens ab.'},
+  {id:'shell_hard',cat:'shell',name:'Hardshell-Jacke',e:'🧥',price:160,kg:0.6,rain:0.92,ins:2,wind:0.5,desc:'Fast regendicht, windabweisend.'},
+  {id:'shoes_basic',cat:'shoes',name:'Turnschuhe',e:'👟',price:0,kg:0.7,blister:1.6,spd:0.95,wetRes:0,desc:'Blasenrisiko hoch, nehmen schnell Wasser auf.'},
+  {id:'shoes_hike',cat:'shoes',name:'Wanderschuhe',e:'🥾',price:90,kg:0.95,blister:0.8,spd:1,wetRes:0.3,desc:'Guter Halt, wenig Blasen.'},
+  {id:'shoes_gtx',cat:'shoes',name:'Wasserdichte Wanderstiefel',e:'🥾',price:150,kg:1.2,blister:0.5,spd:1.03,wetRes:0.7,desc:'Kaum Blasen, hält Flussfurten aus.'},
+
+  {id:'poles',cat:'tool',tool:'poles',name:'Wanderstöcke',e:'🥢',price:40,kg:0.5,desc:'−10 % Energieverbrauch am Berg, sicherer Tritt.'},
+  {id:'spray',cat:'tool',tool:'spray',name:'Bärenspray',e:'🧴',price:30,kg:0.35,desc:'2 Einsätze pro Tour gegen Bär und Wolf.'},
+  {id:'kit',cat:'tool',tool:'kit',name:'Erste-Hilfe-Set',e:'🩹',price:25,kg:0.4,desc:'3 Behandlungen: Blasen, Verstauchung, Krankheit.'},
+  {id:'lamp',cat:'tool',tool:'lamp',name:'Stirnlampe',e:'🔦',price:15,kg:0.1,desc:'Nachts wandern ohne große Nachteile.'},
+  {id:'fire',cat:'tool',tool:'fire',name:'Feuerstarter',e:'🔥',price:10,kg:0.05,desc:'Für Lagerfeuer: wärmt, trocknet, kocht.'},
+  {id:'stove',cat:'tool',tool:'stove',name:'Gaskocher',e:'🍳',price:45,kg:0.45,desc:'Kocht Essen und Wasser (braucht Gaskartuschen).'},
+  {id:'filter',cat:'tool',tool:'filter',name:'Wasserfilter',e:'🚰',price:35,kg:0.3,desc:'Macht Flusswasser trinkbar.'},
+  {id:'bottle1',cat:'water',cap:1,name:'Wasserflasche 1 L',e:'🍶',price:0,kg:0.15,desc:'1 Liter Fassungsvermögen.'},
+  {id:'bladder2',cat:'water',cap:2,name:'Trinkblase 2 L',e:'💧',price:25,kg:0.25,desc:'+2 Liter Fassungsvermögen.'},
+  {id:'bag4',cat:'water',cap:4,name:'Wassersack 4 L',e:'💧',price:32,kg:0.3,desc:'+4 Liter für lange Trockenstrecken.'},
+
+  {id:'map',cat:'nav',nav:'map',q:0.6,name:'Landkarte & Kompass',e:'🗺️',price:20,kg:0.2,desc:'Braucht keinen Strom. Bei Nebel, Nacht und Nässe unsicherer.'},
+  {id:'offline',cat:'nav',nav:'offline',name:'Offline-Kartenpaket (App)',e:'📥',price:5,kg:0,desc:'Smartphone-Navigation funktioniert auch ohne Netz.'},
+  {id:'gps',cat:'nav',nav:'gps',q:0.92,fragile:0.0005,name:'GPS-Gerät',e:'📡',price:130,kg:0.25,desc:'Sehr zuverlässig, eigener Akku, kein Netz nötig.'},
+
+  {id:'phone_cheap',cat:'rec',kind:'phone',name:'Einfaches Smartphone',e:'📱',price:0,kg:0.18,q:0.45,time:1.25,stby:2.2,rate:3.4,fragile:0.004,desc:'Schlechte Bildqualität, schwacher Akku. Auch Navigation.'},
+  {id:'phone_good',cat:'rec',kind:'phone',name:'Flaggschiff-Smartphone',e:'📱',price:240,kg:0.2,q:0.78,time:1.0,stby:1.6,rate:2.6,fragile:0.002,desc:'Gute Aufnahmen, gute Akkulaufzeit. Auch Navigation.'},
+  {id:'camera',cat:'rec',kind:'cam',name:'Systemkamera',e:'📷',price:320,kg:0.9,q:1.0,time:1.5,stby:0.6,rate:3.5,fragile:0.0015,desc:'Beste Handaufnahmen, dauert aber länger.'},
+  {id:'drone',cat:'rec',kind:'drone',name:'Drohne',e:'🛸',price:430,kg:0.6,q:1.2,time:1,stby:0,rate:0,fragile:0.001,desc:'Spektakuläre Luftaufnahmen. Du bleibst für den Flug stehen. Windempfindlich.'},
+  {id:'pb_small',cat:'power',pb:2,name:'Powerbank 10.000 mAh',e:'🔋',price:30,kg:0.25,desc:'2 Ladungen für deine Geräte.'},
+  {id:'pb_big',cat:'power',pb:4,name:'Powerbank 20.000 mAh',e:'🔋',price:60,kg:0.45,desc:'4 Ladungen für deine Geräte.'},
+  {id:'solar',cat:'power',solar:1,name:'Solarpanel',e:'☀️',price:65,kg:0.4,desc:'Lädt tagsüber bei Sonne langsam das Gerät.'}
+];
+const FOODS=[
+  {id:'bar',cat:'food',name:'Müsliriegel',e:'🍫',price:1.5,kg:0.06,sat:8,cook:false},
+  {id:'nuts',cat:'food',name:'Nussmix',e:'🥜',price:3,kg:0.1,sat:15,cook:false},
+  {id:'bread',cat:'food',name:'Brot & Käse',e:'🥖',price:4.5,kg:0.4,sat:25,cook:false},
+  {id:'noodles',cat:'food',name:'Instant-Nudeln (kochen)',e:'🍜',price:2.5,kg:0.2,sat:30,cook:true,warm:15},
+  {id:'dry',cat:'food',name:'Trockennahrung (kochen)',e:'🍲',price:7,kg:0.25,sat:40,cook:true,warm:20}];
+const GAS={id:'gas',cat:'gas',name:'Gaskartusche (5 Einsätze)',e:'🛢️',price:6,kg:0.22,uses:5};
+const CONS=[...FOODS,GAS];
+const gearById=id=>GEAR.find(g=>g.id===id)||CONS.find(g=>g.id===id);
+/* =====================================================================
+   Teil 2: Profil, Speichern, Route/Gelände, Umwelt
+   ===================================================================== */
+const PPK=200;                 // Pixel pro Kilometer
+const SAVE_KEY='wanderkanal_proto_v1';
+let G=null;                    // Spielerprofil (bleibt über Touren erhalten)
+let H=null;                    // aktuelle Wanderung
+const env={};                  // aktuelle Umweltwerte
+
+function newProfile(){
+  return {v:1,name:'Wanderer',look:{skin:1,hair:1,style:0,jacket:2},
+    stats:{trag:3,aus:3,tempo:3,kalt:3,food:3,water:3,nav:3},
+    money:250,owned:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},
+    packed:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},cons:{},
+    subs:120,day:0,videos:[],earned:0,hikes:0,created:false};
+}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(G))}catch(e){}}
+function loadSave(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function wipeSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+
+/* ---- Gepäck ---- */
+const packedGear=()=>GEAR.filter(g=>G.packed[g.id]&&G.owned[g.id]);
+const slotOf=cat=>packedGear().find(g=>g.cat===cat)||null;
+function consKg(){let k=0;for(const id in G.cons){const c=gearById(id);if(c)k+=c.kg*G.cons[id]}return k}
+const gearKg=()=>packedGear().reduce((a,g)=>a+g.kg,0);
+const waterCapL=()=>packedGear().filter(g=>g.cat==='water').reduce((a,g)=>a+g.cap,0);
+const capacityKg=()=>8+2.5*G.stats.trag;
+
+/* ---- Route erzeugen ---- */
+function buildRoute(hk,seed){
+  const rng=mulberry32(seed);
+  const stages=[];let acc=0,prev=hk.startAlt;
+  hk.stages.forEach((s,i)=>{stages.push({i,b:s.b,km0:acc,km:s.km,x0:acc*PPK,x1:(acc+s.km)*PPK,a0:prev,a1:s.alt});acc+=s.km;prev=s.alt});
+  const totalPx=acc*PPK;
+  const N=Math.ceil((totalPx+2400)/10)+2;const elev=new Float32Array(N);
+  const ph=[rng()*6.28,rng()*6.28,rng()*6.28];let si=0;
+  for(let i=0;i<N;i++){
+    const x=i*10;while(si<stages.length-1&&x>=stages[si].x1)si++;
+    const st=stages[si];const t=clamp((x-st.x0)/(st.x1-st.x0),0,1);const s=t*t*(3-2*t);
+    const amp=BIOMES[st.b].noise*hk.rough;
+    elev[i]=lerp(st.a0,st.a1,s)+amp*(0.6*Math.sin(x*0.011+ph[0])+0.3*Math.sin(x*0.027+ph[1])+0.1*Math.sin(x*0.06+ph[2]));
+  }
+  const feats=[];let fid=0;const add=o=>{o.id=fid++;feats.push(o)};
+  stages.forEach(st=>{
+    const L=st.x1-st.x0;
+    const nW=Math.max(1,Math.round(st.km/(st.b==='berg'?7:4.5)));
+    for(let k=0;k<nW;k++)add({type:'quelle',x:st.x0+L*((k+0.25+rng()*0.5)/nW)});
+    if(st.b!=='berg'){
+      const nR=st.b==='tal'?1+(rng()<0.5?1:0):(rng()<0.55?1:0);
+      for(let k=0;k<nR;k++)add({type:'fluss',x:st.x0+L*(0.12+rng()*0.76),bridge:rng()<0.55});
+    }
+    const sg=SIGHTS[st.b];add({type:'sight',x:st.x0+L*(0.25+rng()*0.5),s:sg[Math.floor(rng()*sg.length)]});
+    let jx=st.x0+(1.5+rng()*2)*PPK;
+    while(jx<st.x1-PPK){add({type:'junction',x:jx});jx+=(3.5+rng()*3)*PPK}
+  });
+  const clean=feats.filter(f=>f.x>500&&f.x<totalPx-300);
+  clean.sort((a,b)=>a.x-b.x);
+  // Elemente, die zu dicht beieinander liegen, entzerren
+  for(let i=1;i<clean.length;i++)if(clean[i].x-clean[i-1].x<160)clean[i].x=clean[i-1].x+160;
+  return {stages,elev,feats:clean,totalPx,totalKm:acc};
+}
+function elevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)}
+function gradeAt(x){return (elevAt(x+10)-elevAt(x-10))/100}
+function stageAt(x){const S=H.route.stages;for(let i=0;i<S.length;i++)if(x<S[i].x1)return S[i];return S[S.length-1]}
+function netAt(x){return hash(Math.floor(x/250)+77)<BIOMES[stageAt(x).b].net}
+
+/* ---- Wetter ---- */
+function setWeather(type){
+  const hk=H.hk,W=WEATHER[type];
+  H.weather={type,until:H.t+rnd(120,420),wind:W.wind*rnd(0.75,1.3)*hk.wind,rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.extreme*0.6):0};
+  if((type==='gewitter'||type==='sturm')&&H.started)spawnIcon({kind:'storm',x:H.x+260,e:type==='gewitter'?'⛈️':'🌪️',label:type==='gewitter'?'Gewitter':'Sturm',base:26,life:9});
+}
+function nextWeather(prev){
+  const w=H.hk.weather;let tot=0;const ent=Object.entries(w).map(([k,v])=>{v=k===prev?v*0.4:v;tot+=v;return [k,v]});
+  let r=Math.random()*tot;for(const [k,v] of ent){r-=v;if(r<=0)return k}return 'wolkig';
+}
+function updateWeather(){if(H.t>=H.weather.until)setWeather(nextWeather(H.weather.type))}
+
+function computeEnv(){
+  const hk=H.hk;const hour=(H.t/60)%24;const st=stageAt(H.x);const B=BIOMES[st.b];
+  env.hour=hour;env.stage=st;env.biome=st.b;env.alt=elevAt(H.x);env.grade=gradeAt(H.x);
+  const rise=hk.sunrise,set=hk.sunset;let l;
+  if(hour<rise-0.75||hour>set+0.75)l=0;
+  else if(hour<rise+0.75)l=(hour-(rise-0.75))/1.5;
+  else if(hour>set-0.75)l=1-(hour-(set-0.75))/1.5;
+  else l=1;
+  const W=WEATHER[H.weather.type];
+  env.sun=clamp(l,0,1);env.light=env.sun*W.dim;env.dark=1-env.light;
+  const daily=Math.sin((hour-9)/24*2*Math.PI);
+  env.temp=hk.temp+hk.amp*daily-(env.alt-hk.refAlt)*0.0065+W.dT;
+  env.wind=H.weather.wind*B.wind;
+  env.rainI=H.weather.rainI;
+  env.precip=H.weather.rainI>0.05?(env.temp<1.5?'snow':'rain'):null;
+  env.fog=H.weather.type==='nebel'?0.55:0;
+  env.net=netAt(H.x);
+}
+/* =====================================================================
+   Teil 3: Simulation der Wanderung
+   1 Spielminute = 0,1 s bei 1×. Schrittweite: 1/6 Spielminute.
+   ===================================================================== */
+const CLIP_TYPES={
+  selfie:{n:'Selfie',e:'🤳',base:2.5,dur:4},
+  landschaft:{n:'Landschaftsfoto',e:'🏞️',base:4,dur:3},
+  video:{n:'Video-Clip',e:'🎬',base:5,dur:6},
+  talk:{n:'Selbstgespräch',e:'🗣️',base:3,dur:5},
+  drone:{n:'Drohnenaufnahme',e:'🛸',base:9,dur:10}};
+const REC_LEVELS=['Aus','Gering','Mittel','Intensiv'];
+const SHOT_RATE=[0,1,3,7];            // Aufnahmen pro Stunde
+const DRONE_INT=[1e9,180,90,45];          // Minuten zwischen Drohnenflügen
+
+/* ---------- Start ---------- */
+function startHike(hikeId){
+  const hk=HIKES.find(h=>h.id===hikeId);
+  const route=buildRoute(hk,(Date.now()&0xfffffff)+7);
+  const gear=packedGear();
+  const g={pack:slotOf('pack'),shelter:slotOf('shelter'),bag:slotOf('bag'),mat:slotOf('mat'),mid:slotOf('mid'),shell:slotOf('shell'),shoes:slotOf('shoes'),
+    tools:{},phones:gear.filter(x=>x.kind==='phone'),cam:gear.find(x=>x.kind==='cam')||null,drone:gear.find(x=>x.kind==='drone')||null,
+    map:gear.find(x=>x.nav==='map')||null,offline:gear.some(x=>x.nav==='offline'),gps:gear.find(x=>x.nav==='gps')||null,
+    solar:gear.some(x=>x.solar),waterCap:waterCapL(),gearKg:gearKg()};
+  gear.forEach(x=>{if(x.tool)g.tools[x.tool]=true});
+  const dev={};
+  gear.filter(x=>x.cat==='rec').forEach(x=>{dev[x.id]={batt:100,broken:false,def:x}});
+  if(g.gps)dev.gps={batt:100,broken:false,def:g.gps};
+  const handhelds=gear.filter(x=>x.kind==='phone'||x.kind==='cam').sort((a,b)=>b.q-a.q);
+  const food={};FOODS.forEach(f=>{if(G.cons[f.id])food[f.id]=G.cons[f.id]});
+  const pb=gear.reduce((a,x)=>a+(x.pb||0),0);
+  H={hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pb,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?20:0,
+    x:0,km:0,phase:0,t:hk.startHour*60,dayIdx:Math.floor(hk.startHour*60/1440),awakeSince:hk.startHour*60-60,
+    speed:1,walking:true,auto:true,autoStop:true,
+    body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},
+    water:{clean:g.waterCap,dirty:0},
+    rec:1,activeDev:handhelds[0]?handhelds[0].id:null,droneOn:true,droneTimer:DRONE_INT[1],shot:null,
+    action:null,sleep:{active:false},camp:{pitched:false,x:0},fire:{lit:false,left:0,x:0},
+    inj:{blister:0,sprain:0},sick:0,lost:{on:false,km:0},safeJunction:false,
+    icons:[],clips:[],animalCd:20,hikerCd:60,droneToast:0,wasted:0,passive:0,started:false,ended:false,
+    stats:{walkMin:0,camps:0,sleepH:0,junctionsLost:0,fires:0,animals:0},flash:0,camElev:0,modalOpen:false};
+  H.weather={type:'klar',until:0,wind:2,rainI:0};
+  setWeather(pick(Object.keys(hk.weather)));
+  computeEnv();
+  H.camElev=env.alt;
+  G.cons={};G.hikes++;
+  H.started=true;
+  toast('Los geht\'s! '+hk.name+' · '+H.route.totalKm+' km','good');
+  save();
+}
+
+/* ---------- Hilfsfunktionen ---------- */
+function loadKg(){
+  let k=H.g.gearKg;
+  for(const id in H.food)k+=gearById(id).kg*H.food[id];
+  k+=H.gas*(GAS.kg/5);
+  k+=H.water.clean+H.water.dirty;
+  return k;
+}
+const waterTotal=()=>H.water.clean+H.water.dirty;
+const nearFire=()=>H.fire.lit&&Math.abs(H.x-H.fire.x)<90;
+function nearWater(){return H.route.feats.find(f=>(f.type==='quelle'||f.type==='fluss')&&Math.abs(H.x-f.x)<90)||null}
+function isInjured(){return H.inj.blister>H.t||H.inj.sprain>H.t||H.sick>H.t}
+
+function navInfo(){
+  const g=H.g;let best={q:0.12,label:'Kein Navi – nach Gefühl',note:''};
+  if(g.map){let q=0.6;if(env.fog)q-=0.15;if(env.dark>0.6&&!g.tools.lamp)q-=0.2;if(H.body.wet>70)q-=0.1;if(q>best.q)best={q,label:'Landkarte & Kompass',note:''}}
+  let phoneNote='';
+  for(const p of g.phones){
+    const d=H.dev[p.id];
+    if(d.broken){phoneNote='Smartphone kaputt';continue}
+    if(d.batt<=0){phoneNote='Akku leer';continue}
+    if(!g.offline&&!env.net){phoneNote='Kein Netz';continue}
+    if(0.82>best.q)best={q:0.82,label:'Smartphone',note:''};
+  }
+  if(g.gps){const d=H.dev.gps;if(d.broken)phoneNote='GPS kaputt';else if(d.batt<=0)phoneNote='GPS-Akku leer';else if(0.92>best.q)best={q:0.92,label:'GPS-Gerät',note:''}}
+  if(best.q<=0.12&&phoneNote)best.note=phoneNote;
+  return best;
+}
+
+/* ---------- Kamera ---------- */
+function deviceOK(id){const d=H.dev[id];return d&&!d.broken&&d.batt>0}
+function handheld(){
+  if(H.activeDev&&deviceOK(H.activeDev))return H.dev[H.activeDev];
+  const alt=Object.keys(H.dev).find(id=>H.dev[id].def.kind&&(H.dev[id].def.kind==='phone'||H.dev[id].def.kind==='cam')&&deviceOK(id));
+  if(alt){H.activeDev=alt;toast('Wechsel auf '+H.dev[alt].def.name);return H.dev[alt]}
+  return null;
+}
+function shotQ(def,scenic){
+  const lightF=0.55+0.45*env.light;
+  const wF={klar:1.08,wolkig:1,nebel:0.72,regen:0.8,gewitter:0.85,sturm:0.8}[H.weather.type];
+  return def.q*lightF*wF*scenic*rnd(0.85,1.15);
+}
+function scenicNow(){
+  let s=BIOMES[env.biome].scenic;
+  if(H.route.feats.some(f=>f.type==='sight'&&Math.abs(f.x-H.x)<400))s*=1.5;
+  return s;
+}
+function addClip(o){o.day=G.day;o.biome=env.biome;H.clips.push(o);return o}
+function startShot(dev){
+  const types=['selfie','landschaft','video','talk'];const w=[2,3,3,2];
+  let r=Math.random()*10,ti=0;for(;ti<4;ti++){r-=w[ti];if(r<=0)break}
+  const type=types[Math.min(ti,3)];
+  const dur=CLIP_TYPES[type].dur*1.3*dev.def.time*rnd(0.85,1.15);
+  H.shot={type,left:dur,dur,dev:dev.def.id};
+}
+function launchDrone(){
+  if(env.wind>9||H.weather.type==='gewitter'||env.precip==='snow'){
+    if(H.t-H.droneToast>90){toast('🛸 Zu windig/ungünstig für die Drohne.');H.droneToast=H.t}
+    H.droneTimer=30;return;
+  }
+  H.dev.drone.batt-=22;
+  if(H.dev.drone.batt<35)toast('🛸 Drohnen-Akku niedrig – Powerbank nutzen („Akku laden“).');
+  H.shot={type:'drone',left:10,dur:10,dev:'drone'};
+  H.droneTimer=DRONE_INT[H.rec];
+}
+function finishShot(){
+  const s=H.shot;H.shot=null;if(!s||s.noclip)return;
+  const T=CLIP_TYPES[s.type];const d=H.dev[s.dev];if(!d)return;
+  if(s.type==='drone'&&env.wind>6&&Math.random()<0.04){d.broken=true;toast('💥 Die Drohne ist abgestürzt!','bad');return}
+  const q=shotQ(d.def,s.type==='selfie'?1:scenicNow());
+  addClip({key:s.type,type:s.type,name:T.n,e:T.e,q,value:T.base*q,rar:-1});
+}
+function rollShots(hr){
+  if(env.light<0.2||H.rec===0)return;
+  if(!H.shot){const dev=handheld();if(dev&&Math.random()<SHOT_RATE[H.rec]*hr)startShot(dev)}
+  if(!H.shot&&H.droneOn&&H.g.drone&&H.dev.drone&&deviceOK('drone')&&H.dev.drone.batt>=35){
+    H.droneTimer=Math.min(H.droneTimer,DRONE_INT[H.rec]);
+    H.droneTimer-=hr*60;
+    if(H.droneTimer<=0)launchDrone();
+  }
+}
+function setRec(v){H.rec=v;H.droneTimer=Math.min(H.droneTimer,DRONE_INT[v])}
+
+/* ---------- Kamera-Symbole (Tiere, Sehenswürdigkeiten, Wetter …) ---------- */
+function spawnIcon(o){o.max=o.life;H.icons.push(o);return o}
+function captureIcon(ic){
+  if(ic.taken)return;
+  if(H.rec===0){toast('📷 Aufnahme ist aus – stelle den Regler höher!');return}
+  const dev=handheld();
+  if(!dev){toast('📷 Kein funktionierendes Aufnahmegerät!','bad');return}
+  ic.taken=true;
+  const q=shotQ(dev.def,1.1);
+  let name,e,value,rar=-1,key;
+  if(ic.kind==='animal'){name=ic.a.name;e=ic.a.e;rar=ic.a.r;value=RARITY[rar].base*q*rnd(0.95,1.2);key='tier:'+ic.a.id;H.stats.animals++}
+  else if(ic.kind==='sight'){name=ic.label;e=ic.e;value=ic.base*q;key='sight:'+ic.fid}
+  else if(ic.kind==='storm'){name=ic.label;e=ic.e;value=ic.base*q;key='storm:'+ic.label}
+  else {name=ic.label;e=ic.e;value=ic.base*q;key='hiker:'+H.clips.length}
+  if(ic.kind==='animal'&&ic.a.danger&&Math.random()<ic.a.danger){
+    if(H.g.tools.spray&&H.spray>0){H.spray--;value*=1.3;toast('🧴 '+ic.a.name+' greift an – du vertreibst ihn mit Spray! Dramatische Aufnahme (+30 %).','good')}
+    else attackByAnimal(ic.a);
+  }
+  const c=addClip({key,type:ic.kind,name,e,q,value,rar});
+  H.shot={type:'video',left:2*dev.def.time,dur:2*dev.def.time,dev:dev.def.id,noclip:true};
+  dev.batt=Math.max(0,dev.batt-0.8);
+  const rc=rar>=0?RARITY[rar]:null;
+  toast('📷 '+e+' '+name+(rc?' ('+rc.name+')':'')+' aufgenommen · Qualität '+Math.round(q*100)+' %','good');
+  return c;
+}
+function attackByAnimal(a){
+  H.body.hp=Math.max(1,H.body.hp-(a.id==='bear'?28:14));
+  for(const id in H.food)H.food[id]=Math.floor(H.food[id]*0.75);
+  if(Math.random()<0.35)H.inj.sprain=H.t+1440;
+  toast('⚠️ '+a.name+' greift an! Du verlierst Gesundheit und Proviant.','bad');
+}
+function spawnAnimal(){
+  const cand=ANIMALS.filter(a=>a.b.includes(env.biome));if(!cand.length)return;
+  let tot=cand.reduce((s,a)=>s+a.w,0),r=Math.random()*tot,a=cand[0];
+  for(const c of cand){r-=c.w;if(r<=0){a=c;break}}
+  spawnIcon({kind:'animal',a,x:H.x+rnd(230,420),life:7});
+  toast('👀 '+a.e+' '+a.name+' in Sicht! ('+RARITY[a.r].name+')');
+}
+function updateIcons(dt){
+  for(const ic of H.icons){
+    if(ic.kind==='sight'){ if(H.x-ic.x>220)ic.dead=true; continue }
+    if(ic.taken){ic.fade=(ic.fade||0)+dt;if(ic.fade>0.8)ic.dead=true;continue}
+    ic.life-=dt;
+    if(ic.life<=0){
+      ic.dead=true;
+      if(ic.kind==='animal'&&ic.a.danger&&!(H.g.tools.spray&&H.spray>0)&&Math.random()<ic.a.danger*0.3)attackByAnimal(ic.a);
+    }
+  }
+  H.icons=H.icons.filter(i=>!i.dead);
+}
+function trackSights(){
+  for(const f of H.route.feats){
+    if(f.type!=='sight')continue;
+    const d=f.x-H.x;
+    if(d<330&&d>-200&&!f.iconMade){f.iconMade=true;spawnIcon({kind:'sight',fid:f.id,x:f.x,e:f.s.e,label:f.s.n,base:f.s.v,life:1e9});toast('📍 Sehenswürdigkeit voraus: '+f.s.n)}
+  }
+}
+
+/* ---------- Aktionen ---------- */
+function beginAction(kind,label,dur,done,opts={}){
+  H.action={kind,label,dur,left:dur,done,resume:opts.force?true:(!!opts.resume&&H.walking)};
+  H.walking=false;
+}
+function stepAction(h){
+  const a=H.action;a.left-=h;
+  if(a.left<=0){H.action=null;if(a.done)a.done();if(a.resume&&!H.action&&!H.camp.pitched&&!H.sleep.active)H.walking=true}
+}
+function eatFood(id){
+  const f=FOODS.find(x=>x.id===id);if(!f||!H.food[id])return;
+  H.food[id]--;H.body.sat=clamp(H.body.sat+f.sat,0,100);
+  if(f.warm)H.body.warm=clamp(H.body.warm+f.warm,0,100);
+  toast('🍽️ '+f.e+' '+f.name.replace(' (kochen)','')+' gegessen','good');
+}
+function drinkWater(dirtyOK){
+  const w=H.water;const need=(100-H.body.hyd)/33;
+  let amt=Math.min(need,0.6);
+  const c=Math.min(amt,w.clean);w.clean-=c;let dirt=0;
+  if(dirtyOK&&c<amt){dirt=Math.min(amt-c,w.dirty);w.dirty-=dirt}
+  if(c+dirt<=0.01)return;
+  H.body.hyd=clamp(H.body.hyd+(c+dirt)*33,0,100);
+  toast('💧 '+(c+dirt).toFixed(1).replace('.',',')+' L getrunken');
+  if(dirt>0.05&&Math.random()<0.4){H.sick=H.t+480;toast('🤢 Das Wasser war verunreinigt – du bist krank (8 h).','bad')}
+}
+function act(kind,arg){
+  if(H.action||H.sleep.active||H.ended)return;
+  const g=H.g;
+  switch(kind){
+    case 'walk':
+      if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
+      if(H.body.energy<=0){toast('Du bist zu erschöpft – rasten oder schlafen!','bad');return}
+      H.stopReason=null;H.walking=!H.walking;break;
+    case 'tent':
+      if(H.camp.pitched){beginAction('tent','Baut Lager ab …',15,()=>{H.camp.pitched=false;toast('Lager abgebaut.')});return}
+      if(!g.shelter){toast('Du hast keine Unterkunft dabei.');return}
+      if(Math.abs(env.grade)>0.09){toast('Hier ist es zu steil zum Zelten.','bad');return}
+      beginAction('tent','Baut '+g.shelter.name+' auf …',g.shelter.setup,()=>{H.camp.pitched=true;H.camp.x=H.x;H.stats.camps++;toast('⛺ Lager steht.','good')});break;
+    case 'sleep':
+      if(!H.camp.pitched&&g.shelter){toast('Baue zuerst dein Lager auf – oder schlafe ohne Schutz (Knopf „Draußen schlafen“).');return}
+      startSleep();break;
+    case 'sleepOut':startSleep();break;
+    case 'fire':
+      if(!g.tools.fire||H.fireUses<=0){toast('Kein Feuerstarter.');return}
+      if(H.fire.lit&&nearFire()){toast('Das Feuer brennt bereits.');return}
+      beginAction('fire','Macht Feuer …',20,()=>{
+        H.fireUses--;
+        const p=env.precip?(H.camp.pitched||env.biome==='wald'?0.6:0.3):0.92;
+        if(Math.random()<p){H.fire={lit:true,left:240,x:H.x+60};H.stats.fires++;toast('🔥 Das Feuer brennt.','good')}else toast('Das Holz ist zu nass – Feuer fehlgeschlagen.','bad');
+      });break;
+    case 'eat':
+      if(!H.food[arg]){return}
+      beginAction('eat','Isst …',4,()=>eatFood(arg));break;
+    case 'cook':{
+      const f=FOODS.find(x=>x.id===arg);if(!f||!H.food[arg])return;
+      const stove=g.tools.stove&&H.gas>=1;
+      if(!stove&&!nearFire()){toast('Zum Kochen brauchst du Gaskocher + Gas oder ein Feuer in der Nähe.','bad');return}
+      beginAction('cook','Kocht '+f.name.replace(' (kochen)','')+' …',15,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);eatFood(arg)});break}
+    case 'drink':
+      if(H.water.clean<=0.05){
+        if(H.water.dirty>0.05){showModal({title:'Unbehandeltes Wasser',text:'Du hast nur unbehandeltes Wasser. Trinken kann dich krank machen (ca. 40 %). Trotzdem trinken?',buttons:[{label:'Trinken',fn:()=>beginAction('drink','Trinkt …',2,()=>drinkWater(true))},{label:'Abbrechen'}]});return}
+        toast('Kein Wasser dabei!','bad');return}
+      beginAction('drink','Trinkt …',2,()=>drinkWater(false));break;
+    case 'refill':{
+      const f=nearWater();if(!f){toast('Keine Wasserstelle in der Nähe.');return}
+      if(waterTotal()>=g.waterCap-0.05){toast('Deine Behälter sind schon voll.');return}
+      const autoF=f.type==='fluss'&&g.tools.filter;
+      beginAction('refill','Füllt Wasser auf …',8+(autoF?6:0),()=>{
+        const room=g.waterCap-waterTotal();
+        if(f.type==='quelle'){H.water.clean+=room;toast('💧 Quelle: '+room.toFixed(1).replace('.',',')+' L sauberes Wasser aufgefüllt.','good')}
+        else if(autoF){H.water.clean+=room;toast('🚰 Flusswasser aufgefüllt und gefiltert ('+room.toFixed(1).replace('.',',')+' L).','good')}
+        else{H.water.dirty+=room;toast('💧 Flusswasser aufgefüllt (unbehandelt!) – filtern oder abkochen.')}
+      },{force:H.stopReason==='water'});break}
+    case 'treat':{
+      if(H.water.dirty<=0.05){toast('Kein unbehandeltes Wasser.');return}
+      if(g.tools.filter)beginAction('treat','Filtert Wasser …',8,()=>{H.water.clean+=H.water.dirty;H.water.dirty=0;toast('🚰 Wasser gefiltert.','good')},{force:H.stopReason==='water'});
+      else if((g.tools.stove&&H.gas>=1)||nearFire())beginAction('treat','Kocht Wasser ab …',14,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);H.water.clean+=H.water.dirty;H.water.dirty=0;toast('♨️ Wasser abgekocht.','good')});
+      else toast('Zum Abkochen brauchst du Kocher + Gas oder ein Feuer, zum Filtern einen Wasserfilter.','bad');break}
+    case 'charge':{
+      if(H.pb<=0){toast('Keine Powerbank-Ladung mehr.');return}
+      const ids=Object.keys(H.dev).filter(i=>!H.dev[i].broken&&H.dev[i].batt<90).sort((a,b)=>H.dev[a].batt-H.dev[b].batt);
+      if(!ids.length){toast('Alle Geräte sind geladen.');return}
+      const id=ids[0];
+      beginAction('charge','Lädt '+H.dev[id].def.name+' …',20,()=>{H.dev[id].batt=100;H.pb--;toast('🔋 '+H.dev[id].def.name+' geladen.','good')});break}
+    case 'aid':
+      if(!g.tools.kit||H.kit<=0){toast('Kein Erste-Hilfe-Set.');return}
+      if(!isInjured()){toast('Du brauchst gerade keine Behandlung.');return}
+      beginAction('aid','Versorgt Verletzung …',10,()=>{H.kit--;H.inj.blister=0;H.inj.sprain=0;H.sick=0;toast('🩹 Versorgt.','good')});break;
+    case 'orient':
+      if(!H.lost.on){toast('Du bist auf dem richtigen Weg.');return}
+      beginAction('orient','Sucht Orientierung …',15,()=>{
+        const ok=Math.random()<clamp(navInfo().q+0.25+G.stats.nav*0.02,0.2,0.97);
+        if(ok){H.lost.on=false;toast('🧭 Du hast den Weg wiedergefunden.','good')}
+        else{H.lost.km=Math.max(0.3,H.lost.km-0.3);toast('🧭 Immer noch verirrt …','bad')}
+      });break;
+    case 'rescue':
+      showModal({title:'Tour abbrechen?',text:'Du lässt dich abholen. Das kostet etwa 40 € und deine bisherigen Aufnahmen bleiben erhalten.',buttons:[{label:'Abbrechen & abholen lassen',fn:()=>endHike('abort')},{label:'Weiterwandern'}]});break;
+  }
+}
+
+/* ---------- Schlaf ---------- */
+function comfortTemp(sleeping){
+  const g=H.g;
+  let c=17-4-(g.mid?g.mid.ins:0)-(g.shell?g.shell.ins:0)-1.3*G.stats.kalt;
+  if(sleeping)c-=(17-(g.bag?g.bag.rating:17))*0.6;
+  return c;
+}
+function effTemp(mode){
+  const g=H.g,sh=H.camp.pitched?g.shelter:null;
+  let E=env.temp;
+  const windP=Math.max(sh?sh.wind:0,g.shell?g.shell.wind:0);
+  E-=env.wind*0.5*(1-windP);
+  E-=H.body.wet/100*9;
+  if(mode==='walk')E+=7;
+  if(sh&&mode!=='walk')E+=sh.warm;
+  if(mode==='sleep'&&g.mat)E+=g.mat.warm;
+  if(mode!=='walk'&&nearFire())E+=7;
+  return E;
+}
+function sleepQuality(){
+  const g=H.g,B=H.body,sh=H.camp.pitched?g.shelter:null;
+  const deficit=comfortTemp(true)-effTemp('sleep');
+  let q=1-0.12*Math.max(0,deficit);
+  if(!sh){q-=0.15;if(env.precip)q-=0.2;if(env.wind>12)q-=0.1}
+  if(!g.mat)q-=0.1;
+  if(B.wet>40)q-=(B.wet-40)/100*0.5;
+  if(isInjured())q-=0.05;
+  if(B.sat<25||B.hyd<25)q-=0.1;
+  if(env.sun>0.6)q*=0.8;
+  return clamp(q,0.25,1);
+}
+function sleepNeedH(){
+  const hour=env.hour,bed=hour<12?hour+24:hour;
+  const late=0.5*Math.max(0,bed-22);
+  const awakeH=(H.t-H.awakeSince)/60;
+  const extra=0.15*Math.max(0,awakeH-16);
+  return clamp(4+(100-H.body.energy)/100*4+late+extra,3.5,11.5);
+}
+function startSleep(){
+  if(H.sleep.active)return;
+  const need=sleepNeedH();
+  H.sleep={active:true,need,q:sleepQuality(),startE:H.body.energy,p:0,elapsed:0,qsum:0,begun:H.t};
+  H.walking=false;
+  toast('😴 Du schläfst ein … (Bedarf ca. '+need.toFixed(1).replace('.',',')+' h bei Qualität '+Math.round(H.sleep.q*100)+' %)');
+}
+function stepSleep(h){
+  const S=H.sleep;S.q=sleepQuality();S.elapsed+=h;S.qsum+=S.q*h;
+  S.p+=h/(S.need*60)*S.q;
+  H.body.energy=lerp(S.startE,100,clamp(S.p,0,1));
+  if(S.p>=1||S.elapsed>14*60)wakeUp();
+}
+function wakeUp(){
+  const S=H.sleep;const hrs=S.elapsed/60,avg=S.qsum/S.elapsed;
+  H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;
+  H.inj.blister=Math.min(H.inj.blister,H.t+360*(H.inj.blister?1:0));
+  toast('☀️ Aufgewacht nach '+hrs.toFixed(1).replace('.',',')+' h (Qualität Ø '+Math.round(avg*100)+' %). Lager abbauen nicht vergessen.','good');
+  if(S.p<1)H.body.energy=Math.min(100,lerp(S.startE,100,clamp(S.p,0,1)));
+}
+
+/* ---------- Körper ---------- */
+function bodyTick(mode,hr){
+  const B=H.body,S=G.stats,g=H.g;
+  const lf=loadKg()/capacityKg();const gr=env.grade;
+  const sick=H.sick>H.t,blister=H.inj.blister>H.t,sprain=H.inj.sprain>H.t;
+  if(mode==='walk'){
+    let d=(11+60*Math.max(0,gr)+12*Math.max(0,-gr-0.08))*(1.3-0.1*S.aus)*(0.6+0.8*clamp(lf,0,1.4));
+    if(g.tools.poles&&gr>0.03)d*=0.9;
+    if(B.sat<20)d*=1.3;if(B.hyd<25)d*=1.4;if(B.warm<35)d*=1.25;if(sick)d*=1.3;if(blister||sprain)d*=1.1;
+    if(H.shot&&H.shot.type!=='drone')d*=0.9;
+    B.energy-=d*hr;
+  }else if(mode==='rest'){
+    let r=14;if(B.sat<10||B.hyd<10)r*=0.4;if(sick)r*=0.6;
+    B.energy+=r*hr;
+  }
+  B.energy=clamp(B.energy,0,100);
+  const fm=1.3-0.1*S.food,wm=1.3-0.1*S.water;
+  const heat=env.temp>24?1+(env.temp-24)*0.04:1;
+  B.sat-=({walk:6.5,rest:2.8,sleep:1.6}[mode])*fm*hr;
+  B.hyd-=({walk:8,rest:3,sleep:1.2}[mode])*wm*heat*(sick?1.6:1)*hr;
+  B.sat=clamp(B.sat,0,100);B.hyd=clamp(B.hyd,0,100);
+  // Nässe
+  const sh=H.camp.pitched?g.shelter:null;
+  let gain=0;
+  if(env.precip){
+    const protect=sh?sh.rain:(g.shell?g.shell.rain:0);
+    gain=22*env.rainI*(1-protect)*BIOMES[env.biome].rain*(1-(g.shoes?g.shoes.wetRes*0.2:0));
+  }
+  let dry=2.5+(env.sun>0.8&&(H.weather.type==='klar'||H.weather.type==='wolkig')?6:0)+(mode==='walk'?3:0)+(mode!=='walk'&&nearFire()?22:0)+(sh?2:0);
+  if(gain>0)dry*=0.3;
+  B.wet=clamp(B.wet+(gain-dry)*hr,0,100);
+  // Wärme
+  const E=effTemp(mode),c=comfortTemp(mode==='sleep');
+  H.deficit=c-E;
+  if(H.deficit>0)B.warm-=H.deficit*2*hr;else B.warm+=15*hr;
+  B.warm=clamp(B.warm,0,100);
+  if(E>c+18)B.hyd=clamp(B.hyd-2*hr,0,100);
+  // Verletzungen
+  if(mode==='walk'){
+    if(!blister&&Math.random()<0.028*(g.shoes?g.shoes.blister:1.6)*(1+B.wet/50)*hr){H.inj.blister=H.t+1440;toast('🩹 Du hast dir eine Blase gelaufen.','bad')}
+    const risky=(gr<-0.12?1:0)+(env.dark>0.6&&!g.tools.lamp?1.5:0)+(B.wet>60?0.5:0)+(env.precip?0.3:0);
+    if(!sprain&&Math.random()<0.02*risky*(g.tools.poles?0.5:1)*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad')}
+  }
+  let dhp=0;
+  if(B.sat<=0)dhp-=3;if(B.hyd<=0)dhp-=6;if(B.warm<15)dhp-=4;if(B.warm<=0)dhp-=6;if(sick)dhp-=0.8;
+  if(dhp===0&&B.sat>40&&B.hyd>40&&B.warm>50)dhp+=mode==='sleep'?5:mode==='rest'?2.5:1;
+  B.hp=clamp(B.hp+dhp*hr,0,100);
+  if(B.hp<=0&&!H.ended)endHike('rescue');
+}
+function deviceTick(hr){
+  for(const id in H.dev){
+    const d=H.dev[id],def=d.def;if(d.broken)continue;
+    let drain=0;
+    if(def.kind==='phone'||def.kind==='cam'){drain=def.stby;if(H.activeDev===id&&H.rec>0)drain+=def.rate*H.rec}
+    else if(id==='gps')drain=1.2;
+    d.batt=Math.max(0,d.batt-drain*hr);
+    if(d.batt<=0&&!d.warned){d.warned=true;toast('🪫 Akku leer: '+def.name,'bad')}
+    if(d.batt>10)d.warned=false;
+    const p=0.5*(def.fragile||0.0005)*(env.precip?3:1)*(H.rec>0&&H.activeDev===id?1.5:1)*hr;
+    if(Math.random()<p){d.broken=true;toast('💥 '+def.name+' ist kaputtgegangen!','bad')}
+  }
+  if(H.g.solar&&env.sun>0.6&&(H.weather.type==='klar'||H.weather.type==='wolkig')){
+    const ids=Object.keys(H.dev).filter(i=>!H.dev[i].broken&&H.dev[i].batt<100).sort((a,b)=>H.dev[a].batt-H.dev[b].batt);
+    if(ids.length)H.dev[ids[0]].batt=Math.min(100,H.dev[ids[0]].batt+(H.weather.type==='klar'?5:2.5)*hr);
+  }
+}
+function autoConsume(){
+  if(!H.auto||H.action||H.sleep.active)return;
+  const B=H.body;
+  if(B.hyd<45&&H.water.clean>0.05){beginAction('drink','Trinkt …',2,()=>drinkWater(false),{resume:true});return}
+  if(B.hyd<12&&H.water.dirty>0.05){beginAction('drink','Trinkt (unbehandelt) …',2,()=>drinkWater(true),{resume:true});return}
+  if(B.sat<40){
+    const f=FOODS.filter(f=>!f.cook&&(H.food[f.id]||0)>0).sort((a,b)=>b.sat-a.sat)[0];
+    if(f)beginAction('eat','Isst …',4,()=>eatFood(f.id),{resume:true});
+  }
+}
+
+/* ---------- Ereignisse ---------- */
+function navCheck(){
+  if(H.safeJunction){H.safeJunction=false;toast('🪧 Wegkreuzung – der Tipp des Wanderers war richtig.');return}
+  const nav=navInfo();
+  const p=clamp((1-nav.q)*(1.15-0.13*G.stats.nav)+(env.fog?0.08:0)+(env.dark>0.6?0.05:0),0.01,0.85);
+  if(Math.random()<p){H.lost={on:true,km:1.5+rnd(0,2.5)};H.stats.junctionsLost++;toast('🧭 Du hast dich verlaufen! Nutze „Orientieren“ oder laufe den Umweg zurück.','bad')}
+  else toast('🪧 Wegkreuzung – richtig abgebogen.');
+}
+function checkFeatures(a,b){
+  for(const f of H.route.feats){
+    if(!(a<f.x&&f.x<=b))continue;
+    if(f.type==='quelle'||(f.type==='fluss'&&f.bridge)){
+      toast(f.type==='quelle'?'💧 Quelle – hier kannst du Wasser auffüllen.':'🌉 Du überquerst einen Fluss über eine Brücke (Wasser entnehmbar, unbehandelt).');
+      if(H.autoStop&&(waterTotal()<H.g.waterCap-0.3)){H.walking=false;H.stopReason='water';toast('⏸ Gestoppt an der Wasserstelle – „Wasser auffüllen“ und es geht automatisch weiter.')}
+    }else if(f.type==='fluss')riverFord(f);
+    else if(f.type==='junction')navCheck();
+  }
+}
+function riverFord(f){
+  H.walking=false;
+  showModal({title:'🌊 Flussfurt',text:'Kein Steg in Sicht. Du kannst durchwaten (10 Min., nass werden, Ausrutschgefahr) oder einen Umweg um die Furt gehen (35 Min., trocken).',buttons:[
+    {label:'Durchwaten',fn:()=>beginAction('ford','Durchquert die Furt …',10,()=>{
+      const wr=H.g.shoes?H.g.shoes.wetRes:0;
+      H.body.wet=clamp(H.body.wet+35*(1-wr*0.6),0,100);
+      if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.14:0.06)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist ausgerutscht und hast dir den Fuß verstaucht.','bad')}
+      else toast('Du bist durch – die Beine sind nass.');
+      H.walking=true},{resume:false})},
+    {label:'Umweg gehen',fn:()=>beginAction('ford','Geht um die Furt herum …',35,()=>{H.body.energy=clamp(H.body.energy-8,0,100);toast('Trockenen Fußes drüber.');H.walking=true})}]});
+}
+function hikerEvent(){
+  const opts=[];
+  if(H.water.clean>=0.6)opts.push('water');
+  if(Object.values(H.food).some(v=>v>0))opts.push('food');
+  if(H.water.clean>=0.6)opts.push('trade');
+  opts.push('info');
+  const k=pick(opts);
+  const interview=()=>spawnIcon({kind:'hiker',x:H.x+140,e:'🧑',label:'Interview',base:7,life:9});
+  const done=(msg)=>{toast(msg,'good');interview()};
+  H.walking=false;
+  const resume=()=>{if(!H.camp.pitched)H.walking=true};
+  if(k==='water')showModal({title:'🥾 Wanderer in Not',text:'Ein erschöpfter Wanderer bittet dich um 0,5 L Wasser.',buttons:[
+    {label:'Wasser geben',fn:()=>{H.water.clean-=0.5;if(Math.random()<0.5){G.money+=8;done('Er bedankt sich mit 8 €. Ein kurzes Interview wäre drin!')}else done('Er bedankt sich herzlich. Ein kurzes Interview wäre drin!');resume()}},
+    {label:'Ablehnen',fn:resume}]});
+  else if(k==='food')showModal({title:'🥾 Wanderer ohne Proviant',text:'Ein Wanderer hat seinen Proviant verloren und fragt nach etwas zu essen.',buttons:[
+    {label:'Etwas abgeben',fn:()=>{const id=Object.keys(H.food).filter(i=>H.food[i]>0).sort((a,b)=>gearById(a).sat-gearById(b).sat)[0];if(id){H.food[id]--;done('Du gibst ihm '+gearById(id).name.replace(' (kochen)','')+'. Er erzählt dir seine Wandergeschichte.')}resume()}},
+    {label:'Ablehnen',fn:resume}]});
+  else if(k==='trade')showModal({title:'🥾 Tauschangebot',text:'Ein Wanderer bietet dir 2 Müsliriegel für 0,5 L sauberes Wasser.',buttons:[
+    {label:'Tauschen',fn:()=>{H.water.clean-=0.5;H.food.bar=(H.food.bar||0)+2;done('Tausch erledigt: +2 Müsliriegel.');resume()}},
+    {label:'Ablehnen',fn:resume}]});
+  else showModal({title:'🥾 Wegtipp',text:'Ein Wanderer erklärt dir den Weg zur nächsten Kreuzung.',buttons:[
+    {label:'Danke!',fn:()=>{H.safeJunction=true;done('Die nächste Kreuzung findest du sicher.');resume()}}]});
+}
+
+/* ---------- Hauptschritt ---------- */
+function stepSim(h){
+  const hr=h/60,B=H.body;
+  H.t+=h;
+  const dIdx=Math.floor(H.t/1440);
+  if(dIdx>H.dayIdx){H.dayIdx=dIdx;G.day++;const inc=advanceChannel();H.passive+=inc;if(inc>0.01)toast('📺 Kanal-Einnahmen über Nacht: +'+eur(inc),'good')}
+  updateWeather();computeEnv();
+  deviceTick(hr);
+  if(H.fire.lit){H.fire.left-=h*(env.precip&&!(H.camp.pitched&&Math.abs(H.x-H.camp.x)<200)&&env.rainI>0.6?2:1);if(H.fire.left<=0){H.fire.lit=false;toast('Das Feuer ist erloschen.')}}
+  let mode='rest';
+  if(H.sleep.active){mode='sleep';stepSleep(h)}
+  else if(H.action){stepAction(h)}
+  else{
+    autoConsume();
+    if(H.shot){H.shot.left-=h;if(H.shot.left<=0)finishShot()}
+    if(H.walking&&B.energy<=0){H.walking=false;toast('Erschöpft! Du musst rasten.','bad')}
+    else if(H.walking&&!H.camp.pitched&&!H.action){
+      const v=walkSpeedKmh();
+      if(v>0.01){
+        mode='walk';const dkm=v*hr,dpx=dkm*PPK,prev=H.x;
+        H.phase+=dpx*0.16;H.stats.walkMin+=h;
+        if(H.lost.on){H.lost.km-=dkm;H.wasted+=dkm;if(H.lost.km<=0){H.lost.on=false;toast('🧭 Du hast wieder auf den Weg gefunden.','good')}}
+        else{
+          H.x=Math.min(H.route.totalPx,H.x+dpx);H.km=H.x/PPK;checkFeatures(prev,H.x);
+          if(H.x>=H.route.totalPx&&!H.ended)endHike('goal');
+        }
+      }
+      rollShots(hr);
+    }
+  }
+  H.moving=mode==='walk';
+  trackSights();
+  bodyTick(mode,hr);
+  // Zufallsereignisse
+  if(!H.sleep.active&&!H.ended){
+    H.animalCd-=h;H.hikerCd-=h;
+    if(H.animalCd<=0&&Math.random()<0.5*BIOMES[env.biome].animal*(env.sun<0.2?0.3:1)*(mode==='walk'?1:0.5)*hr){spawnAnimal();H.animalCd=25}
+    if(mode==='walk'&&env.sun>0.3&&H.hikerCd<=0&&Math.random()<0.16*hr){H.hikerCd=180;hikerEvent()}
+  }
+}
+
+function endHike(reason){
+  if(H.ended)return;
+  H.ended=true;
+  if(reason!=='goal'){
+    const cost=reason==='abort'?40:80;
+    H.rescueCost=Math.min(cost,G.money);G.money-=H.rescueCost;
+    if(reason==='rescue'){
+      const d=handheld();
+      if(d){const q=shotQ(d.def,1.2);H.clips.push({key:'rescue',type:'drama',name:'Dramatische Rettung',e:'🚁',q,value:40*q,rar:-1,day:G.day,biome:env.biome})}
+    }
+  }
+  H.reason=reason;
+  save();
+  onHikeEnd(reason);
+}
+
+function walkSpeedKmh(){
+  const S=G.stats,g=H.g,B=H.body;let v=2.8+0.4*S.tempo;
+  const gr=env.grade;let m;
+  if(gr>=0)m=1-2.3*gr;else m=gr>-0.1?1-gr:1.1-2.2*(-gr-0.1);
+  m=clamp(m,0.3,1.15);
+  const lf=loadKg()/capacityKg();
+  m*=1-clamp(lf-0.45,0,1.2)*0.5*(1-0.5*(g.pack?g.pack.comfort:0));
+  if(g.tools.poles&&gr>0.03)m*=1.05;
+  m*=g.shoes?g.shoes.spd:0.95;
+  if(H.inj.blister>H.t)m*=0.88;if(H.inj.sprain>H.t)m*=0.75;if(H.sick>H.t)m*=0.9;
+  if(env.dark>0.6)m*=g.tools.lamp?0.92:0.6;
+  if(B.energy<15)m*=0.6;if(B.warm<35)m*=0.9;
+  if(env.precip)m*=env.precip==='snow'?0.82:0.93;
+  if(env.wind>12)m*=0.85;
+  if(H.shot)m*=H.shot.type==='drone'?0:0.25;
+  return v*m;
+}
+
+/* ---------- Kanal-Einnahmen ---------- */
+const CURVE=d=>(d+1)*Math.exp(-d/12);
+const CURVE_NORM=(()=>{let s=0;for(let d=1;d<=150;d++)s+=CURVE(d);return s})();
+function advanceChannel(){
+  let inc=0;
+  for(const v of G.videos){const d=G.day-v.day;if(d>=1&&d<=150){const x=v.total*CURVE(d)/CURVE_NORM;v.earned+=x;inc+=x;G.subs+=x*1.5}}
+  G.money+=inc;G.earned+=inc;return inc;
+}
+function buildVideoScore(clips,promoIds){
+  const groups={};
+  clips.forEach(c=>{(groups[c.key]=groups[c.key]||[]).push(c.value)});
+  let score=0;
+  const keys=Object.keys(groups);
+  keys.forEach(k=>{groups[k].sort((a,b)=>b-a).forEach((v,i)=>{score+=v*Math.pow(0.92,i)})});
+  const variety=Math.min(1.6,1+0.06*Math.max(0,keys.length-1));
+  return {base:score,variety,groups:keys.length};
+}
+/* =====================================================================
+   Teil 4: Zeichnen (Canvas). Alles aus Formen/Emojis = Platzhalter.
+   Eigene Grafiken: PNG unter assets/… ablegen (siehe README).
+   ===================================================================== */
+const CW=960,CH=540,VS=0.75,CHAR_SX=300;
+const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+const mix=(a,b,t)=>a.map((v,i)=>Math.round(lerp(v,b[i],t)));
+const rgb=(a,al)=>al===undefined?`rgb(${a[0]},${a[1]},${a[2]})`:`rgba(${a[0]},${a[1]},${a[2]},${al})`;
+let camX=0;
+const groundY=x=>380-(elevAt(x)-H.camElev)*VS;
+
+function emoji(g,ch,x,y,size,alpha=1){g.save();g.globalAlpha=alpha;g.font=size+'px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='alphabetic';g.fillText(ch,x,y);g.restore()}
+function sprite(g,path,ch,x,y,size,alpha=1){
+  const im=img(path);
+  if(im){g.save();g.globalAlpha=alpha;g.drawImage(im,x-size/2,y-size,size,size*im.height/im.width);g.restore()}
+  else emoji(g,ch,x,y,size,alpha);
+}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function ln(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
+
+/* ---------- Charakter ---------- */
+function drawHiker(g,x,y,s,o){
+  const L=o.look,ph=o.phase||0,mode=o.mode||'idle';
+  g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';
+  const skin=LOOKS.skin[L.skin],hair=LOOKS.hair[L.hair],jk=LOOKS.jacket[L.jacket];
+  if(mode==='sleep'){
+    g.fillStyle='#4b5d3a';g.beginPath();g.ellipse(0,-7,36,9,0,0,7);g.fill();
+    g.fillStyle=skin;g.beginPath();g.arc(-30,-11,7,0,7);g.fill();
+    g.fillStyle=hair;g.beginPath();g.arc(-31,-14,7,Math.PI,0);g.fill();
+    g.restore();return;
+  }
+  const walk=mode==='walk';
+  const sw=walk?Math.sin(ph)*9:0,bob=walk?Math.abs(Math.sin(ph))*2.2:0;
+  const drop=(mode==='sit'||mode==='work')?14:0;
+  const hipY=-26+drop-bob;
+  // Beine
+  g.strokeStyle='#33465a';g.lineWidth=6;
+  if(drop){ln(g,0,hipY,14,hipY+6);ln(g,14,hipY+6,10,-2);ln(g,0,hipY,8,hipY+8);ln(g,8,hipY+8,4,-2)}
+  else{ln(g,0,hipY,-sw,-3);ln(g,0,hipY,sw,-3)}
+  g.fillStyle='#2b2b2b';
+  if(drop){g.beginPath();g.ellipse(12,-1,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(6,-1,6,3,0,0,7);g.fill()}
+  else{g.beginPath();g.ellipse(-sw+2,-2,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(sw+2,-2,6,3,0,0,7);g.fill()}
+  // Rucksack
+  g.fillStyle=o.packColor||'#7f8c8d';rr(g,-21,hipY-36,15,32,5);g.fill();
+  if(o.tent){g.fillStyle='#c0603a';rr(g,-22,hipY-42,17,7,3);g.fill()}
+  // Oberkörper
+  g.fillStyle=jk;rr(g,-8,hipY-35,17,33,5);g.fill();
+  // Kopf
+  const hx=2,hy=hipY-45;
+  g.fillStyle=skin;g.beginPath();g.arc(hx,hy,8.5,0,7);g.fill();
+  g.fillStyle=hair;
+  if(L.style===0){g.beginPath();g.arc(hx-1,hy-1,8.6,Math.PI*1.02,Math.PI*1.95);g.fill()}
+  else if(L.style===1){g.beginPath();g.arc(hx-1,hy-1,8.8,Math.PI*0.9,Math.PI*1.95);g.fill();rr(g,hx-11,hy-3,6,20,3);g.fill()}
+  else{g.fillStyle='#c0392b';g.beginPath();g.arc(hx,hy-2,9,Math.PI,0);g.fill();g.fillRect(hx-8,hy-3,18,3)}
+  g.fillStyle='#222';g.beginPath();g.arc(hx+4.5,hy-1,1.2,0,7);g.fill();
+  // Arme & Handgeräte
+  const shx=0,shy=hipY-31;
+  g.strokeStyle=jk;g.lineWidth=5;
+  const phone=(px,py,w=7,h=11,col='#222')=>{g.fillStyle=col;rr(g,px-w/2,py-h/2,w,h,2);g.fill();g.fillStyle='#7ec8ff';g.fillRect(px-w/2+1,py-h/2+1,w-2,h-3)};
+  if(mode==='selfie'){ln(g,shx,shy,20,hipY-48);phone(22,hipY-52);g.strokeStyle='#e33';g.lineWidth=1.5;g.beginPath();g.arc(hx+3,hy+2,3,0.1,Math.PI-0.1);g.stroke()}
+  else if(mode==='landschaft'){ln(g,shx,shy,22,hipY-36);phone(26,hipY-38,11,7)}
+  else if(mode==='video'){ln(g,shx,shy,18,hipY-30);ln(g,shx,shy,14,hipY-26);g.fillStyle='#222';rr(g,14,hipY-40,15,10,2);g.fill();g.fillStyle='#e33';g.beginPath();g.arc(27,hipY-38,1.6,0,7);g.fill()}
+  else if(mode==='talk'){ln(g,shx,shy,14,hipY-40);phone(15,hipY-44);
+    g.fillStyle='#fff';rr(g,20,hipY-78,30,18,6);g.fill();g.fillStyle='#333';g.font='12px sans-serif';g.textAlign='center';g.fillText('…',35,hipY-65)}
+  else if(mode==='drone'){ln(g,shx,shy,12,hipY-14);ln(g,shx,shy,8,hipY-12);g.fillStyle='#222';rr(g,4,hipY-20,16,9,3);g.fill()}
+  else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
+  else{ln(g,shx,shy,-sw*0.7+2,hipY-12);ln(g,shx,shy,sw*0.7+4,hipY-12);
+    if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,sw*0.7+4,hipY-12,sw*0.7+18,-1)}}
+  g.fillStyle=skin;
+  g.restore();
+}
+
+/* ---------- Himmel ---------- */
+function drawSky(g,tm){
+  const L=env.sun,tw=1-Math.abs(2*L-1);
+  let top=mix(hex('#0b1436'),hex('#4f9fe0'),L),bot=mix(hex('#1b2748'),hex('#bfe4f6'),L);
+  bot=mix(bot,hex('#f4a261'),tw*0.65);top=mix(top,hex('#6b5b95'),tw*0.2);
+  const gray={klar:0,wolkig:0.2,nebel:0.65,regen:0.5,gewitter:0.72,sturm:0.45}[H.weather.type];
+  const gc=mix(hex('#3b4653'),hex('#8d9aa5'),L);
+  top=mix(top,gc,gray);bot=mix(bot,gc,gray*0.9);
+  const gr=g.createLinearGradient(0,0,0,CH*0.75);gr.addColorStop(0,rgb(top));gr.addColorStop(1,rgb(bot));
+  g.fillStyle=gr;g.fillRect(0,0,CW,CH);
+  // Sterne
+  if(L<0.6&&(H.weather.type==='klar'||H.weather.type==='wolkig')){
+    g.fillStyle='#fff';
+    for(let i=0;i<70;i++){g.globalAlpha=(1-L)*(0.35+0.5*hash(i*5+2))*(H.weather.type==='klar'?1:0.4);g.fillRect(hash(i)*CW,hash(i+300)*CH*0.55,1.6,1.6)}
+    g.globalAlpha=1;
+  }
+  // Sonne / Mond
+  const hk=H.hk,h=env.hour;
+  const df=(h-hk.sunrise)/(hk.sunset-hk.sunrise);
+  if(df>-0.05&&df<1.05){
+    const sx=CW*clamp(df,0,1),sy=CH*0.62-Math.sin(clamp(df,0,1)*Math.PI)*CH*0.5;
+    const gl=g.createRadialGradient(sx,sy,4,sx,sy,90);gl.addColorStop(0,'rgba(255,240,180,0.7)');gl.addColorStop(1,'rgba(255,240,180,0)');
+    g.fillStyle=gl;g.fillRect(sx-90,sy-90,180,180);
+    g.fillStyle='#fff4b0';g.beginPath();g.arc(sx,sy,20,0,7);g.fill();
+  }else{
+    const nl=(h>=hk.sunset?h-hk.sunset:h+24-hk.sunset)/(24-(hk.sunset-hk.sunrise));
+    const mx=CW*clamp(nl,0,1),my=CH*0.6-Math.sin(clamp(nl,0,1)*Math.PI)*CH*0.45;
+    g.fillStyle='#eef1f8';g.beginPath();g.arc(mx,my,15,0,7);g.fill();
+    g.fillStyle='rgba(20,30,60,0.35)';g.beginPath();g.arc(mx+5,my-2,13,0,7);g.fill();
+  }
+  // Wolken
+  const n={klar:2,wolkig:7,nebel:5,regen:10,gewitter:11,sturm:11}[H.weather.type];
+  const cc=mix(mix(hex('#ffffff'),hex('#7f8791'),gray*1.1),hex('#2b3244'),1-L);
+  for(let i=0;i<n;i++){
+    const par=0.06+0.03*(i%3);
+    let cx=((hash(i*9)*1400-camX*par+tm*(6+env.wind*2)*(0.4+0.2*(i%3)))%1500+1500)%1500-200;
+    const cy=30+hash(i*3+1)*150,sc=0.8+hash(i*7)*1.1;
+    g.fillStyle=rgb(cc,0.88);
+    for(const [dx,dy,r] of [[0,0,26],[28,6,20],[-26,8,19],[10,-10,18]]){g.beginPath();g.ellipse(cx+dx*sc,cy+dy*sc,r*sc*1.3,r*sc*0.8,0,0,7);g.fill()}
+  }
+}
+function drawRange(g,par,baseY,amp,col,seed,L){
+  const c=mix(hex(col),hex('#0f1830'),(1-L)*0.7);
+  g.fillStyle=rgb(mix(c,hex('#cfd8e0'),env.fog*0.6));
+  g.beginPath();g.moveTo(0,CH);
+  for(let x=0;x<=CW;x+=8){
+    const wx=x+camX*par;
+    const y=baseY-amp*(0.5+0.32*Math.sin(wx*0.0031+seed)+0.22*Math.sin(wx*0.0087+seed*2.3)+0.1*Math.sin(wx*0.021+seed*4));
+    g.lineTo(x,y);
+  }
+  g.lineTo(CW,CH);g.closePath();g.fill();
+}
+
+/* ---------- Gelände ---------- */
+function snowAmt(){return env.precip==='snow'?0.55:clamp((env.alt-2300)/500,0,0.6)}
+function drawTerrain(g){
+  const sn=snowAmt(),L=env.light;
+  const x0=Math.floor(camX/12)*12;
+  for(let x=x0;x<camX+CW+12;x+=12){
+    const st=stageAt(x);let col=hex(BIOMES[st.b].ground);
+    if(env.precip==='rain'||H.weather.type==='regen')col=mix(col,hex('#2f3b33'),0.15);
+    col=mix(col,hex('#f1f4f8'),sn);
+    const y1=groundY(x),y2=groundY(x+12),sx=x-camX;
+    g.fillStyle=rgb(col);
+    g.beginPath();g.moveTo(sx,y1);g.lineTo(sx+13,y2);g.lineTo(sx+13,CH);g.lineTo(sx,CH);g.closePath();g.fill();
+    g.fillStyle=rgb(mix(col,hex('#3d2c1c'),0.6),0.55);
+    g.beginPath();g.moveTo(sx,y1+16);g.lineTo(sx+13,y2+16);g.lineTo(sx+13,CH);g.lineTo(sx,CH);g.closePath();g.fill();
+  }
+  // Pfad
+  g.strokeStyle=rgb(mix(hex('#c9b48a'),hex('#f1f4f8'),sn*0.7));g.lineWidth=5;g.lineJoin='round';g.beginPath();
+  for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
+  g.stroke();
+}
+function drawDecor(g,tm){
+  const CELL=36,c0=Math.floor((camX-80)/CELL),c1=Math.floor((camX+CW+80)/CELL);
+  const sn=snowAmt();
+  for(let cx=c0;cx<=c1;cx++){
+    const wx=cx*CELL+hash(cx*7)*26;if(wx<80||wx>H.route.totalPx+300)continue;
+    const st=stageAt(wx),B=BIOMES[st.b],y=groundY(wx),sx=wx-camX;
+    if(H.route.feats.some(f=>Math.abs(f.x-wx)<70))continue;
+    const r=hash(cx*13+1),sc=0.75+hash(cx*5+3)*0.7;
+    if(r<B.tree){
+      const dk=mix(hex(st.b==='fjaell'?'#a8853a':'#2f6b34'),hex('#0f1830'),(1-env.light)*0.4);
+      if(st.b==='wald'&&hash(cx*3)<0.35){ // Laubbaum
+        g.fillStyle='#5b3d24';g.fillRect(sx-3*sc,y-26*sc,6*sc,26*sc);
+        g.fillStyle=rgb(mix(hex('#3f8a3a'),hex('#f1f4f8'),sn*0.5));g.beginPath();g.arc(sx,y-38*sc,20*sc,0,7);g.arc(sx-12*sc,y-30*sc,14*sc,0,7);g.arc(sx+12*sc,y-30*sc,14*sc,0,7);g.fill();
+      }else{ // Nadelbaum / Birke
+        g.fillStyle='#5b3d24';g.fillRect(sx-2.5*sc,y-14*sc,5*sc,14*sc);
+        const cl=mix(hex('#245c33'),hex('#f1f4f8'),sn*0.6);g.fillStyle=rgb(st.b==='fjaell'?dk:cl);
+        for(let k=0;k<3;k++){const w=(22-k*5)*sc,yy=y-(10+k*17)*sc;g.beginPath();g.moveTo(sx-w,yy);g.lineTo(sx+w,yy);g.lineTo(sx,yy-24*sc);g.closePath();g.fill()}
+      }
+    }else if(st.b==='berg'||st.b==='fjaell'){
+      if(r<B.tree+0.22){g.fillStyle=rgb(mix(hex('#7c8088'),hex('#f1f4f8'),sn));g.beginPath();g.ellipse(sx,y-4*sc,14*sc,9*sc,0,Math.PI,0);g.fill()}
+    }else if(r<B.tree+0.3){
+      g.fillStyle=rgb(mix(hex('#4c8f3b'),hex('#f1f4f8'),sn));g.beginPath();g.arc(sx,y-5*sc,7*sc,Math.PI,0);g.fill();
+      if(st.b==='wiese'&&hash(cx*11)<0.5){g.fillStyle=pick(['#fff','#f7d84a','#e57ab8']);g.fillRect(sx+3,y-9*sc,2.5,2.5)}
+    }
+  }
+}
+function drawFeatures(g,tm){
+  const gs=H.route.feats.concat([{type:'start',x:120},{type:'finish',x:H.route.totalPx}]);
+  for(const f of gs){
+    const sx=f.x-camX;if(sx<-120||sx>CW+120)continue;const y=groundY(f.x);
+    if(f.type==='quelle'){
+      g.fillStyle='#8a8d90';g.beginPath();g.ellipse(sx,y-6,20,10,0,Math.PI,0);g.fill();
+      g.fillStyle='#4aa8e8';g.beginPath();g.ellipse(sx+16,y+2,20,5,0,0,7);g.fill();
+      emoji(g,'💧',sx-2,y-16,22+Math.sin(tm*3)*1.5);
+    }else if(f.type==='fluss'){
+      g.fillStyle='#3d8fd6';g.fillRect(sx-46,y-1,92,18);
+      g.strokeStyle='rgba(255,255,255,0.55)';g.lineWidth=1.5;
+      for(let k=0;k<4;k++){const wx=sx-40+k*24+((tm*20)%24);g.beginPath();g.moveTo(wx,y+4+k%2*6);g.quadraticCurveTo(wx+6,y+1+k%2*6,wx+12,y+4+k%2*6);g.stroke()}
+      if(f.bridge){
+        g.fillStyle='#8b5e34';g.fillRect(sx-56,y-9,112,6);
+        g.fillStyle='#6d4726';g.fillRect(sx-50,y-3,5,14);g.fillRect(sx+45,y-3,5,14);
+        g.fillRect(sx-56,y-24,4,16);g.fillRect(sx+52,y-24,4,16);g.fillRect(sx-56,y-24,112,3);
+      }else{
+        g.fillStyle='#9aa0a6';for(let k=0;k<5;k++){g.beginPath();g.ellipse(sx-32+k*16,y+1,7,4,0,0,7);g.fill()}
+        g.fillStyle='rgba(255,255,255,0.9)';g.font='bold 11px sans-serif';g.textAlign='center';g.fillText('Furt',sx,y-14);
+      }
+    }else if(f.type==='junction'){
+      g.fillStyle='#6d4726';g.fillRect(sx-2,y-46,4,46);
+      g.fillStyle='#d9b26f';g.fillRect(sx,y-44,30,10);g.fillRect(sx-28,y-30,28,10);
+      g.fillStyle='#4a3417';g.fillRect(sx+22,y-42,6,6);g.fillRect(sx-22,y-28,6,6);
+    }else if(f.type==='sight'){
+      sprite(g,'sights/'+f.s.n.toLowerCase().replace(/[^a-zäöü]+/g,'_'),f.s.e,sx,y-4,58);
+      g.fillStyle='rgba(0,0,0,0.5)';g.font='11px sans-serif';g.textAlign='center';
+      const w=g.measureText(f.s.n).width+10;rr(g,sx-w/2,y+8,w,15,4);g.fill();g.fillStyle='#fff';g.fillText(f.s.n,sx,y+19);
+    }else if(f.type==='start'){
+      g.fillStyle='#6d4726';g.fillRect(sx-2,y-52,4,52);g.fillStyle='#2d7d46';rr(g,sx-4,y-56,64,22,4);g.fill();
+      g.fillStyle='#fff';g.font='bold 13px sans-serif';g.textAlign='left';g.fillText('START',sx+4,y-40);
+    }else if(f.type==='finish'){
+      g.fillStyle='#6d4726';g.fillRect(sx-2,y-70,4,70);g.fillRect(sx+80,y-70,4,70);
+      g.fillStyle='#fff';g.fillRect(sx,y-70,84,20);
+      g.fillStyle='#222';for(let i=0;i<14;i++)for(let j=0;j<3;j++)if((i+j)%2===0)g.fillRect(sx+i*6,y-70+j*6.6,6,6.6);
+      g.fillStyle='#fff';g.font='bold 14px sans-serif';g.textAlign='center';g.fillText('ZIEL',sx+42,y-76);
+    }
+  }
+}
+function drawCamp(g,tm){
+  if(H.camp.pitched&&H.g.shelter){
+    const sh=H.g.shelter,sx=H.camp.x-70-camX,y=groundY(H.camp.x-70);
+    const glow=H.sleep.active||env.dark>0.5;
+    if(sh.id==='tarp'){
+      g.fillStyle='#5f7f55';g.beginPath();g.moveTo(sx-46,y);g.lineTo(sx-30,y-42);g.lineTo(sx+52,y-24);g.lineTo(sx+52,y);g.closePath();g.fill();
+      g.strokeStyle='#3d2c1c';g.lineWidth=3;ln(g,sx-30,y-42,sx-30,y);ln(g,sx+52,y-24,sx+52,y);
+    }else{
+      const col=sh.id==='tentW'?'#c65a2e':sh.id==='tentUL'?'#4a90c8':'#d97b2b';
+      g.fillStyle=col;g.beginPath();g.moveTo(sx-50,y);g.lineTo(sx,y-52);g.lineTo(sx+50,y);g.closePath();g.fill();
+      g.fillStyle=glow?'#ffd98a':'#2b2b2b';g.beginPath();g.moveTo(sx-14,y);g.lineTo(sx,y-30);g.lineTo(sx+14,y);g.closePath();g.fill();
+      g.strokeStyle='rgba(0,0,0,0.3)';g.lineWidth=2;ln(g,sx,y-52,sx,y-30);
+    }
+  }
+  if(H.fire.lit){
+    const sx=H.fire.x-camX,y=groundY(H.fire.x);
+    const gl=g.createRadialGradient(sx,y-14,4,sx,y-14,120);gl.addColorStop(0,'rgba(255,170,60,0.45)');gl.addColorStop(1,'rgba(255,170,60,0)');
+    g.fillStyle=gl;g.beginPath();g.arc(sx,y-14,120,0,7);g.fill();
+    g.fillStyle='#6d4726';g.save();g.translate(sx,y-3);g.rotate(0.3);g.fillRect(-14,-2,28,5);g.rotate(-0.6);g.fillRect(-14,-2,28,5);g.restore();
+    for(let k=0;k<3;k++){const fl=Math.sin(tm*14+k*2)*3;g.fillStyle=['#e25822','#f4a52f','#ffe08a'][k];g.beginPath();g.moveTo(sx-9+k*3,y-4);g.quadraticCurveTo(sx+fl,y-22-k*-4-(3-k)*4,sx+9-k*3,y-4);g.fill()}
+  }
+}
+function drawIcons(g,tm){
+  for(const ic of H.icons){
+    const sx=ic.x-camX;if(sx<-60||sx>CW+60)continue;const gy=groundY(ic.x);
+    let by;
+    if(ic.kind==='animal'){
+      const bob=Math.sin(tm*4+ic.x)*1.5;
+      sprite(g,'animals/'+ic.a.id,ic.a.e,sx,gy-2+bob,30+ic.a.r*4,ic.taken?0.4:1);
+      by=gy-64-ic.a.r*3;
+    }else if(ic.kind==='sight'){by=gy-92}
+    else if(ic.kind==='storm'){emoji(g,ic.e,sx,gy-60+Math.sin(tm*3)*3,44);by=gy-130}
+    else{emoji(g,ic.e,sx,gy-2,30);by=gy-64}
+    const on=H.rec>0&&!ic.taken;const pulse=1+Math.sin(tm*8)*0.07;
+    const r=17*pulse;ic.sx=sx;ic.sy=by;ic.r=22;
+    g.save();
+    g.fillStyle=ic.taken?'rgba(80,200,120,0.9)':on?'rgba(255,255,255,0.95)':'rgba(150,150,150,0.75)';
+    g.beginPath();g.arc(sx,by,r,0,7);g.fill();
+    if(ic.kind==='animal'&&!ic.taken&&on){g.strokeStyle=RARITY[ic.a.r].color;g.lineWidth=3.5;g.beginPath();g.arc(sx,by,r+3,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(ic.life/ic.max,0,1));g.stroke()}
+    else if(!ic.taken&&on&&ic.kind!=='sight'){g.strokeStyle='#ff9800';g.lineWidth=3;g.beginPath();g.arc(sx,by,r+3,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(ic.life/ic.max,0,1));g.stroke()}
+    emoji(g,ic.taken?'✔️':'📷',sx,by+7,20);
+    if(ic.kind==='animal'&&!ic.taken){g.fillStyle=RARITY[ic.a.r].color;g.font='bold 10px sans-serif';g.textAlign='center';const t=RARITY[ic.a.r].name;const w=g.measureText(t).width+8;rr(g,sx-w/2,by-r-17,w,13,4);g.fill();g.fillStyle='#fff';g.fillText(t,sx,by-r-7)}
+    g.restore();
+  }
+}
+
+/* ---------- Wetter-Partikel ---------- */
+function drawWeatherFx(g,tm){
+  if(env.precip){
+    const snow=env.precip==='snow',n=Math.floor(60+env.rainI*160);
+    g.strokeStyle=snow?'rgba(255,255,255,0.9)':'rgba(190,210,235,0.65)';g.fillStyle='rgba(255,255,255,0.9)';g.lineWidth=1.2;
+    const slant=clamp(env.wind*2.2,3,30)*(snow?0.6:1);
+    for(let i=0;i<n;i++){
+      const sp=snow?60+hash(i)*40:520+hash(i)*220;
+      const px=((hash(i*3)*(CW+200)+tm*slant*(snow?5:14)*(0.6+hash(i+9)*0.4))%(CW+200))-100;
+      const py=((hash(i*5+1)*CH+tm*sp)%CH);
+      if(snow){g.beginPath();g.arc(px,py,1.6+hash(i)*1.5,0,7);g.fill()}
+      else{g.beginPath();g.moveTo(px,py);g.lineTo(px-slant*0.5,py+12);g.stroke()}
+    }
+  }
+  if(H.weather.type==='gewitter'){
+    if(Math.random()<0.004)H.flash=1;
+  }
+  if(H.flash>0){g.fillStyle=`rgba(255,255,255,${H.flash*0.7})`;g.fillRect(0,0,CW,CH);H.flash=Math.max(0,H.flash-0.06)}
+}
+
+/* ---------- Gesamtszene ---------- */
+function charMode(){
+  if(H.sleep.active)return 'sleep';
+  if(H.shot)return H.shot.type==='drone'?'drone':H.shot.type;
+  if(H.action){return ['cook','eat','drink','fire','tent','refill','charge','aid','orient','treat'].includes(H.action.kind)?(['eat','drink'].includes(H.action.kind)?'sit':'work'):'walk'}
+  return H.moving?'walk':'sit';
+}
+function drawScene(g,tm){
+  camX=H.x-CHAR_SX;
+  drawSky(g,tm);
+  const L=env.light;
+  drawRange(g,0.06,300,150,BIOMES[env.biome].far,1.3,L);
+  drawRange(g,0.14,340,110,'#4d6b57',4.1,L);
+  drawTerrain(g);
+  drawDecor(g,tm);
+  drawFeatures(g,tm);
+  drawCamp(g,tm);
+  // Charakter
+  const cy=groundY(H.x);
+  const mode=charMode();
+  const sleepHidden=H.sleep.active&&H.camp.pitched&&H.g.shelter&&H.g.shelter.id!=='tarp';
+  if(!sleepHidden){
+    drawHiker(g,CHAR_SX,cy,1.15,{look:G.look,phase:H.phase,mode,packColor:H.g.pack?H.g.pack.color:'#7f8c8d',poles:H.g.tools.poles,tent:!!H.g.shelter&&!H.camp.pitched});
+  }
+  if(H.sleep.active){g.fillStyle='#fff';g.font='bold 20px sans-serif';g.textAlign='center';g.fillText('Z'+'z'.repeat(1+Math.floor(tm*1.5)%3),sleepHidden?CHAR_SX-70:CHAR_SX+20,(sleepHidden?groundY(H.camp.x-70)-58:cy-62)-((tm*10)%14))}
+  if(H.shot&&H.shot.type==='drone'){sprite(g,'sprites/drone','🛸',CHAR_SX+70,cy-120+Math.sin(tm*5)*6,44)}
+  if(H.lost.on){g.fillStyle='#fff';g.font='bold 26px sans-serif';g.textAlign='center';g.fillText('❓',CHAR_SX+4,cy-96+Math.sin(tm*4)*3)}
+  drawIcons(g,tm);
+  // Dunkelheit, Nebel
+  if(env.dark>0.02){g.fillStyle=`rgba(6,10,34,${env.dark*0.58})`;g.fillRect(0,0,CW,CH)}
+  if(H.fire.lit||sleepHidden&&env.dark>0.3){/* Feuerschein wird oben gezeichnet */}
+  if(env.dark>0.4&&H.g.tools.lamp&&H.moving){
+    const gl=g.createRadialGradient(CHAR_SX+90,cy-40,10,CHAR_SX+90,cy-40,190);gl.addColorStop(0,'rgba(255,240,200,0.30)');gl.addColorStop(1,'rgba(255,240,200,0)');
+    g.fillStyle=gl;g.beginPath();g.arc(CHAR_SX+90,cy-40,190,0,7);g.fill();
+  }
+  if(env.fog>0){const f=g.createLinearGradient(0,0,0,CH);f.addColorStop(0,`rgba(210,220,225,${env.fog*0.5})`);f.addColorStop(1,`rgba(210,220,225,${env.fog*0.85})`);g.fillStyle=f;g.fillRect(0,0,CW,CH)}
+  drawWeatherFx(g,tm);
+  if(H.lost.on){const v=g.createRadialGradient(CW/2,CH/2,CH*0.35,CW/2,CH/2,CH*0.9);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(20,10,30,0.55)');g.fillStyle=v;g.fillRect(0,0,CW,CH);
+    g.fillStyle='#fff';g.font='bold 18px sans-serif';g.textAlign='center';g.fillText('Verirrt – '+Math.max(0,H.lost.km).toFixed(1).replace('.',',')+' km Umweg',CW/2,64)}
+}
+
+/* ---------- Streckenprofil (Fortschrittsanzeige) ---------- */
+function drawProfile(cv){
+  const g=cv.getContext('2d'),W=cv.width,Hh=cv.height,R=H.route;
+  g.clearRect(0,0,W,Hh);
+  let mn=1e9,mx=-1e9;for(let i=0;i<R.elev.length;i+=5){mn=Math.min(mn,R.elev[i]);mx=Math.max(mx,R.elev[i])}
+  const px=x=>x/R.totalPx*(W-8)+4,py=e=>Hh-8-(e-mn)/(mx-mn+1)*(Hh-22);
+  for(const st of R.stages){
+    g.fillStyle=rgb(hex(BIOMES[st.b].ground),0.55);
+    g.beginPath();g.moveTo(px(st.x0),Hh);
+    for(let x=st.x0;x<=st.x1;x+=40)g.lineTo(px(x),py(R.elev[Math.min(R.elev.length-1,Math.round(x/10))]));
+    g.lineTo(px(st.x1),Hh);g.closePath();g.fill();
+    g.strokeStyle='rgba(255,255,255,0.25)';g.lineWidth=1;ln(g,px(st.x1),0,px(st.x1),Hh);
+  }
+  g.strokeStyle='#e8f1ea';g.lineWidth=1.6;g.beginPath();
+  for(let x=0;x<=R.totalPx;x+=40){const X=px(x),Y=py(R.elev[Math.round(x/10)]);if(x===0)g.moveTo(X,Y);else g.lineTo(X,Y)}
+  g.stroke();
+  for(const f of R.feats){
+    const X=px(f.x),Y=py(R.elev[Math.round(f.x/10)]);
+    if(f.type==='quelle'){g.fillStyle='#4aa8e8';g.beginPath();g.arc(X,Y-3,2.6,0,7);g.fill()}
+    else if(f.type==='sight'){g.fillStyle='#ffd54a';g.fillRect(X-2.5,Y-9,5,5)}
+    else if(f.type==='fluss'){g.fillStyle='#00bcd4';g.fillRect(X-1.5,Y-6,3,6)}
+  }
+  if(H.camp.pitched){g.fillStyle='#ff9800';g.fillRect(px(H.camp.x)-3,py(elevAt(H.camp.x))-12,6,6)}
+  const X=px(H.x),Y=py(elevAt(H.x));
+  g.fillStyle='#fff';g.strokeStyle='#111';g.lineWidth=1.5;g.beginPath();g.arc(X,Y-4,5,0,7);g.fill();g.stroke();
+}
+/* =====================================================================
+   Teil 5: Oberfläche (Menü, Charakter, Basis, Wanderauswahl, Shop, HUD, Auswertung)
+   ===================================================================== */
+let screen='menu',MODAL=false;const MODALQ=[];
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('active',s.id==='s-'+id));screen=id;window.scrollTo(0,0)}
+
+/* ---------- Modal & Toast ---------- */
+function showModal(o){
+  if(MODAL){MODALQ.push(o);return}
+  MODAL=true;
+  const m=$('#modal');
+  m.innerHTML=`<div class="box"><h3>${o.title||''}</h3><p>${o.text||''}</p><div class="mbody">${o.html||''}</div><div class="btns"></div></div>`;
+  const bx=$('.btns',m);
+  (o.buttons||[{label:'OK'}]).forEach(b=>{const e=document.createElement('button');e.textContent=b.label;e.className=b.cls||'';e.onclick=()=>{closeModal();if(b.fn)b.fn()};bx.appendChild(e)});
+  m.classList.add('open');
+  if(o.onOpen)o.onOpen(m);
+}
+function closeModal(){
+  $('#modal').classList.remove('open');MODAL=false;
+  if(MODALQ.length){const n=MODALQ.shift();setTimeout(()=>showModal(n),50)}
+}
+function toast(msg,cls){
+  if(!H||screen!=='hike')return;
+  const box=$('#toasts');if(!box)return;
+  const last=box.lastElementChild;
+  if(last&&last.textContent===msg&&!last.classList.contains('out')){last.style.animation='none';void last.offsetWidth;last.style.animation='in .25s';return}
+  const d=document.createElement('div');d.className='toast '+(cls||'');d.textContent=msg;box.appendChild(d);
+  while(box.children.length>6)box.removeChild(box.firstChild);
+  setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.remove(),600)},7500);
+}
+const fmtN=(v,d=1)=>v.toFixed(d).replace('.',',');
+const starStr=n=>'★'.repeat(n)+'☆'.repeat(4-n);
+
+/* ---------- Menü ---------- */
+function renderMenu(){
+  show('menu');
+  const sv=loadSave();
+  $('#s-menu').innerHTML=`<div class="center"><h1>🥾 Wanderkanal</h1><p class="sub">Wandern · Filmen · Reichweite aufbauen<br><small>Prototyp – nur für den privaten Gebrauch</small></p>
+  <div class="col">${sv&&sv.created?'<button class="big primary" id="b-cont">Weiterspielen</button>':''}<button class="big" id="b-new">Neues Spiel</button></div>
+  <p class="hint">Der Spielstand wird automatisch im Browser gespeichert.</p></div>`;
+  if(sv&&sv.created)$('#b-cont').onclick=()=>{G=sv;renderHub()};
+  $('#b-new').onclick=()=>{
+    if(sv&&sv.created&&!confirm('Alten Spielstand löschen und neu beginnen?'))return;
+    wipeSave();G=newProfile();renderChar();
+  };
+}
+
+/* ---------- Charakter ---------- */
+function renderChar(){
+  show('char');
+  const used=Object.values(G.stats).reduce((a,b)=>a+b,0),left=STAT_POOL-used;
+  const cyc=(k,n)=>`<div class="row"><span class="lbl">${k==='style'?'Frisur':k==='skin'?'Hautton':k==='hair'?'Haarfarbe':'Jackenfarbe'}</span><button data-c="${k}" data-d="-1">‹</button><span class="val">${k==='style'?LOOKS.styles[G.look.style]:'<i class="sw" style="background:'+LOOKS[k][G.look[k]]+'"></i>'}</span><button data-c="${k}" data-d="1">›</button></div>`;
+  $('#s-char').innerHTML=`<div class="wrap two"><div class="card"><h2>Dein Charakter</h2>
+    <canvas id="prev" width="240" height="300"></canvas>
+    <div class="row"><span class="lbl">Name</span><input id="nm" maxlength="18" value="${G.name}"></div>
+    ${cyc('skin')}${cyc('hair')}${cyc('style')}${cyc('jacket')}</div>
+    <div class="card"><h2>Fähigkeiten <small>(${left} Punkte übrig)</small></h2>
+    ${STAT_DEFS.map(s=>`<div class="stat"><div><b>${s.name}</b><br><small>${s.desc}</small></div><div class="ctl"><button data-s="${s.id}" data-d="-1" ${G.stats[s.id]<=STAT_MIN?'disabled':''}>−</button><span class="pips">${'●'.repeat(G.stats[s.id])}${'○'.repeat(STAT_MAX-G.stats[s.id])}</span><button data-s="${s.id}" data-d="1" ${(G.stats[s.id]>=STAT_MAX||left<=0)?'disabled':''}>+</button></div></div>`).join('')}
+    <p class="hint">Verteile deine Punkte klug: Tragkraft (${fmtN(capacityKg())} kg bequem tragbar) und Ausdauer bestimmen, wie viel Ausrüstung du mitschleppst.</p>
+    <button class="big primary" id="b-ok">Weiter zur Basis</button></div></div>`;
+  $$('#s-char [data-c]').forEach(b=>b.onclick=()=>{const k=b.dataset.c,n=k==='style'?LOOKS.styles.length:LOOKS[k].length;G.look[k]=(G.look[k]+ +b.dataset.d+n)%n;G.name=$('#nm').value;renderChar()});
+  $$('#s-char [data-s]').forEach(b=>b.onclick=()=>{G.stats[b.dataset.s]+=+b.dataset.d;G.name=$('#nm').value;renderChar()});
+  $('#b-ok').onclick=()=>{G.name=($('#nm').value||'Wanderer').trim();G.created=true;save();renderHub()};
+  const g=$('#prev').getContext('2d');g.fillStyle='#1c3328';g.fillRect(0,0,240,300);g.fillStyle='#2f6b45';g.fillRect(0,250,240,50);
+  drawHiker(g,110,262,2.6,{look:G.look,phase:0,mode:'idle',packColor:'#7f8c8d',poles:false});
+}
+
+/* ---------- Basis ---------- */
+function renderHub(){
+  show('hub');save();
+  $('#s-hub').innerHTML=`<div class="wrap"><div class="topbar"><div><h2>🏕️ Basis von ${G.name}</h2></div>
+    <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${Math.floor(G.subs).toLocaleString('de-DE')} Abonnenten</span><span class="chip">📅 Tag ${G.day+1}</span><span class="chip">🥾 ${G.hikes} Touren</span></div></div>
+   <div class="two"><div class="card"><h3>Nächster Schritt</h3>
+    <button class="big primary" id="h-hike">🥾 Neue Wanderung planen</button>
+    <div class="row gap"><button id="h-w1">⏳ 1 Tag warten</button><button id="h-w7">⏳ 7 Tage warten</button></div>
+    <p class="hint">Warten lässt deine veröffentlichten Videos weiter Reichweite und Einnahmen sammeln. Videos gewinnen zuerst an Fahrt und flachen nach etwa 2–3 Wochen ab.</p>
+    <div class="row gap"><button id="h-char">🧍 Charakter ansehen</button><button id="h-menu">Hauptmenü</button></div></div>
+   <div class="card"><h3>📺 Dein Kanal</h3>${G.videos.length?G.videos.slice().reverse().map(v=>`<div class="vid"><div><b>${v.title}</b><br><small>Tag ${v.day+1} · ${v.clips} Clips · Score ${Math.round(v.score)}</small></div><div class="vbar"><i style="width:${clamp(v.earned/v.total*100,0,100)}%"></i></div><div class="vnum">${eur(v.earned)} <small>von ${eur(v.total)}</small></div></div>`).join(''):'<p class="hint">Noch keine Videos. Nimm auf deiner ersten Wanderung Material auf und veröffentliche es danach.</p>'}
+    <p class="hint">Bisher verdient: ${eur(G.earned)}</p></div></div></div>`;
+  $('#h-hike').onclick=renderHikes;
+  const wait=n=>{let inc=0;for(let i=0;i<n;i++){G.day++;inc+=advanceChannel()}save();renderHub();if(inc>0)setTimeout(()=>showModal({title:'⏳ '+n+(n>1?' Tage':' Tag')+' vergangen',text:'Dein Kanal hat '+eur(inc)+' eingebracht.'}),30)};
+  $('#h-w1').onclick=()=>wait(1);$('#h-w7').onclick=()=>wait(7);
+  $('#h-menu').onclick=renderMenu;
+  $('#h-char').onclick=()=>showModal({title:G.name,html:'<canvas id="pv2" width="200" height="240"></canvas><p>'+STAT_DEFS.map(s=>s.name+': '+G.stats[s.id]).join(' · ')+'</p>',buttons:[{label:'Schließen'}],onOpen:()=>{const g=$('#pv2').getContext('2d');g.fillStyle='#1c3328';g.fillRect(0,0,200,240);drawHiker(g,90,210,2.2,{look:G.look,phase:0,mode:'idle',packColor:'#7f8c8d'})}});
+}
+
+/* ---------- Wanderauswahl ---------- */
+function renderHikes(){
+  show('hikes');
+  $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Wanderung wählen</h2><button id="k-back">‹ Zurück</button></div><div class="grid">
+   ${HIKES.map(h=>{const km=h.stages.reduce((a,s)=>a+s.km,0);const bi=[...new Set(h.stages.map(s=>BIOMES[s.b].name))].join(', ');
+   return `<div class="card hike"><h3>${h.name}</h3><div class="sub">${h.region}</div><p>${h.desc}</p>
+   <div class="facts"><span>📏 ${km} km (≈ ${Math.max(1,Math.round(km/26))}–${Math.max(2,Math.round(km/17),Math.round(km/26)+1)} Tage)</span><span>⚡ Schwierigkeit ${starStr(h.diff)}</span><span>🌤️ ${bi}</span><span>🎫 Anreise & Genehmigung ${eur(h.permit)}</span><span>📈 Video-Faktor ×${h.mult.toFixed(1).replace('.',',')}</span></div>
+   <button class="primary" data-h="${h.id}" ${G.money<h.permit?'disabled':''}>Auswählen</button></div>`}).join('')}</div></div>`;
+  $('#k-back').onclick=renderHub;
+  $$('#s-hikes [data-h]').forEach(b=>b.onclick=()=>renderShop(b.dataset.h));
+}
+
+/* ---------- Shop ---------- */
+let SHOP={tab:'Rucksack',hike:null};
+function shopMoney(){return G.money-SHOP.hike.permit}
+function totalLoad(){return gearKg()+consKg()+waterCapL()}
+function renderShop(hikeId,tab){
+  if(hikeId)SHOP.hike=HIKES.find(h=>h.id===hikeId);
+  if(tab)SHOP.tab=tab;
+  show('shop');
+  const hk=SHOP.hike;
+  const items=[...GEAR.filter(g=>TAB_OF[g.cat]===SHOP.tab),...CONS.filter(c=>TAB_OF[c.cat]===SHOP.tab)];
+  const pack=slotOf('pack');const load=totalLoad();const capC=capacityKg();const capP=pack?pack.max:0;
+  const foodPts=FOODS.reduce((a,f)=>a+f.sat*(G.cons[f.id]||0),0);
+  const dayNeed=87*(1.3-0.1*G.stats.food);
+  const km=hk.stages.reduce((a,s)=>a+s.km,0);
+  const warn=[];
+  if(load>capP)warn.push(['bad','Rucksack überladen ('+fmtN(load)+' > '+fmtN(capP)+' kg) – größeren Rucksack wählen oder Gewicht reduzieren.']);
+  else if(load>capC)warn.push(['warn','Schwerer als du bequem tragen kannst – du wirst langsamer und verbrauchst mehr Energie.']);
+  if(foodPts<dayNeed*Math.max(1,km/40))warn.push(['warn','Wenig Proviant für die Tourlänge (≈ '+fmtN(foodPts/dayNeed)+' Tage).']);
+  if(!slotOf('shelter'))warn.push(['info','Keine Unterkunft – Schlafen unter freiem Himmel ist unbequem und riskant.']);
+  if(!slotOf('bag'))warn.push(['info','Kein Schlafsack.']);
+  const hasStove=packedGear().some(g=>g.tool==='stove'),hasFire=packedGear().some(g=>g.tool==='fire');
+  if(hasStove&&!(G.cons.gas>0))warn.push(['warn','Gaskocher ohne Gaskartusche.']);
+  const cookN=FOODS.filter(f=>f.cook).reduce((a,f)=>a+(G.cons[f.id]||0),0);
+  if(cookN>0&&!((hasStove&&G.cons.gas>0)||hasFire))warn.push(['warn','Kochproviant, aber keine Möglichkeit zum Kochen (Gaskocher + Gas oder Feuerstarter).']);
+  if(!packedGear().some(g=>g.nav))warn.push(['info','Kein Navigationsgerät (außer Smartphone mit Netz/Offline-Karten).']);
+  $('#s-shop').innerHTML=`<div class="wrap shop"><div class="topbar"><div><h2>🛒 Ausrüstung: ${hk.name}</h2></div><div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">🎫 ${eur(hk.permit)} Anreise</span><span class="chip">Verfügbar: ${eur(shopMoney())}</span></div></div>
+   <div class="shopgrid"><div><div class="tabs">${TABS.map(t=>`<button class="${t===SHOP.tab?'on':''}" data-t="${t}">${t}</button>`).join('')}</div>
+   <div class="items">${items.map(it=>{
+     const isCons=it.cat==='food'||it.cat==='gas';
+     const ic=`<span class="ico">${img('gear/'+it.id)?`<img src="assets/gear/${it.id}.png">`:it.e}</span>`;
+     if(isCons){const q=G.cons[it.id]||0;return `<div class="item">${ic}<div class="inf"><b>${it.name}</b><small>${it.kg*1000} g · ${eur(it.price)}${it.sat?' · +'+it.sat+' Sättigung':''}</small></div><div class="ctl"><button data-cm="${it.id}" ${q<=0?'disabled':''}>−</button><span class="qty">${q}</span><button data-cp="${it.id}" ${shopMoney()<it.price?'disabled':''}>+</button></div></div>`}
+     const own=!!G.owned[it.id],pk=!!G.packed[it.id];
+     const stats=(it.q?`Bild ${Math.round(it.q*100)}% · `:'')+fmtN(it.kg,2)+' kg';
+     return `<div class="item ${pk?'packed':''}">${ic}<div class="inf"><b>${it.name}</b><small>${it.desc}</small><small class="dim">${stats}${it.price?' · '+eur(it.price):''}</small></div>
+       <div class="ctl">${own?`<button class="${pk?'on':''}" data-pk="${it.id}">${pk?'✓ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${it.id}" ${shopMoney()<it.price?'disabled':''}>Kaufen ${eur(it.price)}</button>`}</div></div>`}).join('')}</div></div>
+   <div class="card side"><h3>🎒 Packliste</h3>
+    <div class="meter"><div class="mlabel">Gewicht ${fmtN(load)} kg</div><div class="mbar"><i style="width:${clamp(load/Math.max(capP,1)*100,0,100)}%" class="${load>capP?'bad':load>capC?'warn':''}"></i><b style="left:${clamp(capC/Math.max(capP,1)*100,0,100)}%"></b></div><small>bequem: ${fmtN(capC)} kg · Rucksack max: ${fmtN(capP)} kg</small></div>
+    <ul class="pl">${packedGear().map(g=>`<li>${g.e} ${g.name}</li>`).join('')}${CONS.filter(c=>G.cons[c.id]).map(c=>`<li>${c.e} ${G.cons[c.id]}× ${c.name.replace(' (kochen)','')}</li>`).join('')}<li>💧 Wasser: ${fmtN(waterCapL())} L (gefüllt)</li></ul>
+    <p class="hint">Proviant reicht für ca. ${fmtN(foodPts/dayNeed)} Tage · Tour ≈ ${km} km</p>
+    ${warn.map(w=>`<div class="warnbox ${w[0]}">${w[1]}</div>`).join('')}
+    <div class="row gap"><button id="s-back">‹ Zurück</button><button class="primary big" id="s-go" ${load>capP||shopMoney()<0?'disabled':''}>Wanderung starten</button></div></div></div></div>`;
+  $$('#s-shop [data-t]').forEach(b=>b.onclick=()=>renderShop(null,b.dataset.t));
+  $$('#s-shop [data-buy]').forEach(b=>b.onclick=()=>{const it=gearById(b.dataset.buy);if(shopMoney()<it.price)return;G.money-=it.price;G.owned[it.id]=1;doPack(it,true);save();renderShop()});
+  $$('#s-shop [data-pk]').forEach(b=>b.onclick=()=>{const it=gearById(b.dataset.pk);doPack(it,!G.packed[it.id]);renderShop()});
+  $$('#s-shop [data-cp]').forEach(b=>b.onclick=()=>{const it=gearById(b.dataset.cp);if(shopMoney()<it.price)return;G.money-=it.price;G.cons[it.id]=(G.cons[it.id]||0)+1;renderShop()});
+  $$('#s-shop [data-cm]').forEach(b=>b.onclick=()=>{const it=gearById(b.dataset.cm);if(!G.cons[it.id])return;G.money+=it.price;G.cons[it.id]--;if(!G.cons[it.id])delete G.cons[it.id];renderShop()});
+  $('#s-back').onclick=()=>{refundCons();renderHikes()};
+  $('#s-go').onclick=()=>{
+    if(G.money<hk.permit)return;
+    G.money-=hk.permit;
+    startHike(hk.id);enterHike();
+  };
+}
+function refundCons(){for(const id in G.cons){const c=gearById(id);G.money+=c.price*G.cons[id]}G.cons={}}
+function doPack(it,on){
+  if(EXCLUSIVE.includes(it.cat)){
+    if(!on&&(it.cat==='pack'||it.cat==='shoes'))return;
+    if(on)GEAR.filter(g=>g.cat===it.cat).forEach(g=>delete G.packed[g.id]);
+  }
+  if(on)G.packed[it.id]=1;else delete G.packed[it.id];
+}
+
+/* ---------- Wanderung: HUD ---------- */
+let ctx,loopStarted=false,tm=0,lastTs=0,accMin=0,hudT=0,profT=0;
+function enterHike(){
+  show('hike');
+  $('#s-hike').innerHTML=`<div class="stagewrap"><div id="stage"><canvas id="cv" width="${CW}" height="${CH}"></canvas>
+    <div id="tl" class="ov"></div><div id="bars" class="ov"></div><div id="tr" class="ov"></div><div id="toasts"></div><div id="actline" class="ov"></div></div>
+    <div id="dock"><div class="prow"><canvas id="prof" width="900" height="56"></canvas><div id="ptxt"></div></div>
+     <div class="ctrls"><div class="cbox"><b>Zeit</b><div class="row gap" id="spd">${[['⏸',0],['1×',1],['2×',2],['4×',4],['8×',8]].map(s=>`<button data-sp="${s[1]}" class="${s[1]===1?'on':''}">${s[0]}</button>`).join('')}</div>
+       <div class="row gap"><button id="a-walk" class="primary"></button></div>
+       <label class="chk"><input type="checkbox" id="c-auto" checked> Auto-Essen/Trinken</label><label class="chk"><input type="checkbox" id="c-stop" checked> Stopp an Wasserstellen</label></div>
+      <div class="cbox rec"><b>📷 Aufnahmen</b><input type="range" id="rec" min="0" max="3" step="1" value="${H.rec}"><div class="rlabels">${REC_LEVELS.map(l=>`<span>${l}</span>`).join('')}</div><div id="rechint"></div>
+        <div class="row gap"><select id="devsel"></select><label class="chk" id="dronewrap"><input type="checkbox" id="c-drone" checked> Drohne</label></div><div id="devinfo"></div></div>
+      <div class="cbox"><b>Aktionen</b><div class="acts" id="acts"></div></div></div></div></div>`;
+  ctx=$('#cv').getContext('2d');
+  $('#cv').onclick=e=>{const r=e.target.getBoundingClientRect(),x=(e.clientX-r.left)*CW/r.width,y=(e.clientY-r.top)*CH/r.height;
+    for(const ic of H.icons.slice().reverse())if(!ic.taken&&ic.sx!==undefined&&Math.hypot(x-ic.sx,y-ic.sy)<ic.r+8){captureIcon(ic);break}};
+  $$('#spd [data-sp]').forEach(b=>b.onclick=()=>setSpeed(+b.dataset.sp));
+  $('#a-walk').onclick=()=>act('walk');
+  $('#c-auto').onchange=e=>H.auto=e.target.checked;$('#c-stop').onchange=e=>H.autoStop=e.target.checked;
+  $('#c-drone').onchange=e=>H.droneOn=e.target.checked;
+  $('#rec').oninput=e=>setRec(+e.target.value);
+  const hs=Object.keys(H.dev).filter(i=>['phone','cam'].includes(H.dev[i].def.kind));
+  $('#devsel').innerHTML=hs.map(i=>`<option value="${i}">${H.dev[i].def.name}</option>`).join('')||'<option>Kein Aufnahmegerät</option>';
+  $('#devsel').value=H.activeDev||'';$('#devsel').onchange=e=>H.activeDev=e.target.value;
+  $('#dronewrap').style.display=H.g.drone?'':'none';
+  const acts=[['tent',''],['sleep',''],['fire','🔥 Feuer machen'],['eat','🍫 Essen'],['cook','🍲 Kochen'],['drink','💧 Trinken'],['refill','🚰 Wasser auffüllen'],['treat','♨️ Wasser behandeln'],['charge','🔋 Akku laden'],['aid','🩹 Erste Hilfe'],['orient','🧭 Orientieren'],['inv','🎒 Inventar'],['rescue','🚁 Abbrechen']];
+  $('#acts').innerHTML=acts.map(a=>`<button data-a="${a[0]}">${a[1]}</button>`).join('');
+  $$('#acts [data-a]').forEach(b=>b.onclick=()=>actClick(b.dataset.a));
+  H.speed=1;accMin=0;tm=0;lastTs=performance.now();
+  updateHUD(true);
+  if(!loopStarted){loopStarted=true;requestAnimationFrame(loop)}
+}
+function setSpeed(s){H.speed=s;$$('#spd [data-sp]').forEach(b=>b.classList.toggle('on',+b.dataset.sp===s))}
+function actClick(a){
+  if(a==='inv')return inventory();
+  if(H.sleep.active){if(a==='sleep')wakeUp();return}
+  if(a==='eat'){const l=FOODS.filter(f=>!f.cook&&H.food[f.id]>0);if(!l.length){toast('Kein direkt essbarer Proviant dabei.','bad');return}
+    showModal({title:'Was möchtest du essen?',buttons:[...l.map(f=>({label:f.e+' '+f.name+' ('+H.food[f.id]+') +'+f.sat,fn:()=>act('eat',f.id)})),{label:'Abbrechen'}]});return}
+  if(a==='cook'){const l=FOODS.filter(f=>f.cook&&H.food[f.id]>0);if(!l.length){toast('Kein Kochproviant dabei.','bad');return}
+    showModal({title:'Was möchtest du kochen?',text:'Braucht Gaskocher + Gas oder ein Feuer in der Nähe.',buttons:[...l.map(f=>({label:f.e+' '+f.name.replace(' (kochen)','')+' ('+H.food[f.id]+') +'+f.sat+' & warm',fn:()=>act('cook',f.id)})),{label:'Abbrechen'}]});return}
+  if(a==='sleep'&&!H.camp.pitched&&!H.g.shelter){act('sleepOut');return}
+  act(a);
+}
+function inventory(){
+  const rows=[];
+  packedGear().forEach(g=>rows.push(g.e+' '+g.name));
+  const h=`<ul class="pl">${rows.map(r=>'<li>'+r+'</li>').join('')}</ul><p>💧 Sauber ${fmtN(H.water.clean)} L · Unbehandelt ${fmtN(H.water.dirty)} L · 🛢️ Gas ${H.gas} Einsätze<br>🔋 Powerbank-Ladungen: ${H.pb} · 🩹 Erste-Hilfe: ${H.kit} · 🧴 Spray: ${H.spray}<br>${FOODS.filter(f=>H.food[f.id]>0).map(f=>f.e+' '+H.food[f.id]+'× '+f.name.replace(' (kochen)','')).join(' · ')||'Kein Proviant'}<br><br>${Object.keys(H.dev).map(i=>{const d=H.dev[i];return d.def.e+' '+d.def.name+': '+(d.broken?'<b>kaputt</b>':Math.round(d.batt)+' %')}).join('<br>')}<br><br>Gesamtgewicht: ${fmtN(loadKg())} kg</p>`;
+  showModal({title:'🎒 Inventar',html:h,buttons:[{label:'Schließen'}]});
+}
+function bar(id,label,v,cls){return `<div class="b ${cls||''}"><span>${label}</span><div><i style="width:${clamp(v,0,100)}%"></i></div></div>`}
+function updateHUD(force){
+  if(!H)return;
+  const B=H.body,W=WEATHER[H.weather.type],hk=H.hk;
+  const day=Math.floor(H.t/1440)-Math.floor(hk.startHour*60/1440)+1;
+  const sn=env.precip==='snow'?'Schnee':W.name;
+  $('#tl').innerHTML=`<div class="tbox"><b>Tag ${day} · ${fmtTime(H.t)}</b><br>${env.precip==='snow'?'🌨️':W.e} ${sn} · ${fmtN(env.temp)} °C<br>💨 ${fmtN(env.wind)} m/s · ⛰️ ${Math.round(env.alt)} m<br>📍 ${BIOMES[env.biome].name}${env.grade>0.08?' (steil ↗)':env.grade<-0.08?' (steil ↘)':''}</div>`;
+  $('#bars').innerHTML=`<div class="tbox">${bar('e','Energie',B.energy,B.energy<25?'low':'')}${bar('s','Sättigung',B.sat,B.sat<25?'low':'')}${bar('h','Wasser',B.hyd,B.hyd<25?'low':'')}${bar('w','Wärme',B.warm,B.warm<40?'low':'')}${bar('n','Nässe',B.wet,B.wet>60?'low':'wet')}${bar('g','Gesundheit',B.hp,B.hp<40?'low':'')}</div>`;
+  const nav=navInfo();const totalClip=H.clips.reduce((a,c)=>a+c.value,0);
+  const cond=[];
+  if(H.inj.blister>H.t)cond.push('🩹 Blase');if(H.inj.sprain>H.t)cond.push('🦶 Verstaucht');if(H.sick>H.t)cond.push('🤢 Krank');
+  $('#tr').innerHTML=`<div class="tbox r"><b>🧭 ${nav.label}</b>${nav.note?'<br><small>'+nav.note+'</small>':''}${H.lost.on?'<br><span class="badtxt">Verirrt!</span>':''}<br>🎞️ ${H.clips.length} Clips (~${Math.round(totalClip)} Wert)<br>🎒 ${fmtN(loadKg())} / ${fmtN(capacityKg())} kg${cond.length?'<br>'+cond.join(' · '):''}${H.camp.pitched?'<br>⛺ Lager steht':''}${H.fire.lit?'<br>🔥 Feuer brennt':''}</div>`;
+  $('#actline').innerHTML=H.sleep.active?`<div class="tbox mid">😴 Schläft … ${Math.round(clamp(H.sleep.p,0,1)*100)} % · Qualität ${Math.round(H.sleep.q*100)} %</div>`:H.action?`<div class="tbox mid">⏳ ${H.action.label} (${Math.ceil(H.action.left)} Min.)</div>`:H.shot?`<div class="tbox mid">📷 ${CLIP_TYPES[H.shot.type].n}${H.shot.type==='drone'?' – Flug':' …'}</div>`:'';
+  $('#a-walk').textContent=H.camp.pitched?'⛺ Lager steht':H.walking?'⏸ Anhalten / Rasten':'▶ Weiterwandern';
+  // Aufnahmen
+  const lv=H.rec;const eff=['Keine Aufnahmen – schnellstes Vorankommen, aber kein Material.','Wenig Material, kaum langsamer.','Solides Material, spürbar langsamer.','Sehr viel Material, sehr langsames Vorankommen.'][lv];
+  $('#rechint').textContent=eff;
+  const ad=H.activeDev&&H.dev[H.activeDev];
+  $('#devinfo').innerHTML=Object.keys(H.dev).map(i=>{const d=H.dev[i];return `<span class="dv ${d.broken?'dead':d.batt<20?'low':''}">${d.def.e} ${d.broken?'kaputt':Math.round(d.batt)+'%'}</span>`}).join(' ');
+  // Aktionsbuttons
+  const busy=!!H.action;const sl=H.sleep.active;
+  const q=(a)=>$('#acts [data-a="'+a+'"]');
+  q('tent').textContent=H.camp.pitched?'⛺ Lager abbauen':'⛺ Lager aufbauen';
+  q('sleep').textContent=sl?'☀️ Aufwachen':(H.camp.pitched||!H.g.shelter?'😴 Schlafen':'😴 Schlafen (Lager?)');
+  $$('#acts [data-a]').forEach(b=>{const a=b.dataset.a;b.disabled=(a==='inv'||a==='rescue')?false:sl?a!=='sleep':busy});
+  q('refill').classList.toggle('hl',!!nearWater());
+  $('#ptxt').innerHTML=`<b>${fmtN(H.km)}</b> / ${H.route.totalKm} km<br><small>Etappe ${env.stage.i+1}/${H.route.stages.length} · ${BIOMES[env.stage.b].name}</small>`;
+  drawProfile($('#prof'));
+}
+function loop(ts){
+  requestAnimationFrame(loop);
+  if(screen!=='hike'||!H){lastTs=ts;return}
+  const dt=Math.min(0.1,(ts-lastTs)/1000);lastTs=ts;tm+=dt;
+  let speed=0;
+  if(!H.ended&&!MODAL){
+    speed=H.speed;if(H.sleep.active&&speed>0)speed=Math.max(speed,30);
+    if(speed>0){
+      accMin+=dt*10*speed;let n=0;const h=1/6;
+      while(accMin>=h&&n<700&&!H.ended&&!MODAL){stepSim(h);accMin-=h;n++}
+      if(n>=700)accMin=0;
+    }
+    updateIcons(speed>0?dt:0);
+  }
+  if(!H.ended){const d=env.alt-H.camElev;H.camElev=Math.abs(d)>80?env.alt:H.camElev+d*Math.min(1,dt*3);drawScene(ctx,tm)}
+  hudT+=dt;if(hudT>0.2){hudT=0;if(!H.ended)updateHUD()}
+}
+window.addEventListener('keydown',e=>{
+  if(screen!=='hike'||!H||MODAL||e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.code==='Space'){e.preventDefault();setSpeed(H.speed===0?1:0)}
+  else if('12345'.includes(e.key))setSpeed([0,1,2,4,8][+e.key-1]);
+});
+
+/* ---------- Auswertung ---------- */
+function onHikeEnd(reason){setTimeout(()=>renderResult(reason),reason==='goal'?600:100)}
+function renderResult(reason){
+  show('result');
+  const hk=H.hk;const days=Math.floor(H.t/1440)-Math.floor(hk.startHour*60/1440)+1;
+  const title={goal:'🏁 Ziel erreicht!',abort:'🚁 Tour abgebrochen',rescue:'🚁 Bergrettung – deine Kräfte haben nicht gereicht'}[reason];
+  const groups={};H.clips.forEach(c=>{const k=c.key;(groups[k]=groups[k]||{c,n:0,best:0,sum:0});groups[k].n++;groups[k].best=Math.max(groups[k].best,c.value);groups[k].sum+=c.value});
+  // Zusammenfassen nach Typ (Tiere einzeln)
+  const list=Object.values(groups).sort((a,b)=>b.best-a.best);
+  const promos=packedGear().filter(g=>g.price>=40);
+  const sc=buildVideoScore(H.clips);
+  $('#s-result').innerHTML=`<div class="wrap"><div class="topbar"><h2>${title}</h2></div>
+   <div class="two"><div class="card"><h3>Tourbericht</h3><ul class="pl"><li>📏 ${fmtN(H.km)} von ${H.route.totalKm} km · ${days} Tag(e)</li><li>🥾 Gehzeit ${fmtN(H.stats.walkMin/60)} h · Schlaf ${fmtN(H.stats.sleepH)} h</li><li>🧭 Verlaufen: ${H.stats.junctionsLost}× (${fmtN(H.wasted)} km Umweg)</li><li>⛺ Lager: ${H.stats.camps}× · 🔥 Feuer: ${H.stats.fires}×</li><li>📺 Kanaleinnahmen während der Tour: ${eur(H.passive)}</li>${H.rescueCost?`<li class="badtxt">🚁 Kosten: ${eur(H.rescueCost)}</li>`:''}</ul>
+    <h3>🎞️ Material (${H.clips.length} Clips)</h3>
+    <div class="cliplist">${list.length?list.map(x=>`<div class="clip"><span>${x.c.e} ${x.c.name}${x.c.rar>=0?` <i class="rar" style="background:${RARITY[x.c.rar].color}">${RARITY[x.c.rar].name}</i>`:''}</span><span>${x.n}× · bester Wert ${fmtN(x.best)}</span></div>`).join(''):'<p class="hint">Du hast kein Material aufgenommen. Stelle beim nächsten Mal den Aufnahme-Regler höher.</p>'}</div></div>
+   <div class="card" id="pubcard"><h3>📺 Video schneiden & veröffentlichen</h3>
+    ${H.clips.length?`<div class="row"><span class="lbl">Titel</span><input id="vt" value="${hk.name} – Mein Trip"></div>
+    <p class="hint">Vielfalt bringt einen Bonus (${sc.groups} verschiedene Motive → ×${fmtN(sc.variety,2)}). Viele gleichartige Clips zählen abnehmend.</p>
+    ${promos.length?`<h4>Ausrüstung bewerben <small>(Provision, −4 % Video-Score je Produkt)</small></h4>${promos.map(p=>`<label class="chk"><input type="checkbox" data-pr="${p.id}"> ${p.e} ${p.name} <small>(${eur(p.price)})</small></label>`).join('')}`:''}
+    <div id="forecast" class="forecast"></div>
+    <button class="big primary" id="r-pub">Video veröffentlichen</button>`:`<p>Ohne Aufnahmen gibt es kein Video und keine Einnahmen.</p><button class="big primary" id="r-home">Zur Basis</button>`}
+   </div></div></div>`;
+  if(!H.clips.length){$('#r-home').onclick=()=>{H=null;renderHub()};return}
+  const calc=()=>{
+    const sel=$$('#pubcard [data-pr]').filter(c=>c.checked).map(c=>gearById(c.dataset.pr));
+    const score=sc.base*sc.variety*hk.mult*(1-0.04*sel.length);
+    const rev=score*1.2*Math.sqrt(1+G.subs/800);
+    const promo=sel.reduce((a,p)=>a+p.price*0.08,0)*clamp(rev/120,0.3,3);
+    return {score,rev,promo,total:rev+promo,sel};
+  };
+  const upd=()=>{const c=calc();$('#forecast').innerHTML=`Video-Score <b>${Math.round(c.score)}</b> · erwartete Einnahmen gesamt <b>${eur(c.total)}</b> <small>(davon Werbung ${eur(c.promo)})</small><br><small>Das Geld kommt nicht auf einmal: Die Aufrufe steigen etwa 11 Tage lang und flachen dann über Wochen ab.</small>`};
+  upd();$$('#pubcard [data-pr]').forEach(c=>c.onchange=upd);
+  $('#r-pub').onclick=()=>{
+    const c=calc();
+    G.videos.push({title:$('#vt').value||hk.name,day:G.day,score:c.score,total:c.total,earned:0,clips:H.clips.length});
+    G.cons={};save();
+    $('#pubcard').innerHTML=`<h3>✅ Veröffentlicht!</h3><p>Dein Video ist online. Erwartete Einnahmen insgesamt: <b>${eur(c.total)}</b>. Sie kommen über die nächsten Tage und Wochen herein – sogar während deiner nächsten Wanderung.</p><button class="big primary" id="r-home">Zur Basis</button>`;
+    $('#r-home').onclick=()=>{H=null;renderHub()};
+  };
+}
+
+/* ---------- Start ---------- */
+window.addEventListener('DOMContentLoaded',()=>{renderMenu()});
+</script>
+</body>
+</html>
