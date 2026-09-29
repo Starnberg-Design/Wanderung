@@ -2551,14 +2551,14 @@ function drawCtx(g,tm,sx,gy){
     FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,3).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
   }
   if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
+  if(H.eatMenu&&eatList.length){ // Auswahl ersetzt die bisherigen Symbole
+    row.length=0;
+    eatList.forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,7)+' '+H.food[f.id]+'×',()=>{H.eatMenu=false;actClick('eat',f.id)},true]));
+    row.push(['↩️','Zurück',()=>{H.eatMenu=false},true]);
+  }
   const n=row.length,gap=n>7?54:62;
   const x0=Math.max(sx-(n-1)/2*gap,H.dog?175:135);
   row.forEach((r,i)=>ctxBubble(g,tm,x0+i*gap,y,r[0],r[1],r[2],r[3]));
-  if(H.eatMenu&&eatList.length){ // kleine Symbole: was aus dem Rucksack gegessen werden soll
-    const ei=row.findIndex(r=>r[1]==='Schließen'),ex=x0+ei*gap,m=eatList.length,sp=44;
-    const sx0=Math.max(30,Math.min(CW-30-(m-1)*sp,ex-(m-1)*sp/2));
-    eatList.forEach((f,i)=>ctxSmall(g,tm,sx0+i*sp,y-58,f.e,H.food[f.id],()=>{H.eatMenu=false;actClick('eat',f.id)}));
-  }
 }
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
