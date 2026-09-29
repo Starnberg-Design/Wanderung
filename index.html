@@ -2358,6 +2358,36 @@ function drawLighting(g,tm,dt){
   if(H.body.warm<40){g.fillStyle=`rgba(120,170,255,${clamp((40-H.body.warm)/40,0,1)*0.18})`;g.fillRect(0,0,CW,CH)}
   if(H.body.energy<8){g.fillStyle=`rgba(0,0,0,${(8-H.body.energy)/8*0.25})`;g.fillRect(0,0,CW,CH)}
 }
+
+/* ---------- Aktions-Blasen direkt an der passenden Stelle ---------- */
+function ctxBubble(g,tm,x,y,e,label,fn,on=true){
+  const pulse=1+Math.sin(tm*5+x)*0.05;
+  g.save();g.translate(x,y);g.scale(pulse,pulse);g.globalAlpha=on?1:0.5;
+  g.fillStyle='rgba(255,235,150,0.96)';g.beginPath();g.arc(0,0,23,0,7);g.fill();g.strokeStyle='#c48a10';g.lineWidth=2.5;g.stroke();
+  g.font='21px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#333';g.fillText(e,0,1);g.textBaseline='alphabetic';
+  g.restore();
+  g.font='bold 12px sans-serif';g.textAlign='center';const w=g.measureText(label).width+12;
+  g.fillStyle='rgba(15,25,20,0.8)';rr(g,x-w/2,y+27,w,18,6);g.fill();g.fillStyle='#fff';g.fillText(label,x,y+40);
+  if(on)HITS.push({fn,x,y,r:36,ic:null});
+}
+function drawCtx(g,tm,sx,gy){
+  if(H.action||H.sleep.active||H.ended||H.live)return;
+  const row=[];const y=gy-150;
+  const w=nearWater();
+  if(w){
+    const full=waterTotal()>=H.g.waterCap-0.05;
+    row.push(['🚰',full?'Voll':'Auffüllen',()=>actClick('refill'),!full]);
+    if(H.water.dirty>0.05)row.push(['♨️','Behandeln',()=>actClick('treat'),true]);
+  }
+  const resting=!H.moving;
+  if(H.camp.pitched&&H.g.shelter){
+    row.push(['😴','Schlafen',()=>actClick('sleep'),true]);
+    row.push(['⛺','Abbauen',()=>actClick('tent'),true]);
+  }else if(resting&&H.g.shelter&&Math.abs(env.grade)<0.09)row.push(['⛺','Zelt',()=>actClick('tent'),true]);
+  if(resting&&H.g.tools.fire&&H.fireUses>0&&!H.fire.lit)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
+  const n=row.length;
+  row.forEach((r,i)=>ctxBubble(g,tm,sx+(i-(n-1)/2)*62,y,r[0],r[1],r[2],r[3]));
+}
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
   if(H.sleep.active)return 'sleep';
@@ -2419,6 +2449,7 @@ function drawScene(g,tm,dt){
     g.restore();
   }
   drawIcons(g,tm);
+  drawCtx(g,tm,sx,gy);
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
   drawWeatherFx(g,tm,dt);
   drawLighting(g,tm,dt);
@@ -2800,7 +2831,7 @@ function buildHikeDOM(){
     const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*CW/r.width,y=(e.clientY-r.top)*CH/r.height;
     let best=null,bd=1e9;
     for(const h of HITS){const d=Math.hypot(h.x-x,h.y-y);if(d<h.r&&d<bd){bd=d;best=h}}
-    if(best){captureIcon(best.ic);updateHUD(true)}
+    if(best){if(best.fn)best.fn();else captureIcon(best.ic);updateHUD(true)}
     else if($('#drawer').classList.contains('open'))$('#drawer').classList.remove('open');
   });
   $('#b-walk').onclick=()=>actClick('walk');
