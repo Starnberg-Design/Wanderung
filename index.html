@@ -2402,6 +2402,22 @@ function drawScene(g,tm,dt){
     const ay=groundY(H.sleep.active?H.camp.x:H.x)+2;
     drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
+
+  // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
+  if((H.action&&H.action.kind!=='live')||H.sleep.active){
+    const A=H.action,em={tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
+    const prog=H.sleep.active?clamp(H.sleep.p,0,1):clamp(1-A.left/A.dur,0,1);
+    const bx=(H.sleep.active&&H.camp.pitched?H.camp.x-70-camX:sx),by=(H.sleep.active&&H.camp.pitched?groundY(H.camp.x-70)-80:gy-122);
+    g.save();g.translate(bx,by);
+    g.fillStyle='rgba(10,20,15,0.72)';g.beginPath();g.arc(0,0,27,0,7);g.fill();
+    g.strokeStyle='rgba(255,255,255,0.18)';g.lineWidth=4;g.beginPath();g.arc(0,0,22,0,7);g.stroke();
+    g.strokeStyle='#4cc38a';g.lineWidth=4;g.lineCap='round';g.beginPath();g.arc(0,0,22,-Math.PI/2,-Math.PI/2+Math.PI*2*prog);g.stroke();
+    g.strokeStyle='rgba(255,255,255,0.7)';g.lineWidth=2;const a=tm*4;g.beginPath();g.arc(0,0,27,a,a+0.9);g.stroke();
+    g.font='20px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff';
+    g.fillText(H.sleep.active?'😴':(em[A.kind]||'⏳'),0,1);g.textBaseline='alphabetic';
+    g.font='bold 10px sans-serif';g.fillStyle='#fff';g.fillText(Math.round(prog*100)+' %',0,42);
+    g.restore();
+  }
   drawIcons(g,tm);
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
   drawWeatherFx(g,tm,dt);
