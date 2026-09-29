@@ -76,7 +76,7 @@ input[type=range]{accent-color:var(--acc)}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 #h-tr{right:calc(6px + var(--sr));top:calc(6px + var(--st));text-align:right;max-width:34vw}
 .sb{display:grid;grid-template-columns:repeat(2,auto);gap:3px 9px}
-.st{display:flex;align-items:center;gap:4px;width:108px;font-size:13px}
+.st{display:flex;align-items:center;gap:4px;width:86px;font-size:13px}
 .st .ic{width:19px;text-align:center;font-size:15px}
 .st .tr{flex:1;height:11px;background:#0008;border-radius:5px;overflow:hidden}
 .st .fl{display:block;height:100%;border-radius:5px;transition:width .3s}
@@ -106,12 +106,11 @@ input[type=range]{accent-color:var(--acc)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.acts button{font-size:.85em;padding:7px 6px}
 .chk{display:flex;gap:6px;align-items:center;font-size:.9em;margin:5px 0}
 #recsl{right:calc(8px + var(--sr));top:calc(50% + 8px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 8px 26px 10px;pointer-events:auto;flex-wrap:nowrap}
-#spdsl{left:calc(8px + var(--sl,0px));top:calc(50% + 24px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 10px 26px 8px;pointer-events:auto;flex-wrap:nowrap}
-#slab{display:flex;flex-direction:column;justify-content:space-between;height:84px;font-size:12px;color:#fff9}
-#slab span{cursor:pointer;line-height:1}#slab span.on{color:#fff;font-weight:700}
-#strk{position:relative;width:30px;height:84px;touch-action:none;cursor:pointer;flex:none}
-#strk:before{content:"";position:absolute;left:12px;width:6px;top:0;bottom:0;background:#0009;border:1px solid #fff4;border-radius:4px}
-#sknob{position:absolute;left:3px;width:24px;height:24px;margin-top:-12px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:top .12s}
+#spdctl{display:flex;align-items:center;gap:2px;background:#0a1410b0;border:1px solid #ffffff22;border-radius:14px;padding:2px 3px}
+#spdctl button{background:transparent;border:0;color:#fff;font-size:15px;width:26px;height:44px;padding:0;cursor:pointer}
+#sp-v{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:38px;color:#fff;font-size:19px;line-height:1}#sp-v small{font-size:11px;margin-top:2px}
+.grp{margin:16px 0 6px;font-size:16px;color:var(--acc)}
+.dogb{display:grid;grid-template-columns:repeat(2,auto);gap:3px 9px;margin-top:6px;padding-top:5px;border-top:1px solid #ffffff22}
 #rlab{display:flex;flex-direction:column;justify-content:space-between;height:112px;font-size:12px;text-align:right;color:#fff9}
 #rlab span{cursor:pointer;line-height:1}#rlab span.on{color:#fff;font-weight:700}
 #rtrk{position:relative;width:30px;height:112px;touch-action:none;cursor:pointer;flex:none}
@@ -162,7 +161,7 @@ canvas.chart{width:100%;height:140px;display:block}
  #modal .box{padding:12px}
  h2{font-size:1.15em}
 }
-@media(max-height:430px){.st{width:96px;font-size:12px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(66px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
+@media(max-height:430px){.st{width:77px;font-size:12px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(66px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
 </style>
 </head>
 <body>
@@ -274,7 +273,10 @@ const BIOMES={
   wiese:{name:'Offenes Land',wind:1.0,net:0.9,rain:1,scenic:0.8,tree:0.06,ground:'#7cb342',far:'#5f8f6a',noise:5,water:6},
   tal:{name:'Tal',wind:0.55,net:0.35,rain:0.9,scenic:1.0,tree:0.4,ground:'#5f9e46',far:'#4a7d5a',noise:8,water:4},
   berg:{name:'Gebirge',wind:1.6,net:0.22,rain:1,scenic:1.35,tree:0,ground:'#8a8d84',far:'#707a8c',noise:40,water:9},
-  fjaell:{name:'Fjäll',wind:1.4,net:0.3,rain:1,scenic:1.4,tree:0.04,ground:'#98996a',far:'#7b8a86',noise:22,water:7}};
+  fjaell:{name:'Fjäll',wind:1.4,net:0.3,rain:1,scenic:1.4,tree:0.04,ground:'#98996a',far:'#7b8a86',noise:22,water:7},
+  sand:{name:'Sandstrand',wind:1.3,net:0.6,rain:1,scenic:1.25,tree:0,ground:'#e0cf9c',far:'#8fb0c4',noise:3,water:14,spd:0.78,bare:1},
+  kies:{name:'Steinstrand',wind:1.2,net:0.5,rain:1,scenic:1.2,tree:0,ground:'#9d9b95',far:'#7d8fa0',noise:6,water:13,spd:0.86,rock:1},
+  schnee:{name:'Schneefeld',wind:1.7,net:0.15,rain:1,scenic:1.5,tree:0,ground:'#eef2f7',far:'#a9b6c9',noise:14,water:12,spd:0.74,snowfield:1,rock:1}};
 
 /* ---- Wetter ---- */
 const WEATHER={
@@ -309,7 +311,7 @@ const REGIONS={
   nordkalott:{name:'Nordkalotte',lat:68.9,meanT:-3.4,sAmp:14,dAmp:4.5,syn:6,wind:1.35,ref:650,mod:{sturm:1.5},tags:['nord']}};
 
 /* ---- Wanderungen ---- */
-const BL={w:'wald',m:'wiese',t:'tal',b:'berg',f:'fjaell'};
+const BL={w:'wald',m:'wiese',t:'tal',b:'berg',f:'fjaell',s:'sand',k:'kies',e:'schnee'};
 // P: erzeugt Etappen aus Muster (Buchstabe = Biom, Zahl = km), Höhe linear a0→a1 plus Schwankung
 function P(spec,total,a0,a1,wig,seed){
   const tk=spec.split(' ').map(s=>({b:BL[s[0]],w:+s.slice(1)}));
@@ -343,41 +345,54 @@ const HIKES=[
  {id:'hoga',name:'Höga Kustenleden',country:'Schweden',reg:'hoga',km:129,diff:3,mult:1.7,permit:35,hard:1.15,ext:1.0,villageEvery:48,startAlt:20,
   desc:'Steile Küstenwälder, Aussichtsberge und Fjordblicke an Schwedens Höga Kusten. Schutzhütten, aber wenige Läden.',
   sights:[S_('Skuleberget-Gipfel','⛰️',70),S_('Ulvön-Fjord','🏞️',76),S_('Höga-Kusten-Brücke','🌉',80)],
-  stages:P('w13 b5 w10 t6 w12 f5',129,20,320,110,11)},
+  stages:P('w13 b5 w10 k3 w12 t6 w10 s2 f5',129,20,320,110,11)},
  {id:'whw',name:'West Highland Way',country:'Schottland',reg:'scot',km:154,diff:3,mult:1.8,permit:30,hard:1.15,ext:1.2,villageEvery:34,startAlt:60,
   desc:'Von Milngavie nach Fort William: Lochs, Moore, Glencoe. Wechselhaft, oft nass, mit Dörfern in Abständen.',
   sights:[S_('Loch Lomond','🏞️',72),S_('Rannoch Moor','🌫️',60),S_('Glencoe','⛰️',88),S_('Ben Nevis','⛰️',100)],
-  stages:P('m12 w8 t8 f10 b8 t6',154,60,300,140,13)},
+  stages:P('m12 w8 k4 t8 f10 b8 t6',154,60,300,140,13)},
  {id:'e5',name:'Alpenüberquerung E5',country:'Deutschland · Österreich · Italien',reg:'alpen',km:120,diff:4,mult:2.1,permit:50,hard:1.3,ext:1.3,villageEvery:60,startAlt:830,
   desc:'Oberstdorf – Meran über Gletscherjoche: Hüttenwege, steile Anstiege, plötzliche Gewitter und kalte Nächte.',
   sights:[S_('Mädelegabel','⛰️',72),S_('Pitztaler Jöchl','⛰️',90),S_('Timmelsjoch','⛰️',80),S_('Meran-Panorama','🏞️',70)],
-  stages:P('t8 w9 b10 b9 t7 w9 b10 t8 b9 w9 t8 m4',120,830,1500,900,17)},
+  stages:P('t8 w9 b10 e4 b9 t7 w9 b10 e4 t8 b9 w9 t8 m4',120,830,1500,900,17)},
  {id:'dolo',name:'Alta Via 1 – Dolomiten',country:'Italien',reg:'dolo',km:125,diff:4,mult:2.2,permit:50,hard:1.3,ext:1.3,villageEvery:62,startAlt:1490,
   desc:'Zackige Felstürme, Klettersteig-Feeling und Refugios. Wenig Wald, viel Fels, starke Sonne und Gewitter.',
   sights:[S_('Lago di Braies','🏞️',78),S_('Tofane-Massiv','⛰️',82),S_('Cinque Torri','🪨',72),S_('Rifugio Lagazuoi','🛖',60)],
-  stages:P('w6 b10 b9 t6 b10 w7 b9 t5',125,1490,1500,700,19)},
+  stages:P('w6 b10 e3 b9 t6 b10 w7 b9 e3 t5',125,1490,1500,700,19)},
  {id:'tmb',name:'Tour du Mont Blanc',country:'Frankreich · Italien · Schweiz',reg:'mtblanc',km:170,diff:4,mult:2.4,permit:55,hard:1.35,ext:1.35,villageEvery:38,startAlt:1030,
   desc:'Der Klassiker um das Massiv – 11 Pässe, Gletscherblick, Dörfer alle paar Tage, aber steile Etappen.',
   sights:[S_('Aiguille du Midi','⛰️',88),S_('Col de la Seigne','⛰️',70),S_('Lac Blanc','🏞️',80),S_('Refuge Bonatti','🛖',62),S_('Grand Col Ferret','⛰️',78)],
-  stages:P('t7 b9 w6 b10 t6 b9 w6 b10 t7 b8',170,1030,1400,800,23)},
+  stages:P('t7 b9 w6 b10 e3 t6 b9 w6 b10 e3 t7 b8',170,1030,1400,800,23)},
  {id:'laugavegur',name:'Laugavegur & Fimmvörðuháls',country:'Island',reg:'island',km:80,diff:4,mult:2.3,permit:110,hard:1.4,ext:1.5,villageEvery:0,startAlt:600,
   desc:'Rhyolithberge, Schneefelder, Flussfurten und heiße Quellen. Kein Laden, kaum Bäume, wildes Wetter.',
   sights:[S_('Landmannalaugar-Thermen','♨️',80),S_('Hrafntinnusker','⛰️',76),S_('Álftavatn','🏞️',68),S_('Skógafoss','🏞️',92)],
-  stages:P('f9 b8 f10 t7 f12 b7 f9 t10 w4',80,600,120,220,29)},
+  stages:P('f9 b8 e5 f10 t7 f12 b7 e4 f9 k3 s3 t10 w4',80,600,120,220,29)},
  {id:'kungs_n',name:'Kungsleden Nord (Abisko – Nikkaluokta)',country:'Schweden',reg:'lappland',km:105,diff:4,mult:2.5,permit:95,hard:1.4,ext:1.5,villageEvery:0,startAlt:380,
   desc:'Die berühmteste Fjäll-Route: weite Täler, Renntiere, Samische Hütten, Kebnekaise voraus. Kaum Netz, Furten, plötzlicher Sturm.',
   sights:[S_('Abisko-Schlucht','🏞️',72),S_('Tjäktja-Pass','⛰️',85),S_('Kebnekaise','⛰️',95),S_('Samische Hütte','🛖',60)],
-  stages:P('w9 f12 f14 t9 f14 b8 f13 t10 f9 w7',105,380,470,280,31)},
+  stages:P('w9 f12 f14 e3 t9 f14 b8 f13 e2 t10 f9 w7',105,380,470,280,31)},
  {id:'kungs',name:'Kungsleden komplett (Abisko – Hemavan)',country:'Schweden',reg:'lappland',km:440,diff:5,mult:4.4,permit:190,hard:1.6,ext:1.6,villageEvery:85,startAlt:380,
   desc:'440 km durch Lappland. Wochenlange Einsamkeit, alle 80 km ein kleiner Ort. Nur mit Strategie, Ausrüstung und Nervenstärke zu schaffen.',
   sights:[S_('Abisko-Schlucht','🏞️',72),S_('Tjäktjapasset','⛰️',88),S_('Kebnekaise','⛰️',96),S_('Saltoluokta-Fjord','🏞️',76),S_('Sarek-Blick','⛰️',92),S_('Kvikkjokk','🛖',62),S_('Ammarnäs-Tal','🏞️',70),S_('Tärnasjön','🏞️',78)],
-  stages:P('w9 f14 f16 t9 f15 b8 f14 t10 f12 w8',440,380,560,330,37)},
+  stages:P('w9 f14 f16 e3 t9 f15 b8 f14 e3 t10 f12 w8',440,380,560,330,37)},
  {id:'nordkalott',name:'Nordkalottleden',country:'Norwegen · Schweden · Finnland',reg:'nordkalott',km:800,diff:6,mult:7.5,permit:260,hard:1.9,ext:1.85,villageEvery:112,startAlt:450,
   desc:'800 km über drei Länder, oberhalb des Polarkreises. Die härteste Tour im Spiel: Winterstürme, Polarnacht oder Mitternachtssonne, wenige Läden.',
   sights:[S_('Treriksröset (Dreiländereck)','🗿',98),S_('Halti – höchster Punkt Finnlands','⛰️',96),S_('Kilpisjärvi','🏞️',72),S_('Lyngenfjord-Blick','🏞️',88),S_('Reisa-Canyon','🏞️',82),S_('Samisches Dorf','🛖',66),S_('Kebnekaise-Blick','⛰️',90),S_('Pältsa-Fjäll','⛰️',80)],
-  stages:P('f14 w9 f16 t8 f15 b8 f14 t9 f13 w8',800,450,640,360,41)}
+  stages:P('f14 w9 f16 e3 t8 f15 b8 f14 e4 t9 f13 k3 s2 w8',800,450,640,360,41)}
 ];
 HIKES.forEach(h=>{h.regD=REGIONS[h.reg];if(!h.km)h.km=h.stages.reduce((a,s)=>a+s.km,0);h.km=Math.round(h.stages.reduce((a,s)=>a+s.km,0))});
+/* Echte Orte mit Läden (Name, km ab Start) */
+const TOWNS={
+ rennsteig:[['Oberhof',20],['Schmiedefeld am Rennsteig',42]],
+ hexenstieg:[['Clausthal-Zellerfeld',20],['Altenau',36],['Schierke',68],['Rübeland',84]],
+ malerweg:[['Stadt Wehlen',13],['Hohnstein',38],['Bad Schandau',62],['Schmilka',76],['Königstein',100]],
+ hoga:[['Ullånger',42],['Norrfällsviken',68],['Bönhamn',94]],
+ whw:[['Drymen',20],['Tyndrum',77],['Kingshouse',110],['Kinlochleven',132]],
+ e5:[['Holzgau',40],['Zams',63],['Vent',96]],
+ dolo:[['Passo Falzarego',48],['Passo Staulanza',86],['Forno di Zoldo',108]],
+ tmb:[['Les Contamines',18],['Courmayeur',76],['Champex-Lac',118],['Trient',140]],
+ kungs:[['Kebnekaise Fjällstation',100],['Saltoluokta',178],['Kvikkjokk',262],['Ammarnäs',352]],
+ nordkalott:[['Ritsem',100],['Abisko',215],['Björkliden',232],['Kilpisjärvi',400],['Skibotn',560],['Kautokeino',780]]
+};
 const SP_REWARD=[0,1,1,2,3,4,5];
 
 /* ---- Ausrüstung ---- */
@@ -429,7 +444,7 @@ const GEAR=[
   {id:'offline',cat:'nav',nav:'offline',name:'Offline-Kartenpaket (App)',e:'📥',price:5,kg:0,desc:'Smartphone-Navigation funktioniert auch ohne Netz.'},
   {id:'gps',cat:'nav',nav:'gps',kind:'gps',q:0.92,fragile:0.0002,name:'GPS-Gerät',e:'📡',price:130,kg:0.25,desc:'Live-Position, Abweichungswarnung, eigener Akku, kein Netz nötig.'},
 
-  {id:'phone_cheap',cat:'rec',kind:'phone',name:'Einfaches Smartphone',e:'📱',price:0,w:80,kg:0.18,q:0.45,time:1.25,rate:2.0,fragile:0.0011,desc:'Schlechte Bildqualität, kleiner Akku. Auch Navigation und Notlicht.'},
+  {id:'phone_cheap',cat:'rec',kind:'phone',name:'Einfaches Smartphone',e:'📱',price:0,w:80,kg:0.18,q:0.45,time:1.25,rate:4.6,fragile:0.0011,desc:'Schlechte Bildqualität, kleiner Akku (ca. 2 Tage bei wenigen Clips). Auch Navigation und Notlicht.'},
   {id:'phone_good',cat:'rec',kind:'phone',name:'Flaggschiff-Smartphone',e:'📱',price:240,kg:0.2,q:0.78,time:1.0,rate:2.6,fragile:0.0006,desc:'Gute Aufnahmen, robust. Filmt in hoher Qualität und braucht dafür etwas mehr Strom.'},
   {id:'camera',cat:'rec',kind:'cam',name:'Systemkamera',e:'📷',price:320,kg:0.9,q:1.0,time:1.5,rate:2.8,fragile:0.0004,desc:'Beste Handaufnahmen, dauert aber länger.'},
   {id:'drone',cat:'rec',kind:'drone',name:'Drohne',e:'🛸',price:430,kg:0.6,q:1.2,time:1,rate:0,fragile:0.0005,desc:'Spektakuläre Luftaufnahmen. Du bleibst für den Flug stehen. Windempfindlich.'},
@@ -560,6 +575,9 @@ function playerLoad(totalKg,dogFoodKg){
 /* ---- Route erzeugen ---- */
 function stageIndexAt(S,x){let lo=0,hi=S.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(x<S[mid].x1)hi=mid;else lo=mid+1}return lo}
 const FEAT_RAD={village:380,sight:260,animal:170,forage:160,special:200,hiker:130,junction:120,quelle:130,fluss:160};
+function stageWaterF(hk,i){let h=0;for(const ch of hk.id)h=(h*31+ch.charCodeAt(0))>>>0;const r=mulberry32(h+i*131)();return r<0.3?0.15:r<0.62?0.7:1.5}
+function stageSprings(hk,st){const B=BIOMES[st.b];let n=Math.round(st.km/(B.water*1.7)*stageWaterF(hk,st.i));if(hk.stages.length<=4||st.km>=13)n=Math.max(n,1);return n}
+function waterInfo(hk){let n=0,dry=0,maxDry=0;hk.stages.forEach((s,i)=>{const c=stageSprings({stages:hk.stages,id:hk.id},{i,b:s.b,km:s.km});n+=c;if(c===0){dry++;maxDry=Math.max(maxDry,s.km)}});const per10=n/hk.km*10;return {n,per10,dry,maxDry,lbl:per10<0.55?'wenige Wasserstellen':per10<1.0?'mäßig viele Wasserstellen':'viele Wasserstellen'}}
 function buildRoute(hk,seed){
   const rng=mulberry32(seed);
   const stages=[];let acc=0,prev=hk.startAlt;
@@ -578,7 +596,7 @@ function buildRoute(hk,seed){
   // Wasserstellen, Flüsse, Wegkreuzungen
   stages.forEach(st=>{
     const L=st.x1-st.x0,B=BIOMES[st.b];
-    const nW=Math.max(1,Math.round(st.km/B.water));
+    const nW=stageSprings(hk,st);
     for(let k=0;k<nW;k++)add({type:'quelle',x:st.x0+L*((k+0.25+rng()*0.5)/nW)});
     if(st.b!=='berg'){
       const nR=st.b==='tal'?1+(rng()<0.5?1:0):(rng()<0.5?1:0);
@@ -613,7 +631,8 @@ function buildRoute(hk,seed){
   // Wanderer, Dörfer, Sammelstellen, Sonderereignisse
   const nH=Math.max(1,Math.round(totalKm/(15+hk.diff*2)));
   for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.05+0.9*((k+0.2+rng()*0.6)/nH))});
-  if(hk.villageEvery>0){
+  if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0]})})}
+  else if(hk.villageEvery>0){
     for(let km=hk.villageEvery*(0.55+rng()*0.25);km<totalKm-6;km+=hk.villageEvery*(0.85+rng()*0.3))
       add({type:'village',x:km*PPK,name:pick(['Dorfladen','Kiosk','Butik','Alimentari','Épicerie','Kaufmannsladen','Kjøpmann'])});
   }
@@ -703,7 +722,7 @@ const CLIP_TYPES={
 const REC_LEVELS=['Aus','Gering','Mittel','Intensiv'];
 const SHOT_RATE=[0,1,3,6];
 const DRONE_INT=[1e9,200,100,55];
-const SPEEDS=[0,1,2,4,8,16];
+const SPEEDS=[0,1,2,4,6,16];
 
 function xpAdd(stat,amt){
   if(!amt||amt<=0)return;
@@ -750,7 +769,7 @@ function startHike(hikeId){
     stim:{boostEnd:0,crashStart:0,crashEnd:0,mul:1,crash:1},charging:null,live:null,stalker:null,
     icons:[],clips:[],passive:0,started:false,ended:false,wasted:0,skyCd:200,coldCd:0,droneToast:0,
     synPh:[rnd(0,6.28),rnd(0,6.28)],nextW:null,
-    dog:ds?{def:ds,hunger:85,thirst:85,fat:0,mood:78,paw:0,fed:0}:null,
+    dog:ds?{def:ds,hunger:85,thirst:85,fat:0,mood:78,paw:0,fed:0,leash:true,away:false,trust:G.dog&&G.dog.bond||0}:null,
     stats:{walkMin:0,camps:0,sleepH:0,junctionsLost:0,fires:0,animals:0,fish:0,forage:0,milestones:0,villages:0,streams:0,donations:0,repairs:0},
     flash:0,camElev:0,moving:false,levelups:[],xp0:JSON.stringify(G.stats)};
   H.weather={type:'klar',until:0,wind:2,rainI:0};
@@ -1038,6 +1057,10 @@ function act(kind,arg){
       const f=FOODS.find(x=>x.id===arg);if(!f||!H.food[arg])return;
       if(!canCook()){toast('Zum Kochen brauchst du Gaskocher + Gas oder ein Feuer in der Nähe.','bad');return}
       beginAction('cook','Bereitet '+f.name.replace(/ \((kochen|garen)\)/,'')+' zu …',f.fish?20:15,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);eatFood(arg)});break}
+    case 'leash':{const D=H.dog;if(!D||D.away)return;D.leash=!D.leash;toast(D.leash?'🦮 '+G.dog.name+' ist wieder an der Leine.':'🐕 '+G.dog.name+' läuft frei'+(D.trust<90?' – bei wenig Vertrauen kann er weglaufen.':'.'),D.leash||D.trust>=90?'':'warn');break}
+    case 'rest':
+      if(!H.camp.pitched||!H.g.shelter){toast('Zum Ausruhen brauchst du ein aufgebautes Zelt oder Tarp.','bad');return}
+      startSleep(true);break;
     case 'drink':
       if(H.water.clean<=0.05){
         if(H.water.dirty>0.05){showModal({title:'Unbehandeltes Wasser',text:'Du hast nur unbehandeltes Wasser. Trinken kann dich krank machen (ca. 40 %). Trotzdem trinken?',buttons:[{label:'Trinken',fn:()=>beginAction('drink','Trinkt …',2,()=>drinkWater(true))},{label:'Abbrechen'}]});return}
@@ -1207,26 +1230,26 @@ function sleepNeedH(){
   const extra=0.15*Math.max(0,awakeH-16);
   return clamp(4+(100-H.body.energy)/100*4+late+extra+H.fatigue*0.06-(hasT('frueh')?1:0),3.5,11.5);
 }
-function startSleep(){
+function startSleep(rest){
   if(H.sleep.active)return;
-  const need=sleepNeedH();
-  H.sleep={active:true,need,q:sleepQuality(),startE:H.body.energy,p:0,elapsed:0,qsum:0,begun:H.t};
+  const need=rest===true?1.5:sleepNeedH();
+  H.sleep={active:true,need,q:sleepQuality(),startE:H.body.energy,p:0,elapsed:0,qsum:0,begun:H.t,rest:rest===true};
   H.walking=false;H.charging=H.charging;
-  toast('😴 Du schläfst ein … (Bedarf ca. '+fmtN(need)+' h bei Qualität '+Math.round(H.sleep.q*100)+' %)');
+  toast(rest===true?'🛌 Du ruhst dich im Schutz deines Lagers aus … (ca. 1,5 h)':'😴 Du schläfst ein … (Bedarf ca. '+fmtN(need)+' h bei Qualität '+Math.round(H.sleep.q*100)+' %)');
 }
 function stepSleep(h){
   const S=H.sleep;S.q=sleepQuality();S.elapsed+=h;S.qsum+=S.q*h;
   S.p+=h/(S.need*60)*S.q;
-  H.fatigue=Math.max(0,H.fatigue-h/60*0.42*S.q);
-  H.body.energy=lerp(S.startE,100-H.fatigue,clamp(S.p,0,1));
+  H.fatigue=Math.max(0,H.fatigue-h/60*0.42*S.q*(S.rest?0.3:1));
+  H.body.energy=lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1));
   if(S.p>=1||S.elapsed>14*60)wakeUp();
 }
 function wakeUp(early){
   const S=H.sleep;const hrs=S.elapsed/60,avg=S.qsum/Math.max(1,S.elapsed);
-  H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;H.sleptTonight=true;
-  toast((early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
-  if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,100-H.fatigue,clamp(S.p,0,1)));
-  if(H.autoNight){H.autoWake=true;if(!H.camp.pitched)H.walking=true}
+  H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;if(!S.rest)H.sleptTonight=true;
+  toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
+  if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1)));
+  if(H.autoNight&&!S.rest){H.autoWake=true;if(!H.camp.pitched)H.walking=true}
 }
 function autoNightTick(){
   if(!H.autoNight||H.action||H.sleep.active||H.ended||MODAL||H.live)return;
@@ -1347,9 +1370,17 @@ const hasWaterProof=()=>false;
 /* ---------- Hund ---------- */
 function dogTick(mode,hr,dkm){
   const D=H.dog;if(!D)return;const def=D.def;
+  if(D.away)return;
+  D.trust=Math.min(100,(D.trust||0)+(D.leash?0.5:0.3)*hr);
+  if(mode==='walk'&&!D.leash&&!H.action&&D.trust<90&&Math.random()<(0.03+0.45*(90-D.trust)/90)*hr){
+    D.away=true;const mins=Math.round(20+(90-D.trust)*1.1+rnd(0,30));
+    toast('🐕 '+G.dog.name+' ist abgehauen! Du musst ihn suchen …','bad');sfx('bad');
+    beginAction('search','Sucht '+G.dog.name+' …',mins,()=>{D.away=false;D.leash=true;D.mood=Math.max(0,D.mood-10);D.trust=Math.max(0,D.trust-2);toast('🐕 '+G.dog.name+' ist wieder da – du legst ihm die Leine an.','good');sfx('success')},{resume:true});
+    return;
+  }
   D.hunger=clamp(D.hunger-(mode==='walk'?6.4:3.2)*hr,0,100);
   D.thirst=clamp(D.thirst-(mode==='walk'?7:3)*hr,0,100);
-  if(mode==='walk')D.fat=Math.min(100,D.fat+dkm*100/(def.stam*1.8));
+  if(mode==='walk')D.fat=Math.min(100,D.fat+dkm*100/(def.stam*1.8)*(D.leash?1.4:1));
   else D.fat=Math.max(0,D.fat-(mode==='sleep'?9:4)*hr);
   const ration=def.food*0.5;
   if(D.hunger<45){
@@ -1559,6 +1590,9 @@ function walkSpeedKmh(){
   m=clamp(m,0.3,1.15);
   const lf=loadKg()/capacityKg();
   m*=1-clamp(lf-0.45,0,1.2)*0.5*(1-0.5*(g.pack?g.pack.comfort:0));
+  m*=clamp(1.1-0.012*loadKg(),0.78,1.1); // leichter Rucksack = schneller
+  {const bs=BIOMES[env.biome].spd;if(bs){m*=(BIOMES[env.biome].snowfield&&g.tools.snowshoes)?Math.min(1,bs+0.2):bs}}
+  m*=[1.07,1.035,1,0.95][H.rec]||1; // wenige Clips = zügiger unterwegs
   if(g.tools.poles&&gr>0.03)m*=1.05;
   m*=g.shoes?g.shoes.spd*(0.9+0.1*cf(g.shoes.id)):0.85;
   if(H.inj.blister>H.t)m*=0.86;if(H.inj.sprain>H.t)m*=0.75;if(H.sick>H.t)m*=0.9;
@@ -1602,7 +1636,14 @@ function stepSim(h){
       if(v>0.01){
         mode='walk';dkm=v*hr;const dpx=dkm*PPK,prev=H.x;
         H.phase+=dpx*0.06;H.stats.walkMin+=h;
-        if(H.g.shoes)wear(H.g.shoes.id,dkm*0.11*(1+B.wet/120));
+        {const ROUGH={wald:1,wiese:0.8,tal:0.9,berg:1.5,fjaell:1.2,sand:1.3,kies:1.6,schnee:1.4}[env.biome]||1;
+         const wx=1+(env.precip?0.5:0)+(env.precip==='snow'||env.snow>0.4?0.4:0)+(env.wind>12?0.3:0)+Math.max(0,B.wet-40)/150;
+         if(H.g.shoes)wear(H.g.shoes.id,dkm*0.11*ROUGH*wx*(1+B.wet/120)*(H.g.tools.gaiters?0.8:1));
+         if(H.g.pack)wear(H.g.pack.id,dkm*0.035*ROUGH*wx);
+         // Kleidung ohne Schutzschicht nutzt sich bei Nässe, Wind und rauem Gelände stärker ab
+         if(H.g.mid&&(env.precip||env.wind>10)&&!H.g.shell)wear(H.g.mid.id,dkm*0.09*ROUGH*wx);
+         else if(H.g.mid)wear(H.g.mid.id,dkm*0.012*ROUGH);
+         if(H.g.shell&&(env.precip||env.wind>10))wear(H.g.shell.id,dkm*0.05*ROUGH*wx);}
         xpAdd('aus',dkm);
         const lf=loadKg()/capacityKg();if(lf>0.7)xpAdd('trag',dkm);else if(lf>0.5)xpAdd('trag',dkm*0.4);
         if(env.grade<0.03)xpAdd('tempo',dkm*0.6);
@@ -1618,7 +1659,7 @@ function stepSim(h){
     if(!H.action&&!H.sleep.active)autoNightTick();
   }
   H.moving=mode==='walk';
-  if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8)+(env.wind>13&&Math.random()<0.01*hr?12:0))}
+  if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
   trackFeatures();trackSky(hr);
   deviceTick(hr,mode);dogTick(mode,hr,dkm);
   bodyTick(mode,hr);
@@ -1657,7 +1698,7 @@ function endHike(reason){
     else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
   }
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
-  if(G.dog){G.dog.bond=Math.min(100,(G.dog.bond||0)+Math.max(1,Math.round(H.km/10)))}
+  if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
   const days=Math.floor(H.t/1440)+1;
   G.pending={hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
     clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
@@ -1797,7 +1838,8 @@ function drawHiker(g,x,y,s,o){
     g.restore();return;
   }
   const walk=mode==='walk',limp=walk&&o.limp;
-  const sw=walk?Math.sin(ph)*(limp?5.5:9):0,bob=walk?Math.abs(Math.sin(ph))*(limp?3.4:2.2):0;
+  const tired=clamp((60-(o.energy===undefined?100:o.energy))/60,0,1);
+  const sw=walk?Math.sin(ph)*(limp?5.5:9)*(1-0.3*tired):0,bob=walk?Math.abs(Math.sin(ph))*(limp?3.4:2.2)*(1-0.3*tired):0;
   if(limp)g.rotate(0.06);
   const drop=(mode==='sit'||mode==='work')?14:0;
   const hipY=-26+drop-bob;
@@ -1807,10 +1849,11 @@ function drawHiker(g,x,y,s,o){
   g.fillStyle='#2b2b2b';
   if(drop){g.beginPath();g.ellipse(12,-1,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(6,-1,6,3,0,0,7);g.fill()}
   else{g.beginPath();g.ellipse(-sw+2,-2,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(sw+2,-2,6,3,0,0,7);g.fill()}
+  g.save();g.translate(0,hipY);g.rotate(0.02+0.26*tired);g.translate(0,-hipY); // Haltung: müde = vorgebeugt
   g.fillStyle=o.packColor||'#7f8c8d';rr(g,-21*bw,hipY-36,15*bw+2,32,5);g.fill();
   if(o.tent){g.fillStyle='#c0603a';rr(g,-22*bw,hipY-42,17*bw+2,7,3);g.fill()}
   g.fillStyle=jk;rr(g,-8*bw,hipY-35,17*bw,33,5);g.fill();
-  const hx=2,hy=hipY-45;
+  const hx=2+3*tired,hy=hipY-45+4.5*tired;
   g.fillStyle=skin;g.beginPath();g.arc(hx,hy,8.5,0,7);g.fill();
   if(L.beard===2){g.fillStyle=hair;g.beginPath();g.arc(hx+1,hy+2,8.5,0.05,Math.PI-0.05);g.fill();g.fillStyle=skin;g.beginPath();g.ellipse(hx+5,hy+1,3,2,0,0,7);g.fill()}
   else if(L.beard===1){g.fillStyle=rgb(hex(hair),0.55);g.beginPath();g.arc(hx+1,hy+2,8.5,0.2,Math.PI-0.2);g.fill()}
@@ -1838,7 +1881,7 @@ function drawHiker(g,x,y,s,o){
   else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
   else{ln(g,shx,shy,-sw*0.7+2,hipY-12);ln(g,shx,shy,sw*0.7+4,hipY-12);
     if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,sw*0.7+4,hipY-12,sw*0.7+18,-1)}}
-  g.restore();
+  g.restore();g.restore();
 }
 
 /* ---------- Hund ---------- */
@@ -2077,8 +2120,9 @@ function drawDecor(g,tm,pass){
       }else if(st.b==='fjaell')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
       else tree(g,sx,y,sc,hash(cx*3)<0.35?'leaf':'con',sway,sn,pass===0);
     }else if(pass===1){
-      if(st.b==='berg'||st.b==='fjaell'){
-        if(r<B.tree+0.22){g.fillStyle=tc('#7c8088',sn);g.beginPath();g.ellipse(sx,y-4*sc,14*sc,9*sc,0,Math.PI,0);g.fill()}
+      if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
+      else if(st.b==='berg'||st.b==='fjaell'||B.rock){
+        if(r<B.tree+(B.rock?0.32:0.22)){g.fillStyle=tc('#7c8088',sn);g.beginPath();g.ellipse(sx,y-4*sc,14*sc,9*sc,0,Math.PI,0);g.fill()}
       }else if(r<B.tree+0.3){
         g.fillStyle=tc('#4c8f3b',sn);g.beginPath();g.arc(sx,y-5*sc,7*sc,Math.PI,0);g.fill();
         if(st.b==='wiese'&&hash(cx*11)<0.5){g.fillStyle=['#fff','#f7d84a','#e57ab8'][cx&3&&(cx%3)];g.fillRect(sx+3,y-9*sc,2.5,2.5)}
@@ -2385,31 +2429,36 @@ function ctxBubble(g,tm,x,y,e,label,fn,on=true){
 }
 function drawCtx(g,tm,sx,gy){
   if(H.action||H.sleep.active||H.ended||H.live)return;
-  const row=[];const y=gy-150;
+  const row=[];const y=gy-150;const B=H.body;
+  if(H.lost.on)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
   const w=nearWater();
   if(w){
     const full=waterTotal()>=H.g.waterCap-0.05;
     row.push(['🚰',full?'Voll':'Auffüllen',()=>actClick('refill'),!full]);
     if(H.water.dirty>0.05)row.push(['♨️','Behandeln',()=>actClick('treat'),true]);
   }
+  if(H.water.clean>0.05&&B.hyd<88)row.push(['💧','Trinken',()=>actClick('drink'),true]);
+  if(B.sat<85){const f=FOODS.filter(f=>!f.cook&&!f.stim&&(H.food[f.id]||0)>0).sort((a,b)=>b.sat-a.sat)[0];if(f)row.push([f.e,'Essen',()=>actClick('eat',f.id),true])}
   const resting=!H.moving;
   if(H.camp.pitched&&H.g.shelter){
     row.push(['😴','Schlafen',()=>actClick('sleep'),true]);
+    row.push(['🛌','Ausruhen',()=>actClick('rest'),true]);
     row.push(['⛺','Abbauen',()=>actClick('tent'),true]);
   }else if(resting&&H.g.shelter&&Math.abs(env.grade)<0.09)row.push(['⛺','Zelt',()=>actClick('tent'),true]);
   if(resting&&H.g.tools.fire&&H.fireUses>0&&!H.fire.lit)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
   if(resting&&H.fire.lit&&nearFire()){
-    FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,4).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
+    FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,3).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
   }
-  const n=row.length;
-  row.forEach((r,i)=>ctxBubble(g,tm,sx+(i-(n-1)/2)*62,y,r[0],r[1],r[2],r[3]));
+  if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
+  const n=row.length,gap=n>7?54:62;
+  row.forEach((r,i)=>ctxBubble(g,tm,sx+(i-(n-1)/2)*gap,y,r[0],r[1],r[2],r[3]));
 }
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
   if(H.sleep.active)return 'sleep';
   if(H.live&&H.action&&H.action.kind==='live')return 'live';
   if(H.shot&&!H.shot.noclip||H.shot)return H.shot.type;
-  if(H.action){const k=H.action.kind;if(['eat','cook','drink','fire','fix','aid','forage','fish','refill','treat','tent','talk','fans'].includes(k))return (k==='tent'||k==='forage'||k==='fans'||k==='talk'||k==='refill')?'idle':'work'}
+  if(H.action){const k=H.action.kind;if(['eat','cook','drink','fire','search','fix','aid','forage','fish','refill','treat','tent','talk','fans'].includes(k))return (k==='tent'||k==='forage'||k==='fans'||k==='talk'||k==='refill')?'idle':'work'}
   if(H.moving)return 'walk';
   if(H.camp.pitched||!H.walking)return 'sit';
   return 'idle';
@@ -2435,23 +2484,28 @@ function drawScene(g,tm,dt){
   const sx=CHAR_SX();
   const g0=H.g;
   const limp=H.inj.blister>H.t||H.inj.sprain>H.t;
-  if(H.dog&&G.dog){
-    const dm=H.sleep.active?'sleep':(H.moving?'walk':(H.dog.fat>60||true?'sit':'idle'));
-    const off=H.moving?100+Math.sin(tm*0.9)*14:(H.fire.lit&&nearFire()?-46:-70);
-    const dx=H.moving?sx-off:sx-off;
-    const px=H.x-(H.moving?off:off);
-    drawDog(g,H.sleep.active?H.camp.x-camX+20:dx,groundY(H.sleep.active?H.camp.x+20:px)+2,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
+  if(H.dog&&G.dog&&!H.dog.away){
+    const dm=H.sleep.active?'sleep':(H.moving?'walk':'sit');
+    const lash=H.dog.leash;
+    const off=H.moving?(lash?66+Math.sin(tm*0.9)*4:100+Math.sin(tm*0.9)*14):(H.fire.lit&&nearFire()?-46:-70);
+    const dx=sx-off,px=H.x-off;
+    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=groundY(H.sleep.active?H.camp.x+20:px)+2;
+    drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
+    if(lash&&!H.sleep.active&&(H.moving||dm==='sit')&&!H.action){ // Leine
+      const hx0=sx+(H.moving?10:8),hy0=gy-(H.moving?27:18),cx=dgx+(H.moving?12:10),cy=dgy-(H.moving?16:12);
+      g.strokeStyle='#c0392b';g.lineWidth=1.8;g.beginPath();g.moveTo(hx0,hy0);g.quadraticCurveTo((hx0+cx)/2,Math.max(hy0,cy)+9,cx,cy);g.stroke();
+    }
   }
   const inTent=H.sleep.active&&H.camp.pitched&&g0.shelter;
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=groundY(H.sleep.active?H.camp.x:H.x)+2;
-    drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+    drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
 
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
   if((H.action&&H.action.kind!=='live')||H.sleep.active){
-    const A=H.action,em={tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
+    const A=H.action,em={tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
     const prog=H.sleep.active?clamp(H.sleep.p,0,1):clamp(1-A.left/A.dur,0,1);
     const bx=(H.sleep.active&&H.camp.pitched?H.camp.x-70-camX:sx),by=(H.sleep.active&&H.camp.pitched?groundY(H.camp.x-70)-80:gy-122);
     g.save();g.translate(bx,by);
@@ -2693,7 +2747,7 @@ function briefing(hk){
   const satStock=CONS.filter(f=>f.sat).reduce((a,f)=>a+f.sat*(G.cons[f.id]||0),0);
   const perDay=65*Math.max(0.5,1.35-0.1*ES('food'))/1.0;
   const stockDays=satStock/perDay;
-  const gapKm=hk.villageEvery>0?hk.villageEvery*1.15:hk.km,gapDays=gapKm/ (hk.diff>=5?15:17);
+  const gapKm=TOWNS[hk.id]?(()=>{const k=[0,...TOWNS[hk.id].filter(t=>t[1]<hk.km-3).map(t=>t[1]),hk.km];let m=0;for(let i=1;i<k.length;i++)m=Math.max(m,k[i]-k[i-1]);return m})():hk.villageEvery>0?hk.villageEvery*1.15:hk.km,gapDays=gapKm/ (hk.diff>=5?15:17);
   if(stockDays<Math.min(gapDays,days)*0.85){w.push({l:stockDays<1?'bad':'warn',t:`Proviant reicht für ca. ${fmtN(stockDays,1)} Tage – ohne Laden brauchst du für die längste Strecke etwa ${fmtN(Math.min(gapDays,days),0)} Tage.`});score+=0.6}
   // Gewicht
   const load=playerLoad(gearKg()+consKg(),(G.cons.dogfood||0));
@@ -2708,21 +2762,51 @@ function briefing(hk){
   const col=score<2.2?'#4caf50':score<3.4?'#8bc34a':score<4.8?'#f7c948':score<6.2?'#ff9800':score<7.6?'#f4511e':'#c2185b';
   return {tDay,tNight,dl,days,w,score,lbl,col,start:dateStr(G.day),end:dateStr(G.day+days),load,sT};
 }
+
+const START_C={nordkalott:'Schweden'};
+function startCountry(hk){return START_C[hk.id]||hk.country.split(' · ')[0]}
+function routeFacts(hk){
+  const days=estDays(hk),ms=new Set();for(let d=0;d<=days;d++)ms.add(dateOf(G.day+d).m);
+  const R=hk.regD,dm=dateOf(G.day+days/2),tDay=seasonalT(R,dm.doy0,avgAlt(hk))+R.dAmp*0.55;
+  const km=b=>hk.stages.filter(s=>s.b===b).reduce((a,s)=>a+s.km,0);
+  const wi=waterInfo(hk);
+  const fishOK=tDay>1&&hk.stages.some(s=>s.b!=='berg'&&s.b!=='schnee');
+  const fo=key=>{const F=FORAGE[key];return hk.stages.some(s=>F.biomes.includes(s.b))&&F.months.some(m=>ms.has(m))};
+  const terr=[];if(km('sand')>0)terr.push('🏖️ Sandstrand '+fmtN(km('sand'),0)+' km');if(km('kies')>0)terr.push('🪨 Steinstrand '+fmtN(km('kies'),0)+' km');if(km('schnee')>0)terr.push('❄️ Schneefelder '+fmtN(km('schnee'),0)+' km');
+  const towns=TOWNS[hk.id]?TOWNS[hk.id].filter(t=>t[1]<hk.km-3).map(t=>t[0]+' (km '+t[1]+')').join(', '):'';
+  return {wi,fishOK,beeren:fo('beeren'),pilze:fo('pilze'),nuesse:fo('nuesse'),terr,towns};
+}
 let SELHIKE=null;
-function renderHikes(){
-  $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
-   <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
-   <div class="card" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Die Jahreszeit ändert Wetter, Kälte und Tageslicht der Touren, und Einnahmen deiner Videos kommen erst über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'} Wenn du wartest, ändert sich also das Risiko in den Karten unten.</p>
-    <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
-   <div class="grid">${HIKES.map(hk=>{const b=briefing(hk);const bad=b.w.filter(x=>x.l==='bad').length;
-     return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
+let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
+function hikeCard(hk){
+  const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
+  const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
+  return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
       <div class="facts"><span>📏 ${hk.km} km · ca. ${b.days} Tage · Gebühr ${eur0(hk.permit)}</span>
       <span>⛰️ <span class="risk" style="background:${DIFF_COL[hk.diff]}">${DIFF_NAMES[hk.diff]}</span> · Erlös-Faktor ×${hk.mult}</span>
-      <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht${hk.villageEvery?' · 🏪 alle ~'+hk.villageEvery+' km':' · keine Läden'}</span>
+      <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
+      <span>🏪 ${f.towns?esc(f.towns):'keine Läden am Weg'}</span>
+      <span>🚰 ${f.wi.lbl}${f.wi.dry?' · '+f.wi.dry+' trockene Abschnitte (bis '+fmtN(f.wi.maxDry,0)+' km)':''}</span>
+      <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
+      ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
       <span>Risiko jetzt: <span class="risk" style="background:${b.col}">${b.lbl}</span>${bad?` <span class="badtxt">${bad}× Warnung</span>`:''}</span></div>
-      <button class="primary" data-hk="${hk.id}">Briefing & Start</button></div>`}).join('')}</div></div>`;
+      <button class="primary" data-hk="${hk.id}">Briefing & Start</button></div>`;
+}
+function renderHikes(){
+  let body='';
+  if(HIKEVIEW==='land'){
+    const groups={};HIKES.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
+    body=Object.keys(groups).sort().map(c=>`<h3 class="grp">🌍 ${esc(c)}</h3><div class="grid">${groups[c].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`).join('');
+  }else body=`<div class="grid">${[...HIKES].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`;
+  $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
+   <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
+   <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📏 Nach Länge</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
+   <div class="card" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Die Jahreszeit ändert Wetter, Kälte und Tageslicht der Touren, und Einnahmen deiner Videos kommen erst über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'} Wenn du wartest, ändert sich also das Risiko in den Karten unten.</p>
+    <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
+   ${body}</div>`;
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
+  $$('[data-hv]').forEach(b=>b.onclick=()=>{HIKEVIEW=b.dataset.hv;try{localStorage.setItem('wk_hv',HIKEVIEW)}catch(e){}renderHikes()});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
 }
@@ -2731,6 +2815,7 @@ function openBriefing(id){
   const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<hk.permit;
   const ic={bad:'⛔',warn:'⚠️',info:'ℹ️'};
   showModal({title:'📋 '+esc(hk.name),wide:true,html:`<p><b>${hk.km} km</b> · ca. ${b.days} Tage · Start ${b.start} · Ende ~${b.end}<br>Temperatur im Verlauf: Nächte bis ca. ${Math.round(b.tNight)} °C, Tage ca. ${Math.round(b.tDay)} °C · Tageslicht ca. ${fmtN(b.dl,0)} h<br>Gesamtrisiko: <span class="risk" style="background:${b.col}">${b.lbl}</span></p>
+   ${(()=>{const f=routeFacts(hk);return `<p class="hint">🚰 ${f.wi.lbl}. 🎣 Fische ${f.fishOK?'möglich':'kaum'} · 🫐 Beeren ${f.beeren?'ja':'nein'} · 🍄 Pilze ${f.pilze?'ja':'nein'} · 🌰 Nüsse ${f.nuesse?'ja':'nein'}${f.terr.length?'<br>'+f.terr.join(' · '):''}${f.towns?'<br>🏪 '+esc(f.towns):''}</p>`})()}
    ${b.w.length?b.w.map(x=>`<div class="warnbox ${x.l}">${ic[x.l]} ${esc(x.t)}</div>`).join(''):'<div class="warnbox info">Keine besonderen Warnungen – gute Vorbereitung.</div>'}
    <p class="hint">Gebühr/Anreise: ${eur0(hk.permit)} (wird beim Start abgezogen). Kaputte Ausrüstung wird nicht mitgenommen.${G.money<hk.permit?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
    buttons:[{label:'🥾 Losziehen',primary:1,fn:()=>{if(blocked){toast('');return}
@@ -2771,8 +2856,10 @@ function renderShop(){
        <button class="primary big" id="d-buy" ${G.money<DOG_SIZES.find(s=>s.id===sel.size).price*priceMod()?'disabled':''}>Hund adoptieren</button></div>`;
     }else{
       const dp=gearById('dogpack'),owns=G.owned.dogpack;
-      dogHTML=`<div class="card"><h3>🐕 ${esc(G.dog.name)}</h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Bindung ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
+      dogHTML=`<div class="card"><h3>🐕 ${esc(G.dog.name)}</h3><canvas id="dogprev" width="260" height="140" style="display:block;border-radius:10px"></canvas><p class="hint">${ds.name}er Hund · Vertrauen ${Math.round(G.dog.bond||0)} % · trägt im Rucksack bis ${ds.packCap} kg (zuerst sein eigenes Futter)</p>
         <div class="item ${G.packed.dogpack?'packed':''}"><div class="ico">🎒</div><div class="inf"><b>Hunderucksack</b><small>Trägt bis ${ds.packCap} kg – nimmt dir Last ab, aber der Hund braucht sein Futter zuerst darin.</small></div><div class="seg">${owns?`<button data-pack="dogpack" class="${G.packed.dogpack?'on':''}">${G.packed.dogpack?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buydp ${G.money<ds.packPrice*priceMod()?'disabled':''}>${eur0(ds.packPrice*priceMod())}</button>`}</div></div>
+        <div class="row"><span class="lbl">Name</span><input id="d-rename" value="${esc(G.dog.name)}" maxlength="14"><button id="d-rn">Umbenennen</button></div>
+        <div class="row"><button id="d-sell" class="warnb">Hund verkaufen (${eur0(Math.round(ds.price*priceMod()*0.35))})</button></div>
         <p class="hint">Futterbedarf: ca. ${fmtN(ds.food,2)} kg pro Tag. Nimm genug Hundefutter mit!</p></div>`;
     }
   }
@@ -2801,11 +2888,21 @@ function renderShop(){
     const dpb=$('[data-dpatch]');if(dpb)dpb.onclick=()=>{SHOPTAB_DOG.name=$('#d-name').value;SHOPTAB_DOG.patch=!SHOPTAB_DOG.patch;renderShop()};
     const db=$('#d-buy');if(db)db.onclick=()=>{const s=DOG_SIZES.find(x=>x.id===SHOPTAB_DOG.size),p=s.price*priceMod();if(G.money<p)return;G.money-=p;
       G.dog={name:($('#d-name').value||'Bello').trim(),size:s.id,color:SHOPTAB_DOG.color,patch:SHOPTAB_DOG.patch,bond:0};sfx('success');save();renderShop()};
+    const rn=$('#d-rn');if(rn)rn.onclick=()=>{const v=($('#d-rename').value||'').trim().slice(0,14);if(!v){toast('Bitte einen Namen eingeben.');return}G.dog.name=v;sfx('success');save();renderShop()};
+    const sl=$('#d-sell');if(sl)sl.onclick=()=>showModal({title:'Hund verkaufen?',text:'Willst du '+G.dog.name+' wirklich verkaufen? Das lässt sich nicht rückgängig machen.',buttons:[{label:'Ja, verkaufen',fn:()=>sellDog()},{label:'Abbrechen'}]});
     const bd=$('[data-buydp]');if(bd)bd.onclick=()=>{const p=ds.packPrice*priceMod();if(G.money<p)return;G.money-=p;G.owned.dogpack=1;G.packed.dogpack=1;G.cond.dogpack=100;sfx('coin');save();renderShop()};
     const dv=$('#dogprev');if(dv){const dg=dv.getContext('2d');const dd=G.dog?dogSize():DOG_SIZES.find(s=>s.id===SHOPTAB_DOG.size);const gd=G.dog||SHOPTAB_DOG;
       const paint=t=>{if(!dv.isConnected)return;dg.clearRect(0,0,260,140);const gr=dg.createLinearGradient(0,0,0,140);gr.addColorStop(0,'#a8d8ee');gr.addColorStop(1,'#d9f0d8');dg.fillStyle=gr;dg.fillRect(0,0,260,140);dg.fillStyle='#5f9e46';dg.fillRect(0,112,260,28);
         drawDog(dg,120,118,dd,gd,'sit',0,t/1000,G.packed.dogpack&&G.dog?'#c0392b':null);requestAnimationFrame(paint)};requestAnimationFrame(paint)}
   }
+}
+function sellDog(){
+  const ds=dogSize(),nm=G.dog.name;
+  G.money+=Math.round(ds.price*priceMod()*0.35);
+  G.dogSale={day:G.day,name:nm};
+  G.subs=Math.round(G.subs*0.25);   // ca. 3/4 kündigen – wird dem Spieler nicht angekündigt
+  delete G.packed.dogpack;
+  G.dog=null;sfx('coin');save();renderShop();
 }
 const SHOPTAB_DOG={name:'Bello',size:'m',color:0,patch:true};
 function unpackCat(cat){GEAR.filter(g=>g.cat===cat).forEach(g=>delete G.packed[g.id])}
@@ -2814,6 +2911,7 @@ function unpackCat(cat){GEAR.filter(g=>g.cat===cat).forEach(g=>delete G.packed[g
    Teil 7: Wander-Oberfläche – HUD, Schleife, Rucksack, Karte, Ortsladen
    ===================================================================== */
 let lastTs=0,accum=0,hudT=0,fps=0,wake=null,livePanelOn=false;
+const DOG_BARS=[['dh','🍖','Hunger','--c-sat'],['dt','💧','Durst','--c-hyd'],['de','🐾','Ausdauer','--c-en'],['dm','😊','Laune','--c-warm'],['dv','🤝','Vertrauen','--c-hp']];
 const HUD_BARS=[['en','⚡','Energie','--c-en'],['sat','🍽️','Nahrung','--c-sat'],['hyd','💧','Wasser','--c-hyd'],['warm','🌡️','Wärme','--c-warm'],['wet','💦','Nässe','--c-wet'],['hp','❤️','Gesundheit','--c-hp']];
 function actClick(k,a){auUnlock();sfx('click');act(k,a);updateHUD(true)}
 function startHikeUI(id){
@@ -2828,7 +2926,7 @@ function startHikeUI(id){
 }
 function buildHikeDOM(){
   $('#s-hike').innerHTML=`<div id="stage"><canvas id="cv"></canvas>
-   <div class="hud" id="h-tl"><div class="pill"><div class="sb">${HUD_BARS.map(b=>`<div class="st" id="st-${b[0]}" title="${b[2]}"><span class="ic">${b[1]}</span><span class="tr"><i class="fl" style="background:var(${b[3]});width:50%"></i></span></div>`).join('')}</div></div></div>
+   <div class="hud" id="h-tl"><div class="pill"><div class="sb">${HUD_BARS.map(b=>`<div class="st" id="st-${b[0]}" title="${b[2]}"><span class="ic">${b[1]}</span><span class="tr"><i class="fl" style="background:var(${b[3]});width:50%"></i></span></div>`).join('')}</div>${H.dog?`<div class="dogb">${DOG_BARS.map(b=>`<div class="st" id="st-${b[0]}" title="${b[2]}"><span class="ic">${b[1]}</span><span class="tr"><i class="fl" style="background:var(${b[3]});width:50%"></i></span></div>`).join('')}</div>`:''}</div></div>
    <div class="hud" id="h-tc"><div class="pill" id="tc"></div></div>
    <div class="hud" id="h-tr"><div class="pill" id="tr" style="pointer-events:auto"></div></div>
    <div class="hud" id="h-mid"><div class="pill" id="mid" style="display:none"></div></div>
@@ -2838,10 +2936,9 @@ function buildHikeDOM(){
      <button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button>
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
-     <button class="rb" id="b-camp"><span>⛺</span><small>Lager</small></button>
+     <div id="spdctl"><button id="sp-dn">◀</button><div id="sp-v"><span>⏩</span><small>1×</small></div><button id="sp-up">▶</button></div>
      <button class="rb" id="b-sleep"><span>😴</span><small>Schlaf</small></button>
      <button class="rb" id="b-menu"><span>☰</span><small>Mehr</small></button></div></div>
-   <div class="hud" id="spdsl"><div class="rlab" id="slab"><span data-l="2">2×</span><span data-l="1">1×</span><span data-l="0">Pause</span></div><div id="strk"><i id="sknob"></i></div><div class="rcam">⏱️</div></div>
    <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
    <div id="rot">📱<br>Bitte das Gerät quer halten</div></div>`;
@@ -2855,13 +2952,8 @@ function buildHikeDOM(){
     else if($('#drawer').classList.contains('open'))$('#drawer').classList.remove('open');
   });
   $('#b-walk').onclick=()=>actClick('walk');
-  {const st=$('#strk');let dr=false;
-   const setSp=l=>{if(l!==H.speed){H.speed=l;sfx('click');updateHUD(true)}};
-   const fromY=e=>{const r=st.getBoundingClientRect();setSp(Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*2))};
-   st.addEventListener('pointerdown',e=>{dr=true;st.setPointerCapture(e.pointerId);fromY(e);e.preventDefault()});
-   st.addEventListener('pointermove',e=>{if(dr)fromY(e)});
-   st.addEventListener('pointerup',()=>{dr=false});
-   $('#slab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!=='')setSp(+l)});}
+  $('#sp-dn').onclick=()=>{H.speed=Math.max(0,(H.speed>4?4:H.speed)-1);sfx('click');updateHUD(true)};
+  $('#sp-up').onclick=()=>{H.speed=Math.min(4,(H.speed<1?0:H.speed)+1);sfx('click');updateHUD(true)};
   const trk=$('#rtrk');let dragging=false;
   const setFromY=e=>{const r=trk.getBoundingClientRect();const l=Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*3);if(l!==H.rec){setRec(l);sfx('click');updateHUD(true)}};
   trk.addEventListener('pointerdown',e=>{dragging=true;trk.setPointerCapture(e.pointerId);setFromY(e);e.preventDefault()});
@@ -2870,7 +2962,6 @@ function buildHikeDOM(){
   $('#rlab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!==''){setRec(+l);sfx('click');updateHUD(true)}});
   $('#b-pack').onclick=()=>{sfx('click');openPack()};
   $('#b-map').onclick=()=>{sfx('click');openMap()};
-  $('#b-camp').onclick=()=>actClick('tent');
   $('#b-sleep').onclick=()=>{if(H.sleep.active){wakeUp(true);sfx('click');updateHUD(true);return}actClick(H.camp.pitched||!H.g.shelter?'sleep':'sleep')};
   $('#b-menu').onclick=()=>{buildDrawer();$('#drawer').classList.toggle('open');sfx('click')};
   buildDrawer();
@@ -2880,7 +2971,7 @@ function buildDrawer(){
   const hh=Object.keys(H.dev).filter(id=>['phone','cam'].includes(H.dev[id].def.kind));
   const btn=(k,e,t)=>`<button data-a="${k}">${e} ${t}</button>`;
   d.innerHTML=`<h4>AKTIONEN</h4><div class="acts">
-    ${btn('tent','⛺','Zelt auf/ab')}${btn('sleep','😴','Schlafen')}${btn('sleepOut','🌙','Draußen schlafen')}${btn('fire','🔥','Feuer machen')}
+    ${btn('tent','⛺','Zelt auf/ab')}${btn('sleep','😴','Schlafen')}${btn('rest','🛌','Ausruhen')}${H.dog?btn('leash','🦮','Leine an/ab'):''}${btn('sleepOut','🌙','Draußen schlafen')}${btn('fire','🔥','Feuer machen')}
     ${btn('drink','💧','Trinken')}${btn('refill','🚰','Wasser auffüllen')}${btn('treat','♨️','Wasser behandeln')}${btn('aid','🩹','Erste Hilfe')}
     ${btn('fix','🧵','Notreparatur')}${btn('orient','🧭','Orientieren')}${btn('live','📡','Livestream')}${btn('shop','🏪','Laden betreten')}
     ${btn('forage','🧺','Sammeln')}${btn('fish','🎣','Angeln')}${btn('rescue','🆘','Tour abbrechen')}</div>
@@ -2941,9 +3032,10 @@ function updateHUD(force){
   // Dock
   $('#b-walk').innerHTML=`<span>${H.walking&&!H.camp.pitched?'⏸':'▶'}</span><small>${H.walking&&!H.camp.pitched?'Halt':'Gehen'}</small>`;
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
-  {const kn=$('#sknob');if(kn)kn.style.top=((2-H.speed)/2*100)+'%';$$('#slab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.speed))}
+  {const sv=$('#sp-v');if(sv)sv.innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`}
+  if(H.dog){const D=H.dog;const sd=(k,v,low)=>{const el=$('#st-'+k);if(!el)return;$('.fl',el).style.width=clamp(v,0,100)+'%';el.classList.toggle('low',low);el.title=DOG_BARS.find(b=>b[0]===k)[2]+' ('+G.dog.name+'): '+Math.round(v)+' %'};sd('dh',D.hunger,D.hunger<25);sd('dt',D.thirst,D.thirst<25);sd('de',100-D.fat,D.fat>85);sd('dm',D.mood,D.mood<30);sd('dv',D.trust,false)}
   {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
-  $('#b-camp').classList.toggle('act',H.camp.pitched);$('#b-sleep').classList.toggle('act',H.sleep.active);{const sb=$('#b-sleep');sb.innerHTML=H.sleep.active?'<span>⏰</span><small>Aufwachen</small>':'<span>😴</span><small>Schlaf</small>'}
+  $('#b-sleep').classList.toggle('act',H.sleep.active);{const sb=$('#b-sleep');sb.innerHTML=H.sleep.active?'<span>⏰</span><small>Aufwachen</small>':'<span>😴</span><small>Schlaf</small>'}
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
   drawProfile($('#prof'));
@@ -2986,7 +3078,7 @@ function frame(ts){
   tm+=dt;
   if(screen!=='hike'||!H)return;
   const cv=$('#cv');if(!cv)return;
-  if(H.speed>2)H.speed=2;
+  if(H.speed>4)H.speed=4;
   if(!H.ended&&!MODAL){
     let mult=SPEEDS[H.speed];
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
@@ -3001,7 +3093,7 @@ function frame(ts){
   if(!H)return;
   H.camElev+=(elevAt(H.x)-H.camElev)*Math.min(1,dt*2.2);
   const rx=H.x,rph=H.phase;
-  if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=4&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
+  if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=6&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
   drawScene(cv.getContext('2d'),tm,dt);
   H.x=rx;H.phase=rph;
   hudT-=dt;if(hudT<=0){hudT=0.2;updateHUD()}
@@ -3011,7 +3103,7 @@ window.addEventListener('keydown',e=>{
   if(screen!=='hike'||!H)return;
   if(e.key==='Escape'){if(MODAL&&!MODAL.locked)closeModal();else $('#drawer').classList.remove('open')}
   else if(e.key===' '&&!MODAL){e.preventDefault();actClick('walk')}
-  else if((e.key==='+'||e.key==='.')&&!MODAL){H.speed=Math.min(2,H.speed+1);updateHUD(true)}
+  else if((e.key==='+'||e.key==='.')&&!MODAL){H.speed=Math.min(4,H.speed+1);updateHUD(true)}
   else if((e.key==='-'||e.key===',')&&!MODAL){H.speed=Math.max(1,H.speed-1);updateHUD(true)}
 });
 
@@ -3194,13 +3286,20 @@ function advanceDay(){
       else if(hp>=v.hype.len&&!v.hype.done){v.hype.done=1;notes.push('📉 Der Hype um „'+v.title+'“ ebbt ab.')}}
     dv=Math.floor(dv+Math.random());
     if(dv<=0){v.h.push(0);continue}
-    const rpv=0.014*rnd(0.85,1.15)*(G.subs>=1000?1.15:1)*(v.promo?0.92:1);
+    const rpv=0.0042*rnd(0.85,1.15)*(G.subs>=1000?1.15:G.subs<500?0.6:1)*(v.promo?0.92:1);
     const r=dv*rpv;
     const conv=0.004*(0.6+0.8*clamp(v.S/120,0,1.4))*(hasT('charme')?1.25:1)*rep*(v.promo?0.75:1)*(v.hype&&age-v.hype.start>=0&&age-v.hype.start<v.hype.len?1.4:1);
     const sg=Math.floor(dv*conv+Math.random());
     v.views+=dv;v.rev+=r;v.likes+=Math.round(dv*0.04*rnd(0.7,1.3));v.subsG+=sg;v.h.push(dv);if(v.h.length>150)v.h.shift();
-    G.subs+=sg;G.totalViews+=dv;views+=dv;rev+=r;
+    const sgx=(G.dogSale&&G.day<G.dogSale.day+180)?Math.floor(sg*0.5+Math.random()):sg;   // Kanal wächst 6 Monate 50 % langsamer
+    G.subs+=sgx;G.totalViews+=dv;views+=dv;rev+=r;
     if(age<8&&Math.random()<0.06)addComments(v,1);
+  }
+  if(G.dogSale){ // Reaktionen der Community auf den Hundeverkauf – nur in den Kommentaren zu sehen
+    const since=G.day-G.dogSale.day,nm=G.dogSale.name,lv=(G.videos||[]).slice(-1)[0];
+    const pr=since<0?0:since<21?0.75:since<90?0.3:since<180?0.08:0;
+    if(pr>0&&Math.random()<pr){const T=[`Wo ist ${nm}?? 😢`,`Ihr habt ${nm} verkauft?! Das war der Grund, warum ich abonniert hatte.`,`Ohne ${nm} schau ich das nicht mehr. Unsubscribed.`,`${nm} wegzugeben ist echt das Letzte. Schade um den Kanal.`,`Der Hund gehörte doch zur Familie… wie kann man das machen?`,`Kanal war mal cool, seit ${nm} weg ist, nicht mehr.`,`Ich hoffe ${nm} hat ein gutes Zuhause gefunden 💔`,`Bin raus. Wer seinen Hund verkauft, bekommt keine Klicks von mir.`,`Vermisse ${nm} in jedem Video…`];
+      G.comments.unshift({day:G.day,vid:lv?lv.id:null,user:pick(NAMES),text:pick(T)});if(G.comments.length>80)G.comments.length=80}
   }
   if(views>0)G.videos_lastUp=G.day;
   // Abo-Schwund ohne Aktivität
@@ -3279,7 +3378,7 @@ function publishVideos(){
 let STUDIOTAB='Übersicht';
 function drawThumb(cv,v){
   const g=cv.getContext('2d'),w=cv.width,h=cv.height,r=mulberry32(v.thumb.seed);
-  const pal={wald:['#5b9bd5','#2f6a2d'],berg:['#7aa6d6','#7f8794'],tal:['#8fc0e6','#4f8f3d'],wiese:['#8ec9f0','#8dbf4a'],fjaell:['#9cb6c8','#9a9a6a']}[v.thumb.biome];
+  const pal={wald:['#5b9bd5','#2f6a2d'],berg:['#7aa6d6','#7f8794'],tal:['#8fc0e6','#4f8f3d'],wiese:['#8ec9f0','#8dbf4a'],fjaell:['#9cb6c8','#9a9a6a'],sand:['#8fc4e8','#e0cf9c'],kies:['#9cb6c8','#9d9b95'],schnee:['#b5c9de','#eef2f7']}[v.thumb.biome]||['#8fc0e6','#4f8f3d'];
   const sunset=r()<0.4;
   const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,sunset?'#f6a35c':pal[0]);gr.addColorStop(1,sunset?'#ffd9a0':'#e6f2fb');g.fillStyle=gr;g.fillRect(0,0,w,h);
   g.fillStyle=shade(pal[1],-0.25);g.beginPath();g.moveTo(0,h);for(let x=0;x<=w;x+=10)g.lineTo(x,h*0.55-Math.abs(Math.sin(x*0.03+v.thumb.seed))*h*0.28-r()*3);g.lineTo(w,h);g.fill();
