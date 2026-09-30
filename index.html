@@ -57,6 +57,7 @@ input[type=range]{accent-color:var(--acc)}
 .item{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
 .item.packed{border-color:var(--acc)}.item.broken{border-color:var(--bad)}
 .ico{font-size:2em;width:48px;text-align:center}.ico img{width:44px;height:44px;object-fit:contain}
+.ico.wide{width:112px}.ico.wide img{width:104px;height:47px}
 .inf{flex:1;display:flex;flex-direction:column;gap:2px}
 .qty{min-width:24px;text-align:center}
 .side{position:sticky;top:10px;align-self:start}
@@ -195,11 +196,12 @@ const $=(s,el=document)=>el.querySelector(s);
 const $$=(s,el=document)=>[...el.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ---- Optionale eigene Grafiken: assets/<pfad>.png ---- */
+/* ---- Optionale eigene Grafiken: assets/<pfad>.png (oder .svg, z. B. img('Zelte_Tarp','svg')) ---- */
 const IMG={};
-function img(path){
-  if(!(path in IMG)){IMG[path]=null;const i=new Image();i.onload=()=>{IMG[path]=i};i.onerror=()=>{IMG[path]=false};i.src='assets/'+path+'.png';}
-  return IMG[path]||null;
+function img(path,ext='png'){
+  const key=ext==='png'?path:path+'.'+ext;
+  if(!(key in IMG)){IMG[key]=null;const i=new Image();i.onload=()=>{IMG[key]=i};i.onerror=()=>{IMG[key]=false};i.src='assets/'+path.split('/').map(encodeURIComponent).join('/')+'.'+ext;}
+  return IMG[key]||null;
 }
 
 /* ---- Charakter ---- */
@@ -438,10 +440,14 @@ const GEAR=[
   {id:'pack_pro',cat:'pack',name:'Expeditionsrucksack 65 L',e:'🎒',price:230,kg:2.3,max:26,comfort:1,color:'#e67e22',desc:'Max. 26 kg, bester Tragekomfort.'},
   {id:'pack_exp',cat:'pack',name:'Winter-Expedition 85 L',e:'🎒',price:340,kg:3.0,max:34,comfort:1.2,color:'#8e44ad',desc:'Max. 34 kg für lange Touren ohne Laden.'},
 
-  {id:'tarp',cat:'shelter',name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:8,down:4,desc:'Leicht, schützt teils vor Regen (70 %), wenig Wind- und Wärmeschutz. Am schnellsten auf- und abgebaut.'},
-  {id:'tent1',cat:'shelter',name:'1-Personen-Zelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Regendicht, +4 °C Wärme, guter Windschutz.'},
-  {id:'tentUL',cat:'shelter',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:4,wind:0.6,setup:14,down:7,desc:'Wie das 1-Personen-Zelt, aber halb so schwer, deutlich schneller auf- und abgebaut.'},
-  {id:'tentW',cat:'shelter',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'+8 °C Wärme, trotzt Sturm. Schwer.'},
+  // Unterkünfte (img = Dateiname in assets/, .svg). Reihenfolge = Shop-Reihenfolge (nach Preis).
+  {id:'tarp',cat:'shelter',img:'Zelte_Tarp',imgClosed:'Zelte_Tarp geschlossen',sc:1.2,name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:8,down:4,desc:'Leicht, schützt teils vor Regen (70 %) und etwas vor Wind, kaum Wärmeschutz. Am schnellsten auf- und abgebaut. Bei Sturm oder starkem Regen wird es seitlich zugespannt.'},
+  {id:'tentFl',cat:'shelter',img:'Zelte_Flohmarkt Zelt',name:'Flohmarkt-Zelt',e:'⛺',price:40,kg:5.2,rain:0.85,warm:3.5,wind:0.45,setup:28,down:16,desc:'Uraltes Familienzelt aus schwerem Stoff: dämmt besser als Freizeitzelt und Tarp, wiegt aber ein Vielfaches, ist nicht ganz dicht (85 % Regenschutz) und braucht ewig beim Auf- und Abbau.'},
+  {id:'tentF',cat:'shelter',img:'Zelte_Freizeitzelt',name:'Freizeitzelt',e:'⛺',price:60,kg:2.6,rain:0.92,warm:2.5,wind:0.4,setup:15,down:8,desc:'Günstiges Zelt für den Sommer: schnell aufgebaut, weitgehend regendicht (92 %), aber wenig Isolierung und Windschutz.'},
+  {id:'tent1',cat:'shelter',img:'Zelte_Outdoorzelt',name:'Outdoorzelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Der solide Einstieg: regendicht, +4 °C Wärme, guter Windschutz.'},
+  {id:'tentM',cat:'shelter',img:'Zelte_Militärzelt',name:'Militärzelt',e:'⛺',price:200,kg:3.0,rain:1,warm:6,wind:0.8,setup:22,down:12,desc:'Robuster Allrounder: regendicht, +6 °C Wärme, sehr guter Windschutz. Schwerer als Outdoor- und Ultraleichtzelt.'},
+  {id:'tentUL',cat:'shelter',img:'Zelte_Ultraleichtzelt',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:3.5,wind:0.55,setup:10,down:5,desc:'Wiegt fast nichts und steht in Minuten. Dafür dämmt es schlechter als Outdoor- und Militärzelt (+3,5 °C) und hält weniger Wind ab.'},
+  {id:'tentW',cat:'shelter',img:'Zelte_Winterzelt',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'Beste Isolierung (+8 °C), trotzt Sturm. Schwerer als das Militärzelt und langsamer aufgebaut.'},
   {id:'bag_s',cat:'bag',name:'Sommerschlafsack (+8 °C)',e:'🛌',price:40,kg:0.9,rating:8,desc:'Komfort bis +8 °C.'},
   {id:'bag_3',cat:'bag',name:'3-Jahreszeiten-Schlafsack (0 °C)',e:'🛌',price:110,kg:1.4,rating:0,desc:'Komfort bis 0 °C.'},
   {id:'bag_w',cat:'bag',name:'Winterschlafsack (−12 °C)',e:'🛌',price:230,kg:2.1,rating:-12,desc:'Komfort bis −12 °C.'},
@@ -489,6 +495,7 @@ const GEAR=[
   {id:'dogpack',cat:'dogpack',name:'Hunderucksack',e:'🎒',price:0,kg:0.3,desc:'Der Hund trägt zuerst sein eigenes Futter, den Rest deiner Last. Größe passt zur Hunderasse.'}
 ];
 GEAR.forEach(g=>{if(g.w===undefined)g.w=g.price||10});
+GEAR.forEach(g=>{if(g.img){img(g.img,'svg');if(g.imgClosed)img(g.imgClosed,'svg')}}); // Zelt-Grafiken vorladen
 const GEAR_REPAIRABLE=g=>['pack','shelter','bag','mid','shell','shoes','tool','rec','nav','water','power'].includes(g.cat)&&!(g.id==='offline');
 
 /* ---- Proviant ---- */
@@ -1079,7 +1086,7 @@ function act(kind,arg){
       if(H.camp.pitched){beginAction('tent','Baut Lager ab …',(H.g.shelter&&H.g.shelter.down)||15,()=>{H.camp.pitched=false;toast('Lager abgebaut. Du machst eine Pause – tippe auf „Gehen“, wenn es weitergehen soll.')});sfx('tent');return}
       if(!g.shelter){toast('Du hast keine Unterkunft dabei.');return}
       if(Math.abs(env.grade)>0.09){toast('Hier ist es zu steil zum Zelten.','bad');return}
-      beginAction('tent','Baut '+g.shelter.name+' auf …',g.shelter.setup,()=>{H.camp.pitched=true;H.camp.x=H.x;H.stats.camps++;toast('⛺ Lager steht.','good')});sfx('tent');break;
+      beginAction('tent','Baut '+g.shelter.name+' auf …',g.shelter.setup,()=>{H.camp.pitched=true;H.tarpClosed=false;H.camp.x=H.x;H.stats.camps++;toast('⛺ Lager steht.','good')});sfx('tent');break;
     case 'sleep':
       if(!H.camp.pitched&&g.shelter){toast('Baue zuerst dein Lager auf – oder schlafe ohne Schutz (Knopf „Draußen schlafen“).');return}
       startSleep();break;
@@ -2166,13 +2173,76 @@ function drawTerrain(g,tm){
   }
   if(wet&&env.rainI>0.1){g.fillStyle='rgba(150,180,210,0.28)';for(let ci=Math.floor(camX/110)-1;ci<=Math.floor((camX+CW)/110)+1;ci++){if(hash(ci*7+2)>0.4)continue;const x=ci*110+hash(ci*5+1)*90;g.beginPath();g.ellipse(x-camX,groundY(x)+6,26,3,0,0,7);g.fill()}}
 }
+/* ---------- Wehende & fliegende Blätter ----------
+   Blätter lösen sich nur von gezeichneten Laub-/Birkenkronen (also nur in Wäldern bzw. an Bäumen).
+   Menge, Tempo und Wirbel wachsen mit dem Wind in Kronenhöhe (H.weather.wind, nicht der abgeschwächte Bodenwind im Wald).
+   Farbe und Menge folgen der Jahreszeit; unter Schnee fallen keine Blätter. */
+const CROWNS=[],LEAVES=[];
+function leafPalette(){
+  const m=env.month;
+  if(m===9)return{k:1.6,c:['#e0a82a','#d9702a','#c0392b','#e8c63a','#b8541f']};          // Oktober: Laubfärbung
+  if(m===10)return{k:1.3,c:['#b8812f','#9a5f25','#8a4a22','#c9a040']};                      // November: braun
+  if(m===8)return{k:1.0,c:['#c9b43a','#e0a030','#7ba540','#d98a2b','#5da33f']};             // September: gelb-grün
+  if(m===11||m<2)return{k:0.12,c:['#8a6a3a','#7a5a30','#9a7a48']};                          // Winter: nur Restlaub
+  if(m===2)return{k:0.22,c:['#8f7a3a','#6f9a3a','#9aa650']};
+  if(m===3||m===4)return{k:0.32,c:['#8fc24a','#a6d45a','#7ab83e','#c4dc7a']};               // Frühling: frisches Grün
+  return{k:0.42,c:['#5da33f','#4a8f34','#79b84a','#6aa83c']};                                // Sommer
+}
+function drawLeaves(g,tm,dt){
+  dt=Math.min(dt||0.016,0.05);
+  const wv=H.weather.wind,wk=clamp(wv/14,0,1),pal=leafPalette(),snowy=snowAmt()>0.5;
+  const gw=1; // Windrichtung wie beim Regen: von rechts nach links
+  // Neue Blätter aus sichtbaren Kronen
+  const nC=CROWNS.length/4;
+  if(nC>0&&!snowy&&LEAVES.length<130){
+    let rate=pal.k*(0.12+12*Math.pow(wk,1.8))*(env.precip?0.6:1)*Math.min(1,nC/6);
+    let n=rate*dt;
+    while(n>0){
+      if(Math.random()<Math.min(1,n)){
+        const i=Math.floor(Math.random()*nC)*4,cx=CROWNS[i],cy=CROWNS[i+1],r=CROWNS[i+2],far=CROWNS[i+3];
+        const wx=cx+camX+rnd(-r,r),gyy=groundY(wx);
+        LEAVES.push({x:wx,o:Math.max(4,gyy-(cy+rnd(-r*0.5,r*0.5))),ph:rnd(0,6.28),rot:rnd(0,6.28),fl:rnd(0,6.28),
+          sz:(far?0.75:1)*rnd(3.4,5.6),col:pick(pal.c),fall:rnd(16,30),land:0,far});
+      }
+      n-=1;
+    }
+  }
+  // Bewegen und Zeichnen
+  g.save();
+  for(let i=LEAVES.length-1;i>=0;i--){
+    const L=LEAVES[i];
+    const gust=0.65+0.35*Math.sin(tm*0.8+L.x*0.01+L.ph);
+    const drift=(4+Math.pow(wv,1.3)*9)*gust;                       // px/s nach links
+    if(!L.land){
+      L.x-=drift*gw*dt*(L.far?0.8:1);
+      L.x+=Math.sin(tm*2.3+L.ph)*(8+wk*26)*dt;                     // Flattern
+      const lift=wk*wk*(70*Math.sin(tm*1.3+L.ph)+30);              // Böen wirbeln Blätter auch nach oben
+      L.o+=(lift-L.fall*(1-0.35*wk))*dt;
+      L.rot+=(1.5+wk*7)*dt*(L.ph>3.14?1:-1);L.fl+=(2+wk*5)*dt;
+      if(L.o<=0){L.o=0;L.land=1;L.life=rnd(2.5,5)}
+    }else{
+      L.life-=dt;L.x-=drift*0.35*wk*dt;                            // am Boden: bei Sturm weiterrutschen
+      if(L.life<=0){LEAVES.splice(i,1);continue}
+    }
+    const sx=L.x-camX;
+    if(sx<-40||sx>CW+40||L.o>CH){LEAVES.splice(i,1);continue}
+    const sy=groundY(L.x)-L.o-(L.land?1.5:0);
+    const a=L.land?clamp(L.life/1.2,0,1)*0.9:0.92;
+    g.globalAlpha=a*(L.far?0.8:1);g.fillStyle=tc(L.col);
+    g.save();g.translate(sx,sy);g.rotate(L.land?L.rot*0.3:L.rot);g.scale(1,L.land?0.4:0.45+0.55*Math.abs(Math.cos(L.fl)));
+    g.beginPath();g.ellipse(0,0,L.sz,L.sz*0.52,0,0,7);g.fill();g.restore();
+  }
+  g.restore();
+}
 function tree(g,sx,y,sc,kind,sway,sn,dim){
   sc=Math.min(sc*2.3,4.2);
   if(kind==='leaf'){
+    CROWNS.push(sx+sway*0.8,y-38*sc,20*sc,dim?1:0);
     g.fillStyle=tc('#5b3d24');g.fillRect(sx-3*sc,y-26*sc,6*sc,26*sc);
     g.fillStyle=tc(dim?'#2f6a2d':'#3f8a3a',sn*0.5);const tx=sx+sway*0.8;
     g.beginPath();g.arc(tx,y-38*sc,20*sc,0,7);g.arc(tx-12*sc,y-30*sc,14*sc,0,7);g.arc(tx+12*sc,y-30*sc,14*sc,0,7);g.fill();
   }else if(kind==='birch'){
+    CROWNS.push(sx+sway*0.6,y-34*sc,10*sc,dim?1:0);
     g.fillStyle=tc('#d8d6cc');g.fillRect(sx-1.6*sc,y-30*sc,3.2*sc,30*sc);
     g.fillStyle=tc('#a8a142',sn*0.4);g.beginPath();g.arc(sx+sway*0.6,y-34*sc,10*sc,0,7);g.arc(sx-6*sc+sway*0.6,y-28*sc,7*sc,0,7);g.arc(sx+6*sc+sway*0.6,y-28*sc,7*sc,0,7);g.fill();
   }else{
@@ -2298,7 +2368,17 @@ function drawCamp(g,tm,dt){
   if(H.camp.pitched&&H.g.shelter){
     const sh=H.g.shelter,sx=H.camp.x-70-camX,y=groundY(H.camp.x-70);
     const glow=H.sleep.active||env.dark>0.5;
+    // Tarp: bei Sturm oder starkem Regen seitlich zugespannt (mit Hysterese, damit es nicht flackert)
     if(sh.id==='tarp'){
+      const hardWx=env.wind>=9||H.weather.wind>=9, hardRain=!!env.precip&&env.rainI>=0.6;
+      const calm=env.wind<6&&H.weather.wind<6&&!(env.precip&&env.rainI>=0.3);
+      if(hardWx||hardRain)H.tarpClosed=true;else if(calm)H.tarpClosed=false;
+    }
+    const tim=sh.img?img(sh.id==='tarp'&&H.tarpClosed&&sh.imgClosed?sh.imgClosed:sh.img,'svg'):null;
+    if(tim){
+      const w=140*(sh.sc||1),h=w*230/512,flap=Math.sin(tm*3+sx*0.01)*env.wind*0.0016;
+      g.save();g.translate(sx,y+2);g.transform(1,0,flap,1,0,0);g.drawImage(tim,-w/2,-h,w,h);g.restore();
+    }else if(sh.id==='tarp'){ // Notbehelf, falls die Grafik nicht lädt
       g.fillStyle=tc('#5f7f55');g.beginPath();g.moveTo(sx-46,y);g.lineTo(sx-30,y-42);g.lineTo(sx+52,y-24);g.lineTo(sx+52,y);g.closePath();g.fill();
       g.strokeStyle='#3d2c1c';g.lineWidth=3;ln(g,sx-30,y-42,sx-30,y);ln(g,sx+52,y-24,sx+52,y);
     }else{
@@ -2579,9 +2659,11 @@ function drawScene(g,tm,dt){
   drawRange(g,0.3,CH*0.73,80,st.b==='berg'?'#5b6572':'#4f7357',7.3,0.1);
   drawTreeBand(g,0.42,CH*0.76,60,5.5,34,'#2f5c3a',0.06);
   drawTerrain(g,tm);
+  CROWNS.length=0;
   drawDecor(g,tm,0);
   drawFeatures(g,tm);
   drawDecor(g,tm,1);
+  drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
@@ -2950,7 +3032,7 @@ function renderShop(){
   const itemHTML=g=>{
     const own=!!G.owned[g.id],packed=!!G.packed[g.id],br=own&&G.cond[g.id]!==undefined&&G.cond[g.id]<=0;
     const excl=EXCLUSIVE.includes(g.cat);
-    return `<div class="item ${packed?'packed':''} ${br?'broken':''}"><div class="ico">${g.e}</div><div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small></div>
+    return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${g.img?`<div class="ico wide"><img src="assets/${encodeURIComponent(g.img)}.svg" alt="${g.e}"></div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small></div>
      <div class="seg">${own?`<button data-pack="${g.id}" class="${packed?'on':''}" ${br?'disabled':''}>${packed?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${g.id}" ${G.money<gearPrice(g)?'disabled':''}>${g.price?eur0(gearPrice(g)):'Kostenlos'}</button>`}</div></div>`};
   const consHTML=c=>{const n=G.cons[c.id]||0,p=(c.price*priceMod());
     const info=c.sat?`Sättigung +${c.sat}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':'für den Hund, 1 kg';
