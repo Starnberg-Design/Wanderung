@@ -660,11 +660,19 @@ function buildRoute(hk,seed){
   // Sehenswürdigkeiten = seltene Meilensteine
   const sl=hk.sights&&hk.sights.length?hk.sights:null;
   const nS=sl?sl.length:Math.max(1,Math.round(totalKm/38));
+  const peakCount=sl?sl.filter(q=>q.e==='⛰️').length:0;
   for(let k=0;k<nS;k++){
-    const x=totalPx*(0.1+0.8*((k+0.35+rng()*0.4)/nS));
+    let x=totalPx*(0.1+0.8*((k+0.35+rng()*0.4)/nS));
     const st=stages[stageIndexAt(stages,x)];
     const s=sl?sl[k]:(()=>{const g=SIGHTS[st.b];return g[Math.floor(rng()*g.length)]})();
-    add({type:'sight',x,s});
+    const summit=s.e==='⛰️';
+    if(summit){ // Gipfel liegen nur auf echten Höhepunkten der Route (bei einem einzigen Gipfel: höchster Punkt der ganzen Tour)
+      const W=(peakCount===1&&sl)?totalPx:Math.max(3*PPK,Math.min(totalPx*0.2,8*PPK));
+      const i0=Math.max(30,Math.floor((x-W)/10)),i1=Math.min(Math.floor((totalPx-150)/10),Math.ceil((x+W)/10));
+      let bi=-1,bv=-1e9;for(let i=i0;i<=i1;i++){if(elev[i]>bv){bv=elev[i];bi=i}}
+      if(bi>=0)x=bi*10;
+    }
+    add({type:'sight',x,s,summit});
   }
   // Tiere: wenige Highlights entlang der Route
   const tags=reg.tags;
@@ -681,8 +689,11 @@ function buildRoute(hk,seed){
     add({type:'animal',x,a});
   }
   // Wanderer, Dörfer, Sammelstellen, Sonderereignisse
-  const nH=Math.max(1,Math.round(totalKm/(15+hk.diff*2)));
-  for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.05+0.9*((k+0.2+rng()*0.6)/nH))});
+  // Begegnungen: auf leichten Touren öfter, auf schweren selten bis sehr selten (Winter seltener, Sommer etwas häufiger)
+  const hSpacing=[18,18,32,55,90,140,200][Math.min(hk.diff,6)]||18;
+  const hSeason=(()=>{const m=dateOf(G.day).m;return (m===11||m<2)?0.45:(m>=5&&m<=7)?1.2:1})();
+  const expH=totalKm/hSpacing*hSeason,nH=Math.floor(expH)+(rng()<expH-Math.floor(expH)?1:0);
+  for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.08+0.84*((k+0.2+rng()*0.6)/nH))});
   if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0]})})}
   else if(hk.villageEvery>0){
     for(let km=hk.villageEvery*(0.55+rng()*0.25);km<totalKm-6;km+=hk.villageEvery*(0.85+rng()*0.3))
@@ -698,9 +709,11 @@ function buildRoute(hk,seed){
   if(rng()<(0.1+Math.min(0.25,totalKm/1500)))add({type:'special',kind:'stalker',x:totalPx*(0.25+rng()*0.5)});
   const fanP=G.subs>=50000?Math.min(0.35,0.05+(G.subs-50000)/400000):0;
   if(rng()<fanP)add({type:'special',kind:'fans',x:totalPx*(0.3+rng()*0.5)});
-  const clean=feats.filter(f=>f.x>600&&f.x<totalPx-400);
+  const clean=feats.filter(f=>f.summit?(f.x>300&&f.x<totalPx-100):(f.x>600&&f.x<totalPx-400));
   clean.sort((a,b)=>a.x-b.x);
-  for(let i=1;i<clean.length;i++){const need=((FEAT_RAD[clean[i].type]||120)+(FEAT_RAD[clean[i-1].type]||120))*0.55;if(clean[i].x-clean[i-1].x<need)clean[i].x=clean[i-1].x+need}
+  for(let i=1;i<clean.length;i++){const a=clean[i-1],b=clean[i];const need=((FEAT_RAD[b.type]||120)+(FEAT_RAD[a.type]||120))*0.55;
+    if(b.x-a.x<need){if(b.summit&&!a.summit)a.x=b.x-need;else if(!b.summit)b.x=a.x+need}}  // Gipfel bleiben exakt auf dem Höhepunkt
+  clean.sort((a,b)=>a.x-b.x);
   return {stages,elev,feats:clean,totalPx,totalKm};
 }
 function featsIn(a,b){ // sortiert nach x; Features im Bereich (a,b]
@@ -814,7 +827,7 @@ function startHike(hikeId){
   const ds=dogSize();
   let startRisk=3;try{startRisk=briefing(hk).score}catch(e){}
   const gap0=skillGap(hk);
-  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,carry:G.cons.firewood||0,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
+  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,carry:G.cons.firewood||0,walkers:[],vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
     x:0,km:0,phase:0,t:startH*60,dayIdx:0,awakeSince:startH*60-60,cond,startDay:G.day,
     speed:1,wood:0,woodX:0,thrill:0,flags:{},walking:true,auto:true,autoStop:true,autoNight:hk.km>=60,autoWake:false,sleptTonight:false,
     body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},fatigue:0,
@@ -954,7 +967,7 @@ function setRec(v){H.rec=v;H.droneTimer=Math.min(H.droneTimer,DRONE_INT[v])}
 
 /* ---------- Symbole (Kamera, Laden, Sammeln …) ---------- */
 function spawnIcon(o){o.max=o.life;o.born=tm;H.icons.push(o);return o}
-const TAP_KINDS=['shop','forage','fish','special'];
+const TAP_KINDS=['shop','forage','fish','special','summit'];
 function captureIcon(ic){
   if(ic.taken)return;
   if(TAP_KINDS.includes(ic.kind))return tapIcon(ic);
@@ -968,12 +981,13 @@ function captureIcon(ic){
   else if(ic.kind==='sight'){name=ic.label;e=ic.e;value=ic.base*q*1.15;key='sight:'+ic.fid}
   else if(ic.kind==='storm'){name=ic.label;e=ic.e;value=ic.base*q;key='storm:'+ic.label}
   else if(ic.kind==='sky'){name=ic.label;e=ic.e;value=ic.base*q;key='sky:'+ic.label}
+  else if(ic.kind==='aurora'){name=ic.label;e=ic.e;value=ic.base*Math.pow(Math.min(q,1.3),1.7)*1.5;key='aurora:'+G.day}
   else {name=ic.label;e=ic.e;value=ic.base*q;key='hiker:'+H.clips.length}
   if(ic.kind==='animal'&&ic.a.danger&&Math.random()<ic.a.danger*(H.dog&&H.dog.mood>40?0.5:1)){
     if(H.g.tools.spray&&H.spray>0){H.spray--;value*=1.3;toast('🧴 '+ic.a.name+' greift an – du vertreibst ihn mit Spray! Dramatische Aufnahme (+30 %).','good')}
     else attackByAnimal(ic.a);
   }
-  const c=addClip({key,type:ic.kind,name,e,q,value,rar});
+  const c=addClip({key,type:ic.kind==='aurora'?'sky':ic.kind,name,e,q,value,rar});
   H.shot={type:'video',left:2*dev.def.time,dur:2*dev.def.time,dev:dev.def.id,noclip:true};
   dev.batt=Math.max(0,dev.batt-0.8);
   const rc=rar>=0?RARITY[rar]:null;
@@ -988,6 +1002,7 @@ function tapIcon(ic){
   else if(ic.kind==='forage')actClick('forage');
   else if(ic.kind==='fish')actClick('fish');
   else if(ic.kind==='special'){ic.dead=true;runSpecial(ic.f)}
+  else if(ic.kind==='summit')openSummitBook(ic.f);
 }
 function attackByAnimal(a){
   H.body.hp=Math.max(1,H.body.hp-(a.id==='bear'?28:14));
@@ -997,6 +1012,7 @@ function attackByAnimal(a){
 }
 function updateIcons(dt){
   for(const ic of H.icons){
+    if(ic.follow)ic.x=ic.follow.x;
     if(ic.kind==='sight'||TAP_KINDS.includes(ic.kind)){ if(H.x-ic.x>260||ic.dead)ic.dead=true; continue }
     if(ic.taken){ic.fade=(ic.fade||0)+dt;if(ic.fade>0.8)ic.dead=true;continue}
     ic.life-=dt;
@@ -1007,13 +1023,33 @@ function updateIcons(dt){
   }
   H.icons=H.icons.filter(i=>!i.dead);
 }
+const WALK_NAMES=['Jonas','Lena','Mats','Ingrid','Felix','Sofie','Erik','Hanna','Tobi','Marit','Lars','Anke','Paul','Nora','Sven','Clara'];
+function spawnWalker(){
+  const look={skin:Math.floor(rnd(0,5)),hair:Math.floor(rnd(0,7)),style:Math.floor(rnd(0,6)),beard:Math.random()<0.3?Math.floor(rnd(1,3)):0,glasses:Math.random()<0.2?Math.floor(rnd(1,3)):0,build:Math.floor(rnd(0,3)),jacket:Math.floor(rnd(0,8)),pants:Math.floor(rnd(0,5))};
+  H.walkers.push({x:H.x+rnd(780,900),v:rnd(3.2,5),look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
+}
+function updateWalkers(h){
+  const w=H.walkers;if(!w.length)return;
+  for(const W of w){
+    if(!W.wait)W.x-=W.v*PPK*h/60;
+    W.ph+=(W.wait?0:0.25)*h*2;
+    if(!W.met&&Math.abs(W.x-H.x)<70){
+      W.met=true;
+      if(H.walking&&!H.action&&!H.sleep.active){W.wait=true;hikerEvent(W)}
+    }
+  }
+  H.walkers=w.filter(W=>W.x>H.x-900);
+}
 function hasIcon(kind,fid){return H.icons.some(i=>i.kind===kind&&i.fid===fid&&!i.dead)}
 function trackFeatures(){
-  for(const f of featsIn(H.x-320,H.x+470)){
+  for(const f of featsIn(H.x-320,H.x+900)){
     const d=f.x-H.x;
     if(f.type==='sight'){
       if(d<380&&!f.iconMade){f.iconMade=true;spawnIcon({kind:'sight',fid:f.id,x:f.x,e:f.s.e,label:f.s.n,base:f.s.v,life:1e9});toast('📍 Meilenstein voraus: '+f.s.n,'good');sfx('discover')}
+      if(f.summit&&d<260&&!hasIcon('summit',f.id))spawnIcon({kind:'summit',fid:f.id,f,x:f.x+74,e:'📖',label:'Gipfelbuch',life:1e9});
       if(d<50&&!f.reached){f.reached=true;H.stats.milestones++;H.body.energy=Math.min(100-H.fatigue,H.body.energy+8);toast('🏆 Meilenstein erreicht: '+f.s.n+' – das gibt Motivation (+Energie)!','good');sfx('success')}
+    }else if(f.type==='hiker'){
+      if(!f.done&&d<820&&d>-200&&env.light>0.25&&!H.sleep.active){f.done=true;spawnWalker()}
     }else if(f.type==='animal'){
       if(!f.spawned&&d<430){
         if(env.light>0.25&&!H.sleep.active){
@@ -1038,6 +1074,11 @@ function trackFeatures(){
   }
 }
 function trackSky(hr){
+  if(env.aurora&&env.dark>0.85&&!H.sleep.active&&H.flags['au'+G.day]===undefined){
+    H.flags['au'+G.day]=1;
+    spawnIcon({kind:'aurora',x:H.x,e:'🌌',label:'Nordlicht',base:26,life:55});
+    toast('🌌 Nordlicht am Himmel! Nimm es schnell auf – eine gute Kamera lohnt sich.','good');sfx('discover');
+  }
   H.skyCd-=hr*60;
   if(H.skyCd>0||env.light<0.6||env.precip||env.wind>7)return;
   if(env.biome==='berg'&&H.hk.regD.tags.includes('alpen')&&Math.random()<0.35*hr){
@@ -1048,7 +1089,18 @@ function trackSky(hr){
 }
 
 /* ---------- Aktionen ---------- */
+const ACTION_CLIPS={fire:['🔥','Lagerfeuer entfachen',4.5],cook:['🍲','Kochen am Lagerplatz',4],tent:['⛺','Zeltaufbau im Zeitraffer',4.5],forage:['🫐','Sammeln am Wegesrand',3.5],fish:['🎣','Angeln am Wasser',4.5],ftarp:['🏕️','Tarp über dem Feuer',3.5],solar:['☀️','Solarpanel aufstellen',3]};
+function actionClip(kind){
+  const a=ACTION_CLIPS[kind];if(!a||H.rec===0||!H.dev)return;
+  const dev=handheld();if(!dev)return;
+  const key='act:'+kind+':'+G.day;
+  if(H.clips.some(c=>c.key===key))return;
+  const q=shotQ(dev.def,0.9);
+  const hiding=env.dark>0.6&&kind!=='fire'&&kind!=='cook'&&kind!=='tent'?0.6:1;
+  addClip({key,type:'video',name:a[1],e:a[0],q,value:a[2]*q*hiding*(env.dark>0.6&&kind==='fire'?1.25:1),rar:-1});
+}
 function beginAction(kind,label,dur,done,opts={}){
+  if(ACTION_CLIPS[kind]){const d0=done;done=()=>{try{actionClip(kind)}catch(e){}if(d0)d0()}}
   H.action={kind,label,dur,left:dur,done,tick:opts.tick,resume:opts.force?true:(!!opts.resume&&H.walking)};
   H.walking=false;
 }
@@ -1521,7 +1573,6 @@ function checkFeatures(a,b){
       if(H.autoStop&&(waterTotal()<H.g.waterCap*0.75)){H.walking=false;H.stopReason='water';toast('⏸ Gestoppt an der Wasserstelle – „Wasser auffüllen“ und es geht automatisch weiter.')}
     }else if(f.type==='fluss')riverFord(f);
     else if(f.type==='junction')navCheck();
-    else if(f.type==='hiker'&&env.light>0.3&&!f.done){f.done=true;hikerEvent()}
   }
   for(const f of featsIn(a+175,b+175)){
     if(f.type==='village'&&!f.left){
@@ -1555,17 +1606,18 @@ function navCheck(){
     sfx('warn');
   }else if(nav.q<0.9)xpAdd('nav',3.5);
 }
-function hikerEvent(){
-  const opts=[];
+function hikerEvent(W){
+  const opts=['greet','greet'];
   if(H.water.clean>=0.6)opts.push('water');
   if(Object.values(H.food).some(v=>v>0))opts.push('food');
   if(H.water.clean>=0.6)opts.push('trade');
   opts.push('info');
   const k=pick(opts);
-  const interview=()=>spawnIcon({kind:'hiker',x:H.x+180,e:'🧑',label:'Interview',base:8,life:12});
+  const interview=()=>spawnIcon({kind:'hiker',x:W?W.x:H.x+120,follow:W||null,e:'🎤',label:'Interview',base:8,life:14});
   const done=(msg)=>{toast(msg,'good');interview()};
   H.walking=false;
-  const resume=()=>{if(!H.camp.pitched)H.walking=true};
+  const resume=()=>{if(W)W.wait=false;if(!H.camp.pitched)H.walking=true};
+  if(k==='greet'){toast('🥾 Ein Wanderer grüßt dich: „'+pick(['Hallo! Schönes Wetter heute.','Moin! Der Weg ist wunderbar.','Gute Tour noch!','Schön, dass hier jemand unterwegs ist.','Bei der nächsten Kreuzung rechts, dann geht es schön weiter.','Pass auf, weiter oben ist es rutschig.'])+'“','good');interview();resume();return}
   if(k==='water')showModal({title:'🥾 Wanderer in Not',text:'Ein erschöpfter Wanderer bittet dich um 0,5 L Wasser.',buttons:[
     {label:'Wasser geben',fn:()=>{H.water.clean-=0.5;if(Math.random()<0.5){G.money+=8;done('Er bedankt sich mit 8 €. Ein kurzes Interview wäre drin!')}else done('Er bedankt sich herzlich. Ein kurzes Interview wäre drin!');resume()}},
     {label:'Ablehnen',fn:resume}]});
@@ -1577,6 +1629,26 @@ function hikerEvent(){
     {label:'Ablehnen',fn:resume}]});
   else showModal({title:'🥾 Wegtipp',text:'Ein Wanderer erklärt dir den Weg zur nächsten Kreuzung.',buttons:[
     {label:'Danke!',fn:()=>{H.safeJunction=true;done('Die nächste Kreuzung findest du sicher.');resume()}}]});
+}
+const BOOK_TEXT=['Was für eine Aussicht! Die Mühe hat sich gelohnt.','Bei Nebel hochgekommen, dann riss es kurz auf. Unvergesslich.','Mit den Kindern zum ersten Mal oben – stolz!','Nach 3 Stunden Aufstieg: Brotzeit mit Blick. Mehr braucht es nicht.','Solo und glücklich. Bis nächstes Jahr!','Wind wie verrückt, aber die Sicht war Gold wert.','Endlich geschafft – Knie tun weh, Herz ist voll.','Danke an den, der das Kreuz wieder aufgestellt hat.','Wir kommen wieder, dann mit Schlafsack.','Sonnenaufgang hier oben war das Beste meiner Reise.'];
+function bookKey(f){return H.hk.id+':'+f.s.n}
+function bookEntries(f){
+  G.books=G.books||{};const key=bookKey(f);
+  if(!G.books[key]){let h=0;for(const ch of key)h=(h*31+ch.charCodeAt(0))>>>0;const r=mulberry32(h),n=3+Math.floor(r()*3),arr=[];
+    for(let i=0;i<n;i++)arr.push({n:WALK_NAMES[Math.floor(r()*WALK_NAMES.length)],d:'vor '+(1+Math.floor(r()*40))+' Tagen',t:BOOK_TEXT[Math.floor(r()*BOOK_TEXT.length)]});
+    G.books[key]=arr}
+  return G.books[key];
+}
+function openSummitBook(f){
+  const arr=bookEntries(f),key=bookKey(f);
+  const mine=arr.some(e=>e.me&&e.k===G.day);
+  const list=arr.slice(0,8).map(e=>`<div style="margin:6px 0;padding:6px 8px;background:rgba(0,0,0,.06);border-radius:6px"><b>${esc(e.n)}</b> <small>· ${esc(e.d)}</small><br>${esc(e.t)}</div>`).join('');
+  showModal({title:'📖 Gipfelbuch – '+esc(f.s.n),html:'<p>Am Gipfelkreuz hängt ein wetterfester Kasten mit dem Gipfelbuch.</p>'+list,buttons:[
+    {label:mine?'Schon eingetragen':'✍️ Eintragen',primary:1,fn:()=>{if(mine)return;
+      const t=pick(BOOK_TEXT);arr.unshift({n:G.name,d:dateStr(G.day),t,me:true,k:G.day});
+      if(!H.flags['book'+f.id]){H.flags['book'+f.id]=1;addClip({key:'book:'+f.id,type:'sight',name:'Eintrag im Gipfelbuch',e:'📖',q:1,value:6,rar:-1});xpAdd('nav',2)}
+      toast('📖 Du hast dich ins Gipfelbuch eingetragen.','good');save()}},
+    {label:'Schließen'}]});
 }
 function runSpecial(f){
   f.done=true;H.walking=false;
@@ -1785,7 +1857,7 @@ function stepSim(h){
   }
   H.moving=mode==='walk';
   if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
-  trackFeatures();trackSky(hr);
+  trackFeatures();trackSky(hr);updateWalkers(h);
   deviceTick(hr,mode);dogTick(mode,hr,dkm);
   bodyTick(mode,hr);
   {const F=H.flags,Bd=H.body;
@@ -2383,6 +2455,14 @@ function drawFeatures(g,tm){
       g.fillStyle=tc('#6d4726');g.fillRect(sx-2,y-46,4,46);
       g.fillStyle=tc('#d9b26f');g.fillRect(sx,y-44,30,10);g.fillRect(sx-28,y-30,28,10);
       g.fillStyle=tc('#4a3417');g.fillRect(sx+22,y-42,6,6);g.fillRect(sx-22,y-28,6,6);
+    }else if(f.type==='sight'&&f.summit){
+      g.fillStyle=tc('#7d8288');g.beginPath();g.moveTo(sx-50,y+2);g.lineTo(sx-18,y-22);g.lineTo(sx+8,y-30);g.lineTo(sx+52,y+2);g.fill();
+      g.fillStyle=tc('#9aa0a6');g.beginPath();g.moveTo(sx-18,y-22);g.lineTo(sx+8,y-30);g.lineTo(sx+4,y-14);g.fill();
+      g.fillStyle=tc('#6d4726');g.fillRect(sx-3,y-96,6,70);g.fillRect(sx-19,y-78,38,6);
+      g.fillStyle=tc('#c9a45c');g.fillRect(sx+14,y-26,14,12);g.fillStyle=tc('#6d4726');g.fillRect(sx+14,y-26,14,3);
+      g.fillStyle='rgba(255,215,90,'+(0.3+0.15*Math.sin(tm*2))+')';g.beginPath();g.arc(sx,y-92,5,0,7);g.fill();
+      g.font='bold 13px sans-serif';g.textAlign='center';
+      const lb=f.s.n+(f.s.h?' '+f.s.h:'');const w=g.measureText(lb).width+16;g.fillStyle='rgba(20,30,20,0.72)';rr(g,sx-w/2,y+8,w,20,6);g.fill();g.fillStyle=f.reached?'#ffd54a':'#fff';g.fillText((f.reached?'★ ':'')+lb,sx,y+22);
     }else if(f.type==='sight'){
       const p=1+Math.sin(tm*2)*0.03;
       const gl=g.createRadialGradient(sx,y-40,10,sx,y-40,90);gl.addColorStop(0,'rgba(255,225,120,0.28)');gl.addColorStop(1,'rgba(255,225,120,0)');
@@ -2493,12 +2573,20 @@ function drawCamp(g,tm,dt){
    ===================================================================== */
 const HITS=[];                 // Klickflächen der Symbole (Bildschirmkoordinaten)
 const LIGHT={t:0,next:8,flash:0,bolt:null};
+function drawWalkers(g,tm){
+  for(const W of H.walkers){
+    const sx=W.x-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(W.x);
+    g.save();g.translate(sx,0);g.scale(-1,1);
+    drawHiker(g,0,gy,1.15,{look:W.look,phase:W.ph,mode:W.wait?'idle':'walk',packColor:W.pack,tm,poles:false});
+    g.restore();
+  }
+}
 function drawIcons(g,tm){
   HITS.length=0;
   for(const ic of H.icons){
     if(ic.dead)continue;
     let sx=ic.x-camX;
-    if(ic.kind!=='sky'&&ic.kind!=='storm'&&(sx<-60||sx>CW+60))continue;
+    if(ic.kind!=='sky'&&ic.kind!=='storm'&&ic.kind!=='aurora'&&(sx<-60||sx>CW+60))continue;
     const gy=groundY(ic.x);let by=gy-92,ey=gy;
     if(ic.kind==='animal'){
       const bob=Math.sin(tm*3+ic.x)*1.5;
@@ -2515,10 +2603,12 @@ function drawIcons(g,tm){
     }else if(ic.kind==='sky'){
       const t2=1-ic.life/ic.max;sx=CW*(0.3+0.4*t2)+Math.sin(tm)*6;const sy=140+Math.sin(tm*0.8)*10+t2*20;
       emoji(g,'🪂',sx,sy,44);by=sy+30;ey=sy;ic._sx=sx;
+    }else if(ic.kind==='aurora'){
+      const sy=120+Math.sin(tm*1.5)*4;sx=CW*0.5;emoji(g,'🌌',sx,sy,46);by=sy+38;ic._sx=sx;
     }else if(ic.kind==='storm'){
       const sy=150+Math.sin(tm*2)*4;sx=CW*0.62;emoji(g,ic.e,sx,sy,44);by=sy+40;ic._sx=sx;
     }else if(ic.kind==='hiker'){
-      emoji(g,'🧑‍🦯',sx,gy+2,38);by=gy-62;
+      by=gy-112;
     }else if(ic.kind==='sight'){
       by=gy-120;
     }else if(ic.kind==='shop'){by=gy-108}
@@ -2771,6 +2861,7 @@ function drawScene(g,tm,dt){
     g.font='bold 10px sans-serif';g.fillStyle='#fff';g.fillText(Math.round(prog*100)+' %',0,42);
     g.restore();
   }
+  drawWalkers(g,tm);
   drawIcons(g,tm);
   drawCtx(g,tm,sx,gy);
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
@@ -3533,7 +3624,12 @@ const THUMBS=[{id:'pano',n:'🏞️ Panorama',d:'Weite Landschaft'},{id:'face',n
 function clipScore(clips){
   const v=clips.map(c=>c.value).sort((a,b)=>b-a);let s=0;v.slice(0,30).forEach((x,i)=>s+=x*Math.pow(0.94,i));
   const types=new Set(clips.map(c=>c.type)),rar=clips.filter(c=>c.rar>=3).length;
-  return s*(1+0.04*Math.min(types.size,6)+0.08*Math.min(rar,3));
+  // Kameraqualität zählt zusätzlich: gute Geräte (Ø-Qualität der besten Clips) heben den Gesamteindruck, billige Kameras drücken ihn
+  const top=[...clips].sort((a,b)=>b.value-a.value).slice(0,12),aq=top.length?top.reduce((a,c)=>a+(c.q||0.7),0)/top.length:0.7;
+  const camF=0.7+0.45*clamp(aq,0.3,1.35);
+  // Abwechslung belohnen: viele verschiedene Motive (Tiere, Sehenswürdigkeiten, Alltag am Lager)
+  const names=new Set(clips.map(c=>c.name)).size,variety=1+0.012*Math.min(names,14);
+  return s*(1+0.04*Math.min(types.size,6)+0.08*Math.min(rar,3))*camF*variety*0.86;
 }
 /* ---------- Tagesfortschritt des Kanals ---------- */
 function idleDays(){
