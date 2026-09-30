@@ -314,6 +314,11 @@ const REGIONS={
   mtblanc:{name:'Mont-Blanc-Massiv',lat:45.9,meanT:3.9,sAmp:9.5,dAmp:6.5,syn:3.5,wind:1.2,ref:1900,mod:{gewitter:1.6,sturm:1.2},tags:['alpen']},
   island:{name:'Island',lat:64.0,meanT:1.5,sAmp:7.5,dAmp:3,syn:3.5,wind:1.5,ref:500,mod:{regen:1.5,sturm:1.7,nebel:1.3},tags:['isl']},
   lappland:{name:'Lappland',lat:67.8,meanT:-2.6,sAmp:13.5,dAmp:4.5,syn:5.5,wind:1.2,ref:650,mod:{sturm:1.2},tags:['nord']},
+  norwegen:{name:'Jotunheimen',lat:61.5,meanT:-1.2,sAmp:11,dAmp:5.5,syn:4.5,wind:1.25,ref:1100,mod:{sturm:1.3,regen:1.3},tags:['nord']},
+  eng:{name:'Cotswolds',lat:51.8,meanT:9.6,sAmp:7.5,dAmp:4,syn:3,wind:0.9,ref:150,mod:{regen:1.3},tags:['de']},
+  irland:{name:'Südwestirland',lat:52.0,meanT:10,sAmp:5.5,dAmp:3,syn:3,wind:1.3,ref:150,mod:{regen:1.9,sturm:1.4,nebel:1.3},tags:['scot']},
+  korsika:{name:'Korsika (GR20)',lat:42.2,meanT:5.5,sAmp:10,dAmp:7.5,syn:3.5,wind:1.2,ref:1500,mod:{gewitter:1.6},tags:['alpen']},
+  camino:{name:'Nordspanien',lat:42.7,meanT:11,sAmp:10,dAmp:7.5,syn:3.2,wind:1,ref:600,mod:{gewitter:1.3},tags:['de']},
   nordkalott:{name:'Nordkalotte',lat:68.9,meanT:-3.4,sAmp:14,dAmp:4.5,syn:6,wind:1.35,ref:650,mod:{sturm:1.5},tags:['nord']}};
 
 /* ---- Wanderungen ---- */
@@ -416,6 +421,26 @@ const HIKES=[
   desc:'800 km über drei Länder, oberhalb des Polarkreises. Die härteste Tour im Spiel: Winterstürme, Polarnacht oder Mitternachtssonne, wenige Läden.',
   sights:[S_('Treriksröset (Dreiländereck)','🗿',98),S_('Halti – höchster Punkt Finnlands','⛰️',96),S_('Kilpisjärvi','🏞️',72),S_('Lyngenfjord-Blick','🏞️',88),S_('Reisa-Canyon','🏞️',82),S_('Samisches Dorf','🛖',66),S_('Kebnekaise-Blick','⛰️',90),S_('Pältsa-Fjäll','⛰️',80)],
   stages:P('f14 w9 f16 e3 t8 f15 b8 f14 e4 t9 f13 k3 s2 w8',800,450,640,360,41)}
+  ,{id:'besseggen',name:'Besseggen-Grat',country:'Norwegen',reg:'norwegen',km:14,diff:3,mult:1.3,permit:15,hard:1.2,ext:1.25,villageEvery:0,startAlt:990,lodgeKind:'huette',
+  desc:'Der berühmteste Grat Norwegens zwischen zwei Seen: schmal, ausgesetzt und mit Blick auf Gjende und Bessvatnet.',
+  sights:[S_('Besseggen-Grat','⛰️',92),S_('Gjende-See','🏞️',80)],
+  stages:P('f3 b3 b3 e1 b2 f2',14,990,1000,340,51)},
+ {id:'cotswold',name:'Cotswold Way',country:'England',reg:'eng',km:164,diff:2,mult:1.35,permit:10,hard:1.0,ext:0.9,villageEvery:0,startAlt:130,lodgeKind:'none',
+  desc:'Sanfte Hügel, Steinmauern und Honigstein-Dörfer von Chipping Campden bis Bath. Viele Pubs und Unterkünfte am Weg.',
+  sights:[S_('Broadway Tower','🗼',78),S_('Sudeley Castle','🏰',70),S_('Bath Abbey','⛪',84)],
+  stages:P('m6 w5 t6 m5 w4 t8',164,130,40,90,55)},
+ {id:'kerry',name:'Kerry Way',country:'Irland',reg:'irland',km:214,diff:3,mult:1.75,permit:15,hard:1.15,ext:1.2,villageEvery:0,startAlt:40,
+  desc:'Rund um die Iveragh-Halbinsel: Moor, Küstenklippen und Wolkenlöcher mit Blick auf die Skelligs. Regen ist Standard.',
+  sights:[S_('Torc-Wasserfall','🏞️',74),S_('Skellig-Blick','🏝️',82),S_('Ring-of-Kerry-Küste','🏞️',78)],
+  stages:P('w6 b6 m8 f7 k2 t9 m7 b7 w5',214,40,50,300,53)},
+ {id:'gr20',name:'GR20 – Korsika',country:'Frankreich (Korsika)',reg:'korsika',km:180,diff:5,mult:3.3,permit:45,hard:1.55,ext:1.4,villageEvery:0,startAlt:290,
+  desc:'Der härteste Fernwanderweg Europas: Granitgrate, Ketten, Schneefelder, Gewitter am Nachmittag und Hütten an den Pässen.',
+  sights:[S_('Cirque de la Solitude','⛰️',90),S_('Lac de Melo','🏞️',80),S_('Bavella-Nadeln','⛰️',86)],
+  stages:P('w5 b8 e2 b9 f4 b7 t3 b9 w4',180,290,260,1200,57)},
+ {id:'camino',name:'Camino Francés (Pilgerweg)',country:'Frankreich · Spanien',reg:'camino',km:780,diff:3,mult:3.6,permit:20,hard:1.05,ext:1.1,villageEvery:0,startAlt:170,lodgeKind:'none',
+  desc:'780 km von den Pyrenäen nach Santiago de Compostela: Weinberge, Meseta-Weite und Pilgerherbergen in fast jedem Ort.',
+  sights:[S_('Pyrenäen-Pass','⛰️',84),S_('Kathedrale von Burgos','⛪',88),S_('Cruz de Ferro','✝️',80),S_('Santiago-Kathedrale','⛪',96)],
+  stages:P('t8 m10 m12 w6 m14 b5 m10 t8 m16',780,170,260,260,59)}
 ];
 HIKES.forEach(h=>{h.regD=REGIONS[h.reg];if(!h.km)h.km=h.stages.reduce((a,s)=>a+s.km,0);h.km=Math.round(h.stages.reduce((a,s)=>a+s.km,0))});
 /* Echte Orte mit Läden (Name, km ab Start) */
@@ -429,6 +454,10 @@ const TOWNS={
  dolo:[['Passo Falzarego',48],['Passo Staulanza',86],['Forno di Zoldo',108]],
  tmb:[['Les Contamines',18],['Courmayeur',76],['Champex-Lac',118],['Trient',140]],
  kungs:[['Kebnekaise Fjällstation',100],['Saltoluokta',178],['Kvikkjokk',262],['Ammarnäs',352]],
+ cotswold:[['Broadway',11],['Winchcombe',41],['Painswick',92],['Stroud',100],['Wotton-under-Edge',125]],
+ kerry:[['Glenbeigh',45],['Cahersiveen',85],['Waterville',130],['Sneem',175]],
+ gr20:[['Vizzavona',85],['Bavella',140]],
+ camino:[['Roncesvalles',25],['Pamplona',66],['Logroño',160],['Burgos',290],['León',450],['Astorga',500],['Sarria',650]],
  nordkalott:[['Ritsem',100],['Abisko',215],['Björkliden',232],['Kilpisjärvi',400],['Skibotn',560],['Kautokeino',780]]
 };
 const SP_REWARD=[0,1,1,2,3,4,5];
@@ -572,7 +601,7 @@ function wxWeights(R,m,ext){
 
 /* ---- Profil ---- */
 function newProfile(){
-  return {v:2,name:'Wanderer',chan:'Wanderkanal',look:{skin:1,hair:1,style:0,beard:0,glasses:0,build:1,jacket:2,pants:0},talent:'natur',
+  return {v:2,home:'Deutschland',growth:false,shaveDay:0,cutDay:0,name:'Wanderer',chan:'Wanderkanal',look:{skin:1,hair:1,style:0,beard:0,glasses:0,build:1,jacket:2,pants:0},talent:'natur',
     stats:{trag:3,aus:3,tempo:3,kalt:3,food:3,water:3,nav:3},xp:{},sp:0,
     money:300,owned:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},
     packed:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},cons:{},cond:{},dog:null,
@@ -702,7 +731,8 @@ function buildRoute(hk,seed){
   }
   // Hütten, Stugas, Bothys und Windschutz an echten Wanderrouten (Stil je nach Region)
   {const tg=(hk.regD&&hk.regD.tags)||[],alp=tg.includes('alpen'),nor=tg.includes('nord'),sco=tg.includes('scot'),isl=tg.includes('isl');
-   const kinds=nor?{main:'stuga',free:'shelter'}:alp?{main:'huette',free:null}:isl?{main:'huette',free:null}:sco?{main:null,free:'bothy'}:{main:null,free:'shelter'};
+   const ov=hk.lodgeKind;
+   const kinds=ov==='none'?{main:null,free:null}:ov==='huette'?{main:'huette',free:null}:nor?{main:'stuga',free:'shelter'}:alp?{main:'huette',free:null}:isl?{main:'huette',free:null}:sco?{main:null,free:'bothy'}:{main:null,free:'shelter'};
    const NM={stuga:['Sälka','Tjäktja','Singi','Alesjaure','Nallo','Kaitumjaure','Vistas','Hukejaure','Salka','Teusajaure','Kebnekaise','Låktatjåkka','Storulvån','Helags','Vålådalen','Nikkaluokta'],
      huette:['Kemptner','Memminger','Braunschweiger','Anhalter','Hanauer','Rifugio Nuvolau','Rifugio Lavaredo','Refuge du Col','Cabane du Mont','Landmannalaugar','Þórsmörk','Hvanngil','Álftavatn','Emstrur','Berghaus Zirbitz'],
      bothy:['Corrour','Sourlies','Glen Affric','Ryvoan','Fords of Avon','Shenavall','Kinbreack','Gelder'],
@@ -1108,6 +1138,16 @@ function trackFeatures(){
     }
   }
 }
+const SHELF={bread:3,wurst:6,berries:1.5,mushroom:2};
+function spoilTick(){
+  H.fs=H.fs||{};
+  for(const f of FOODS){const sh=f.fish?1:SHELF[f.id];if(!sh)continue;
+    const n=H.food[f.id]||0,r=H.fs[f.id]||(H.fs[f.id]={n:0,t0:H.t});
+    if(n>r.n&&r.n>0)r.t0=H.t-(H.t-r.t0)*r.n/n;else if(n>0&&r.n===0)r.t0=H.t;
+    r.n=n;
+    if(n>0&&H.t-r.t0>sh*1440){const lost=Math.ceil(n*0.5);H.food[f.id]=n-lost;r.n=n-lost;r.t0=H.t-sh*1440*0.55;toast('🤢 '+lost+'× '+f.name.replace(/ \((kochen|garen)\)/,'')+' ist verdorben.','warn')}
+  }
+}
 function snowTick(hr){
   let d=H.snowDepth==null?0:H.snowDepth;
   const eq=clamp((1.5-env.seasonT)/5,0,1)*30;
@@ -1132,7 +1172,7 @@ function trackSky(hr){
 }
 
 /* ---------- Aktionen ---------- */
-const ACTION_CLIPS={fire:['🔥','Lagerfeuer entfachen',4.5],cook:['🍲','Kochen am Lagerplatz',4],tent:['⛺','Zeltaufbau im Zeitraffer',4.5],forage:['🫐','Sammeln am Wegesrand',3.5],fish:['🎣','Angeln am Wasser',4.5],ftarp:['🏕️','Tarp über dem Feuer',3.5],solar:['☀️','Solarpanel aufstellen',3]};
+const ACTION_CLIPS={eat:['🍕','Essen im Ort',3],fire:['🔥','Lagerfeuer entfachen',4.5],cook:['🍲','Kochen am Lagerplatz',4],tent:['⛺','Zeltaufbau im Zeitraffer',4.5],forage:['🫐','Sammeln am Wegesrand',3.5],fish:['🎣','Angeln am Wasser',4.5],ftarp:['🏕️','Tarp über dem Feuer',3.5],solar:['☀️','Solarpanel aufstellen',3]};
 function actionClip(kind){
   const a=ACTION_CLIPS[kind];if(!a||H.rec===0||!H.dev)return;
   const dev=handheld();if(!dev)return;
@@ -1845,6 +1885,21 @@ function lodgeStay(f){
   showModal({title:'🏨 '+esc(L.name),text:'Du checkst ein: '+L.label+'. Du schläfst im Warmen und Trockenen, deine Kleidung trocknet.',buttons:[
     {label:'Schlafen',primary:1,fn:()=>{H.indoor='lodge';startSleep()}},{label:'Später'}]});
 }
+function regPriceLevel(){return ({island:1.8,norwegen:1.7,nordkalott:1.4,mtblanc:1.45,lappland:1.25,hoga:1.2,alpen:1.15,dolo:1.2,scot:1.1,korsika:1.15,irland:1.1}[H.hk.reg]||1)*priceMod()}
+function restaurantDialog(f){
+  const hr=env.hour,lvl=regPriceLevel();
+  const OPT=[
+    {e:'☕',n:'Café: Kaffee & Kuchen',p:6.5,dur:30,from:8,to:18,fx:()=>{H.body.sat=Math.min(100,H.body.sat+25);H.body.energy=Math.min(100-H.fatigue,H.body.energy+8);stimFx('coffee')}},
+    {e:'🍕',n:'Pizzeria: Pizza',p:13,dur:45,from:11,to:22,fx:()=>{H.body.sat=Math.min(100,H.body.sat+55);H.body.energy=Math.min(100-H.fatigue,H.body.energy+6);H.body.warm=Math.min(100,H.body.warm+10)}},
+    {e:'🍽️',n:'Gasthaus: Tagesmenü',p:22,dur:60,from:11.5,to:21,fx:()=>{H.body.sat=Math.min(100,H.body.sat+75);H.body.hyd=Math.min(100,H.body.hyd+25);H.body.energy=Math.min(100-H.fatigue,H.body.energy+12);H.body.warm=Math.min(100,H.body.warm+15)}}];
+  const btns=OPT.map(o=>{const price=Math.round(o.p*lvl*10)/10,open=hr>=o.from&&hr<o.to;
+    return {label:`${o.e} ${o.n} · ${eur(price)}${open?'':' (geschlossen)'}`,fn:()=>{
+      if(!open){toast('Hier ist gerade geschlossen.','warn');return}
+      if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+      G.money-=price;H.walking=false;beginAction('eat','Isst '+o.n.split(':')[0]+' …',o.dur,()=>{o.fx();toast(o.e+' Lecker! Du bist gestärkt.','good')})}}});
+  btns.push({label:'Zurück'});
+  showModal({title:'🍴 '+esc(f.name),html:'<p>Im Ort kannst du dich hinsetzen und richtig essen. Die Preise richten sich nach Region, Essen ist dort eine willkommene Pause.</p>',buttons:btns,wide:true});
+}
 function nearLodgeFeat(){
   for(const f of featsIn(H.x-330,H.x+330)){if((f.type==='lodge'||(f.type==='village'&&f.town))&&Math.abs(f.x-H.x)<330)return f}
   return null;
@@ -2080,7 +2135,7 @@ function stepSim(h){
   }
   H.moving=mode==='walk';
   if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
-  trackFeatures();trackSky(hr);updateWalkers(h);snowTick(hr);
+  trackFeatures();trackSky(hr);updateWalkers(h);snowTick(hr);spoilTick();
   deviceTick(hr,mode);dogTick(mode,hr,dkm);
   bodyTick(mode,hr);
   {const F=H.flags,Bd=H.body;
@@ -3062,6 +3117,7 @@ function drawCtx(g,tm,sx,gy){
   if(resting){const lf=nearLodgeFeat();if(lf){
     if(H.parcels&&H.parcels[lf.id]&&H.parcels[lf.id].length)row.push(['📦','Paket',()=>collectParcels(lf),true]);
     if(lf.type==='lodge'&&lf.shop)row.push(['🍲','Küche',()=>openVillageShop(lf),true]);
+    if(lf.type==='village'&&lf.town)row.push(['🍴','Essen',()=>restaurantDialog(lf),true]);
     row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
   }}
   if(resting&&handheld())row.push(['📱','Handy',()=>openPhone(),true]);
@@ -3125,7 +3181,7 @@ function drawScene(g,tm,dt){
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
-    drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+    drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
 
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
@@ -3255,6 +3311,9 @@ function renderChar(){
      <div class="row"><span class="lbl">Frisur</span>${seg(LOOKS.styles,'style')}</div>
      <div class="row"><span class="lbl">Bart</span>${seg(LOOKS.beards,'beard')}</div>
      <div class="row"><span class="lbl">Brille</span>${seg(LOOKS.glasses,'glasses')}</div>
+     <div class="row"><span class="lbl">Haar & Bart</span><div class="seg"><button data-gr="0" class="${!G.growth?'on':''}">bleiben gleich</button><button data-gr="1" class="${G.growth?'on':''}">wachsen mit der Zeit</button></div></div>
+     <div class="row"><span class="lbl">Wohnland</span><select id="c-home">${Object.keys(HOMES).map(c=>`<option ${ (G.home||'Deutschland')===c?'selected':''}>${c}</option>`).join('')}</select></div>
+     <p class="hint">Vom Wohnland hängen Anreisekosten und -dauer zu den Touren ab.</p>
      <div class="row"><span class="lbl">Jacke</span><div>${sw(LOOKS.jacket,'jacket')}</div></div>
      <div class="row"><span class="lbl">Hose</span><div>${sw(LOOKS.pants,'pants')}</div></div>
    </div>
@@ -3269,14 +3328,25 @@ function renderChar(){
     drawHiker(g,120,222,2.3,{look:G.look,phase:0,mode:'idle',packColor:'#c0392b',tent:true,tm:t/1000});requestAnimationFrame(paint)};
   requestAnimationFrame(paint);
   $$('[data-k]').forEach(el=>el.onclick=()=>{G.look[el.dataset.k]=+el.dataset.i;const n=$('#c-name').value,c=$('#c-chan').value;G.name=n;G.chan=c;renderChar()});
+  const hs=$('#c-home');if(hs)hs.onchange=()=>{G.home=hs.value};
+  $$('[data-gr]').forEach(el=>el.onclick=()=>{G.growth=el.dataset.gr==='1';G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
   $$('[data-tal]').forEach(el=>el.onclick=()=>{G.talent=el.dataset.tal;G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
   $$('[data-st]').forEach(el=>el.onclick=()=>{G.stats[el.dataset.st]+=+el.dataset.d;G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
-  $('#c-go').onclick=()=>{G.name=($('#c-name').value||'Wanderer').trim();G.chan=($('#c-chan').value||'Wanderkanal').trim();G.created=true;save();renderHub();show('hub');
+  $('#c-go').onclick=()=>{G.name=($('#c-name').value||'Wanderer').trim();G.chan=($('#c-chan').value||'Wanderkanal').trim();G.created=true;G.shaveDay=G.day;G.cutDay=G.day;save();renderHub();show('hub');
     showModal({title:'Willkommen, '+esc(G.name)+'!',html:'<p>Dein Kanal <b>'+esc(G.chan)+'</b> startet mit einem einfachen Smartphone, Turnschuhen und 300 €. Wähle als Erstes eine leichte Tour, kaufe Proviant im Shop – und lies bei Bedarf das Spielprinzip.</p>',buttons:[{label:'Spielprinzip lesen',fn:showHowTo},{label:'Los!',primary:1}]})};
 }
 
 /* ---------- Zentrale ---------- */
 function daysToPayout(){const d=dateOf(G.day);let n=0;while(dateOf(G.day+n).dom!==21&&n<40)n++;return n}
+function lookNow(){
+  const L=G.look;if(!G.growth)return L;
+  const day=G.day+((typeof H!=='undefined'&&H&&H.t)?H.t/1440:0);
+  const ba=day-(G.shaveDay||0),ha=day-(G.cutDay||0),o=Object.assign({},L);
+  o.beard=Math.max(L.beard,ba>=28?2:ba>=12?1:0);
+  if(L.style===0&&ha>=45)o.style=1;
+  if(L.style===5&&ha>=90)o.style=1;
+  return o;
+}
 function renderHub(){
   H=null;
   const d=dateOf(G.day),s=seasonOfM(d.m),pend=G.pending;
@@ -3293,12 +3363,15 @@ function renderHub(){
     <div class="card"><h3>🛒 Ausrüstung & Proviant</h3><p class="hint">Rucksack packen, Proviant kaufen, Hund ausstatten.</p><button id="h-shop">Zum Shop</button> <button id="h-dog">🐕 Hund</button></div>
     <div class="card"><h3>📺 Kanal & Studio</h3><p class="hint">Videos, Statistik, Kommentare, Livestreams, Auszahlungen.</p><button id="h-studio">Kanal öffnen</button></div>
     <div class="card"><h3>🔧 Werkstatt</h3>${workshopHTML()}</div>
+    ${G.growth?`<div class="card"><h3>💈 Friseur</h3><p class="hint">Haare und Bart wachsen. Bart: ${['sauber','Stoppeln','Vollbart'][lookNow().beard]} · Frisur: ${LOOKS.styles[lookNow().style]}</p><button id="h-shave">🪒 Rasieren (gratis)</button> <button id="h-cut">✂️ Haare schneiden (18 €)</button></div>`:''}
     <div class="card"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
       <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div>
 </div>
     <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Wachsen von selbst mit deiner Erfahrung: Je weiter und anspruchsvoller die Touren, desto schneller. Wer eine Strecke oder ähnliche Gegenden öfter geht, orientiert sich besser. Schwere Routen kannst du nur mit genug Fähigkeiten meistern – gute Ausrüstung allein reicht nicht.</p>${xpRow}</div>
    </div><p class="hint" style="margin-top:14px">Touren gesamt: ${G.hikes} · Kilometer: ${fmtInt(G.km)} · Einnahmen gesamt: ${eur(G.earned)}</p></div>`;
   $('#h-hikes').onclick=()=>{renderHikes();show('hikes')};
+  {const sb=$('#h-shave');if(sb)sb.onclick=()=>{G.shaveDay=G.day;save();renderHub()};
+   const cb=$('#h-cut');if(cb)cb.onclick=()=>{if(G.money<18){showModal({title:'💈 Friseur',text:'Dafür reicht dein Geld nicht.'});return}G.money-=18;G.cutDay=G.day;save();renderHub()}}
   $('#h-shop').onclick=()=>{SHOPTAB='Rucksack';renderShop();show('shop')};
   $('#h-dog').onclick=()=>{SHOPTAB='Hund';renderShop();show('shop')};
   $('#h-studio').onclick=()=>{STUDIOTAB='Übersicht';renderStudio();show('studio')};
@@ -3395,7 +3468,7 @@ function briefing(hk){
   return {tDay,tNight,dl,days,w,score,lbl,col,start:dateStr(G.day),end:dateStr(G.day+days),load,sT};
 }
 
-const START_C={nordkalott:'Schweden'};
+const START_C={nordkalott:'Schweden',gr20:'Frankreich',camino:'Spanien'};
 function startCountry(hk){return START_C[hk.id]||hk.country.split(' · ')[0]}
 function routeFacts(hk){
   const days=estDays(hk),ms=new Set();for(let d=0;d<=days;d++)ms.add(dateOf(G.day+d).m);
@@ -3408,6 +3481,22 @@ function routeFacts(hk){
   const towns=TOWNS[hk.id]?TOWNS[hk.id].filter(t=>t[1]<hk.km-3).map(t=>t[0]+' (km '+t[1]+')').join(', '):'';
   return {wi,fishOK,beeren:fo('beeren'),pilze:fo('pilze'),nuesse:fo('nuesse'),terr,towns};
 }
+const HOMES={Deutschland:[51,10],Österreich:[47.5,14.5],Schweiz:[46.8,8.2],Schweden:[59.3,18],Norwegen:[59.9,10.7],Schottland:[55.9,-3.2],England:[51.5,-0.1],Irland:[53.3,-6.3],Italien:[45.5,9.2],Frankreich:[48.9,2.4],Spanien:[40.4,-3.7],Island:[64.1,-21.9]};
+const REG_XY={harz:[51.8,10.6],thuer:[50.7,10.7],sachsen:[50.9,14.2],hoga:[63.0,18.3],alpen:[47.4,10.3],dolo:[46.6,12.0],scot:[56.2,-4.6],mtblanc:[45.9,6.9],island:[63.9,-19.3],lappland:[68.4,18.8],nordkalott:[69.3,20.0],norwegen:[61.5,8.8],eng:[51.9,-1.8],irland:[52.05,-9.5],korsika:[42.5,8.9],camino:[43.2,-1.2]};
+function travelInfo(hk){
+  const home=G.home||'Deutschland',a=HOMES[home]||HOMES.Deutschland,b=REG_XY[hk.reg]||a;
+  const R=6371,rad=x=>x*Math.PI/180,dl=rad(b[0]-a[0]),dn=rad(b[1]-a[1]);
+  const h=Math.sin(dl/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dn/2)**2;
+  const d=Math.round(2*R*Math.asin(Math.sqrt(h)));
+  const isl=['Schottland','England','Irland','Island'].includes(home),hisl=['scot','eng','irland','island'].includes(hk.reg);
+  const sea=(home==='Island')!==(hk.reg==='island')||(isl!==hisl&&d>300)||(isl&&hisl&&home!=={scot:'Schottland',eng:'England',irland:'Irland',island:'Island'}[hk.reg]&&d>400);
+  if(d<60)return {cost:12,days:0,mode:'Bus & Bahn',km:d};
+  let mode,cost;
+  if(sea||d>2300){mode='Flug';cost=2*(45+0.03*d)}else{mode='Zug';cost=2*0.07*d}
+  cost=Math.round(Math.max(25,cost)/5)*5;
+  return {cost,days:mode==='Flug'?0:Math.floor(d/900),mode,km:d};
+}
+function travelText(hk){const t=travelInfo(hk);return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
 let SELHIKE=null;
 let HIKECTRY=null;
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
@@ -3417,6 +3506,7 @@ function hikeCard(hk){
   return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
       <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} · Gebühr ${eur0(hk.permit)}</span>
+      <span>🚆 ${esc(travelText(hk))}</span>
       <span>⛰️ <span class="risk" style="background:${DIFF_COL[hk.diff]}">${DIFF_NAMES[hk.diff]}</span> · Erlös-Faktor ×${hk.mult}</span>
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
       <span>💪 Empfohlene Fähigkeiten Ø ${SKILL_REQ[hk.diff]} · du: Ø ${fmtN(skillAvg(hk),1)}</span>
@@ -3449,14 +3539,15 @@ function renderHikes(){
 let BACKHIKE=null;
 function openBriefing(id){
   const hk=HIKES.find(h=>h.id===id),b=briefing(hk);
-  const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<hk.permit;
+  const tr=travelInfo(hk),fee=hk.permit+tr.cost;
+  const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<fee;
   const ic={bad:'⛔',warn:'⚠️',info:'ℹ️'};
   showModal({title:'📋 '+esc(hk.name),wide:true,html:`<p><b>${hk.km} km</b> · ${dayLbl(hk)} · Start ${b.start} · Ende ~${b.end}<br>Temperatur im Verlauf: Nächte bis ca. ${Math.round(b.tNight)} °C, Tage ca. ${Math.round(b.tDay)} °C · Tageslicht ca. ${fmtN(b.dl,0)} h<br>Gesamtrisiko: <span class="risk" style="background:${b.col}">${b.lbl}</span></p>
    ${(()=>{const f=routeFacts(hk);return `<p class="hint">🚰 ${f.wi.lbl}. 🎣 Fische ${f.fishOK?'möglich':'kaum'} · 🫐 Beeren ${f.beeren?'ja':'nein'} · 🍄 Pilze ${f.pilze?'ja':'nein'} · 🌰 Nüsse ${f.nuesse?'ja':'nein'}${f.terr.length?'<br>'+f.terr.join(' · '):''}${f.towns?'<br>🏪 '+esc(f.towns):''}</p>`})()}
    ${b.w.length?b.w.map(x=>`<div class="warnbox ${x.l}">${ic[x.l]} ${esc(x.t)}</div>`).join(''):'<div class="warnbox info">Keine besonderen Warnungen – gute Vorbereitung.</div>'}
-   <p class="hint">Gebühr/Anreise: ${eur0(hk.permit)} (wird beim Start abgezogen). Kaputte Ausrüstung wird nicht mitgenommen.${G.money<hk.permit?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
+   <p class="hint">Gebühr ${eur0(hk.permit)} + Anreise (${esc(travelText(hk))}) = <b>${eur0(fee)}</b>, wird beim Start abgezogen. Kaputte Ausrüstung wird nicht mitgenommen. Proviant hält nur für diese eine Tour, frische Ware (Brot, Wurst, Fisch, Beeren) verdirbt nach wenigen Tagen.${G.money<fee?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
    buttons:[{label:'🥾 Losziehen',primary:1,fn:()=>{if(blocked){toast('');return}
-      G.money-=hk.permit;startHikeUI(id)}},{label:'🛒 Zum Shop',fn:()=>{BACKHIKE=id;SHOPTAB='Rucksack';renderShop();show('shop')}},{label:'Zurück'}]});
+      G.money-=fee;for(let i=0;i<tr.days;i++){G.day++;advanceDay()}startHikeUI(id)}},{label:'🛒 Zum Shop',fn:()=>{BACKHIKE=id;SHOPTAB='Rucksack';renderShop();show('shop')}},{label:'Zurück'}]});
   if(blocked){const bt=$$('#modal .btns button')[0];bt.disabled=true}
 }
 
@@ -4132,7 +4223,7 @@ function drawThumb(cv,v){
   g.fillStyle=shade(pal[1],-0.25);g.beginPath();g.moveTo(0,h);for(let x=0;x<=w;x+=10)g.lineTo(x,h*0.55-Math.abs(Math.sin(x*0.03+v.thumb.seed))*h*0.28-r()*3);g.lineTo(w,h);g.fill();
   g.fillStyle=pal[1];g.fillRect(0,h*0.78,w,h*0.22);
   const t=v.thumb.id;
-  if(t==='face'){drawHiker(g,w*0.3,h*0.98,0.9,{look:G.look,mode:'idle',phase:0,tm:0,packColor:'#c0392b'});g.font=Math.round(h*0.4)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.72,h*0.6)}
+  if(t==='face'){drawHiker(g,w*0.3,h*0.98,0.9,{look:lookNow(),mode:'idle',phase:0,tm:0,packColor:'#c0392b'});g.font=Math.round(h*0.4)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.72,h*0.6)}
   else if(t==='text'){g.font='900 '+Math.round(h*0.26)+'px Impact,Arial Black,sans-serif';g.textAlign='center';g.lineWidth=5;g.strokeStyle='#000';g.fillStyle='#ffe14a';const word=(v.tour.split(/[ –-]+/).find(x=>x.length>3)||v.tour).toUpperCase();g.strokeText(word,w/2,h*0.55);g.fillText(word,w/2,h*0.55);g.font=Math.round(h*0.3)+'px "Noto Color Emoji",sans-serif';g.fillText(v.thumb.e,w*0.5,h*0.9)}
   else if(t==='drama'){g.fillStyle='rgba(255,40,40,0.25)';g.fillRect(0,0,w,h);g.strokeStyle='#ff2d2d';g.lineWidth=6;g.strokeRect(3,3,w-6,h-6);g.font=Math.round(h*0.55)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.5,h*0.72);g.fillStyle='#ff2d2d';g.font='900 '+Math.round(h*0.3)+'px Arial';g.fillText('➜',w*0.15,h*0.5)}
   else{g.font=Math.round(h*0.5)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.5,h*0.72)}
