@@ -626,7 +626,7 @@ function playerLoad(totalKg,dogFoodKg){
 
 /* ---- Route erzeugen ---- */
 function stageIndexAt(S,x){let lo=0,hi=S.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(x<S[mid].x1)hi=mid;else lo=mid+1}return lo}
-const FEAT_RAD={village:380,sight:260,animal:170,forage:160,special:200,hiker:130,junction:120,quelle:130,fluss:160};
+const FEAT_RAD={lodge:300,village:380,sight:260,animal:170,forage:160,special:200,hiker:130,junction:120,quelle:130,fluss:160};
 function stageWaterF(hk,i){let h=0;for(const ch of hk.id)h=(h*31+ch.charCodeAt(0))>>>0;const r=mulberry32(h+i*131)();return r<0.3?0.15:r<0.62?0.7:1.5}
 function stageSprings(hk,st){const B=BIOMES[st.b];let n=Math.round(st.km/(B.water*1.7)*stageWaterF(hk,st.i));if(hk.stages.length<=4||st.km>=13)n=Math.max(n,1);return n}
 function waterInfo(hk){let n=0,dry=0,maxDry=0;hk.stages.forEach((s,i)=>{const c=stageSprings({stages:hk.stages,id:hk.id},{i,b:s.b,km:s.km});n+=c;if(c===0){dry++;maxDry=Math.max(maxDry,s.km)}});const per10=n/hk.km*10;return {n,per10,dry,maxDry,lbl:per10<0.55?'wenige Wasserstellen':per10<1.0?'mäßig viele Wasserstellen':'viele Wasserstellen'}}
@@ -694,11 +694,26 @@ function buildRoute(hk,seed){
   const hSeason=(()=>{const m=dateOf(G.day).m;return (m===11||m<2)?0.45:(m>=5&&m<=7)?1.2:1})();
   const expH=totalKm/hSpacing*hSeason,nH=Math.floor(expH)+(rng()<expH-Math.floor(expH)?1:0);
   for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.08+0.84*((k+0.2+rng()*0.6)/nH))});
-  if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0]})})}
+  if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0],town:true})})}
   else if(hk.villageEvery>0){
     for(let km=hk.villageEvery*(0.55+rng()*0.25);km<totalKm-6;km+=hk.villageEvery*(0.85+rng()*0.3))
       add({type:'village',x:km*PPK,name:pick(['Dorfladen','Kiosk','Butik','Alimentari','Épicerie','Kaufmannsladen','Kjøpmann'])});
   }
+  // Hütten, Stugas, Bothys und Windschutz an echten Wanderrouten (Stil je nach Region)
+  {const tg=(hk.regD&&hk.regD.tags)||[],alp=tg.includes('alpen'),nor=tg.includes('nord'),sco=tg.includes('scot'),isl=tg.includes('isl');
+   const kinds=nor?{main:'stuga',free:'shelter'}:alp?{main:'huette',free:null}:isl?{main:'huette',free:null}:sco?{main:null,free:'bothy'}:{main:null,free:'shelter'};
+   const NM={stuga:['Sälka','Tjäktja','Singi','Alesjaure','Nallo','Kaitumjaure','Vistas','Hukejaure','Salka','Teusajaure','Kebnekaise','Låktatjåkka','Storulvån','Helags','Vålådalen','Nikkaluokta'],
+     huette:['Kemptner','Memminger','Braunschweiger','Anhalter','Hanauer','Rifugio Nuvolau','Rifugio Lavaredo','Refuge du Col','Cabane du Mont','Landmannalaugar','Þórsmörk','Hvanngil','Álftavatn','Emstrur','Berghaus Zirbitz'],
+     bothy:['Corrour','Sourlies','Glen Affric','Ryvoan','Fords of Avon','Shenavall','Kinbreack','Gelder'],
+     shelter:['Vindskydd Ekorrberget','Skydd Norra','Raststuga','Schutzhütte Eichenkamp','Vindskydd Lunden','Waldhütte Mitte','Vindskydd Sjöudden','Schutzhütte am Kamm']};
+   const used=new Set();const nm=k=>{const a=NM[k].filter(x=>!used.has(x));const v=(a.length?a:NM[k])[Math.floor(rng()*(a.length||NM[k].length))];used.add(v);return v};
+   const tooClose=x=>feats.some(f=>(f.type==='village'||f.type==='lodge')&&Math.abs(f.x-x)<1.6*PPK);
+   const placeKind=(k,gapKm,lo)=>{if(!k)return;for(let km=gapKm*(lo+rng()*0.3);km<totalKm-4;km+=gapKm*(0.8+rng()*0.4)){const x=km*PPK;if(x<PPK*2||tooClose(x))continue;add({type:'lodge',kind:k,x,name:nm(k),shop:k==='stuga'||k==='huette'})}};
+   if(totalKm>=18||(alp&&totalKm>=10)){
+     const gap=nor?17:alp?(hk.diff>=4?14:11):isl?13:22;
+     placeKind(kinds.main,gap,0.6);
+     placeKind(kinds.free,nor?13:sco?19:24,0.35);
+   }}
   stages.forEach(st=>{
     for(const key in FORAGE){
       const F=FORAGE[key];if(!F.biomes.includes(st.b))continue;
@@ -1353,7 +1368,8 @@ function comfortTemp(sleeping){
 const VEST_HEAT=[0,3,5,8],VEST_DRAIN=[0,100/24,100/16,100/10],VEST_NAME=['Aus','Schwach','Mittel','Stark'];
 const vestOn=()=>!!H.dev.vest&&H.vestMode>0&&deviceOK('vest');
 function effTemp(mode){
-  if(H.indoor)return 17+(H.lodge?H.lodge.tier*1.5:0);
+  if(H.indoor==='lodge')return 17+(H.lodge?H.lodge.tier*1.5:0);
+  if(H.indoor==='shelter'){let E=env.temp+3-env.wind*0.5*0.35-H.body.wet/100*9;if(mode!=='walk'&&H.g.mat)E+=H.g.mat.warm;if(nearFire())E+=6;if(H.dog&&mode!=='walk')E+=1.5;if(vestOn())E+=VEST_HEAT[H.vestMode];return E}
   const g=H.g,sh=H.camp.pitched?g.shelter:null;
   let E=env.temp;
   const windP=Math.max(sh?sh.wind*cf(sh.id):0,g.shell?g.shell.wind:0);
@@ -1371,7 +1387,8 @@ function sleepQuality(){
   const g=H.g,B=H.body,sh=H.camp.pitched?g.shelter:null;
   const deficit=comfortTemp(true)-effTemp('sleep');
   let q=1-0.12*Math.max(0,deficit);
-  if(H.indoor){q=0.92+(H.lodge?H.lodge.tier*0.03:0)}
+  if(H.indoor==='lodge'){q=0.86+(H.lodge?H.lodge.tier*0.04:0)}
+  else if(H.indoor==='shelter'){q-=0.04}
   else if(!sh){q-=0.15;if(env.precip)q-=0.2;if(env.wind>12)q-=0.1}
   if(!g.mat)q-=0.1;
   if(B.wet>40&&!H.indoor)q-=(B.wet-40)/100*0.5;
@@ -1400,16 +1417,21 @@ function startSleep(rest){
 function stepSleep(h){
   const S=H.sleep;S.q=sleepQuality();S.elapsed+=h;S.qsum+=S.q*h;
   S.p+=h/(S.need*60)*S.q;
-  if(H.indoor)H.body.wet=Math.max(0,H.body.wet-h*0.25);
+  if(H.indoor==='lodge')H.body.wet=Math.max(0,H.body.wet-h*0.25);
   H.fatigue=Math.max(0,H.fatigue-h/60*0.42*S.q*(S.rest?0.3:1));
   H.body.energy=lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1));
   if(S.p>=1||S.elapsed>14*60)wakeUp();
 }
 function wakeUp(early){
   const S=H.sleep;const hrs=S.elapsed/60,avg=S.qsum/Math.max(1,S.elapsed);
-  const wasIn=H.indoor;H.indoor=false;if(wasIn){H.lodge=null;H.body.wet=Math.min(H.body.wet,8)}
+  const wasIn=H.indoor;H.indoor=false;
+  if(wasIn==='lodge'){const T=H.lodge?H.lodge.tier:1;H.body.wet=Math.min(H.body.wet,8);
+    if(T>=2)for(const id in H.dev)if(!H.dev[id].broken)H.dev[id].batt=100;
+    if(T>=3)H.body.sat=Math.min(100,H.body.sat+30);
+    if(T>=2)toast('🔌 Über Nacht sind alle Geräte aufgeladen.'+(T>=3?' Frühstück inklusive (+30 Nahrung).':''),'good');
+    H.lodge=null}
   H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;if(!S.rest)H.sleptTonight=true;
-  if(wasIn)toast('🏨 Du hast in der Herberge geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %). Ausgecheckt.','good');else toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
+  if(wasIn==='shelter')toast('🛖 Du hast im Windschutz geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %).','good');else if(wasIn)toast('🏨 Du hast in der Herberge geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %). Ausgecheckt.','good');else toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
   if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1)));
   if(H.autoNight&&!S.rest){H.autoWake=true}
 }
@@ -1677,7 +1699,8 @@ function runSpecial(f){
   }
 }
 /* ---------- Läden unterwegs ---------- */
-function villagePrice(it){return it.price*1.35*priceMod()}
+let HUTMUL=1;
+function villagePrice(it){return it.price*1.35*priceMod()*HUTMUL}
 function buyVillage(id,qty){
   const it=gearById(id);const p=villagePrice(it)*qty;if(G.money<p)return false;
   G.money-=p;
@@ -1703,35 +1726,104 @@ function openPhone(){
   showModal({title:'📱 Handy '+(net?'· 📶 Empfang':'· 📵 kein Empfang'),html:'<p>'+(net?'Du hast Netz. Was möchtest du tun?':'Hier gibt es kein Mobilfunknetz. Livestream, Buchung und Kanal-Beitrag sind nicht möglich.')+lod+'</p>',buttons:[
     {label:'📡 Livestream starten',fn:()=>startLiveDialog()},
     {label:'🏨 Herberge buchen',fn:()=>bookLodgeDialog()},
+    {label:'📦 Proviant vorbestellen',fn:()=>orderParcelDialog()},
     {label:'📝 Beitrag im Kanal posten',fn:()=>teaserDialog()},
     {label:'Schließen'}]});
 }
-function lodgeTargets(){
-  const out=[];for(const f of H.route.feats){if(f.type==='village'&&f.x>H.x+150&&f.x<H.x+PPK*30&&f.name&&!/laden|kiosk|butik|alimentari|épicerie|kaufmann|kjøpmann/i.test(f.name))out.push(f)}
-  return out.slice(0,4);
+const CLASS_NAMES=['','Klasse 1 · Mehrbett/Lager','Klasse 2 · Zweibettzimmer','Klasse 3 · Einzelzimmer, Frühstück'];
+function lodgePrice(f,t){const base=f.type==='lodge'?(f.kind==='stuga'?[0,35,70]:[0,32,62,110]):[0,30,58,95];return base[t]||0}
+function lodgeTiers(f){return f.type==='lodge'?(f.kind==='stuga'?[1,2]:[1,2,3]):[1,2,3]}
+function lodgeBookable(f){return f.type==='village'?!!f.town:(f.type==='lodge'&&(f.kind==='stuga'||f.kind==='huette'))}
+function lodgeFreeKind(f){return f.type==='lodge'&&(f.kind==='shelter'||f.kind==='bothy')}
+function lodgeFull(f,tier,dayIdx,walkin){
+  let h=5381;for(const ch of H.hk.id+':'+f.id+':'+tier+':'+dayIdx)h=((h*33)^ch.charCodeAt(0))>>>0;
+  const r=mulberry32(h)();
+  const m=dateOf(G.day).m,seas=(m>=5&&m<=8)?1.6:(m===4||m===9)?1.1:(m>=10||m<=2)?0.4:0.8;
+  const base=f.type==='village'?0.10:f.kind==='stuga'?0.22:f.kind==='huette'?0.28:f.kind==='bothy'?0.32:0.28;
+  const pop=H.hk.diff>=4?1.15:1;
+  const p=clamp(base*seas*pop+(tier===1?0.07:0)+(walkin?0.12:0),0.03,0.85);
+  return r<p;
 }
+function lodgeTargets(){
+  const out=[];for(const f of H.route.feats){if(f.x>H.x+150&&f.x<H.x+PPK*40&&lodgeBookable(f))out.push(f)}
+  return out.slice(0,5);
+}
+function lodgeDay(f){const km=Math.max(0,(f.x-H.x)/PPK);return Math.floor((H.t+km/3.5*60)/1440)}
+function lodgeLabel(f){return f.type==='lodge'?({stuga:'Stuga',huette:'Hütte'})[f.kind]+' '+f.name:f.name}
 function bookLodgeDialog(){
   if(!env.net){toast('📵 Ohne Netz kannst du nichts buchen.','bad');return}
   if(H.lodge){toast('🏨 Du hast schon gebucht: '+H.lodge.name+'.');return}
   const t=lodgeTargets();
-  if(!t.length){toast('🏨 In den nächsten 30 km gibt es keine buchbare Unterkunft im Ort.','warn');return}
-  const m=dateOf(G.day).m,busy=(m>=5&&m<=8)?0.16:0.07;
-  const btns=[];
-  t.forEach(f=>{const km=Math.round((f.x-H.x)/PPK*10)/10;
-    [['Mehrbettzimmer',28,1],['Einzelzimmer',64,2]].forEach(([lab,price,tier])=>{
-      btns.push({label:`${esc(f.name)} · ${km} km · ${lab} · ${price} €`,fn:()=>{
-        if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
-        if(Math.random()<busy+(tier===1?0.06:0)){toast('🏨 '+f.name+': '+lab+' ist leider ausgebucht. Versuche ein anderes Angebot.','bad');return}
-        G.money-=price;H.lodge={fid:f.id,name:f.name,label:lab,tier,price};
-        toast('🏨 Gebucht: '+lab+' in '+f.name+' für '+price+' €. Erreiche den Ort und tippe dort auf „Herberge“.','good');sfx('success');save()}});
-    })});
+  if(!t.length){toast('🏨 In den nächsten 40 km gibt es keine buchbare Unterkunft. Windschutz und Bothys sind nicht buchbar.','warn');return}
+  const btns=t.map(f=>{const km=Math.round((f.x-H.x)/PPK*10)/10;
+    return {label:`${esc(lodgeLabel(f))} · ${km} km · ab ${lodgePrice(f,lodgeTiers(f)[0])} €`,fn:()=>bookClassDialog(f)}});
   btns.push({label:'Abbrechen'});
-  showModal({title:'🏨 Herberge buchen',html:'<p>Die Buchung wird sofort bezahlt. Schläfst du nicht dort, verfällt sie. Mehrbettzimmer sind öfter ausgebucht.</p>',buttons:btns,wide:true});
+  showModal({title:'🏨 Unterkunft buchen',html:'<p>Wähle einen Ort. Gebucht wird sofort und bezahlt. Kommst du nicht hin, verfällt die Buchung. Hütten in der Wildnis sind in der Hauptsaison oft voll.</p>',buttons:btns,wide:true});
 }
-function lodgeStay(){
+function bookClassDialog(f){
+  const day=lodgeDay(f);
+  const btns=lodgeTiers(f).map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
+    const price=lodgePrice(f,t);
+    if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+    if(lodgeFull(f,t,day,false)){toast('🏨 '+lodgeLabel(f)+': '+CLASS_NAMES[t].split(' · ')[0]+' ist ausgebucht. Probiere eine andere Klasse oder Unterkunft.','bad');return}
+    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price};
+    toast('🏨 Gebucht: '+CLASS_NAMES[t].split(' · ')[0]+' in '+lodgeLabel(f)+' ('+price+' €). Dort zeigt dir das Symbol „Unterkunft“ den Check-in.','good');sfx('success');save()}}));
+  btns.push({label:'Zurück',fn:()=>bookLodgeDialog()});
+  showModal({title:'🏨 '+esc(lodgeLabel(f)),html:'<p>Wähle die Komfortklasse. Klasse 2 lädt nachts deine Geräte auf, Klasse 3 bringt zusätzlich Frühstück.</p>',buttons:btns,wide:true});
+}
+function lodgeStay(f){
   const L=H.lodge;if(!L)return;
   showModal({title:'🏨 '+esc(L.name),text:'Du checkst ein: '+L.label+'. Du schläfst im Warmen und Trockenen, deine Kleidung trocknet.',buttons:[
-    {label:'Schlafen',primary:1,fn:()=>{H.indoor=true;startSleep()}},{label:'Später'}]});
+    {label:'Schlafen',primary:1,fn:()=>{H.indoor='lodge';startSleep()}},{label:'Später'}]});
+}
+function nearLodgeFeat(){
+  for(const f of featsIn(H.x-330,H.x+330)){if((f.type==='lodge'||(f.type==='village'&&f.town))&&Math.abs(f.x-H.x)<330)return f}
+  return null;
+}
+function lodgeHere(f){
+  if(H.lodge&&H.lodge.fid===f.id)return lodgeStay(f);
+  const day=Math.floor(H.t/1440);
+  if(lodgeFreeKind(f)){
+    const full=lodgeFull(f,0,day,false);
+    const nm=({shelter:'Windschutz',bothy:'Bothy'})[f.kind]+' '+f.name;
+    if(full){showModal({title:'🛖 '+esc(nm),text:'Leider schon belegt – andere Wanderer haben hier ihr Lager aufgeschlagen. Du musst weiter oder selbst zelten.',buttons:[{label:'OK'}]});return}
+    showModal({title:'🛖 '+esc(nm),text:'Frei! Der Unterstand ist kostenlos, nicht buchbar und bietet Schutz vor Wind und Regen – aber keine Heizung und keine Betten.',buttons:[
+      {label:'Hier übernachten',primary:1,fn:()=>{H.indoor='shelter';startSleep()}},{label:'Weiter'}]});
+    return;
+  }
+  // Spontan: nur mit Empfang
+  if(!env.net){showModal({title:'📵 '+esc(lodgeLabel(f)),text:'Es ist niemand zu erreichen und du hast kein Netz. Eine spontane Buchung ist nur mit Handyempfang möglich.',buttons:[{label:'OK'}]});return}
+  const btns=lodgeTiers(f).map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
+    const price=lodgePrice(f,t);
+    if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+    if(lodgeFull(f,t,day,true)){toast('🏨 '+CLASS_NAMES[t].split(' · ')[0]+' ist leider belegt.','bad');return}
+    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price};sfx('coin');lodgeStay(f)}}));
+  btns.push({label:'Weiter'});
+  showModal({title:'🏨 '+esc(lodgeLabel(f)),html:'<p>Spontan buchen per Handy – ohne Vorreservierung ist es schneller voll. Wähle eine Klasse:</p>',buttons:btns,wide:true});
+}
+/* ---------- Proviant-Vorablieferung ---------- */
+const PARCELS=[
+  {id:'koch',name:'Kochpaket',e:'🍲',items:{dry:3,oats:3,coffee:3}},
+  {id:'snack',name:'Snackpaket',e:'🍫',items:{bar:8,choc:3,nuts:3,wurst:2}},
+  {id:'mix',name:'Gemischtes Paket',e:'📦',items:{dry:2,noodles:2,bar:4,bread:2,wurst:2,coffee:2}}];
+function parcelPrice(P){let s=0;for(const id in P.items)s+=gearById(id).price*P.items[id];return Math.round(s*1.15*priceMod()*10)/10}
+function orderParcelDialog(){
+  if(!env.net){toast('📵 Ohne Netz kannst du nichts bestellen.','bad');return}
+  const t=[];for(const f of H.route.feats){if(f.x>H.x+PPK*6&&f.x<H.x+PPK*80&&(f.type==='lodge'&&f.shop||(f.type==='village'&&f.town)))t.push(f)}
+  if(!t.length){toast('📦 Weiter voraus gibt es keine Stelle, die Pakete annimmt (mindestens 6 km entfernt).','warn');return}
+  const btns=t.slice(0,5).map(f=>({label:`${esc(lodgeLabel(f))} · ${Math.round((f.x-H.x)/PPK)} km`,fn:()=>{
+    showModal({title:'📦 Proviant an '+esc(lodgeLabel(f)),html:'<p>Bestellt wird sofort (+15 % Versand). Vor Ort ist Essen in der Wildnis mehr als doppelt so teuer. Das Paket liegt dort bereit, wenn du ankommst.</p>',buttons:PARCELS.map(P=>({label:`${P.e} ${P.name} · ${eur(parcelPrice(P))}`,fn:()=>{
+      const pr=parcelPrice(P);if(G.money<pr){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+      G.money-=pr;(H.parcels=H.parcels||{})[f.id]=(H.parcels[f.id]||[]).concat([P.id]);sfx('coin');
+      toast('📦 '+P.name+' bestellt. Abholbereit bei '+lodgeLabel(f)+'.','good');save()}})).concat([{label:'Zurück',fn:()=>orderParcelDialog()}]),wide:true})}}));
+  btns.push({label:'Abbrechen'});
+  showModal({title:'📦 Proviant vorbestellen',html:'<p>Wähle, wo dein Paket auf dich wartet:</p>',buttons:btns,wide:true});
+}
+function collectParcels(f){
+  const l=(H.parcels&&H.parcels[f.id])||[];if(!l.length)return;
+  const got={};l.forEach(pid=>{const P=PARCELS.find(x=>x.id===pid);for(const id in P.items){H.food[id]=(H.food[id]||0)+P.items[id];got[id]=(got[id]||0)+P.items[id]}});
+  delete H.parcels[f.id];
+  toast('📦 Paket abgeholt: '+Object.keys(got).map(id=>got[id]+'× '+gearById(id).name.replace(/ \((kochen|garen)\)/,'')).join(', ')+'.','good');sfx('success');
 }
 function teaserDialog(){
   if(!env.net){toast('📵 Ohne Netz kannst du nichts posten.','bad');return}
@@ -2532,6 +2624,24 @@ function drawFeatures(g,tm){
       sprite(g,'sights/'+f.s.n.toLowerCase().replace(/[^a-zäöü]+/g,'_'),f.s.e,sx,y-4,84*p);
       g.font='bold 13px sans-serif';g.textAlign='center';
       const w=g.measureText(f.s.n).width+16;g.fillStyle='rgba(20,30,20,0.72)';rr(g,sx-w/2,y+8,w,20,6);g.fill();g.fillStyle=f.reached?'#ffd54a':'#fff';g.fillText((f.reached?'★ ':'')+f.s.n,sx,y+22);
+    }else if(f.type==='lodge'){
+      const k=f.kind;
+      if(k==='shelter'||k==='bothy'){
+        g.fillStyle=tc('#6d4726');g.fillRect(sx-30,y-42,5,42);g.fillRect(sx+26,y-34,5,34);
+        g.fillStyle=tc('#8b5e34');g.beginPath();g.moveTo(sx-36,y-42);g.lineTo(sx+36,y-34);g.lineTo(sx+36,y-28);g.lineTo(sx-36,y-36);g.fill();
+        g.fillStyle=tc('#5a3c1e');g.fillRect(sx-25,y-30,54,30);g.fillStyle='rgba(0,0,0,0.25)';g.fillRect(sx-22,y-28,48,26);
+        if(f.used)emoji(g,'🏕️',sx+4,y-4,20);
+      }else{
+        const col=k==='stuga'?'#b5432e':'#8a6a45',roof=k==='stuga'?'#4a2f22':'#5a5a60';
+        g.fillStyle=tc(col);g.fillRect(sx-38,y-40,76,40);
+        g.fillStyle=tc(roof);g.beginPath();g.moveTo(sx-46,y-40);g.lineTo(sx,y-68);g.lineTo(sx+46,y-40);g.fill();
+        g.fillStyle=tc('#f3e6b0');g.fillRect(sx-28,y-30,16,14);g.fillRect(sx+12,y-30,16,14);g.fillStyle=tc('#3a2a1a');g.fillRect(sx-6,y-26,12,26);
+        if(env.dark>0.4){g.fillStyle='rgba(255,210,110,0.85)';g.fillRect(sx-28,y-30,16,14);g.fillRect(sx+12,y-30,16,14)}
+        g.fillStyle=tc('#6d4726');g.fillRect(sx+34,y-88,3,48);g.fillStyle='#2d7d46';g.fillRect(sx+37,y-88,16,10);
+      }
+      g.font='bold 12px sans-serif';g.textAlign='center';
+      const tl=({stuga:'Stuga',huette:'Hütte',bothy:'Bothy',shelter:'Windschutz'})[k]+' '+f.name;const w=g.measureText(tl).width+14;
+      g.fillStyle='rgba(20,30,20,0.72)';rr(g,sx-w/2,y+8,w,19,6);g.fill();g.fillStyle='#fff';g.fillText(tl,sx,y+21);
     }else if(f.type==='village')drawVillage(g,sx,y,f);
     else if(f.type==='forage'){
       const F=FORAGE[f.f],inS=F.months.includes(env.month)&&!f.done;
@@ -2846,7 +2956,11 @@ function drawCtx(g,tm,sx,gy){
   if(resting&&H.fire.lit&&nearFire()){
     FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,3).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
   }
-  if(H.lodge&&resting){const vf=H.route.feats.find(f=>f.id===H.lodge.fid);if(vf&&Math.abs(vf.x-H.x)<330)row.push(['🏨','Herberge',()=>lodgeStay(),true])}
+  if(resting){const lf=nearLodgeFeat();if(lf){
+    if(H.parcels&&H.parcels[lf.id]&&H.parcels[lf.id].length)row.push(['📦','Paket',()=>collectParcels(lf),true]);
+    if(lf.type==='lodge'&&lf.shop)row.push(['🍲','Küche',()=>openVillageShop(lf),true]);
+    row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
+  }}
   if(resting&&handheld())row.push(['📱','Handy',()=>openPhone(),true]);
   if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
   if(H.eatMenu&&eatList.length){ // Auswahl ersetzt die bisherigen Symbole
@@ -2945,7 +3059,7 @@ function drawProfile(cv){
   g.beginPath();g.moveTo(0,h);ys.forEach((e,i)=>g.lineTo(i/N*w,h-3-(e-lo)/span*(h-8)));g.lineTo(w,h);g.closePath();g.fillStyle='rgba(76,195,138,0.35)';g.fill();
   g.strokeStyle='#4cc38a';g.lineWidth=1.2;g.beginPath();ys.forEach((e,i)=>i?g.lineTo(i/N*w,h-3-(e-lo)/span*(h-8)):g.moveTo(0,h-3-(e-lo)/span*(h-8)));g.stroke();
   // Orte & Meilensteine
-  for(const f of R.feats){if(f.type==='village'){g.fillStyle='#ffb54a';g.fillRect(f.x/R.totalPx*w-1,h-9,2,9)}else if(f.type==='sight'){g.fillStyle='#ffd54a';g.beginPath();g.arc(f.x/R.totalPx*w,6,2.2,0,7);g.fill()}}
+  for(const f of R.feats){if(f.type==='village'){g.fillStyle='#ffb54a';g.fillRect(f.x/R.totalPx*w-1,h-9,2,9)}else if(f.type==='lodge'){g.fillStyle='#6cb8ff';g.fillRect(f.x/R.totalPx*w-1,h-7,2,7)}else if(f.type==='sight'){g.fillStyle='#ffd54a';g.beginPath();g.arc(f.x/R.totalPx*w,6,2.2,0,7);g.fill()}}
   const px=H.x/R.totalPx*w;g.fillStyle='#fff';g.beginPath();g.arc(px,h-3-(elevAt(H.x)-lo)/span*(h-8),3.4,0,7);g.fill();
 }
 
@@ -3621,12 +3735,13 @@ function openMap(){
 function openVillageShop(f){
   if(!f)return;
   H.walking=false;
-  const items=[...FOODS.filter(x=>x.shop),GAS,...(H.dog?[DOGFOOD]:[])];
+  HUTMUL=f.type==='lodge'?2.3:1;
+  const items=f.type==='lodge'?[...FOODS.filter(x=>['bar','choc','nuts','dry','noodles','coffee','bread'].includes(x.id)),GAS,...(H.dog?[DOGFOOD]:[])]:[...FOODS.filter(x=>x.shop),GAS,...(H.dog?[DOGFOOD]:[])];
   const kg=loadKg(),cap=H.g.pack?H.g.pack.max:capacityKg();
   const row=it=>{const p=villagePrice(it),n=it.id==='gas'?fmtN(H.gas/5,1)+' Kart.':it.id==='dogfood'?fmtN(H.dogfood)+' kg':(H.food[it.id]||0);
     return `<div class="stat"><div style="flex:1">${it.e} <b>${it.name.replace(/ \((kochen|garen)\)/,'')}</b><br><small>${it.sat?'Nahrung +'+it.sat+' · ':''}${fmtN(it.kg,2)} kg · dabei: ${n}</small></div><button data-vb="${it.id}" ${G.money<p?'disabled':''}>+1 · ${eur(p)}</button></div>`};
   const devs=Object.keys(H.dev).filter(id=>!H.dev[id].broken&&H.dev[id].batt<95);
-  showModal({replace:!!MODAL,wide:true,title:'🏪 '+esc(f.name),html:`<p>Du hast <b>${eur(G.money)}</b>. Gewicht: <b>${fmtN(kg)} kg</b> / max. ${cap} kg. Preise sind hier etwas höher als daheim.</p>
+  showModal({replace:!!MODAL,wide:true,title:(f.type==='lodge'?'🍲 ':'🏪 ')+esc(f.name),html:`<p>Du hast <b>${eur(G.money)}</b>. Gewicht: <b>${fmtN(kg)} kg</b> / max. ${cap} kg. ${f.type==='lodge'?'Hüttenpreise: alles gut doppelt so teuer, weil der Nachschub getragen oder geflogen wird.':'Preise sind hier etwas höher als daheim.'}</p>
    <div class="two"><div class="card" style="max-height:290px;overflow:auto">${items.map(row).join('')}</div>
    <div class="card"><h3>Service</h3>
     <button data-water style="width:100%;margin-bottom:6px" ${waterTotal()>=H.g.waterCap-0.05?'disabled':''}>🚰 Wasser kostenlos auffüllen</button>
