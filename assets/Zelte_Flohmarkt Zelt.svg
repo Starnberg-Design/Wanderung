@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="uuid-7c9bfe81-d24a-4ab3-a29f-4124a85c850a" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 230">
+  <defs>
+    <style>
+      .uuid-4f2ff918-0e26-42a3-a184-0a530fce494d {
+        fill: #232204;
+      }
+
+      .uuid-44e7b2d1-ffda-4444-a7ed-02507961787a {
+        fill: #804e1a;
+      }
+
+      .uuid-04a3d7cb-2345-4e7d-bac5-acc050ef6c9b {
+        fill: #be7b3f;
+      }
+
+      .uuid-d8d44c96-64ff-45b9-b40d-75397024458c {
+        fill: #333206;
+      }
+
+      .uuid-10055035-f0e4-41f5-9fad-dc8b03bca6c0 {
+        fill: #6e6257;
+      }
+
+      .uuid-ce520651-6009-4e2d-b94b-4fe7e9628000 {
+        fill: #363437;
+      }
+
+      .uuid-935ef6a4-7a5d-4e0a-8295-bc3273e50268 {
+        fill: url(#uuid-0c2370dd-98a1-4675-87e9-affb3541b6cf);
+      }
+
+      .uuid-5fdbb428-8675-4c7a-a50c-555f7f1e2d54 {
+        fill: #542e0e;
+      }
+
+      .uuid-eb840a7e-27d7-41e6-a480-3a120e4b4bc1 {
+        fill: #653711;
+      }
+    </style>
+    <linearGradient id="uuid-0c2370dd-98a1-4675-87e9-affb3541b6cf" data-name="Degradado sin nombre 292" x1="176.77" y1="-10.53" x2="122.22" y2="146.02" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".47" stop-color="#fff" stop-opacity=".17"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <polygon class="uuid-10055035-f0e4-41f5-9fad-dc8b03bca6c0" points="9.73 228.94 8.35 228 141.95 32.08 155.82 13.64 157.15 14.64 143.3 33.04 9.73 228.94"/>
+  <rect class="uuid-10055035-f0e4-41f5-9fad-dc8b03bca6c0" x="153.15" y="3.52" width="1.66" height="78.48" transform="translate(31.26 145.13) rotate(-55.35)"/>
+  <path class="uuid-04a3d7cb-2345-4e7d-bac5-acc050ef6c9b" d="M140.66,32.68c0,113.49-81.73,197.32-81.73,197.32h297.59V32.68h-215.86Z"/>
+  <path class="uuid-44e7b2d1-ffda-4444-a7ed-02507961787a" d="M244.15,230s82.43-82.97,112.37-197.32c0,0,34,136.14,106.96,197.32h-219.33Z"/>
+  <polygon class="uuid-44e7b2d1-ffda-4444-a7ed-02507961787a" points="196.03 82.44 176.08 134.78 240.47 134.78 252.87 82.44 196.03 82.44"/>
+  <path class="uuid-4f2ff918-0e26-42a3-a184-0a530fce494d" d="M337.6,210.91c-1.29,6.34-2.65,12.71-4.11,19.09h47.5c-4.2-16.82-7.72-33.63-10.65-49.71-9.56,11.54-20.57,21.83-32.75,30.61Z"/>
+  <path class="uuid-d8d44c96-64ff-45b9-b40d-75397024458c" d="M370.35,180.29c-11.03-60.45-13.83-110.41-13.83-110.41,0,0-4.06,67.81-18.92,141.02,12.18-8.78,23.19-19.07,32.75-30.61Z"/>
+  <rect class="uuid-10055035-f0e4-41f5-9fad-dc8b03bca6c0" x="425.46" y="-6.05" width="1.66" height="262.01" transform="translate(12.87 287.48) rotate(-37.8)"/>
+  <rect class="uuid-10055035-f0e4-41f5-9fad-dc8b03bca6c0" x="146.01" y="124.31" width="268.38" height="1.67" transform="translate(5.69 262.31) rotate(-50.62)"/>
+  <polygon class="uuid-4f2ff918-0e26-42a3-a184-0a530fce494d" points="249.97 96.96 251.82 89.17 198.54 89.17 181.63 137.09 195.41 137.09 209.58 96.96 249.97 96.96"/>
+  <polygon class="uuid-d8d44c96-64ff-45b9-b40d-75397024458c" points="249.97 96.96 209.58 96.96 195.41 137.09 240.47 137.09 249.97 96.96"/>
+  <path class="uuid-935ef6a4-7a5d-4e0a-8295-bc3273e50268" d="M145.83,43.16s2.98,74.75-32.66,123.77c0,0,37.85-34.76,50.56-123.77h-17.89Z"/>
+  <path class="uuid-eb840a7e-27d7-41e6-a480-3a120e4b4bc1" d="M196.03,82.44s-8.96-4.37-6.31-15.39c2.65-11.02,12.45-9.39,12.45-9.39h51.35s-3.19.93-5.03,10c-1.61,7.92,4.37,14.78,4.37,14.78h-56.83Z"/>
+  <circle class="uuid-5fdbb428-8675-4c7a-a50c-555f7f1e2d54" cx="253.34" cy="70.08" r="12.36"/>
+  <path class="uuid-4f2ff918-0e26-42a3-a184-0a530fce494d" d="M359.22,32.68c0,1.49-1.21,2.7-2.7,2.7s-2.7-1.21-2.7-2.7,1.21-2.7,2.7-2.7,2.7,1.21,2.7,2.7Z"/>
+  <rect class="uuid-ce520651-6009-4e2d-b94b-4fe7e9628000" x="1.06" y="226.95" width="15.95" height="3.04"/>
+  <rect class="uuid-ce520651-6009-4e2d-b94b-4fe7e9628000" x="186.76" y="226.95" width="15.95" height="3.04"/>
+  <rect class="uuid-ce520651-6009-4e2d-b94b-4fe7e9628000" x="494.99" y="226.95" width="15.95" height="3.04"/>
+</svg>
