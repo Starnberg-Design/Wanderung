@@ -827,7 +827,7 @@ function startHike(hikeId){
   const ds=dogSize();
   let startRisk=3;try{startRisk=briefing(hk).score}catch(e){}
   const gap0=skillGap(hk);
-  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,carry:G.cons.firewood||0,walkers:[],vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
+  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,carry:G.cons.firewood||0,walkers:[],teaserBoost:0,teaserDay:-1,lodge:null,indoor:false,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
     x:0,km:0,phase:0,t:startH*60,dayIdx:0,awakeSince:startH*60-60,cond,startDay:G.day,
     speed:1,wood:0,woodX:0,thrill:0,flags:{},walking:true,auto:true,autoStop:true,autoNight:hk.km>=60,autoWake:false,sleptTonight:false,
     body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},fatigue:0,
@@ -1353,6 +1353,7 @@ function comfortTemp(sleeping){
 const VEST_HEAT=[0,3,5,8],VEST_DRAIN=[0,100/24,100/16,100/10],VEST_NAME=['Aus','Schwach','Mittel','Stark'];
 const vestOn=()=>!!H.dev.vest&&H.vestMode>0&&deviceOK('vest');
 function effTemp(mode){
+  if(H.indoor)return 17+(H.lodge?H.lodge.tier*1.5:0);
   const g=H.g,sh=H.camp.pitched?g.shelter:null;
   let E=env.temp;
   const windP=Math.max(sh?sh.wind*cf(sh.id):0,g.shell?g.shell.wind:0);
@@ -1370,12 +1371,13 @@ function sleepQuality(){
   const g=H.g,B=H.body,sh=H.camp.pitched?g.shelter:null;
   const deficit=comfortTemp(true)-effTemp('sleep');
   let q=1-0.12*Math.max(0,deficit);
-  if(!sh){q-=0.15;if(env.precip)q-=0.2;if(env.wind>12)q-=0.1}
+  if(H.indoor){q=0.92+(H.lodge?H.lodge.tier*0.03:0)}
+  else if(!sh){q-=0.15;if(env.precip)q-=0.2;if(env.wind>12)q-=0.1}
   if(!g.mat)q-=0.1;
-  if(B.wet>40)q-=(B.wet-40)/100*0.5;
+  if(B.wet>40&&!H.indoor)q-=(B.wet-40)/100*0.5;
   if(isInjured())q-=0.05;
   if(B.sat<25||B.hyd<25)q-=0.1;
-  if(env.sun>0.6&&!env.midnightSun)q*=0.8;
+  if(env.sun>0.6&&!env.midnightSun&&!H.indoor)q*=0.8;
   if(H.dog)q+=0.04;
   if(H.stalker)q-=0.15;
   if(H.stim.crash>1&&H.t<H.stim.crashEnd)q-=0.04;
@@ -1398,14 +1400,16 @@ function startSleep(rest){
 function stepSleep(h){
   const S=H.sleep;S.q=sleepQuality();S.elapsed+=h;S.qsum+=S.q*h;
   S.p+=h/(S.need*60)*S.q;
+  if(H.indoor)H.body.wet=Math.max(0,H.body.wet-h*0.25);
   H.fatigue=Math.max(0,H.fatigue-h/60*0.42*S.q*(S.rest?0.3:1));
   H.body.energy=lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1));
   if(S.p>=1||S.elapsed>14*60)wakeUp();
 }
 function wakeUp(early){
   const S=H.sleep;const hrs=S.elapsed/60,avg=S.qsum/Math.max(1,S.elapsed);
+  const wasIn=H.indoor;H.indoor=false;if(wasIn){H.lodge=null;H.body.wet=Math.min(H.body.wet,8)}
   H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;if(!S.rest)H.sleptTonight=true;
-  toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
+  if(wasIn)toast('🏨 Du hast in der Herberge geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %). Ausgecheckt.','good');else toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
   if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1)));
   if(H.autoNight&&!S.rest){H.autoWake=true}
 }
@@ -1688,6 +1692,64 @@ function cafeCharge(id){
 const CHAT_GOOD=['Endlich live! 🔥','Wie ist das Wetter bei dir?','Mega Ausblick!','Zeig mal den Rucksack!','Grüße aus Hamburg 👋','Was gibt es heute zu essen?','Respekt für die Etappe!','Wie schwer ist dein Rucksack?','Bin von der Arbeit aus dabei 😅','Schönes Licht gerade!'];
 const CHAT_SMALL=['Hallo? Jemand da?','Nur ich hier 😄','Immerhin zwei Leute!','Bin neu hier, cooler Kanal!'];
 const CHAT_BEG=['Schon wieder Spendenaufruf… 🙄','Bettel-Stream, ich bin raus.','Einmal reicht doch!','Unsubscribed. Nervt.','Kannst du bitte aufhören zu betteln?'];
+function phoneDev(){const d=handheld();return d}
+function openPhone(){
+  if(H.sleep.active||H.action)return;
+  const dev=phoneDev();
+  if(!dev){toast('📱 Kein funktionierendes Handy oder keine Kamera dabei.','bad');return}
+  if(H.walking&&!H.camp.pitched)H.walking=false;
+  const net=env.net;
+  const lod=H.lodge?` Gebucht: <b>${esc(H.lodge.name)}</b> (${esc(H.lodge.label)}).`:'';
+  showModal({title:'📱 Handy '+(net?'· 📶 Empfang':'· 📵 kein Empfang'),html:'<p>'+(net?'Du hast Netz. Was möchtest du tun?':'Hier gibt es kein Mobilfunknetz. Livestream, Buchung und Kanal-Beitrag sind nicht möglich.')+lod+'</p>',buttons:[
+    {label:'📡 Livestream starten',fn:()=>startLiveDialog()},
+    {label:'🏨 Herberge buchen',fn:()=>bookLodgeDialog()},
+    {label:'📝 Beitrag im Kanal posten',fn:()=>teaserDialog()},
+    {label:'Schließen'}]});
+}
+function lodgeTargets(){
+  const out=[];for(const f of H.route.feats){if(f.type==='village'&&f.x>H.x+150&&f.x<H.x+PPK*30&&f.name&&!/laden|kiosk|butik|alimentari|épicerie|kaufmann|kjøpmann/i.test(f.name))out.push(f)}
+  return out.slice(0,4);
+}
+function bookLodgeDialog(){
+  if(!env.net){toast('📵 Ohne Netz kannst du nichts buchen.','bad');return}
+  if(H.lodge){toast('🏨 Du hast schon gebucht: '+H.lodge.name+'.');return}
+  const t=lodgeTargets();
+  if(!t.length){toast('🏨 In den nächsten 30 km gibt es keine buchbare Unterkunft im Ort.','warn');return}
+  const m=dateOf(G.day).m,busy=(m>=5&&m<=8)?0.16:0.07;
+  const btns=[];
+  t.forEach(f=>{const km=Math.round((f.x-H.x)/PPK*10)/10;
+    [['Mehrbettzimmer',28,1],['Einzelzimmer',64,2]].forEach(([lab,price,tier])=>{
+      btns.push({label:`${esc(f.name)} · ${km} km · ${lab} · ${price} €`,fn:()=>{
+        if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+        if(Math.random()<busy+(tier===1?0.06:0)){toast('🏨 '+f.name+': '+lab+' ist leider ausgebucht. Versuche ein anderes Angebot.','bad');return}
+        G.money-=price;H.lodge={fid:f.id,name:f.name,label:lab,tier,price};
+        toast('🏨 Gebucht: '+lab+' in '+f.name+' für '+price+' €. Erreiche den Ort und tippe dort auf „Herberge“.','good');sfx('success');save()}});
+    })});
+  btns.push({label:'Abbrechen'});
+  showModal({title:'🏨 Herberge buchen',html:'<p>Die Buchung wird sofort bezahlt. Schläfst du nicht dort, verfällt sie. Mehrbettzimmer sind öfter ausgebucht.</p>',buttons:btns,wide:true});
+}
+function lodgeStay(){
+  const L=H.lodge;if(!L)return;
+  showModal({title:'🏨 '+esc(L.name),text:'Du checkst ein: '+L.label+'. Du schläfst im Warmen und Trockenen, deine Kleidung trocknet.',buttons:[
+    {label:'Schlafen',primary:1,fn:()=>{H.indoor=true;startSleep()}},{label:'Später'}]});
+}
+function teaserDialog(){
+  if(!env.net){toast('📵 Ohne Netz kannst du nichts posten.','bad');return}
+  const dev=handheld();if(!dev){toast('📱 Kein Aufnahmegerät.','bad');return}
+  if(dev.batt<6){toast('🪫 Akku zu schwach.','bad');return}
+  if(H.teaserDay===Math.floor(H.t/1440)&&(H.teaserN||0)>=1){toast('📝 Heute hast du schon einen Beitrag gepostet.','warn');return}
+  const post=(clip)=>{
+    const q=shotQ(dev.def,scenicNow());
+    const boost=(clip?0.03:0.015)*clamp(q,0.3,1.3);
+    H.teaserBoost=Math.min(0.06,(H.teaserBoost||0)+boost);if(H.teaserDay!==Math.floor(H.t/1440))H.teaserN=0;H.teaserDay=Math.floor(H.t/1440);H.teaserN=(H.teaserN||0)+1;
+    dev.batt=Math.max(0,dev.batt-(clip?2.5:1));
+    const likes=Math.max(1,Math.round(G.subs*0.03*clamp(q,0.3,1.3)*rnd(0.6,1.4)));
+    const gain=Math.max(0,Math.round(G.subs*0.002*q));G.subs+=gain;
+    toast('📝 Beitrag „'+(clip?'Kurzclip':'Foto & Text')+'“ gepostet: '+likes+' Likes'+(gain?', +'+gain+' Abos':'')+'. Das Tourvideo profitiert später minimal.','good');sfx('success');save();
+  };
+  showModal({title:'📝 Teaser im Kanal posten',text:'Ein kurzer Beitrag zur laufenden Wanderung macht neugierig aufs spätere Video. Pro Tour bringt das nur wenige Prozent mehr Aufrufe (höchstens 6 %), je besser das Gerät und die Kulisse, desto mehr.',buttons:[
+    {label:'📷 Foto + Text',fn:()=>post(false)},{label:'🎬 Kurzclip',fn:()=>post(true)},{label:'Abbrechen'}]});
+}
 function startLiveDialog(){
   if(H.sleep.active)return;
   const dev=handheld();
@@ -1904,7 +1966,7 @@ function endHike(reason){
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
   if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
   const days=Math.floor(H.t/1440)+1;
-  G.pending={hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
+  G.pending={teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
     thrill:H.thrill,risk:H.startRisk,flags:H.flags,lostN:H.stats.junctionsLost,hadDog:!!H.dog,
     clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
   H.pendingSummary={clips:H.clips.length};
@@ -2784,6 +2846,8 @@ function drawCtx(g,tm,sx,gy){
   if(resting&&H.fire.lit&&nearFire()){
     FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,3).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
   }
+  if(H.lodge&&resting){const vf=H.route.feats.find(f=>f.id===H.lodge.fid);if(vf&&Math.abs(vf.x-H.x)<330)row.push(['🏨','Herberge',()=>lodgeStay(),true])}
+  if(resting&&handheld())row.push(['📱','Handy',()=>openPhone(),true]);
   if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
   if(H.eatMenu&&eatList.length){ // Auswahl ersetzt die bisherigen Symbole
     row.length=0;
@@ -3826,7 +3890,7 @@ function publishVideos(){
     const promo=adEach>0?1+0.5*Math.sqrt(adEach/10)*rnd(0.5,1.5):1;
     const exc=(p.thrill||0)>=3;
     const luck=Math.exp(rnd(-0.5,exc?0.6:0.15));   // außergewöhnlich gut nur bei spannenden Ereignissen
-    const V=(2500+G.subs*12)*Math.pow(Math.max(S,2)/45,0.8)*(exc?1:0.85)*luck*(1+0.08*(n-1))*tm2*tl*promo;
+    const V=(2500+G.subs*12)*Math.pow(Math.max(S,2)/45,0.8)*(exc?1:0.85)*luck*(1+0.08*(n-1))*tm2*tl*promo*(1+(p.teaser||0));
     const v={id:++G.vid,title:n>1?title+' – Teil '+(i+1)+'/'+n:title,day:G.day+i*3,tour:p.name,S,V,tau:rnd(5,9),views:0,likes:0,rev:0,subsG:0,h:[],
       thumb:{id:th,biome:pick(['wald','berg','tal','wiese','fjaell']),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
     if(exc&&Math.random()<0.05+(cl.some(c=>c.rar>=3)?0.05:0)+Math.min(0.08,(p.thrill-3)*0.02)){v.hype={start:rnd(1,3)|0,len:Math.round(rnd(5,11)),mul:rnd(6,16)};v.hyped=1}
