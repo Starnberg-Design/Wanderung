@@ -471,6 +471,7 @@ const GEAR=[
   {id:'snowshoes',cat:'tool',tool:'snowshoes',name:'Schneeschuhe',e:'🎿',price:85,kg:1.2,desc:'Tiefschnee bremst dich nur noch ein Drittel so stark.'},
   {id:'spray',cat:'tool',tool:'spray',name:'Bärenspray',e:'🧴',price:30,kg:0.35,desc:'2 Einsätze pro Tour gegen Bär und Wolf.'},
   {id:'kit',cat:'tool',tool:'kit',name:'Erste-Hilfe-Set',e:'🩹',price:25,kg:0.4,desc:'3 Behandlungen: Blasen, Verstauchung, Krankheit.'},
+  {id:'drybag',cat:'tool',tool:'drybag',name:'Seesack (Dry Bag)',e:'🎒',price:22,kg:0.25,desc:'Wasserdichter Packsack: Handy, Proviant und Kleidung bleiben beim Schwimmen oder Furten trocken.'},
   {id:'repair',cat:'tool',tool:'repair',name:'Reparaturset',e:'🧵',price:18,kg:0.2,desc:'3 Notreparaturen unterwegs (+35 % Zustand am schlechtesten Teil).'},
   {id:'vest',cat:'tool',tool:'vest',kind:'vest',name:'Beheizbare Weste',e:'🦺',price:290,kg:0.8,stby:0,fragile:0.00008,desc:'Heizt von innen, Stufe am Gerät einstellbar: stark +8 °C (Akku ca. 10 h), mittel +5 °C (ca. 16 h), schwach +3 °C (ca. 24 h). Akku an Ladestation oder per Powerbank laden. Leer = keine Wärme.'},
   {id:'firetarp',cat:'tool',tool:'firetarp',name:'Feuer-Tarp',e:'🏕️',price:22,kg:0.45,desc:'Kleines Tarp, das du über die Feuerstelle spannst, damit Regen und Sturm das Feuer nicht löschen. Zum Abspannen brauchst du Bäume oder Wanderstöcke.'},
@@ -626,7 +627,7 @@ function playerLoad(totalKg,dogFoodKg){
 
 /* ---- Route erzeugen ---- */
 function stageIndexAt(S,x){let lo=0,hi=S.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(x<S[mid].x1)hi=mid;else lo=mid+1}return lo}
-const FEAT_RAD={lodge:300,village:380,sight:260,animal:170,forage:160,special:200,hiker:130,junction:120,quelle:130,fluss:160};
+const FEAT_RAD={see:140,lodge:300,village:380,sight:260,animal:170,forage:160,special:200,hiker:130,junction:120,quelle:130,fluss:160};
 function stageWaterF(hk,i){let h=0;for(const ch of hk.id)h=(h*31+ch.charCodeAt(0))>>>0;const r=mulberry32(h+i*131)();return r<0.3?0.15:r<0.62?0.7:1.5}
 function stageSprings(hk,st){const B=BIOMES[st.b];let n=Math.round(st.km/(B.water*1.7)*stageWaterF(hk,st.i));if(hk.stages.length<=4||st.km>=13)n=Math.max(n,1);return n}
 function waterInfo(hk){let n=0,dry=0,maxDry=0;hk.stages.forEach((s,i)=>{const c=stageSprings({stages:hk.stages,id:hk.id},{i,b:s.b,km:s.km});n+=c;if(c===0){dry++;maxDry=Math.max(maxDry,s.km)}});const per10=n/hk.km*10;return {n,per10,dry,maxDry,lbl:per10<0.55?'wenige Wasserstellen':per10<1.0?'mäßig viele Wasserstellen':'viele Wasserstellen'}}
@@ -724,18 +725,36 @@ function buildRoute(hk,seed){
   if(rng()<(0.1+Math.min(0.25,totalKm/1500)))add({type:'special',kind:'stalker',x:totalPx*(0.25+rng()*0.5)});
   const fanP=G.subs>=50000?Math.min(0.35,0.05+(G.subs-50000)/400000):0;
   if(rng()<fanP)add({type:'special',kind:'fans',x:totalPx*(0.3+rng()*0.5)});
+  // Seen liegen in Senken des Höhenprofils
+  const lakes=[];
+  {const nL=totalKm>=14?Math.max(1,Math.round(totalKm/30)):0;
+   const cand=[];for(let i=50;i<Math.floor((totalPx-PPK*3)/10);i++){let mn=true;for(let d=-35;d<=35&&mn;d+=5){if(d&&elev[i+d]<elev[i])mn=false}if(mn)cand.push(i)}
+   const noLake=new Set(['sand','kies','schnee']);
+   for(let k=0;k<nL&&cand.length;k++){
+     const i=cand.splice(Math.floor(rng()*cand.length),1)[0];const x=i*10;
+     const st=stages[stageIndexAt(stages,x)];if(noLake.has(st.b))continue;
+     if(lakes.some(L=>Math.abs(L.xc-x)<PPK*6))continue;
+     const Lv=elev[i]+6+rng()*4;let a=i,b=i;while(a>i-45&&elev[a]<Lv)a--;while(b<i+45&&elev[b]<Lv)b++;
+     const w=(b-a)*10;if(w<150||elev[a]<Lv-0.01&&a<=i-45)continue;
+     for(let j=a;j<=b;j++){const t=(j-i)/Math.max(1,(j<i?i-a:b-i));elev[j]-=15*(1-t*t)}
+     const name=pick(['Bergsee','Waldsee','Tarn','Loch','Tjärn','Stausee','Moorsee','Lac','Vatn','Järvi','Weiher']);
+     lakes.push({xl:a*10,xr:b*10,xc:x,L:Lv,w,boat:rng()<0.45,name});
+   }}
+  lakes.forEach(L=>add({type:'see',x:L.xl,lake:L}));
+  for(let i=feats.length-1;i>=0;i--){const f=feats[i];if(['quelle','fluss','junction','forage','hiker','animal','village','lodge'].includes(f.type)&&lakes.some(L=>f.x>L.xl-60&&f.x<L.xr+60))feats.splice(i,1)}
   const clean=feats.filter(f=>f.summit?(f.x>300&&f.x<totalPx-100):(f.x>600&&f.x<totalPx-400));
   clean.sort((a,b)=>a.x-b.x);
   for(let i=1;i<clean.length;i++){const a=clean[i-1],b=clean[i];const need=((FEAT_RAD[b.type]||120)+(FEAT_RAD[a.type]||120))*0.55;
     if(b.x-a.x<need){if(b.summit&&!a.summit)a.x=b.x-need;else if(!b.summit)b.x=a.x+need}}  // Gipfel bleiben exakt auf dem Höhepunkt
   clean.sort((a,b)=>a.x-b.x);
-  return {stages,elev,feats:clean,totalPx,totalKm};
+  return {stages,elev,feats:clean,totalPx,totalKm,lakes};
 }
 function featsIn(a,b){ // sortiert nach x; Features im Bereich (a,b]
   const F=H.route.feats;let lo=0,hi=F.length;
   while(lo<hi){const m=(lo+hi)>>1;if(F[m].x<=a)lo=m+1;else hi=m}
   const out=[];for(let i=lo;i<F.length&&F[i].x<=b;i++)out.push(F[i]);return out;
 }
+function inLake(x){const L=H.route.lakes;if(!L)return false;for(const l of L)if(x>l.xl-30&&x<l.xr+30)return true;return false}
 function featNear(type,x,r){for(const f of featsIn(x-r,x+r)){if(f.type===type)return f}return null}
 function elevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)}
 function gradeAt(x){return (elevAt(x+10)-elevAt(x-10))/(20*1000/PPK)}
@@ -776,7 +795,8 @@ function computeEnv(){
   const daily=R.dAmp*(0.35+0.65*env.sun)*Math.sin((hour-9)/24*2*Math.PI);
   const syn=R.syn*(0.6*Math.sin(H.t/1440*0.83+H.synPh[0])+0.4*Math.sin(H.t/1440*2.1+H.synPh[1]));
   env.temp=sT+daily+syn+W.dT;
-  env.snow=clamp((1.5-sT)/5,0,1);
+  if(H.snowDepth==null)H.snowDepth=clamp((1.5-sT)/5,0,1)*30;
+  env.snow=clamp(H.snowDepth/30,0,1);
   env.frozen=sT<-4;
   env.wind=H.weather.wind*B.wind;
   env.rainI=H.weather.rainI;
@@ -1087,6 +1107,14 @@ function trackFeatures(){
       if(d<380&&!f.iconMade&&!f.done){f.iconMade=true;spawnIcon({kind:'special',fid:f.id,f,x:f.x,e:f.kind==='fans'?'🎉':'❗',label:f.kind==='fans'?'Fans':'Fremder',life:1e9});toast(f.kind==='fans'?'🎉 Da wartet eine Gruppe auf dich!':'❗ Ein Fremder steht am Weg …','warn')}
     }
   }
+}
+function snowTick(hr){
+  let d=H.snowDepth==null?0:H.snowDepth;
+  const eq=clamp((1.5-env.seasonT)/5,0,1)*30;
+  if(env.precip==='snow')d+=(1.2+4*env.rainI)*hr;
+  if(eq<d)d+=(eq-d)*Math.min(1,0.06*hr*(env.temp>0?1+env.temp*0.25:0.2));
+  else d+=(eq-d)*Math.min(1,0.4*hr);
+  H.snowDepth=clamp(d,0,60);
 }
 function trackSky(hr){
   if(env.aurora&&env.dark>0.85&&!H.sleep.active&&H.flags['au'+G.day]===undefined){
@@ -1490,7 +1518,7 @@ function bodyTick(mode,hr){
     gain=22*env.rainI*(1-protect)*BIOMES[env.biome].rain*(1-(g.shoes?g.shoes.wetRes*0.2:0));
     if(mode!=='sleep'&&g.shell&&!sh)wear(g.shell.id,0.45*hr);
   }
-  let dry=2.5+(env.sun>0.8&&(H.weather.type==='klar'||H.weather.type==='wolkig')?6:0)+(mode==='walk'?3:0)+(mode!=='walk'&&nearFire()?22:0)+(sh?2:0);
+  let dry=2.5+(env.sun>0.8&&(H.weather.type==='klar'||H.weather.type==='wolkig')?6:0)+(mode==='walk'?3:0)+(mode!=='walk'&&nearFire()?22:0)+(sh?(mode==='sleep'?4.5:2):0);
   if(gain>0)dry*=0.3;
   B.wet=clamp(B.wet+(gain-dry)*hr,0,100);
   // Wärme
@@ -1600,6 +1628,7 @@ function checkFeatures(a,b){
     }else if(f.type==='fluss')riverFord(f);
     else if(f.type==='junction')navCheck();
   }
+  for(const f of featsIn(a-200,b+200)){if(f.type==='see'&&!f.done&&f.lake.xl-90>=a&&f.lake.xl-90<b){f.done=true;lakeDialog(f.lake)}}
   for(const f of featsIn(a+175,b+175)){
     if(f.type==='village'&&!f.left){
       f.left=true;H.stats.villages++;
@@ -1607,15 +1636,55 @@ function checkFeatures(a,b){
     }
   }
 }
+function lakeDialog(L){
+  H.walking=false;
+  const km=L.w/PPK,frozen=env.frozen;
+  const tDet=Math.round(25+km*45),tSw=Math.round(8+km*12),tBoat=Math.round(10+km*18),tIce=Math.round(6+km*10);
+  const dry=H.g.tools.drybag;
+  const btns=[];
+  btns.push({label:'🚶 Um den See herum ('+tDet+' Min., trocken)',fn:()=>startCross(L,'detour',tDet,()=>{H.body.energy=clamp(H.body.energy-7,0,100);H.wasted+=km*0.6;toast('🚶 Du hast den See trocken umrundet.')})});
+  if(!frozen){
+    btns.push({label:'🏊 Durchschwimmen ('+tSw+' Min.)',fn:()=>startCross(L,'swim',tSw,()=>{
+      const cold=env.temp<8?(8-env.temp)*2.2:0;
+      H.body.wet=clamp(H.body.wet+(dry?55:85),0,100);H.body.warm=clamp(H.body.warm-12-cold,0,100);H.body.energy=clamp(H.body.energy-10,0,100);
+      if(!dry){
+        for(const id in H.food)H.food[id]=Math.floor(H.food[id]*0.78);
+        if(Math.random()<0.2){const ph=H.g.phones.find(x=>H.dev[x.id]&&!H.dev[x.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Handy hat Wasser abbekommen und ist defekt!','bad')}}
+        toast('🏊 Du bist drüben – aber ein Teil des Proviants ist durchnässt und unbrauchbar.','warn');
+      }else toast('🏊 Mit dem Seesack kamst du sicher durch – nur du bist nass.','good');
+      if(H.dog&&!H.dog.away)toast('🐕 '+(G.dog&&G.dog.name||'Dein Hund')+' ist neben dir geschwommen.');
+    })});
+    if(L.boat)btns.push({label:'🛶 Boot leihen (14 €, '+tBoat+' Min.)',fn:()=>{if(G.money<14){toast('💶 Dafür reicht dein Geld nicht.','bad');H.walking=false;lakeDialog(L);return}G.money-=14;startCross(L,'boat',tBoat,()=>{toast('🛶 Du bist trocken übergesetzt – das Boot bleibt am Ufer.','good');if(Math.random()<0.6)addClip({key:'boat:'+L.xl,type:'landschaft',name:'Bootsfahrt über den '+L.name,e:'🛶',q:1,value:7,rar:-1})})}});
+  }else{
+    const thick=clamp((-env.seasonT-3)*3,0,30),pb=clamp(0.5-thick*0.025,0.04,0.45);
+    btns.push({label:'🧊 Über das Eis ('+tIce+' Min., Eis ca. '+Math.round(thick)+' cm)',fn:()=>startCross(L,'ice',tIce,()=>{
+      if(Math.random()<pb){
+        H.body.wet=clamp(H.body.wet+(dry?60:88),0,100);H.body.warm=clamp(H.body.warm-42,0,100);
+        if(Math.random()<0.4){H.inj.sprain=H.t+1440;}
+        if(!dry)for(const id in H.food)H.food[id]=Math.floor(H.food[id]*0.85);
+        toast('🧊 Das Eis bricht! Du brichst bis zur Hüfte ein und rettest dich ans Ufer – eiskalt und nass.'+(dry?'':' Der Proviant ist teilweise durchweicht.'),'bad');sfx('bad');
+        if(!dry&&Math.random()<0.15){const ph=H.g.phones.find(x=>H.dev[x.id]&&!H.dev[x.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Handy ist im Wasser kaputtgegangen!','bad')}}
+      }else toast('🧊 Das Eis hat gehalten – du bist sicher drüben.','good');
+    })});
+  }
+  showModal({title:'🏞️ '+esc(L.name),text:'Vor dir liegt ein See mit etwa '+fmtN(km,2)+' km Breite, der den Weg unterbricht.'+(frozen?' Er ist zugefroren, aber wie dick ist das Eis?':' Im Wasser wirst du nass, dein Proviant und das Handy sind gefährdet'+(dry?' – der Seesack schützt sie.':'.')),buttons:btns,wide:true});
+}
+function startCross(L,kind,dur,done){
+  const x0=H.x,x1=Math.min(H.route.totalPx,L.xr+70),label={detour:'Umrundet den See …',swim:'Schwimmt durch den See …',boat:'Rudert über den See …',ice:'Geht über das Eis …'}[kind];
+  H.crossing={kind,x0,x1,L};
+  const fin=()=>{H.crossing=null;H.detourDy=0;H.x=x1;H.km=H.x/PPK;if(done)done();H.walking=true};
+  beginAction('ford',label,dur,fin,{tick:h=>{const pr=clamp(1-H.action.left/dur,0,1);H.x=lerp(x0,x1,pr);H.km=H.x/PPK;H.phase+=h*0.35;
+    H.detourDy=kind==='detour'?34*Math.sin(Math.PI*pr):kind==='swim'?8:0}});
+}
 function riverFord(f){
   H.walking=false;
   showModal({title:'🌊 Flussfurt',text:'Kein Steg in Sicht. Du kannst durchwaten (10 Min., nass werden, Ausrutschgefahr) oder einen Umweg um die Furt gehen (35 Min., trocken).'+(env.frozen?' Das Wasser ist eiskalt – Durchwaten kühlt dich stark aus.':''),buttons:[
     {label:'Durchwaten',fn:()=>beginAction('ford','Durchquert die Furt …',10,()=>{
       const wr=H.g.shoes?H.g.shoes.wetRes:0;
-      H.body.wet=clamp(H.body.wet+35*(1-wr*0.6),0,100);
+      H.body.wet=clamp(H.body.wet+35*(1-wr*0.6)*(H.g.tools.drybag?0.85:1),0,100);
       if(env.frozen||env.temp<3)H.body.warm=clamp(H.body.warm-25,0,100);
       if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.14:0.06)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist ausgerutscht und hast dir den Fuß verstaucht.','bad');
-        if(Math.random()<0.15){const ph=H.g.phones.find(p=>H.dev[p.id]&&!H.dev[p.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Smartphone hat Wasser abbekommen und ist defekt!','bad')}}}
+        if(!H.g.tools.drybag&&Math.random()<0.15){const ph=H.g.phones.find(p=>H.dev[p.id]&&!H.dev[p.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Smartphone hat Wasser abbekommen und ist defekt!','bad')}}}
       else toast('Du bist durch – die Beine sind nass.');
       H.walking=true},{resume:false})},
     {label:'Umweg gehen',fn:()=>beginAction('ford','Geht um die Furt herum …',35,()=>{H.body.energy=clamp(H.body.energy-8,0,100);toast('Trockenen Fußes drüber.');H.walking=true})}]});
@@ -2011,7 +2080,7 @@ function stepSim(h){
   }
   H.moving=mode==='walk';
   if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
-  trackFeatures();trackSky(hr);updateWalkers(h);
+  trackFeatures();trackSky(hr);updateWalkers(h);snowTick(hr);
   deviceTick(hr,mode);dogTick(mode,hr,dkm);
   bodyTick(mode,hr);
   {const F=H.flags,Bd=H.body;
@@ -2534,6 +2603,7 @@ function drawDecor(g,tm,pass){
     const forest=B.tree>0.3;
     if(pass===0&&!forest)continue;
     if(featsIn(wx-60,wx+60).some(f=>f.type!=='junction'&&f.type!=='animal'&&f.type!=='hiker'))continue;
+    if(inLake(wx))continue;
     const y=groundY(wx)+(pass===0?-9:0);
     const r=hash(cx*13+1+pass*5),sc=(0.75+hash(cx*5+3)*0.75)*(pass===0?0.72:1);
     const sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
@@ -2585,6 +2655,7 @@ function drawVillage(g,sx,y0,f){
 }
 function pick2(r,a){return a[Math.floor(r()*a.length)]}
 function drawFeatures(g,tm){
+  drawLakes(g,tm);
   const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finish',x:H.route.totalPx}]);
   for(const f of gs){
     const sx=f.x-camX;if(sx<-340||sx>CW+340)continue;const y=groundY(f.x);
@@ -2745,7 +2816,39 @@ function drawCamp(g,tm,dt){
    ===================================================================== */
 const HITS=[];                 // Klickflächen der Symbole (Bildschirmkoordinaten)
 const LIGHT={t:0,next:8,flash:0,bolt:null};
+function heroY(x){
+  const c=H&&H.crossing;if(!c)return groundY(x);
+  const ys=380-(c.L.L-H.camElev)*VS;
+  if(c.kind==='detour'){const pr=clamp((x-c.x0)/Math.max(1,c.x1-c.x0),0,1);return lerp(groundY(c.x0),groundY(c.x1),pr)+8+30*Math.sin(Math.PI*pr)}
+  return Math.min(groundY(x),ys)+(c.kind==='boat'?10:c.kind==='swim'?14:2);
+}
+function drawLakes(g,tm){
+  const R=H.route.lakes;if(!R)return;
+  for(const L of R){
+    if(L.xr<camX-40||L.xl>camX+CW+40)continue;
+    const x0=Math.max(L.xl,Math.floor(camX/10)*10-10),x1=Math.min(L.xr,camX+CW+20);
+    const ys=380-(L.L-H.camElev)*VS;
+    const fr=env.frozen;
+    g.save();
+    g.beginPath();g.moveTo(x0-camX,ys);g.lineTo(x1-camX,ys);
+    for(let x=x1;x>=x0;x-=10)g.lineTo(x-camX,Math.max(ys,groundY(x)+1));
+    g.closePath();
+    const gr=g.createLinearGradient(0,ys,0,ys+90);
+    if(fr){gr.addColorStop(0,tc('#dff0fa'));gr.addColorStop(1,tc('#9cc3dc'))}else{gr.addColorStop(0,tc('#5fb4ea'));gr.addColorStop(1,tc('#1f5f9e'))}
+    g.fillStyle=gr;g.fill();
+    g.clip();
+    if(fr){g.strokeStyle='rgba(255,255,255,0.55)';g.lineWidth=1;for(let k=0;k<9;k++){const cx=L.xl+(L.xr-L.xl)*((k*0.37+0.1)%1)-camX;g.beginPath();g.moveTo(cx,ys+3);g.lineTo(cx+14,ys+12);g.lineTo(cx+4,ys+20);g.stroke()}}
+    else{g.strokeStyle='rgba(255,255,255,0.45)';g.lineWidth=1.4;
+      for(let k=0;k<7;k++){const cx=L.xl+(L.xr-L.xl)*((k*0.29+0.05)%1)-camX+Math.sin(tm*0.8+k)*6;const cy=ys+5+(k%3)*7;g.beginPath();g.moveTo(cx-10,cy);g.quadraticCurveTo(cx,cy-3,cx+10,cy);g.stroke()}}
+    g.restore();
+    const mx=(L.xl+L.xr)/2-camX;
+    g.font='bold 12px sans-serif';g.textAlign='center';const w=g.measureText(L.name).width+14;
+    g.fillStyle='rgba(20,30,20,0.6)';rr(g,mx-w/2,ys-22,w,18,6);g.fill();g.fillStyle='#fff';g.fillText(L.name,mx,ys-9);
+  }
+}
 function drawWalkers(g,tm){
+  if(H.crossing&&H.crossing.kind==='boat'){const sx=CHAR_SX(),gy=heroY(H.x);emoji(g,'🛶',sx,gy+14+Math.sin(tm*3)*2,54)}
+  if(H.crossing&&H.crossing.kind==='swim'){const sx=CHAR_SX(),gy=heroY(H.x);g.fillStyle='rgba(255,255,255,0.5)';for(let k=0;k<4;k++){g.beginPath();g.arc(sx-16+k*11+Math.sin(tm*6+k)*3,gy+10+Math.sin(tm*5+k*2)*2,3,0,7);g.fill()}}
   for(const W of H.walkers){
     const sx=W.x-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(W.x);
     g.save();g.translate(sx,0);g.scale(-1,1);
@@ -2975,6 +3078,7 @@ function drawCtx(g,tm,sx,gy){
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
   if(H.sleep.active)return 'sleep';
+  if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'||H.crossing.kind==='swim'))return 'walk';
   if(H.live&&H.action&&H.action.kind==='live')return 'live';
   if(H.shot&&!H.shot.noclip||H.shot)return H.shot.type;
   if(H.action){const k=H.action.kind;if(['eat','cook','drink','fire','wood','feed','search','fix','aid','forage','fish','refill','treat','tent','talk','fans','ftarp','solar'].includes(k))return (k==='tent'||k==='forage'||k==='fans'||k==='talk'||k==='refill')?'idle':'work'}
@@ -3010,7 +3114,7 @@ function drawScene(g,tm,dt){
     const lash=H.dog.leash;
     const off=H.moving?(lash?66+Math.sin(tm*0.9)*4:100+Math.sin(tm*0.9)*14):(H.fire.lit&&nearFire()?-46:-70);
     const dx=sx-off,px=H.x-off;
-    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=groundY(H.sleep.active?H.camp.x+20:px)+2;
+    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px))+2;
     drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
     if(lash&&!H.sleep.active&&(H.moving||dm==='sit')&&!H.action){ // Leine
       const hx0=sx+(H.moving?10:8),hy0=gy-(H.moving?27:18),cx=dgx+(H.moving?12:10),cy=dgy-(H.moving?16:12);
@@ -3020,7 +3124,7 @@ function drawScene(g,tm,dt){
   const inTent=H.sleep.active&&H.camp.pitched&&g0.shelter;
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
-    const ay=groundY(H.sleep.active?H.camp.x:H.x)+2;
+    const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
     drawHiker(g,ax,ay,1.2,{look:G.look,phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
 
@@ -3549,7 +3653,7 @@ function updateHUD(force){
   if(H.t<H.stim.boostEnd)inj.push('⚡Koffein');else if(H.t>=H.stim.crashStart&&H.t<H.stim.crashEnd&&H.stim.crash>1)inj.push('📉Tief');
   if(H.stalker)inj.push('👤Verfolger');
   const dd=dateOf(G.day),se=seasonOfM(dd.m);
-  $('#tc').innerHTML=`<div class="dl">${dateStr(G.day)} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${env.net?' · 📶':' · 📵'}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
+  $('#tc').innerHTML=`<div class="dl">${dateStr(G.day)} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${env.net?' · 📶':' · 📵'}${H.snowDepth>=2?' · ❄️ '+Math.round(H.snowDepth)+' cm':''}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
   const devs=Object.keys(H.dev).map(id=>battHTML(id,H.dev[id])).join('');
   const pb=H.pbs.length?`<div><span class="dev ${pbTotal()/pbCapTotal()<0.15?'low':''}" data-pb style="cursor:pointer">🔋 Powerbank<span class="bt" style="width:34px"><i style="width:${pbCapTotal()?pbTotal()/pbCapTotal()*100:0}%"></i></span>${Math.round(pbCapTotal()?pbTotal()/pbCapTotal()*100:0)}%</span></div>`:'';
   $('#tr').innerHTML=`<div>${fmtN(H.km)} / ${H.route.totalKm} km</div><div style="margin-top:2px;max-width:100%;line-height:1.55">${devs}</div>${pb}`;
