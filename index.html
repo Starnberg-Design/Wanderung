@@ -57,6 +57,8 @@ input[type=range]{accent-color:var(--acc)}
 .item{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
 .item.packed{border-color:var(--acc)}.item.broken{border-color:var(--bad)}
 .ico{font-size:2em;width:48px;text-align:center}.ico img{width:44px;height:44px;object-fit:contain}
+.ico.pk{width:64px}.ico.pk img{width:60px;height:74px}
+.pvs{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}.pvs button{width:34px;height:40px;padding:2px;border:2px solid transparent;border-radius:6px;background:rgba(255,255,255,.07);min-width:0}.pvs button.on{background:rgba(255,255,255,.18)}.pvs img{width:100%;height:100%;object-fit:contain}
 .ico.wide{width:112px}.ico.wide img{width:104px;height:47px}
 .inf{flex:1;display:flex;flex-direction:column;gap:2px}
 .qty{min-width:24px;text-align:center}
@@ -467,19 +469,24 @@ const TABS=['Rucksack','Schlafen','Kleidung','Ausrüstung','Navigation','Technik
 const TAB_OF={wood:'Proviant',pack:'Rucksack',shelter:'Schlafen',bag:'Schlafen',mat:'Schlafen',mid:'Kleidung',shell:'Kleidung',shoes:'Kleidung',tool:'Ausrüstung',water:'Ausrüstung',nav:'Navigation',rec:'Technik',power:'Technik',food:'Proviant',gas:'Proviant',dog:'Hund',dogpack:'Hund',dogfood:'Hund'};
 const EXCLUSIVE=['pack','shelter','bag','mat','mid','shell','shoes'];
 const GEAR=[
-  {id:'pack_basic',cat:'pack',name:'Standard-Rucksack 35 L',e:'🎒',price:0,w:40,kg:1.4,max:11,comfort:0,color:'#7f8c8d',desc:'Trägt max. 11 kg, kaum Komfort.'},
-  {id:'pack_trek',cat:'pack',name:'Trekkingrucksack 50 L',e:'🎒',price:95,kg:1.9,max:17,comfort:0.5,color:'#c0392b',desc:'Max. 17 kg, gutes Tragesystem.'},
-  {id:'pack_pro',cat:'pack',name:'Expeditionsrucksack 65 L',e:'🎒',price:230,kg:2.3,max:26,comfort:1,color:'#e67e22',desc:'Max. 26 kg, bester Tragekomfort.'},
-  {id:'pack_exp',cat:'pack',name:'Winter-Expedition 85 L',e:'🎒',price:340,kg:3.0,max:34,comfort:1.2,color:'#8e44ad',desc:'Max. 34 kg für lange Touren ohne Laden.'},
+  {id:'pack_school',cat:'pack',name:'Schul-Rucksack 18 L',e:'🎒',price:15,kg:0.6,max:6,comfort:-0.3,vol:18,wbig:1.5,wcap:1.5,imgs:['Rucksäcke_Schul-Rucksack 1','Rucksäcke_Schul-Rucksack 2'],cols:['#e8b410','#c75b14'],color:'#e8b410',desc:'Winzig und leicht, nur für Tagesausflüge. Ein Wassersack passt nicht hinein, höchstens eine Flasche.'},
+  {id:'pack_day',cat:'pack',name:'Ausflugsrucksack 28 L',e:'🎒',price:30,kg:0.9,max:9,comfort:-0.1,vol:28,wbig:2,wcap:3,imgs:['Rucksäcke_Ausflugsrucksack 1','Rucksäcke_Ausflugsrucksack 2'],cols:['#e8902a','#5ea842'],color:'#e8902a',desc:'Handlich für Tagestouren. Eine Trinkblase passt hinein, mehr nicht.'},
+  {id:'pack_basic',cat:'pack',name:'Standard-Rucksack 35 L',e:'🎒',price:0,kg:1.4,max:11,comfort:0,vol:35,wbig:2,wcap:3,imgs:['Rucksäcke_Standart-Rucksack 1','Rucksäcke_Standart-Rucksack 2','Rucksäcke_Standart-Rucksack 3','Rucksäcke_Standart-Rucksack 4'],cols:['#8b2a1d','#9b768b','#b32a14','#868a8c'],color:'#8b2a1d',w:40,desc:'Der Starter-Rucksack: trägt wenig, kaum Komfort.'},
+  {id:'pack_hike',cat:'pack',name:'Wanderrucksack 45 L',e:'🎒',price:70,kg:1.7,max:14,comfort:0.3,vol:45,wbig:2,wcap:4,imgs:['Rucksäcke_Wander-Rucksack 1','Rucksäcke_Wander-Rucksack 2','Rucksäcke_Wander-Rucksack 3','Rucksäcke_Wander-Rucksack 4'],cols:['#8a8872','#b82c2c','#7b8b3a','#4881ba'],color:'#8a8872',desc:'Solide für Mehrtagestouren; zwei große Flaschen passen in die Seitentaschen.'},
+  {id:'pack_trek',cat:'pack',name:'Trekkingrucksack 50 L',e:'🎒',price:95,kg:1.9,max:17,comfort:0.5,vol:50,wbig:4,wcap:6,imgs:['Rucksäcke_Treckingrucksack 1','Rucksäcke_Treckingrucksack 2'],cols:['#8f8c3f','#3f5a22'],color:'#8f8c3f',desc:'Gutes Tragesystem, Platz für Wassersack und Flaschen.'},
+  {id:'pack_surv',cat:'pack',name:'Survival-Rucksack 60 L',e:'🎒',price:140,kg:2.5,max:21,comfort:0.45,vol:60,wbig:4,wcap:7,tough:0.5,imgs:['Rucksäcke_Survival-Rucksack 1','Rucksäcke_Survival-Rucksack 2','Rucksäcke_Survival-Rucksack 3','Rucksäcke_Survival-Rucksack 4'],cols:['#615f27','#41571d','#7a7f84','#8e84c4'],color:'#615f27',desc:'Schwer, aber extrem robust – verschleißt nur halb so schnell.'},
+  {id:'pack_haul',cat:'pack',name:'Schlepper-Rucksack 110 L',e:'🎒',price:85,kg:3.8,max:32,comfort:-0.5,vol:110,wbig:4,wcap:9,imgs:['Rucksäcke_Schlepper Rucksack 1','Rucksäcke_Schlepper Rucksack 2'],cols:['#c75b14','#e68545'],color:'#c75b14',desc:'Riesiger Stauraum zum kleinen Preis. Aber schon leer schwer, sperrig und unbequem – das kostet Tempo und Kraft.'},
+  {id:'pack_pro',cat:'pack',name:'Expeditionsrucksack 75 L',e:'🎒',price:260,kg:2.9,max:30,comfort:1,vol:75,wbig:4,wcap:9,tough:0.7,imgs:['Rucksäcke_Expeditionsrucksack 1','Rucksäcke_Expeditionsrucksack 2'],cols:['#127c8a','#5b71a3'],color:'#127c8a',desc:'Für lange Touren: viel Volumen, sehr guter Tragekomfort, robust.'},
+  {id:'pack_exp',cat:'pack',name:'Hightech-Rucksack 85 L',e:'🎒',price:420,kg:2.4,max:34,comfort:1.3,vol:85,wbig:4,wcap:10,tough:0.8,imgs:['Rucksäcke_Hightech-Rucksack 1','Rucksäcke_Hightech-Rucksack 2'],cols:['#ff9836','#8c893d'],color:'#ff9836',desc:'Leicht, riesig und mit bestem Tragesystem. Das Beste für Wochentouren.'},
 
   // Unterkünfte (img = Dateiname in assets/, .svg). Reihenfolge = Shop-Reihenfolge (nach Preis).
-  {id:'tarp',cat:'shelter',img:'Zelte_Tarp',imgClosed:'Zelte_Tarp geschlossen',sc:1.2,name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:8,down:4,desc:'Leicht, schützt teils vor Regen (70 %) und etwas vor Wind, kaum Wärmeschutz. Am schnellsten auf- und abgebaut. Bei Sturm oder starkem Regen wird es seitlich zugespannt.'},
-  {id:'tentFl',cat:'shelter',img:'Zelte_Flohmarkt Zelt',name:'Flohmarkt-Zelt',e:'⛺',price:40,kg:5.2,rain:0.85,warm:3.5,wind:0.45,setup:28,down:16,desc:'Uraltes Familienzelt aus schwerem Stoff: dämmt besser als Freizeitzelt und Tarp, wiegt aber ein Vielfaches, ist nicht ganz dicht (85 % Regenschutz) und braucht ewig beim Auf- und Abbau.'},
-  {id:'tentF',cat:'shelter',img:'Zelte_Freizeitzelt',name:'Freizeitzelt',e:'⛺',price:60,kg:2.6,rain:0.92,warm:2.5,wind:0.4,setup:15,down:8,desc:'Günstiges Zelt für den Sommer: schnell aufgebaut, weitgehend regendicht (92 %), aber wenig Isolierung und Windschutz.'},
-  {id:'tent1',cat:'shelter',img:'Zelte_Outdoorzelt',name:'Outdoorzelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Der solide Einstieg: regendicht, +4 °C Wärme, guter Windschutz.'},
-  {id:'tentM',cat:'shelter',img:'Zelte_Militärzelt',name:'Militärzelt',e:'⛺',price:200,kg:3.0,rain:1,warm:6,wind:0.8,setup:22,down:12,desc:'Robuster Allrounder: regendicht, +6 °C Wärme, sehr guter Windschutz. Schwerer als Outdoor- und Ultraleichtzelt.'},
-  {id:'tentUL',cat:'shelter',img:'Zelte_Ultraleichtzelt',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:3.5,wind:0.55,setup:10,down:5,desc:'Wiegt fast nichts und steht in Minuten. Dafür dämmt es schlechter als Outdoor- und Militärzelt (+3,5 °C) und hält weniger Wind ab.'},
-  {id:'tentW',cat:'shelter',img:'Zelte_Winterzelt',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'Beste Isolierung (+8 °C), trotzt Sturm. Schwerer als das Militärzelt und langsamer aufgebaut.'},
+  {id:'tarp',cat:'shelter',wres:9,img:'Zelte_Tarp',imgClosed:'Zelte_Tarp geschlossen',sc:1.2,name:'Tarp',e:'🏕️',price:28,kg:0.6,rain:0.7,warm:1.5,wind:0.25,setup:8,down:4,desc:'Leicht, schützt teils vor Regen (70 %) und etwas vor Wind, kaum Wärmeschutz. Am schnellsten auf- und abgebaut. Bei Sturm oder starkem Regen wird es seitlich zugespannt.'},
+  {id:'tentFl',cat:'shelter',wres:10,img:'Zelte_Flohmarkt Zelt',name:'Flohmarkt-Zelt',e:'⛺',price:40,kg:5.2,rain:0.85,warm:3.5,wind:0.45,setup:28,down:16,desc:'Uraltes Familienzelt aus schwerem Stoff: dämmt besser als Freizeitzelt und Tarp, wiegt aber ein Vielfaches, ist nicht ganz dicht (85 % Regenschutz) und braucht ewig beim Auf- und Abbau.'},
+  {id:'tentF',cat:'shelter',wres:9.5,img:'Zelte_Freizeitzelt',name:'Freizeitzelt',e:'⛺',price:60,kg:2.6,rain:0.92,warm:2.5,wind:0.4,setup:15,down:8,desc:'Günstiges Zelt für den Sommer: schnell aufgebaut, weitgehend regendicht (92 %), aber wenig Isolierung und Windschutz.'},
+  {id:'tent1',cat:'shelter',wres:15,img:'Zelte_Outdoorzelt',name:'Outdoorzelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Der solide Einstieg: regendicht, +4 °C Wärme, guter Windschutz.'},
+  {id:'tentM',cat:'shelter',wres:19,img:'Zelte_Militärzelt',name:'Militärzelt',e:'⛺',price:200,kg:3.0,rain:1,warm:6,wind:0.8,setup:22,down:12,desc:'Robuster Allrounder: regendicht, +6 °C Wärme, sehr guter Windschutz. Schwerer als Outdoor- und Ultraleichtzelt.'},
+  {id:'tentUL',cat:'shelter',wres:14,img:'Zelte_Ultraleichtzelt',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:3.5,wind:0.55,setup:10,down:5,desc:'Wiegt fast nichts und steht in Minuten. Dafür dämmt es schlechter als Outdoor- und Militärzelt (+3,5 °C) und hält weniger Wind ab.'},
+  {id:'tentW',cat:'shelter',wres:25,img:'Zelte_Winterzelt',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'Beste Isolierung (+8 °C), trotzt Sturm. Schwerer als das Militärzelt und langsamer aufgebaut.'},
   {id:'bag_s',cat:'bag',name:'Sommerschlafsack (+8 °C)',e:'🛌',price:40,kg:0.9,rating:8,desc:'Komfort bis +8 °C.'},
   {id:'bag_3',cat:'bag',name:'3-Jahreszeiten-Schlafsack (0 °C)',e:'🛌',price:110,kg:1.4,rating:0,desc:'Komfort bis 0 °C.'},
   {id:'bag_w',cat:'bag',name:'Winterschlafsack (−12 °C)',e:'🛌',price:230,kg:2.1,rating:-12,desc:'Komfort bis −12 °C.'},
@@ -531,7 +538,7 @@ const GEAR=[
   {id:'dogpack',cat:'dogpack',name:'Hunderucksack',e:'🎒',price:0,kg:0.3,desc:'Der Hund trägt zuerst sein eigenes Futter, den Rest deiner Last. Größe passt zur Hunderasse.'}
 ];
 GEAR.forEach(g=>{if(g.w===undefined)g.w=g.price||10});
-GEAR.forEach(g=>{if(g.img){img(g.img,'svg');if(g.imgClosed)img(g.imgClosed,'svg')}}); // Zelt-Grafiken vorladen
+GEAR.forEach(g=>{if(g.img){img(g.img,'svg');if(g.imgClosed)img(g.imgClosed,'svg')}if(g.imgs)g.imgs.forEach(m=>img(m,'svg'))}); // Zelt- und Rucksack-Grafiken vorladen
 const GEAR_REPAIRABLE=g=>['pack','shelter','bag','mid','shell','shoes','tool','rec','nav','water','power'].includes(g.cat)&&!(g.id==='offline');
 
 /* ---- Proviant ---- */
@@ -641,8 +648,17 @@ const isBroken=id=>condOf(id)<=0;
 const packedGear=()=>GEAR.filter(g=>G.packed[g.id]&&G.owned[g.id]&&(G.cond[g.id]===undefined||G.cond[g.id]>0)&&(g.cat!=='dogpack'||G.dog));
 const slotOf=cat=>packedGear().find(g=>g.cat===cat)||null;
 function consKg(){let k=0;for(const id in G.cons){const c=gearById(id);if(c)k+=c.kg*G.cons[id]}return k}
-const gearKg=()=>packedGear().filter(g=>g.cat!=='dogpack').reduce((a,g)=>a+g.kg,0);
-const waterContainers=()=>packedGear().filter(g=>g.cat==='water');
+const gearKg=()=>{const no=waterFit().no;return packedGear().filter(g=>g.cat!=='dogpack'&&!no.includes(g)).reduce((a,g)=>a+g.kg,0)};
+const packVar=g=>{const n=(g.imgs||[]).length;return n?clamp(((G.var||{})[g.id]|0),0,n-1):0};
+const packImg=g=>g&&g.imgs?g.imgs[packVar(g)]:null;
+const packCol=g=>g?(g.cols?g.cols[packVar(g)]:g.color):null;
+// Welche gepackten Wasserbehälter passen in den Rucksack? (einzelne Größe + Gesamtmenge)
+function waterFit(){
+  const pk=slotOf('pack'),all=packedGear().filter(g=>g.cat==='water'),ok=[],no=[];let tot=0;
+  for(const c of all){if(pk&&pk.wbig&&(c.cap>pk.wbig||tot+c.cap>pk.wcap)){no.push(c)}else{ok.push(c);tot+=c.cap}}
+  return {ok,no};
+}
+const waterContainers=()=>waterFit().ok;
 const waterCapL=()=>waterContainers().reduce((a,g)=>a+g.cap,0);
 const capacityKg=()=>8+2.5*ES('trag');
 function dogPackCap(){const d=dogSize();return d&&packedGear().some(g=>g.cat==='dogpack')?d.packCap:0}
@@ -876,7 +892,7 @@ function startHike(hikeId){
   const g={pack:slotOf('pack'),shelter:slotOf('shelter'),bag:slotOf('bag'),mat:slotOf('mat'),mid:slotOf('mid'),shell:slotOf('shell'),shoes:slotOf('shoes'),
     tools:{},phones:gear.filter(x=>x.kind==='phone'),cam:gear.find(x=>x.kind==='cam')||null,drone:gear.find(x=>x.kind==='drone')||null,
     map:gear.find(x=>x.nav==='map')||null,offline:gear.some(x=>x.nav==='offline'),gps:gear.find(x=>x.nav==='gps')||null,
-    solar:gear.some(x=>x.solar),solarBig:gear.some(x=>x.solarBig),containers:gear.filter(x=>x.cat==='water'),waterCap:waterCapL(),gearKg:gearKg()};
+    solar:gear.some(x=>x.solar),solarBig:gear.some(x=>x.solarBig),containers:waterContainers(),waterCap:waterCapL(),gearKg:gearKg()};
   gear.forEach(x=>{if(x.tool)g.tools[x.tool]=true});
   const dev={};
   gear.filter(x=>x.cat==='rec').forEach(x=>{dev[x.id]={batt:100,broken:false,def:x}});
@@ -2114,7 +2130,7 @@ function stepSim(h){
         {const ROUGH={wald:1,wiese:0.8,tal:0.9,berg:1.5,fjaell:1.2,sand:1.3,kies:1.6,schnee:1.4}[env.biome]||1;
          const wx=1+(env.precip?0.5:0)+(env.precip==='snow'||env.snow>0.4?0.4:0)+(env.wind>12?0.3:0)+Math.max(0,B.wet-40)/150;
          if(H.g.shoes)wear(H.g.shoes.id,dkm*0.11*ROUGH*wx*(1+B.wet/120)*(H.g.tools.gaiters?0.8:1));
-         if(H.g.pack)wear(H.g.pack.id,dkm*0.035*ROUGH*wx);
+         if(H.g.pack)wear(H.g.pack.id,dkm*0.035*ROUGH*wx*(H.g.pack.tough||1));
          // Kleidung ohne Schutzschicht nutzt sich bei Nässe, Wind und rauem Gelände stärker ab
          if(H.g.mid&&(env.precip||env.wind>10)&&!H.g.shell)wear(H.g.mid.id,dkm*0.09*ROUGH*wx);
          else if(H.g.mid)wear(H.g.mid.id,dkm*0.012*ROUGH);
@@ -2134,6 +2150,7 @@ function stepSim(h){
     if(!H.action&&!H.sleep.active)autoNightTick();
   }
   H.moving=mode==='walk';
+  if(H.camp.pitched&&H.g.shelter)windTent(hr);
   if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
   trackFeatures();trackSky(hr);updateWalkers(h);snowTick(hr);spoilTick();
   deviceTick(hr,mode);dogTick(mode,hr,dkm);
@@ -2333,8 +2350,10 @@ function drawHiker(g,x,y,s,o){
   if(drop){g.beginPath();g.ellipse(12,-1,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(6,-1,6,3,0,0,7);g.fill()}
   else{g.beginPath();g.ellipse(-sw+2,-2,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(sw+2,-2,6,3,0,0,7);g.fill()}
   g.save();g.translate(0,hipY);g.rotate(0.02+0.26*tired);g.translate(0,-hipY); // Haltung: müde = vorgebeugt
-  g.fillStyle=o.packColor||'#7f8c8d';rr(g,-21*bw,hipY-36,15*bw+2,32,5);g.fill();
-  if(o.tent){g.fillStyle='#c0603a';rr(g,-22*bw,hipY-42,17*bw+2,7,3);g.fill()}
+  if(!o.nopack){const ps=o.packScale||1,ph=32*ps,pw=(15*bw+2)*(0.85+0.15*ps);
+    g.fillStyle=o.packColor||'#7f8c8d';rr(g,-6*bw-pw+2,hipY-4-ph,pw,ph,5);g.fill();
+    g.fillStyle='rgba(0,0,0,0.18)';rr(g,-6*bw-pw+2,hipY-4-ph*0.45,pw,ph*0.45,5);g.fill(); // dunklere Unterseite
+    if(o.tent){g.fillStyle='#c0603a';rr(g,-6*bw-pw+1,hipY-4-ph-6,pw+2,7,3);g.fill()}}
   g.fillStyle=jk;rr(g,-8*bw,hipY-35,17*bw,33,5);g.fill();
   const hx=2+3*tired,hy=hipY-45+4.5*tired;
   g.fillStyle=skin;g.beginPath();g.arc(hx,hy,8.5,0,7);g.fill();
@@ -2788,9 +2807,63 @@ function drawFeatures(g,tm){
     }
   }
 }
+
+/* ---------- Rucksack abgesetzt ---------- */
+function packIsDown(){
+  if(!H||!H.g||!H.g.pack||H.moving||H.ended)return false;
+  const k=H.action?H.action.kind:null;
+  const now=H.camp.pitched||H.sleep.active||nearFire()||(k&&['fire','feed','cook','tent','ftarp','wood'].includes(k));
+  if(now)H.packHold=H.t+25;
+  const down=now||(H.packHold!=null&&H.t<H.packHold);
+  if(!down)H.packX=null;
+  return !!down;
+}
+function drawPackDown(g,tm){
+  if(!packIsDown())return;
+  const pk=H.g.pack,m=packImg(pk),im=m?img(m,'svg'):null;
+  let tx=H.x-62;
+  if(H.camp.pitched&&H.g.shelter){const w=140*(H.g.shelter.sc||1);tx=H.camp.x-70-w/2-34}
+  if(H.packX==null)H.packX=tx;else H.packX+=(tx-H.packX)*0.12;
+  const x=H.packX-camX,y=groundY(H.packX)+2;
+  g.save();g.fillStyle='rgba(0,0,0,0.22)';g.beginPath();g.ellipse(x,y,32,5,0,0,7);g.fill();
+  if(im){const s=0.16,w=400*s,h=512*s;g.drawImage(im,x-w/2,y-h,w,h)}
+  else{g.fillStyle=packCol(pk)||'#7f8c8d';rr(g,x-14,y-38,28,38,6);g.fill()}
+  g.restore();
+}
+/* ---------- Zelt & Wind ---------- */
+function blowAway(){
+  const sh=H.g.shelter;if(!sh)return;
+  H.tentFly={x:H.camp.x-70,id:sh.id,t0:0,closed:!!H.tarpClosed};
+  if(H.sleep.active)wakeUp(true);
+  const c=condOf(sh.id)-(15+Math.random()*25);
+  H.cond[sh.id]=Math.max(0,c);
+  H.g.shelter=null;H.camp.pitched=false;
+  H.body.wet=Math.min(100,H.body.wet+(env.precip?22:6));
+  toast('💨 Eine Böe hat dein '+sh.name+' mitgerissen! Es ist für diese Tour verloren'+(c<=0?' und völlig zerfetzt.':' und nach der Tour beschädigt.')+(sh.wres<14?' Teure Zelte halten deutlich mehr Wind aus.':''),'bad');sfx('bad');
+  if(H.stats)H.stats.tentsLost=(H.stats.tentsLost||0)+1;
+}
+function windTent(hr){
+  const sh=H.g.shelter;if(!sh||!sh.wres)return;
+  let wr=sh.wres;if(sh.id==='tarp'&&H.tarpClosed)wr*=1.15;
+  const gust=env.wind*(0.9+Math.random()*0.3);
+  H.windStress=gust/wr;
+  if(gust>wr*0.78&&gust<=wr&&H.t-(H.windWarn||-9999)>90){H.windWarn=H.t;toast('💨 Dein '+sh.name+' knattert bedenklich (Wind ~'+Math.round(env.wind*3.6)+' km/h). Bei mehr Wind hält es nicht – abbauen oder Windschutz suchen!','bad')}
+  if(gust>wr){const p=clamp(0.12+(gust-wr)/wr*1.5,0,0.9);if(Math.random()<1-Math.pow(1-p,hr))blowAway()}
+}
+function drawTentFly(g,tm){
+  const f=H.tentFly;if(!f)return;
+  if(!f.t0)f.t0=tm;
+  const a=tm-f.t0;if(a>4.5){H.tentFly=null;return}
+  const def=gearById(f.id),nm=f.closed&&def.imgClosed?def.imgClosed:def.img,im=nm?img(nm,'svg'):null;
+  const w=140*(def.sc||1),h=w*230/512,x=f.x-camX+110*a+16*a*a,y=groundY(f.x)-30*a-16*a*a-h*0.4;
+  g.save();g.globalAlpha=clamp(1-a/4.5,0,1);g.translate(x,y);g.rotate(a*2.6);
+  if(im)g.drawImage(im,-w/2,-h/2,w,h);else{g.fillStyle='#d97b2b';g.beginPath();g.moveTo(-40,20);g.lineTo(0,-30);g.lineTo(40,20);g.closePath();g.fill()}
+  g.restore();
+}
 /* ---------- Lager & Feuer ---------- */
 const FX={sparks:[],smoke:[]};
 function drawCamp(g,tm,dt){
+  drawTentFly(g,tm);
   if(H.camp.pitched&&H.g.shelter){
     const sh=H.g.shelter,sx=H.camp.x-70-camX,y=groundY(H.camp.x-70);
     const glow=H.sleep.active||env.dark>0.5;
@@ -2802,7 +2875,7 @@ function drawCamp(g,tm,dt){
     }
     const tim=sh.img?img(sh.id==='tarp'&&H.tarpClosed&&sh.imgClosed?sh.imgClosed:sh.img,'svg'):null;
     if(tim){
-      const w=140*(sh.sc||1),h=w*230/512,flap=Math.sin(tm*3+sx*0.01)*env.wind*0.0016;
+      const w=140*(sh.sc||1),h=w*230/512,flap=Math.sin(tm*(3+(H.windStress||0)*4)+sx*0.01)*env.wind*0.0016*(1+Math.max(0,(H.windStress||0)-0.6)*3);
       g.save();g.translate(sx,y+2);g.transform(1,0,flap,1,0,0);g.drawImage(tim,-w/2,-h,w,h);g.restore();
     }else if(sh.id==='tarp'){ // Notbehelf, falls die Grafik nicht lädt
       g.fillStyle=tc('#5f7f55');g.beginPath();g.moveTo(sx-46,y);g.lineTo(sx-30,y-42);g.lineTo(sx+52,y-24);g.lineTo(sx+52,y);g.closePath();g.fill();
@@ -3160,6 +3233,7 @@ function drawScene(g,tm,dt){
   drawDecor(g,tm,1);
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
+  drawPackDown(g,tm);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
   const sx=CHAR_SX();
@@ -3181,7 +3255,7 @@ function drawScene(g,tm,dt){
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
-    drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:g0.pack?g0.pack.color:null,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+    drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
   }
 
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
@@ -3325,7 +3399,7 @@ function renderChar(){
    </div></div></div>`;
   const cv=$('#prev'),g=cv.getContext('2d');
   const paint=(t)=>{if(!cv.isConnected)return;g.clearRect(0,0,240,260);const gr=g.createLinearGradient(0,0,0,260);gr.addColorStop(0,'#9fd3f0');gr.addColorStop(1,'#d9f0d8');g.fillStyle=gr;g.fillRect(0,0,240,260);g.fillStyle='#5f9e46';g.fillRect(0,220,240,40);
-    drawHiker(g,120,222,2.3,{look:G.look,phase:0,mode:'idle',packColor:'#c0392b',tent:true,tm:t/1000});requestAnimationFrame(paint)};
+    drawHiker(g,120,222,2.3,{look:G.look,phase:0,mode:'idle',packColor:packCol(slotOf('pack'))||'#c0392b',packScale:(slotOf('pack')&&slotOf('pack').vol)?clamp(0.72+slotOf('pack').vol*0.0085,0.85,1.5):1,tent:true,tm:t/1000});requestAnimationFrame(paint)};
   requestAnimationFrame(paint);
   $$('[data-k]').forEach(el=>el.onclick=()=>{G.look[el.dataset.k]=+el.dataset.i;const n=$('#c-name').value,c=$('#c-chan').value;G.name=n;G.chan=c;renderChar()});
   const hs=$('#c-home');if(hs)hs.onchange=()=>{G.home=hs.value};
@@ -3564,7 +3638,12 @@ function renderShop(){
   const itemHTML=g=>{
     const own=!!G.owned[g.id],packed=!!G.packed[g.id],br=own&&G.cond[g.id]!==undefined&&G.cond[g.id]<=0;
     const excl=EXCLUSIVE.includes(g.cat);
-    return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${g.img?`<div class="ico wide"><img src="assets/${encodeURIComponent(g.img)}.svg" alt="${g.e}"></div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small></div>
+    const pimg=packImg(g),nv=(g.imgs||[]).length;
+    const wno=g.cat==='water'&&pk&&pk.wbig&&g.cap>pk.wbig;
+    const pinfo=g.cat==='pack'?` · ${g.vol} L · trägt max. ${g.max} kg · 💧 Behälter bis ${fmtN(g.wbig)} L, gesamt ${fmtN(g.wcap)} L${g.tough?' · robust':''}`:'';
+    const winfo=g.cat==='shelter'&&g.wres?` · 💨 hält bis ca. ${Math.round(g.wres*3.6)} km/h`:'';
+    const pv=nv>1?`<div class="pvs">${g.imgs.map((m,i)=>`<button data-pv="${g.id}:${i}" class="${i===packVar(g)?'on':''}" style="border-color:${i===packVar(g)?g.cols[i]:'transparent'}" title="Variante ${i+1}"><img src="assets/${encodeURIComponent(m)}.svg" alt=""></button>`).join('')}</div>`:'';
+    return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${pimg?`<div class="ico pk"><img src="assets/${encodeURIComponent(pimg)}.svg" alt="${g.e}"></div>`:g.img?`<div class="ico wide"><img src="assets/${encodeURIComponent(g.img)}.svg" alt="${g.e}"></div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${pinfo}${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${winfo}${wno?' · <span class="badtxt">⚠ passt nicht in deinen Rucksack</span>':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small>${pv}</div>
      <div class="seg">${own?`<button data-pack="${g.id}" class="${packed?'on':''}" ${br?'disabled':''}>${packed?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${g.id}" ${G.money<gearPrice(g)?'disabled':''}>${g.price?eur0(gearPrice(g)):'Kostenlos'}</button>`}</div></div>`};
   const consHTML=c=>{const n=G.cons[c.id]||0,p=(c.price*priceMod());
     const info=c.sat?`Sättigung +${c.sat}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':c.id==='firewood'?'Trockenes Holz fürs Feuer – lohnt sich dort, wo es kaum Holz gibt (Gebirge, Fjäll, Strand, Schnee)':'für den Hund, 1 kg';
@@ -3594,18 +3673,19 @@ function renderShop(){
   const fl=packedGear().length;
   $('#s-shop').innerHTML=`<div class="wrap"><div class="topbar"><h2>🛒 Ausrüstung</h2><div class="chips"><span class="chip">💶 ${eur(G.money)}</span><button id="sh-back">◀ Zurück</button></div></div>
    <div class="tabs">${tabs}</div>
-   <div class="shopgrid"><div class="items">${dogHTML}${items.map(itemHTML).join('')}${cons.map(consHTML).join('')}${SHOPTAB==='Rucksack'?'<p class="hint">Es kann immer nur ein Rucksack eingepackt sein. Ein größerer Rucksack trägt mehr und sitzt bequemer.</p>':''}</div>
+   <div class="shopgrid"><div class="items">${dogHTML}${items.map(itemHTML).join('')}${cons.map(consHTML).join('')}${SHOPTAB==='Rucksack'?'<p class="hint">Es kann immer nur ein Rucksack eingepackt sein. Bei mehreren Ausführungen eines Typs wählst du das Aussehen per Klick auf die kleinen Bilder. Ein größerer Rucksack trägt mehr und sitzt bequemer.</p>':''}</div>
    <div class="card side"><h3>🎒 Packliste</h3>
     <div>Last: <b>${fmtN(load)} kg</b> <small>(Rucksack max. ${maxL} kg · bequem bis ${fmtN(cap)} kg)</small></div>
     <div class="mbar"><i class="${load>maxL?'bad':load>cap?'warn':''}" style="width:${clamp(load/maxL*100,0,100)}%"></i><b style="left:${clamp(cap/maxL*100,0,100)}%"></b></div>
     ${load>maxL?'<div class="warnbox bad">Rucksack überladen!</div>':load>cap?'<div class="warnbox warn">Schwer: du wirst langsamer und verbrauchst mehr Energie.</div>':''}
     <ul class="pl">${packedGear().map(g=>`<li>${g.e} ${g.name}</li>`).join('')}${Object.keys(G.cons).filter(k=>G.cons[k]>0).map(k=>{const c=gearById(k);return `<li>${c.e} ${G.cons[k]}× ${c.name.replace(/ \((kochen|garen)\)/,'')}</li>`}).join('')}</ul>
-    <div class="hint">Wasserkapazität: ${fmtN(waterCapL())} L${waterCapL()<2?' <span class="badtxt">(wenig!)</span>':''}</div>
+    <div class="hint">Wasserkapazität: ${fmtN(waterCapL())} L${waterCapL()<2?' <span class="badtxt">(wenig!)</span>':''}${waterFit().no.length?'<br><span class="badtxt">⚠ Passt nicht in den Rucksack: '+waterFit().no.map(c=>c.name).join(', ')+'</span>':''}</div>
     <button class="primary" id="sh-hikes" style="margin-top:8px;width:100%">Touren ansehen ▶</button></div></div></div>`;
   $$('[data-tab]').forEach(b=>b.onclick=()=>{SHOPTAB=b.dataset.tab;renderShop()});
   $('#sh-back').onclick=()=>{if(BACKHIKE){const id=BACKHIKE;BACKHIKE=null;renderHikes();show('hikes');openBriefing(id)}else{renderHub();show('hub')}};$('#sh-hikes').onclick=()=>{if(BACKHIKE){const id=BACKHIKE;BACKHIKE=null;renderHikes();show('hikes');openBriefing(id)}else{renderHikes();show('hikes')}};
   $$('[data-buy]').forEach(b=>b.onclick=()=>{const g=gearById(b.dataset.buy),p=gearPrice(g);if(G.money<p)return;G.money-=p;G.owned[g.id]=1;G.cond[g.id]=100;
     if(EXCLUSIVE.includes(g.cat)||g.cat==='rec'&&false)unpackCat(g.cat);G.packed[g.id]=1;sfx('coin');save();renderShop()});
+  $$('[data-pv]').forEach(b=>b.onclick=()=>{const[id,i]=b.dataset.pv.split(':');G.var=G.var||{};G.var[id]=+i;sfx('click');save();renderShop()});
   $$('[data-pack]').forEach(b=>b.onclick=()=>{const g=gearById(b.dataset.pack);if(G.packed[g.id]){delete G.packed[g.id]}else{if(EXCLUSIVE.includes(g.cat))unpackCat(g.cat);G.packed[g.id]=1}sfx('click');save();renderShop()});
   $$('[data-cp]').forEach(b=>b.onclick=()=>{const c=gearById(b.dataset.cp),p=c.price*priceMod();if(G.money<p)return;G.money-=p;G.cons[c.id]=(G.cons[c.id]||0)+1;sfx('coin');save();renderShop()});
   $$('[data-cm]').forEach(b=>b.onclick=()=>{const c=gearById(b.dataset.cm);if(!G.cons[c.id])return;G.money+=c.price*priceMod();G.cons[c.id]--;if(!G.cons[c.id])delete G.cons[c.id];save();renderShop()});
@@ -4223,7 +4303,7 @@ function drawThumb(cv,v){
   g.fillStyle=shade(pal[1],-0.25);g.beginPath();g.moveTo(0,h);for(let x=0;x<=w;x+=10)g.lineTo(x,h*0.55-Math.abs(Math.sin(x*0.03+v.thumb.seed))*h*0.28-r()*3);g.lineTo(w,h);g.fill();
   g.fillStyle=pal[1];g.fillRect(0,h*0.78,w,h*0.22);
   const t=v.thumb.id;
-  if(t==='face'){drawHiker(g,w*0.3,h*0.98,0.9,{look:lookNow(),mode:'idle',phase:0,tm:0,packColor:'#c0392b'});g.font=Math.round(h*0.4)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.72,h*0.6)}
+  if(t==='face'){drawHiker(g,w*0.3,h*0.98,0.9,{look:lookNow(),mode:'idle',phase:0,tm:0,packColor:packCol(slotOf('pack'))||'#c0392b'});g.font=Math.round(h*0.4)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.72,h*0.6)}
   else if(t==='text'){g.font='900 '+Math.round(h*0.26)+'px Impact,Arial Black,sans-serif';g.textAlign='center';g.lineWidth=5;g.strokeStyle='#000';g.fillStyle='#ffe14a';const word=(v.tour.split(/[ –-]+/).find(x=>x.length>3)||v.tour).toUpperCase();g.strokeText(word,w/2,h*0.55);g.fillText(word,w/2,h*0.55);g.font=Math.round(h*0.3)+'px "Noto Color Emoji",sans-serif';g.fillText(v.thumb.e,w*0.5,h*0.9)}
   else if(t==='drama'){g.fillStyle='rgba(255,40,40,0.25)';g.fillRect(0,0,w,h);g.strokeStyle='#ff2d2d';g.lineWidth=6;g.strokeRect(3,3,w-6,h-6);g.font=Math.round(h*0.55)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.5,h*0.72);g.fillStyle='#ff2d2d';g.font='900 '+Math.round(h*0.3)+'px Arial';g.fillText('➜',w*0.15,h*0.5)}
   else{g.font=Math.round(h*0.5)+'px "Noto Color Emoji","Segoe UI Emoji",sans-serif';g.textAlign='center';g.fillText(v.thumb.e,w*0.5,h*0.72)}
