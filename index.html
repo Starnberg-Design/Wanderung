@@ -548,11 +548,11 @@ const FOODS=[
   {id:'nuts',cat:'food',name:'Nussmix',e:'🥜',price:3,kg:0.1,sat:15,cook:false,shop:1},
   {id:'wurst',cat:'food',name:'Salami & Käse',e:'🧀',price:3.5,kg:0.15,sat:22,cook:false,shop:1},
   {id:'bread',cat:'food',name:'Brot & Käse',e:'🥖',price:4.5,kg:0.4,sat:25,cook:false,shop:1},
-  {id:'oats',cat:'food',name:'Haferbrei (kochen)',e:'🥣',price:1.6,kg:0.12,sat:28,cook:true,warm:12,shop:1},
-  {id:'noodles',cat:'food',name:'Instant-Nudeln (kochen)',e:'🍜',price:2.5,kg:0.2,sat:30,cook:true,warm:15,shop:1},
-  {id:'dry',cat:'food',name:'Trockennahrung (kochen)',e:'🍲',price:7,kg:0.25,sat:40,cook:true,warm:20,shop:1},
-  {id:'coffee',cat:'food',name:'Kaffee (kochen)',e:'☕',price:1.4,kg:0.05,sat:2,cook:true,warm:8,stim:'coffee',shop:1},
-  {id:'edrink',cat:'food',name:'Energydrink',e:'🥤',price:2.6,kg:0.5,sat:3,cook:false,stim:'edrink',shop:1},
+  {id:'oats',cat:'food',name:'Haferbrei (kochen)',e:'🥣',price:1.4,kg:0.1,sat:22,cook:true,warm:10,water:0.3,hyd:3,shop:1},
+  {id:'noodles',cat:'food',name:'Instant-Nudelsuppe (kochen)',e:'🍜',price:2.5,kg:0.15,sat:32,en:2,cook:true,warm:20,water:0.45,hyd:10,shop:1},
+  {id:'dry',cat:'food',name:'Trockennahrung (kochen)',e:'🍲',price:7.5,kg:0.13,sat:52,en:6,cook:true,warm:26,water:0.5,hyd:3,shop:1},
+  {id:'coffee',cat:'food',name:'Kaffee (kochen)',e:'☕',price:1.4,kg:0.05,sat:2,cook:true,warm:8,water:0.3,hyd:9,stim:'coffee',shop:1},
+  {id:'edrink',cat:'food',name:'Energydrink',e:'🥤',price:2.6,kg:0.5,sat:3,hyd:13,cook:false,stim:'edrink',shop:1},
   // Gesammelt / geangelt (nicht käuflich)
   {id:'berries',cat:'food',name:'Wilde Beeren',e:'🫐',price:0,kg:0.1,sat:10,cook:false,wild:1},
   {id:'mushroom',cat:'food',name:'Pilze (garen)',e:'🍄',price:0,kg:0.12,sat:14,cook:true,warm:8,wild:1},
@@ -1505,6 +1505,7 @@ function eatFood(id){
   const f=FOODS.find(x=>x.id===id);if(!f||!H.food[id])return;
   H.food[id]--;H.body.sat=clamp(H.body.sat+f.sat,0,100);
   if(f.warm)H.body.warm=clamp(H.body.warm+f.warm,0,100);
+  if(f.hyd)H.body.hyd=clamp(H.body.hyd+f.hyd,0,100);
   if(f.en)H.body.energy=Math.min(100-H.fatigue,H.body.energy+f.en);
   if(f.stim)stimFx(f.stim);
   toast('🍽️ '+f.e+' '+f.name.replace(/ \((kochen|garen)\)/,'')+' gegessen','good');sfx(f.stim==='edrink'?'drink':'eat');
@@ -1594,7 +1595,8 @@ if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
     case 'cook':{
       const f=FOODS.find(x=>x.id===arg);if(!f||!H.food[arg])return;
       if(!canCook()){toast('Zum Kochen brauchst du Gaskocher + Gas oder ein Feuer in der Nähe.','bad');return}
-      beginAction('cook','Bereitet '+f.name.replace(/ \((kochen|garen)\)/,'')+' zu …',f.fish?20:15,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);eatFood(arg)});break}
+      if(f.water&&H.water.clean+H.water.dirty<f.water-0.001){toast('💧 Zum Zubereiten fehlen '+fmtN(f.water)+' L Wasser.','bad');return}
+      beginAction('cook','Bereitet '+f.name.replace(/ \((kochen|garen)\)/,'')+' zu …',f.fish?20:15,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);if(f.water){const c=Math.min(f.water,H.water.clean);H.water.clean-=c;H.water.dirty=Math.max(0,H.water.dirty-(f.water-c))}eatFood(arg)});break}
     case 'leash':{const D=H.dog;if(!D||D.away)return;D.leash=!D.leash;toast(D.leash?'🦮 '+G.dog.name+' ist wieder an der Leine.':'🐕 '+G.dog.name+' läuft frei'+(D.trust<90?' – bei wenig Vertrauen kann er weglaufen.':'.'),D.leash||D.trust>=90?'':'warn');break}
     case 'rest':
       if(!H.camp.pitched||!H.g.shelter){toast('Zum Ausruhen brauchst du ein aufgebautes Zelt oder Tarp.','bad');return}
@@ -3952,7 +3954,7 @@ function hikeCard(hk){
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
   return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
-      <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} · Gebühr ${eur0(hk.permit)}</span>
+      <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} </span>
       <span>🚆 ${esc(travelText(hk))}</span>
       <span>⛰️ <span class="risk" style="background:${DIFF_COL[hk.diff]}">${DIFF_NAMES[hk.diff]}</span> · Erlös-Faktor ×${hk.mult}</span>
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
@@ -3986,13 +3988,13 @@ function renderHikes(){
 let BACKHIKE=null;
 function openBriefing(id){
   const hk=HIKES.find(h=>h.id===id),b=briefing(hk);
-  const tr=travelInfo(hk),fee=hk.permit+tr.cost;
+  const tr=travelInfo(hk),fee=tr.cost;
   const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<fee;
   const ic={bad:'⛔',warn:'⚠️',info:'ℹ️'};
   showModal({title:'📋 '+esc(hk.name),wide:true,html:`<p><b>${hk.km} km</b> · ${dayLbl(hk)} · Start ${b.start} · Ende ~${b.end}<br>Temperatur im Verlauf: Nächte bis ca. ${Math.round(b.tNight)} °C, Tage ca. ${Math.round(b.tDay)} °C · Tageslicht ca. ${fmtN(b.dl,0)} h<br>Gesamtrisiko: <span class="risk" style="background:${b.col}">${b.lbl}</span></p>
    ${(()=>{const f=routeFacts(hk);return `<p class="hint">🚰 ${f.wi.lbl}. 🎣 Fische ${f.fishOK?'möglich':'kaum'} · 🫐 Beeren ${f.beeren?'ja':'nein'} · 🍄 Pilze ${f.pilze?'ja':'nein'} · 🌰 Nüsse ${f.nuesse?'ja':'nein'}${f.terr.length?'<br>'+f.terr.join(' · '):''}${f.towns?'<br>🏪 '+esc(f.towns):''}</p>`})()}
    ${b.w.length?b.w.map(x=>`<div class="warnbox ${x.l}">${ic[x.l]} ${esc(x.t)}</div>`).join(''):'<div class="warnbox info">Keine besonderen Warnungen – gute Vorbereitung.</div>'}
-   <p class="hint">Gebühr ${eur0(hk.permit)} + Anreise (${esc(travelText(hk))}) = <b>${eur0(fee)}</b>, wird beim Start abgezogen. Kaputte Ausrüstung wird nicht mitgenommen. Proviant hält nur für diese eine Tour, frische Ware (Brot, Wurst, Fisch, Beeren) verdirbt nach wenigen Tagen.${G.money<fee?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
+   <p class="hint">Anreise (${esc(travelText(hk))}) = <b>${eur0(fee)}</b>, wird beim Start abgezogen. Kaputte Ausrüstung wird nicht mitgenommen. Proviant hält nur für diese eine Tour, frische Ware (Brot, Wurst, Fisch, Beeren) verdirbt nach wenigen Tagen.${G.money<fee?' <span class="badtxt">Zu wenig Geld!</span>':''}</p>`,
    buttons:[{label:'🥾 Losziehen',primary:1,fn:()=>{if(blocked){toast('');return}
       G.money-=fee;for(let i=0;i<tr.days;i++){G.day++;advanceDay()}startHikeUI(id)}},{label:'🛒 Zum Shop',fn:()=>{BACKHIKE=id;SHOPTAB='Rucksack';renderShop();show('shop')}},{label:'Zurück'}]});
   if(blocked){const bt=$$('#modal .btns button')[0];bt.disabled=true}
@@ -4019,7 +4021,7 @@ function renderShop(){
     return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${pimg?`<div class="ico pk"><img src="assets/${encodeURIComponent(pimg)}.svg" alt="${g.e}"></div>`:g.img?`<div class="ico wide"><img src="assets/${encodeURIComponent(g.img)}.svg" alt="${g.e}"></div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${pinfo}${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${winfo}${wno?' · <span class="badtxt">⚠ passt nicht in deinen Rucksack</span>':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small>${pv}</div>
      <div class="seg">${own?`<button data-pack="${g.id}" class="${packed?'on':''}" ${br?'disabled':''}>${packed?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${g.id}" ${G.money<gearPrice(g)?'disabled':''}>${g.price?eur0(gearPrice(g)):'Kostenlos'}</button>`}</div></div>`};
   const consHTML=c=>{const n=G.cons[c.id]||0,p=(c.price*priceMod());
-    const info=c.sat?`Sättigung +${c.sat}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':c.id==='firewood'?'Trockenes Holz fürs Feuer – lohnt sich dort, wo es kaum Holz gibt (Gebirge, Fjäll, Strand, Schnee)':'für den Hund, 1 kg';
+    const info=c.sat?`Sättigung +${c.sat}${c.warm?' · wärmt +'+c.warm:''}${c.hyd?' · Durst +'+c.hyd:''}${c.water?' · braucht '+fmtN(c.water)+' L Wasser':''}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':c.id==='firewood'?'Trockenes Holz fürs Feuer – lohnt sich dort, wo es kaum Holz gibt (Gebirge, Fjäll, Strand, Schnee)':'für den Hund, 1 kg';
     return `<div class="item"><div class="ico">${c.e}</div><div class="inf"><b>${c.name}</b><small>${info}</small><small>${fmtN(c.kg,2)} kg</small></div>
      <div class="ctl"><button data-cm="${c.id}" ${n<=0?'disabled':''}>−</button><span class="qty">${n}</span><button data-cp="${c.id}" ${G.money<p?'disabled':''}>+ ${eur(p)}</button></div></div>`};
   let dogHTML='';
@@ -4427,7 +4429,7 @@ function openPack(rep){
   const foods=FOODS.filter(f=>(H.food[f.id]||0)>0);
   const canC=canCook();
   const foodCells=foods.length?foods.map(f=>{const n=H.food[f.id];
-    return `<div class="cell" data-eat="${f.id}"><div class="big">${f.e.repeat(Math.min(n,5))}${n>5?'…':''}</div><b>${n}× ${f.name.replace(/ \((kochen|garen)\)/,'')}</b><br><small>+${f.sat} Nahrung${f.cook?(canC?' · 🔥 kochbar':' · <span class="badtxt">Kocher/Feuer nötig</span>'):''}</small></div>`}).join(''):'<p class="hint">Kein Proviant mehr!</p>';
+    return `<div class="cell" data-eat="${f.id}"><div class="big">${f.e.repeat(Math.min(n,5))}${n>5?'…':''}</div><b>${n}× ${f.name.replace(/ \((kochen|garen)\)/,'')}</b><br><small>+${f.sat} Nahrung${f.warm?' · +'+f.warm+' Wärme':''}${f.hyd?' · +'+f.hyd+' Durst':''}${f.water?' · 💧'+fmtN(f.water)+' L':''}${f.cook?(canC?' · 🔥 kochbar':' · <span class="badtxt">Kocher/Feuer nötig</span>'):''}</small></div>`}).join(''):'<p class="hint">Kein Proviant mehr!</p>';
   const bottles=conts.map(c=>`<div class="bottle" data-drink>${bottleSVG(c.def.cap,c.clean,c.dirty)}<br>${c.def.name.replace('Wasserflasche','Flasche').replace('Trinkflasche','Flasche')}</div>`).join('')||'<p class="hint">Keine Behälter.</p>';
   const pbHTML=H.pbs.map(p=>`<div style="margin:4px 0">🔋 ${p.name} <b>${Math.round(p.left/p.cap*100)}%</b>${barHTML(p.left/p.cap*100,'var(--c-batt)',10)}</div>`).join('')||'<p class="hint">Keine Powerbank.</p>';
   const devHTML=Object.keys(H.dev).map(id=>{const d=H.dev[id];
