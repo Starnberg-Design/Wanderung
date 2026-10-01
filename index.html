@@ -863,6 +863,30 @@ function chooseBranch(f,k){
   H.dir=1;H.walking=true;
   if(kind==='climb')toast('🧗 Der Pfad wird steil – du musst dich teils mit den Armen hochziehen. Das kostet viel Kraft.');
 }
+function atSummit(){
+  if(!H||H.side||H.fork)return false;
+  if(H.lookX!=null&&Math.abs(H.x-H.lookX)<PPK*0.5)return false;
+  if(featsIn(H.x-140,H.x+140).some(f=>f.type==='sight'&&f.summit))return true;
+  const e=elevAt(H.x);let mx=-1e9,mn=1e9;
+  for(let d=-0.8;d<=0.81;d+=0.1){const v=elevAt(H.x+d*PPK);if(v>mx)mx=v;if(v<mn)mn=v}
+  return e>=mx-4&&e-mn>=45;
+}
+function summitLook(){
+  const clear=!(env.fog>0.25||env.precip||env.dark>0.6||(H.weather&&H.weather.type==='nebel'));
+  beginAction('orient','Schaut ins Land …',8,()=>{
+    H.lookX=H.x;
+    if(!clear){toast('🌫️ Die Sicht ist zu schlecht – du erkennst den Wegverlauf nicht.');return}
+    const lim=H.x+8*PPK;let n=0;
+    for(const f of H.route.feats){
+      if(f.type!=='junction'||f.decided||f.x<=H.x+60||f.x>lim)continue;
+      const F=forkOf(f);if(!F.hint||F.hint.dir!==F.main)F.hint={dir:F.main,src:'gipfel'};
+      if(++n>=2)break;
+    }
+    if(!n)toast('⛰️ Weite Aussicht – in den nächsten Kilometern liegt keine Wegscheide.');
+    else toast('⛰️ Von hier oben erkennst du den Wegverlauf: '+(n>1?'Die nächsten Wegscheiden sind':'Die nächste Wegscheide ist')+' markiert (💡).','good');
+    xpAdd('nav',4);
+  });
+}
 function checkNav(f){
   const F=forkOf(f),nav=navInfo();
   beginAction('orient',nav.live?'Prüft '+nav.label+' …':'Liest die Karte …',nav.live?1:6,()=>{
@@ -1610,6 +1634,7 @@ if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
     case 'orient':
       if(H.fork){checkNav(H.fork);return}
 if(H.side){orientSide();return}
+if(!H.lost.on&&atSummit()){summitLook();return}
 if(!H.lost.on){toast('Du bist auf dem richtigen Weg.');return}
       showOrient();break;
     case 'reverse':reverseDir();break;
@@ -3471,6 +3496,7 @@ function drawCtx(g,tm,sx,gy){
   if(H.fork){drawForkUI(g,tm,sx,gy);return}
 const row=[];const y=gy-150;const B=H.body;
   if(H.lost.on||H.side)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
+  else if(atSummit())row.push(['🧭','Umschauen',()=>actClick('orient'),true]);
 row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
   const w=nearWater();
   if(w){
