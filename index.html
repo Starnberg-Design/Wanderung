@@ -444,6 +444,46 @@ const HIKES=[
   sights:[S_('Pyrenäen-Pass','⛰️',84),S_('Kathedrale von Burgos','⛪',88),S_('Cruz de Ferro','✝️',80),S_('Santiago-Kathedrale','⛪',96)],
   stages:P('t8 m10 m12 w6 m14 b5 m10 t8 m16',780,170,260,260,59)}
 ];
+/* ---------- Heimat-Grundrouten: je Land 3 (Anreise 0 / 5 / 10 EUR) ---------- */
+const HOME_HIKES=[
+['de_oberhof','Rennsteig-Runde Oberhof','Deutschland','thuer',1,0,820,'Kurze Runde auf dem Rennsteig bei Oberhof: Fichtenwald, Skisprungschanzen und weite Blicke über den Thüringer Wald.',[['Grenzadler-Aussicht','🦅',55]],[['wald',4,870],['wiese',2,900],['wald',2,830]]],
+['de_teufelsmauer','Teufelsmauer bei Blankenburg','Deutschland','harz',1,5,220,'Ein Felsgrat wie eine Mauer: Die Teufelsmauer im nördlichen Harzvorland, leichter Weg mit Aussichtspunkten.',[['Teufelsmauer','🪨',68]],[['wald',3,300],['berg',3,340],['wiese',3,260],['wald',3,230]]],
+['de_papststein','Gohrisch und Papststein','Deutschland','sachsen',2,10,140,'Elbsandsteingebirge pur: Stufen, Felsen und die Aussicht vom Papststein.',[['Papststein-Aussicht','🏞️',74]],[['wald',4,260],['berg',3,430],['wald',3,300],['wiese',2,150]]],
+['at_gaisberg','Gaisberg-Rundweg Salzburg','Österreich','alpen',1,0,500,'Der Salzburger Hausberg: ein sanfter Aufstieg durch Wald und Wiesen mit Blick über die Stadt.',[['Gaisberg-Gipfel','⛰️',66]],[['wald',3,900],['wiese',3,1287],['wald',3,520]]],
+['at_pfaender','Pfänder-Höhenweg Bregenz','Österreich','alpen',1,5,420,'Über Bregenz zum Pfänder: Wald, Almwiesen und das große Bodensee-Panorama.',[['Pfänder-Gipfel','⛰️',70],['Bodensee-Panorama','🌅',60]],[['wald',4,800],['wiese',3,1064],['wald',4,500]]],
+['at_rax','Rax-Plateau – Heukuppe','Österreich','alpen',2,10,970,'Hochplateau der Rax mit Felsen, Latschen und weitem Blick bis zum Schneeberg.',[['Heukuppe-Gipfel','⛰️',80]],[['wald',4,1500],['berg',4,1850],['berg',4,1500]]],
+['ch_uetliberg','Uetliberg – Planetenweg','Schweiz','alpen',1,0,420,'Zürichs Hausberg: Waldweg mit Planetenweg, oben Aussichtsturm und Blick über Stadt und See.',[['Uetliberg-Aussichtsturm','🗼',62]],[['wald',4,840],['wiese',3,800],['wald',2,450]]],
+['ch_rigi','Rigi Panoramaweg','Schweiz','alpen',1,5,440,'Die Königin der Berge: Aufstieg zur Rigi Kulm mit Blick auf Seen und Alpenkette.',[['Rigi Kulm','⛰️',78]],[['wald',4,1100],['wiese',4,1798],['wiese',4,1200]]],
+['ch_pilatus','Pilatus – Klimsenhorn','Schweiz','alpen',2,10,1100,'Steiler Aufstieg über Felsstufen zum Pilatus Kulm, Gämsen und Tiefblicke inklusive.',[['Pilatus Kulm','⛰️',84]],[['wald',3,1600],['berg',4,2132],['berg',4,1500]]],
+['se_slattdal','Slåttdalsskrevan-Runde','Schweden','hoga',1,0,30,'Durch die enge Felsspalte Slåttdalsskrevan an der Höga Kusten, danach ein kurzer Rückweg im Wald.',[['Slåttdalsskrevan-Schlucht','🪨',66]],[['wald',3,150],['berg',2,250],['wald',3,60]]],
+['se_norrfallsviken','Norrfällsviken-Küstenweg','Schweden','hoga',1,5,5,'Ruhiger Weg an der Küste der Höga Kusten: Kiesbuchten, Kiefernwald und glattgeschliffene Felsen.',[['Norrfällsviken-Bucht','🌊',64]],[['kies',3,15],['wald',5,120],['kies',3,10]]],
+['se_njulla','Njulla-Aufstieg Abisko','Schweden','lappland',2,10,390,'Aufstieg über die Baumgrenze zum Njulla mit Blick über Torneträsk und die Fjällkette.',[['Njulla-Gipfel','⛰️',82]],[['wald',3,700],['fjaell',5,1140],['fjaell',4,700]]],
+['no_nordmarka','Nordmarka – Ullevålseter-Runde','Norwegen','norwegen',1,0,200,'Osloer Waldgebiet mit Seen, Hütten und breiten Wegen, ideal für einen Tag.',[['Ullevålseter','🏡',58]],[['wald',4,380],['wiese',2,320],['wald',3,240]]],
+['no_gaustatoppen','Gaustatoppen Sommerroute','Norwegen','norwegen',2,5,1180,'Der Gaustatoppen in Telemark: Steinfelder und ein Gipfel mit Fernsicht bis weit ins Land.',[['Gaustatoppen-Gipfel','⛰️',88]],[['fjaell',3,1500],['berg',3,1883],['berg',4,1400]]],
+['no_preikestolen','Preikestolen','Norwegen','norwegen',2,10,270,'Zum berühmten Felsplateau über dem Lysefjord, Stufen, Steine und ein spektakulärer Tiefblick.',[['Preikestolen-Plateau','🏞️',92]],[['wald',3,450],['berg',3,604],['berg',3,300]]],
+['sc_arthur','Arthur\'s Seat Rundweg','Schottland','scot',1,0,40,'Mitten in Edinburgh: Rundweg um den erloschenen Vulkan mit Gipfelblick über die Stadt.',[['Arthur\'s Seat','⛰️',64]],[['wiese',2,150],['berg',2,251],['wiese',2,60]]],
+['sc_pentlands','Pentland Hills – Carnethy Hill','Schottland','scot',2,5,250,'Heidehügel südlich von Edinburgh: weite Hänge, Wind und ein Gipfel mit Fernblick.',[['Carnethy Hill','⛰️',70]],[['wiese',4,500],['berg',3,573],['wiese',4,300]]],
+['sc_conic','Conic Hill und Loch Lomond','Schottland','scot',2,10,20,'West Highland Way bei Balmaha: Aufstieg zum Conic Hill mit Blick über Loch Lomond und die Inseln.',[['Conic Hill','⛰️',72],['Loch-Lomond-Blick','🌊',70]],[['wald',3,150],['berg',3,361],['wiese',4,40]]],
+['en_dovedale','Dovedale – Stepping Stones','England','eng',1,0,140,'Peak District: Das Tal des Dove mit den berühmten Trittsteinen und sanften Hängen.',[['Stepping Stones','🪨',60]],[['tal',4,170],['wiese',3,300],['tal',3,150]]],
+['en_malvern','Malvern Hills Kammweg','England','eng',1,5,100,'Der Kamm der Malvern Hills: grüne Hänge, Wind und Blicke über halb England.',[['Worcestershire Beacon','⛰️',68]],[['wiese',4,300],['berg',3,425],['wiese',4,120]]],
+['en_penyghent','Pen-y-ghent Rundweg','England','eng',2,10,230,'Yorkshire Dales: Aufstieg zum Pen-y-ghent und Rückweg vorbei am Höhlenschacht Hull Pot.',[['Pen-y-ghent','⛰️',74],['Hull Pot','🕳️',66]],[['wiese',4,500],['berg',3,694],['wiese',6,250]]],
+['ie_howth','Howth Cliff Path','Irland','irland',1,0,10,'Klippenweg auf der Halbinsel Howth: Meer, Möwen und ein Leuchtturm.',[['Baily Lighthouse','🗼',62]],[['kies',3,80],['wiese',4,120],['kies',2,15]]],
+['ie_glendalough','Glendalough – Spinc','Irland','irland',2,5,130,'Die Seen von Glendalough und der Aufstieg über den Spinc mit Blick ins Tal.',[['Upper Lake','🌊',72]],[['wald',3,300],['berg',4,380],['tal',4,140]]],
+['ie_torc','Torc Mountain Kerry','Irland','irland',2,10,40,'Vom Torc-Wasserfall hinauf zum Torc Mountain mit Aussicht über Killarney.',[['Torc-Wasserfall','💧',66],['Torc-Gipfel','⛰️',74]],[['wald',4,200],['berg',4,535],['wald',4,60]]],
+['it_azzurro','Sentiero Azzurro Monterosso–Vernazza','Italien','korsika',1,0,5,'Der blaue Küstenpfad der Cinque Terre mit Terrassen, Stufen und Meerblick.',[['Vernazza-Hafen','🏖️',78]],[['kies',2,100],['wald',3,150],['kies',2,10]]],
+['it_seiser','Seiser Alm Panoramaweg','Italien','dolo',1,5,1850,'Europas größte Hochalm: breite Wege, Almhütten und der Schlern im Blick.',[['Schlern-Blick','🏔️',80]],[['wiese',5,2000],['wiese',4,2100],['wiese',3,1900]]],
+['it_zinnen','Drei Zinnen Rundweg','Italien','dolo',2,10,2300,'Rundweg um die Drei Zinnen in den Dolomiten, hoch, felsig und oft windig.',[['Drei Zinnen','⛰️',92]],[['berg',4,2450],['berg',4,2400],['berg',3,2350]]],
+['fr_calanques','Calanques – Sentier de Morgiou','Frankreich','korsika',1,0,5,'Weißer Kalkfels, türkises Wasser und Kiefern: Küstenweg in den Calanques bei Marseille.',[['Calanque de Sormiou','🌊',76]],[['kies',3,100],['wald',2,150],['kies',3,10]]],
+['fr_lacblanc','Lac Blanc ab La Flégère','Frankreich','mtblanc',2,5,1877,'Hochgebirgssee mit Blick auf den Mont Blanc, kurze Tour, aber hoch und felsig.',[['Lac Blanc','🏔️',90]],[['berg',3,2350],['berg',2,2352],['berg',3,1900]]],
+['fr_posettes','Aiguillette des Posettes','Frankreich','mtblanc',2,10,1450,'Aussichtsgipfel über Chamonix mit Fernblick auf den Mont Blanc.',[['Aiguillette des Posettes','⛰️',76]],[['wald',4,1800],['berg',3,2201],['wald',5,1500]]],
+['es_zarautz','Zarautz – Getaria Küstenweg','Spanien','camino',1,0,5,'Baskische Küste: Strand, Weinberge und der Fischerhafen von Getaria.',[['Getaria-Hafen','⚓',66]],[['kies',3,60],['wiese',4,120],['kies',3,10]]],
+['es_anboto','Anboto Aufstieg','Spanien','camino',2,5,600,'Der markante Kalkgipfel Anboto im Baskenland: Buchenwald, dann Fels.',[['Anboto-Gipfel','⛰️',78]],[['wald',4,900],['berg',3,1331],['berg',4,800]]],
+['es_cares','Ruta del Cares','Spanien','camino',2,10,220,'In den Fels gehauener Weg durch die Cares-Schlucht in den Picos de Europa.',[['Cares-Schlucht','🏞️',88]],[['tal',5,400],['berg',2,500],['tal',5,300]]],
+['is_oskjuhlid','Öskjuhlíð – Elliðaár Stadtwald','Island','island',1,0,10,'Grüne Runde durch Reykjavík: Wäldchen, Flusstal und Aussicht von der Perlan.',[['Perlan-Aussicht','🔭',58]],[['wald',3,70],['wiese',3,60],['wald',2,15]]],
+['is_glymur','Glymur Wasserfall','Island','island',2,5,40,'Zum zweithöchsten Wasserfall Islands: Schlucht, Flussquerung und Tiefblick.',[['Glymur-Wasserfall','💧',86]],[['kies',2,120],['berg',3,330],['kies',2,50]]],
+['is_reykjadalur','Reykjadalur Heißquellental','Island','island',1,10,110,'Dampfende Hänge und ein warmer Bach zum Baden mitten in der Landschaft.',[['Heißer Bach','♨️',84]],[['wiese',3,250],['berg',2,300],['wiese',2,120]]]
+];
+HOME_HIKES.forEach(a=>HIKES.push({id:a[0],name:a[1],country:a[2],reg:a[3],diff:a[4],trav:a[5],permit:0,mult:a[4]===1?0.5:0.68,hard:a[4]===1?0.9:1.0,ext:a[4]===1?0.7:0.8,villageEvery:0,startAlt:a[6],desc:a[7],sights:a[8].map(s=>S_(s[0],s[1],s[2])),stages:a[9].map(s=>({b:s[0],km:s[1],alt:s[2]}))}));
 HIKES.forEach(h=>{h.regD=REGIONS[h.reg];if(!h.km)h.km=h.stages.reduce((a,s)=>a+s.km,0);h.km=Math.round(h.stages.reduce((a,s)=>a+s.km,0))});
 /* Echte Orte mit Läden (Name, km ab Start) */
 const TOWNS={
@@ -607,10 +647,11 @@ function wxWeights(R,m,ext){
 }
 
 /* ---- Profil ---- */
+function adminOn(){try{return localStorage.getItem('wk_admin')==='1'}catch(e){return false}}
 function newProfile(){
   return {v:2,home:'Deutschland',growth:false,shaveDay:0,cutDay:0,name:'Wanderer',chan:'Wanderkanal',look:{skin:1,hair:1,style:0,beard:0,glasses:0,build:1,jacket:2,pants:0},talent:'natur',
     stats:{trag:3,aus:3,tempo:3,kalt:3,food:3,water:3,nav:3},xp:{},sp:0,
-    money:300,owned:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},
+    money:(adminOn()?10000:300),owned:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},
     packed:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},cons:{},cond:{},dog:null,
     subs:120,day:0,videos:[],hist:[],comments:[],notes:[],lives:[],vid:0,
     earned:0,hikes:0,km:0,created:false,begHeat:0,pendCur:0,pendPrev:0,flags:{},pending:null,totalViews:0,liveEarned:0,lastMonth:3,vol:0.7,mute:false};
@@ -2396,10 +2437,11 @@ function stepSim(h){
   updateWeather();computeEnv();
   if(H.fire.lit){
     const big=H.fire.left>110,shel=H.camp.pitched&&Math.abs(H.x-H.camp.x)<200;
-    let rate=1,extra=0;
-    if(big)extra=(env.wind>10?0.4:0)+(env.precip&&!shel?0.9*env.rainI:0);
-    else extra=(env.wind>6?0.9:0)+(env.precip?(shel?0.6:0.7+1.3*env.rainI):0);
-    rate+=extra*(fireCovered(H.fire.x)?0.2:1); // Tarp hält Regen und Wind vom Feuer ab
+    let rate=1;const cov=fireCovered(H.fire.x);
+    let wx,rx;
+    if(big){wx=env.wind>10?0.4:0;rx=(env.precip&&!shel)?0.9*env.rainI:0}
+    else{wx=env.wind>6?0.9:0;rx=env.precip?(shel?0.6:0.7+1.3*env.rainI):0}
+    rate+=wx*(cov?0.2:1)+(cov?0:rx); /* unter dem Tarp loescht Regen das Feuer nicht */
     H.fire.left-=h*rate;
     if(H.fire.left<=0){H.fire.lit=false;toast(big?'Das Feuer ist erloschen.':'Das kleine Feuer ist '+(env.precip||env.wind>6?'im '+(env.precip?'Regen':'Wind')+' ':'')+'ausgegangen – mit mehr Holz hält es länger.','warn')}
   }
@@ -2620,7 +2662,7 @@ function ln(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.strok
 /* ---------- Wanderer ---------- */
 function drawHiker(g,x,y,s,o){
   const L=o.look,ph=o.phase||0,mode=o.mode||'idle';
-  const bw=[0.92,1,1.1][L.build||0];
+  const bw=[0.92,1,1.1][L.build||0]*(L.gender?0.94:1);
   g.save();g.translate(x,y);g.scale(s,s);g.lineCap='round';g.lineJoin='round';
   const skin=LOOKS.skin[L.skin],hair=LOOKS.hair[L.hair],jk=LOOKS.jacket[L.jacket],pants=LOOKS.pants[L.pants||0];
   if(mode==='sleep'){
@@ -2669,8 +2711,8 @@ const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
   g.fillStyle=jk;rr(g,-8*bw,hipY-35,17*bw,33,5);g.fill();
   const hx=2+3*tired,hy=hipY-45+4.5*tired;
   g.fillStyle=skin;g.beginPath();g.arc(hx,hy,8.5,0,7);g.fill();
-  if(L.beard===2){g.fillStyle=hair;g.beginPath();g.arc(hx+1,hy+2,8.5,0.05,Math.PI-0.05);g.fill();g.fillStyle=skin;g.beginPath();g.ellipse(hx+5,hy+1,3,2,0,0,7);g.fill()}
-  else if(L.beard===1){g.fillStyle=rgb(hex(hair),0.55);g.beginPath();g.arc(hx+1,hy+2,8.5,0.2,Math.PI-0.2);g.fill()}
+  if(!L.gender&&L.beard===2){g.fillStyle=hair;g.beginPath();g.arc(hx+1,hy+2,8.5,0.05,Math.PI-0.05);g.fill();g.fillStyle=skin;g.beginPath();g.ellipse(hx+5,hy+1,3,2,0,0,7);g.fill()}
+  else if(!L.gender&&L.beard===1){g.fillStyle=rgb(hex(hair),0.55);g.beginPath();g.arc(hx+1,hy+2,8.5,0.2,Math.PI-0.2);g.fill()}
   g.fillStyle=hair;
   const st=L.style;
   if(st===0){g.beginPath();g.arc(hx-1,hy-1,8.6,Math.PI*1.02,Math.PI*1.95);g.fill()}
@@ -2678,6 +2720,7 @@ const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
   else if(st===2){g.fillStyle='#c0392b';g.beginPath();g.arc(hx,hy-2,9,Math.PI,0);g.fill();g.fillRect(hx-8,hy-3,18,3)}
   else if(st===3){g.beginPath();g.arc(hx-1,hy-1,8.6,Math.PI*1.02,Math.PI*1.95);g.fill();g.beginPath();g.ellipse(hx-11,hy+2+Math.sin(ph)*0.8*(walk?1:0),3.5,7,0.3,0,7);g.fill()}
   else if(st===5){for(let i=0;i<7;i++){g.beginPath();g.arc(hx-7+i*2.6,hy-6-Math.sin(i*1.3)*2,3.6,0,7);g.fill()}}
+  if(L.gender){g.fillStyle=hair;if(st===0){rr(g,hx-11,hy-3,6,13,3);g.fill()}g.fillStyle='#c0504d';g.fillRect(hx+5.5,hy+3,2.6,1.3)}
   if(L.glasses===1){g.strokeStyle='#222';g.lineWidth=1.1;g.beginPath();g.arc(hx+4.5,hy-1,2.6,0,7);g.stroke()}
   else if(L.glasses===2){g.fillStyle='#111';rr(g,hx+1.5,hy-3,7,4,1.5);g.fill()}
   else{g.fillStyle='#222';g.beginPath();g.arc(hx+4.5,hy-1,1.2,0,7);g.fill()}
@@ -2968,11 +3011,11 @@ function drawLeaves(g,tm,dt){
 const CON_TREES=[['Dunkle Tanne',80,1],['Grüne Tanne',72,1],['Hellgrüne Tanne',70,1],['Lichte Tanne',72,1],['Zerzauste Grüne Tanne',64,1],['Zerzauste Hellgrüne Tanne',64,1],['Dichte Grüne Kiefer',76,1],['Dichte Hellgrüne Kiefer',72,1],['Lichte Kiefer',68,1],['Zerzauste Kiefer',62,1],['Kleine Tanne',14,0.6],['Kleiner Abendländischer Lebensbaum',12,0.5],['Kleiner Nadelstrauch',8,0.8]];
 const CON_W=CON_TREES.reduce((a,t)=>a+t[2],0),CON_BMP={},CON_PRE={};let CON_BMP_N=0;
 function conPick(v){let a=v*CON_W;for(const t of CON_TREES){a-=t[2];if(a<0)return t}return CON_TREES[0]}
-function conBmp(name,dim){
-  const step=Math.round(NM_*4),key=name+'|'+(dim?1:0)+'|'+step;
+function conBmp(name,dim,pfx){pfx=pfx||'Nadelwald_';
+  const step=Math.round(NM_*4),key=pfx+name+'|'+(dim?1:0)+'|'+step;
   let c=CON_BMP[key];if(c)return c;
-  const im=img('Nadelwald_'+name,'svg');if(!im)return null;
-  if(CON_BMP_N++>80){for(const k in CON_BMP)delete CON_BMP[k];CON_BMP_N=0}
+  const im=img(pfx+name,'svg');if(!im)return null;
+  if(CON_BMP_N++>110){for(const k in CON_BMP)delete CON_BMP[k];CON_BMP_N=0}
   c=document.createElement('canvas');c.width=c.height=288;const x=c.getContext('2d');
   x.drawImage(im,0,0,288,288);x.globalCompositeOperation='source-atop';
   if(dim){x.fillStyle='rgba(0,0,0,0.16)';x.fillRect(0,0,288,288)}
@@ -2989,8 +3032,41 @@ function drawConImg(g,sx,y,sc,sway,sn,dim,v){
   g.save();g.translate(sx,y+h*0.012);g.transform(1,0,-0.8*sway/h,1,0,0);g.drawImage(bmp,-h/2,-h,h,h);g.restore();
   return true;
 }
+/* ---------- Laubbaum-Grafiken (4 Jahreszeiten) ---------- */
+const LAUB_TREES=[ /* [Name, Dateien F/S/H/W oder null, Höhe(×sc), Gewicht, Regionsgruppen N/C/A/M, nur offenes Land] */
+  ['Eiche',null,70,3,'NCAM',0],['Rotbuche',null,76,3,'CAM',0],['Linde',null,68,2,'NCAM',0],
+  ['Bergahorn',null,72,2,'CA',0],['Spitzahorn',null,66,1.5,'NCAM',0],['Ahorn',null,64,1.5,'NCAM',0],
+  ['Feldahorn',null,40,1,'CM',0],['Hainbuche',null,58,1.5,'CAM',0],['Robinie',null,62,1,'CM',0],
+  ['junge Eiche',['junge Eiche Frühjahr Frühling','junge Eiche Sommer','junge Eiche Herbst','junge Eiche Winter'],36,2,'NCAM',0],
+  ['Eukalyptus',null,80,3,'M',0],
+  ['Apfelbaum',null,28,2,'CAM',1],
+  ['Formgeschnitten',['formgeschnittenen Laubbaum Frühling','formgeschnittenen Laubbaum Sommer','formgeschnittener Laubbaum Herbst','Formgeschnittener Laubbaum Winter'],22,0.6,'CAM',1]
+];
+const LEAF_SHARE={hoga:0.07,lappland:0.04,nordkalott:0.05,norwegen:0.07,island:0.05,alpen:0.32,dolo:0.22,mtblanc:0.3,korsika:0.4,camino:0.5,harz:0.42,thuer:0.4,sachsen:0.45,eng:0.75,irland:0.65,scot:0.4};
+const LEAF_PRE={};
+function regGroup(){const r=(H&&H.hk&&H.hk.reg)||'';if(['hoga','lappland','nordkalott','norwegen','island'].includes(r))return 'N';if(r==='korsika'||r==='camino')return 'M';if(r==='alpen'||r==='dolo'||r==='mtblanc')return 'A';return 'C'}
+function leafP(wx,open){let p=H&&H.hk?LEAF_SHARE[H.hk.reg]:0.4;if(p==null)p=0.4;if(open)p=Math.min(0.9,p*1.4+0.06);return p*clamp((1800-elevAt(wx))/700,0,1)}
+function leafPick(v,open){
+  const grp=regGroup(),c=[];let tot=0;
+  for(const s of LAUB_TREES){if(s[4].indexOf(grp)<0||(s[5]&&!open))continue;let w=s[3];if(grp==='A'&&s[0]==='Bergahorn')w*=2;if(open&&s[0]==='Apfelbaum')w*=1.5;c.push([s,w]);tot+=w}
+  let a=v*tot;for(const q of c){a-=q[1];if(a<0)return q[0]}return c.length?c[0][0]:null;
+}
+function leafFile(s,season){const i=['Frühling','Sommer','Herbst','Winter'].indexOf(season);return s[1]?s[1][i]:s[0]+' '+season}
+function drawLeafImg(g,sx,y,sc,sway,sn,dim,v,open){
+  if(v===undefined)return false;
+  const s=leafPick(v,open);if(!s)return false;
+  const season=sn>=0.3?'Winter':(env.season||'Sommer');
+  if(!LEAF_PRE[season]){LEAF_PRE[season]=1;LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,season),'svg'))}
+  const bmp=conBmp(leafFile(s,season),dim,'Laubwald_');
+  if(!bmp)return false;
+  const h=s[2]*sc;
+  g.save();g.translate(sx,y+h*0.012);g.transform(1,0,-0.8*sway/h,1,0,0);g.drawImage(bmp,-h/2,-h,h,h);g.restore();
+  return true;
+}
 function tree(g,sx,y,sc,kind,sway,sn,dim,v){
   sc=Math.min(sc*2.3,4.2);
+  const lopen=kind==='leafo';if(lopen)kind='leaf';
+  if(kind==='leaf'&&drawLeafImg(g,sx,y,sc,sway,sn,dim,v,lopen)){CROWNS.push(sx+sway*0.8,y-38*sc,20*sc,dim?1:0);return}
   if(kind==='leaf'){
     CROWNS.push(sx+sway*0.8,y-38*sc,20*sc,dim?1:0);
     g.fillStyle=tc('#5b3d24');g.fillRect(sx-3*sc,y-26*sc,6*sc,26*sc);
@@ -3022,9 +3098,9 @@ function drawDecor(g,tm,pass){
     const sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
     if(r<B.tree){
       if(st.b==='wald'){
-        const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<0.28?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
+        const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<leafP(wx,false)?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
       }else if(st.b==='fjaell')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
-      else tree(g,sx,y,sc,hash(cx*3)<0.35?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
+      else tree(g,sx,y,sc,hash(cx*3)<leafP(wx,true)?'leafo':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
     }else if(pass===1){
       if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
       else if(st.b==='berg'||st.b==='fjaell'||B.rock){
@@ -3696,11 +3772,13 @@ function renderMenu(){
       ${has?'<button class="primary big" id="m-cont">▶ Weiterspielen</button>':''}
       <button class="${has?'':'primary '}big" id="m-new">${has?'Neues Spiel':'▶ Neues Spiel'}</button>
       <button id="m-how">📖 Spielprinzip</button>
+      <button id="m-admin">🛠️ Admin-Modus: ${adminOn()?'AN (10.000 €)':'AUS'}</button>
       <button id="m-fs">📱 Vollbild / Querformat</button>
     </div>
     <p class="hint">Tipp am Handy: Vollbild aktivieren und quer halten. Der Spielstand wird automatisch gespeichert.</p></div>`;
   if(has)$('#m-cont').onclick=()=>{auUnlock();G=loadSave();auVol();renderHub();show('hub')};
   $('#m-new').onclick=()=>{auUnlock();const go=()=>{wipeSave();G=newProfile();auVol();renderChar();show('char')};if(has)showModal({title:'Neues Spiel?',text:'Dein alter Spielstand wird gelöscht.',buttons:[{label:'Ja, neu beginnen',fn:go},{label:'Abbrechen'}]});else go()};
+  $('#m-admin').onclick=()=>{const on=!adminOn();try{localStorage.setItem('wk_admin',on?'1':'0')}catch(e){}if(on){const sv=loadSave();if(sv&&sv.created){G=sv;G.money=10000;save()}}renderMenu()};
   $('#m-how').onclick=showHowTo;$('#m-fs').onclick=goFullscreen;
 }
 function goFullscreen(){
@@ -3730,6 +3808,7 @@ function renderChar(){
      <div class="row"><span class="lbl">Name</span><input id="c-name" value="${esc(G.name)}" maxlength="18"></div>
      <div class="row"><span class="lbl">Kanalname</span><input id="c-chan" value="${esc(G.chan)}" maxlength="24"></div>
      <div class="row"><span class="lbl">Kanalbilder</span><div class="imgbtns">${imgBtns()}</div></div><p class="hint">Eigenes Profilbild und Kanalbanner (optional) – du kannst sie später im Studio ändern.</p>
+     <div class="row"><span class="lbl">Geschlecht</span>${seg(['Männlich','Weiblich'],'gender')}</div>
      <div class="row"><span class="lbl">Körperbau</span>${seg(LOOKS.builds,'build')}</div><p class="hint" id="c-bd">${BUILD_DESC[L.build]}</p>
      <div class="row"><span class="lbl">Hautton</span><div>${sw(LOOKS.skin,'skin')}</div></div>
      <div class="row"><span class="lbl">Haarfarbe</span><div>${sw(LOOKS.hair,'hair')}</div></div>
@@ -3933,6 +4012,7 @@ function routeFacts(hk){
 const HOMES={Deutschland:[51,10],Österreich:[47.5,14.5],Schweiz:[46.8,8.2],Schweden:[59.3,18],Norwegen:[59.9,10.7],Schottland:[55.9,-3.2],England:[51.5,-0.1],Irland:[53.3,-6.3],Italien:[45.5,9.2],Frankreich:[48.9,2.4],Spanien:[40.4,-3.7],Island:[64.1,-21.9]};
 const REG_XY={harz:[51.8,10.6],thuer:[50.7,10.7],sachsen:[50.9,14.2],hoga:[63.0,18.3],alpen:[47.4,10.3],dolo:[46.6,12.0],scot:[56.2,-4.6],mtblanc:[45.9,6.9],island:[63.9,-19.3],lappland:[68.4,18.8],nordkalott:[69.3,20.0],norwegen:[61.5,8.8],eng:[51.9,-1.8],irland:[52.05,-9.5],korsika:[42.5,8.9],camino:[43.2,-1.2]};
 function travelInfo(hk){
+  if(hk.trav!=null&&startCountry(hk)===(G.home||'Deutschland'))return {cost:hk.trav,days:0,mode:hk.trav?'Bus / Bahn':'Zu Fuß',km:hk.trav?10+hk.trav*3:0};
   const home=G.home||'Deutschland',a=HOMES[home]||HOMES.Deutschland,b=REG_XY[hk.reg]||a;
   const R=6371,rad=x=>x*Math.PI/180,dl=rad(b[0]-a[0]),dn=rad(b[1]-a[1]);
   const h=Math.sin(dl/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dn/2)**2;
@@ -3945,7 +4025,7 @@ function travelInfo(hk){
   cost=Math.round(Math.max(25,cost)/5)*5;
   return {cost,days:mode==='Flug'?0:Math.floor(d/900),mode,km:d};
 }
-function travelText(hk){const t=travelInfo(hk);return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
+function travelText(hk){const t=travelInfo(hk);if(t.mode==='Zu Fuß')return 'Start direkt vor der Haustür – keine Anreisekosten';return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
 let SELHIKE=null;
 let HIKECTRY=null;
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
@@ -4143,7 +4223,7 @@ function playIntro(hk,done){
   const bus=((hk.id.charCodeAt(0)+hk.km)%3)===0;
   if(ti.mode==='Flug')steps.push({k:'plane',d:4.6,t:'✈️ Landeanflug – '+ct});
   else if(ti.mode==='Zug')steps.push({k:'ice',d:3.6,t:'🚆 Mit dem Fernzug unterwegs'});
-  steps.push({k:bus?'bus':'rb',d:3.6,t:bus?'🚌 Weiter mit dem Bus':'🚃 Weiter mit der Regionalbahn'});
+  if(ti.mode!=='Zu Fuß')steps.push({k:bus?'bus':'rb',d:3.6,t:bus?'🚌 Weiter mit dem Bus':'🚃 Weiter mit der Regionalbahn'});
   steps.push({k:'arr',d:3.4,t:'📍 '+hk.name});
   const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:9000;background:#000';
   const cv=document.createElement('canvas');cv.style.cssText='width:100%;height:100%;display:block';ov.appendChild(cv);
@@ -4222,6 +4302,7 @@ function startHikeUI(id){
   startHikeUI2(id)}
 function startHikeUI2(id){
   startHike(id);
+  try{const se=env.season||'Sommer';LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,se),'svg'));LEAF_PRE[se]=1}catch(e){}
   MODALQ=[];
   buildHikeDOM();show('hike');resizeStage();
   accum=0;lastTs=performance.now();hudT=0;livePanelOn=false;LIGHT.next=8;FX.sparks=[];FX.smoke=[];BIRDS.length=0;
