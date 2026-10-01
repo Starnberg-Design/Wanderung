@@ -924,7 +924,7 @@ function chooseBranch(f,k){
   const nav=navInfo();
   let ra=nav.live?(0.2+rnd(0,0.3))*PPK:nav.src==='map'?(0.5+(1-nav.q)*1.2+rnd(0,0.5))*PPK:(1.0+rnd(0,1.4))*PPK*clamp(1.1-0.04*ES('nav'),0.7,1.1);
   ra=clamp(ra,0.15*PPK,len*0.9);
-  H.side={f,d:k,kind,out,len,x0,pos:0,gain:b.gain||0,gainF:b.gainF||1,realized:kind==='climb',realizeAt:ra,col:b.col,town:b.name,crux:false,liftM:kind==='climb'?Math.round(len*0.6):0};
+  H.side={f,d:k,ct:tm,kind,out,len,x0,pos:0,gain:b.gain||0,gainF:b.gainF||1,realized:kind==='climb',realizeAt:ra,col:b.col,town:b.name,crux:false,liftM:kind==='climb'?Math.round(len*0.6):0};
   H.dir=1;H.walking=true;
   if(kind==='climb')toast('🧗 Der Pfad wird steil – du musst dich teils mit den Armen hochziehen. Das kostet viel Kraft.');
 }
@@ -1065,8 +1065,6 @@ function drawTrailMarks(g,tm){
 function drawFork(g,tm,f,sx,y){
   const F=forkOf(f);
   const rib=(dx,dy,w0,col)=>{g.fillStyle=tc(col);g.beginPath();g.moveTo(sx-w0,y+2);g.quadraticCurveTo(sx+dx*0.3,y-dy*0.2,sx+dx,y-dy);g.lineTo(sx+dx+3,y-dy);g.quadraticCurveTo(sx+dx*0.3+w0*1.2,y-dy*0.2+3,sx+w0,y+2);g.closePath();g.fill()};
-  if(F.dirs.includes('L'))rib(-230,66,13,F.br.L.kind==='climb'?'#8d8d86':'#b9a27a');
-  if(F.dirs.includes('R'))rib(230,70,13,F.br.R.kind==='climb'?'#8d8d86':'#b9a27a');
   if(F.sign!=='missing'){
     const stake=(px,col,al)=>{g.globalAlpha=al;g.fillStyle=tc('#6d4726');g.fillRect(px-1.5,y-20,3,20);g.fillStyle=tc(col);g.fillRect(px-1.5,y-20,3,8);g.globalAlpha=1};
     const pos={L:-60,S:70,R:60};
@@ -1138,9 +1136,42 @@ function drawSideStuff(g,tm){
     for(let x=a;x<=b;x+=26){const hx=x+hash(Math.floor(x)*3)*14,px=hx-camX;if(px<-40||px>CW+40)continue;const gy=groundY(hx);g.fillStyle=tc('#9aa0a6');g.fillRect(px,gy-4,6,4);g.fillStyle=tc('#4d5156');g.fillRect(px+2,gy+5,7,3)}
   }
 }
+/* Pfad-Abzweig: Der gezeichnete Weg spaltet sich an der Wegscheide in einen tieferen (vorderen) Seitenpfad. */
+const FORK_SPLIT=320;
+function forkLane(F,k){const o=F.dirs.filter(d=>d!==F.main);return Math.max(0,o.indexOf(k))}
+function forkDepth(F,k){return 34+forkLane(F,k)*28}
+function forkSm(t){t=clamp(t,0,1);return t*t*(3-2*t)}
+function forkM(){const S=H&&H.side;return S?clamp((tm-(S.ct||0))/1.5,0,1):0}
+function laneOff(F,k,dx,m){return forkDepth(F,k)*forkSm(dx/FORK_SPLIT)*(1-m*forkSm((dx-500)/500))}
+function sideOff(x){const S=H&&H.side;if(!S||!S.f.fork)return 0;return laneOff(S.f.fork,S.d,x-S.f.x,forkM())}
+function mainTrailA(x){const S=H&&H.side;if(!S)return 1;return 1-forkM()*forkSm((x-S.f.x-400)/500)}
+function drawForkPaths(g,tm,f){
+  const F=forkOf(f);
+  for(const k of F.dirs){
+    if(k===F.main)continue;
+    const mine=!!(H.side&&H.side.f===f&&H.side.d===k);if(H.side&&H.side.f===f&&!mine)continue;
+    const mm=mine?forkM():0;
+    const b=F.br[k],len=Math.max(0.3,b.len||1)*PPK;
+    const a=Math.max(f.x,camX-24),e=Math.min(f.x+len,camX+CW+24);
+    if(e<=a)continue;
+    const col=b.kind==='climb'?'#8d8d86':'#b9a27a',yy=x=>groundY(x)+2+laneOff(F,k,x-f.x,mm);
+    g.lineCap='round';g.lineJoin='round';
+    g.strokeStyle=tc(col);g.lineWidth=5;
+    const fadeFrom=f.x+len-160,bodyEnd=Math.min(e,fadeFrom);
+    if(bodyEnd>a){g.beginPath();for(let x=a;x<=bodyEnd;x+=12){const sx=x-camX,y=yy(x);if(x===a)g.moveTo(sx,y);else g.lineTo(sx,y)}g.lineTo(bodyEnd-camX,yy(bodyEnd));g.stroke()}
+    if(e>fadeFrom){
+      for(let x=Math.max(a,fadeFrom);x<e;x+=12){
+        const al=clamp(1-(x-fadeFrom)/160,0,1);if(al<=0)break;
+        g.globalAlpha=al;g.lineWidth=5*(0.4+0.6*al);g.beginPath();g.moveTo(x-camX,yy(x));g.lineTo(x+12-camX,yy(x+12));g.stroke();
+      }
+      g.globalAlpha=1;
+    }
+    g.lineCap='butt';
+  }
+}
 function drawForksTop(g,tm){
-  if(H.side){const f=H.side.f,fx=f.x-camX;if(fx>-360&&fx<CW+360)drawFork(g,tm,f,fx,groundY(f.x));return}
-  for(const f of featsIn(camX-300,camX+CW+300))if(f.type==='junction')drawFork(g,tm,f,f.x-camX,groundY(f.x));
+  if(H.side){const f=H.side.f,fx=f.x-camX;drawForkPaths(g,tm,f);if(fx>-360&&fx<CW+360)drawFork(g,tm,f,fx,groundY(f.x));return}
+  for(const f of featsIn(camX-2600,camX+CW+300))if(f.type==='junction'){drawForkPaths(g,tm,f);const fx=f.x-camX;if(fx>-300&&fx<CW+300)drawFork(g,tm,f,fx,groundY(f.x))}
 }
 function featsIn(a,b){ // sortiert nach x; Features im Bereich (a,b]
   if(H.side)return [];
@@ -2957,8 +2988,8 @@ function drawTerrain(g,tm){
     g.beginPath();g.moveTo(sx,y1+18);g.lineTo(sx+13,y2+18);g.lineTo(sx+13,CH);g.lineTo(sx,CH);g.closePath();g.fill();
   }
   g.strokeStyle=rgb(mix(mix(hex('#c9b48a'),hex('#f1f4f8'),sn*0.7),NIGHT,NM_));g.lineWidth=5;g.lineJoin='round';g.beginPath();
-  for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
-  g.stroke();
+  if(!H.side){for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
+  g.stroke()}else{const ba=g.strokeStyle;for(let x=x0;x<camX+CW+12;x+=12){const al=(mainTrailA(x)+mainTrailA(x+12))/2;if(al<=0.01)continue;g.globalAlpha=al;g.strokeStyle=ba;g.beginPath();g.moveTo(x-camX,groundY(x)+2);g.lineTo(x+12-camX,groundY(x+12)+2);g.stroke()}g.globalAlpha=1}
   // Grashalme, die im Wind wehen
   if(sn<0.5){
     g.strokeStyle=tc('#3a7a35');g.lineWidth=1.4;
@@ -3688,7 +3719,7 @@ drawForksTop(g,tm);drawStartFlag(g,tm);
     const lash=H.dog.leash;
     const off=H.moving?(lash?66+Math.sin(tm*0.9)*4:100+Math.sin(tm*0.9)*14):(H.fire.lit&&nearFire()?-46:-70);
     const dr=(H.dir||1)<0?-1:1,dx=sx-off*dr,px=H.x-off*dr;
-    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px))+2;
+    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px)+sideOff(px))+2;
     g.save();if(dr<0){g.translate(dgx,0);g.scale(-1,1);g.translate(-dgx,0)}
 drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
 g.restore();
@@ -3700,7 +3731,7 @@ g.restore();
   const inTent=H.sleep.active&&H.camp.pitched&&g0.shelter;
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
-    const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
+    const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.38;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
 drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
