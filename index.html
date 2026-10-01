@@ -2651,7 +2651,32 @@ function drawLeaves(g,tm,dt){
   }
   g.restore();
 }
-function tree(g,sx,y,sc,kind,sway,sn,dim){
+/* ---- Nadelbaum-Grafiken (assets/Nadelwald_*.svg), Winter-Variante bei Schnee ---- */
+const CON_TREES=[['Dunkle Tanne',80,1],['Grüne Tanne',72,1],['Hellgrüne Tanne',70,1],['Lichte Tanne',72,1],['Zerzauste Grüne Tanne',64,1],['Zerzauste Hellgrüne Tanne',64,1],['Dichte Grüne Kiefer',76,1],['Dichte Hellgrüne Kiefer',72,1],['Lichte Kiefer',68,1],['Zerzauste Kiefer',62,1],['Kleine Tanne',14,0.6],['Kleiner Abendländischer Lebensbaum',12,0.5],['Kleiner Nadelstrauch',8,0.8]];
+const CON_W=CON_TREES.reduce((a,t)=>a+t[2],0),CON_BMP={},CON_PRE={};let CON_BMP_N=0;
+function conPick(v){let a=v*CON_W;for(const t of CON_TREES){a-=t[2];if(a<0)return t}return CON_TREES[0]}
+function conBmp(name,dim){
+  const step=Math.round(NM_*4),key=name+'|'+(dim?1:0)+'|'+step;
+  let c=CON_BMP[key];if(c)return c;
+  const im=img('Nadelwald_'+name,'svg');if(!im)return null;
+  if(CON_BMP_N++>80){for(const k in CON_BMP)delete CON_BMP[k];CON_BMP_N=0}
+  c=document.createElement('canvas');c.width=c.height=288;const x=c.getContext('2d');
+  x.drawImage(im,0,0,288,288);x.globalCompositeOperation='source-atop';
+  if(dim){x.fillStyle='rgba(0,0,0,0.16)';x.fillRect(0,0,288,288)}
+  if(step>0){x.globalAlpha=Math.min(1,step/4);x.fillStyle=rgb(NIGHT);x.fillRect(0,0,288,288)}
+  return CON_BMP[key]=c;
+}
+function drawConImg(g,sx,y,sc,sway,sn,dim,v){
+  if(v===undefined)return false;
+  const t=conPick(v),w=sn>=0.3;
+  if(!CON_PRE[w]){CON_PRE[w]=1;CON_TREES.forEach(q=>img('Nadelwald_'+q[0]+(w?' Winter':''),'svg'))}
+  const bmp=conBmp(t[0]+(w?' Winter':''),dim)||(w?conBmp(t[0],dim):null);
+  if(!bmp)return false;
+  const h=t[1]*sc;
+  g.save();g.translate(sx,y+h*0.012);g.transform(1,0,-0.8*sway/h,1,0,0);g.drawImage(bmp,-h/2,-h,h,h);g.restore();
+  return true;
+}
+function tree(g,sx,y,sc,kind,sway,sn,dim,v){
   sc=Math.min(sc*2.3,4.2);
   if(kind==='leaf'){
     CROWNS.push(sx+sway*0.8,y-38*sc,20*sc,dim?1:0);
@@ -2662,6 +2687,7 @@ function tree(g,sx,y,sc,kind,sway,sn,dim){
     CROWNS.push(sx+sway*0.6,y-34*sc,10*sc,dim?1:0);
     g.fillStyle=tc('#d8d6cc');g.fillRect(sx-1.6*sc,y-30*sc,3.2*sc,30*sc);
     g.fillStyle=tc('#a8a142',sn*0.4);g.beginPath();g.arc(sx+sway*0.6,y-34*sc,10*sc,0,7);g.arc(sx-6*sc+sway*0.6,y-28*sc,7*sc,0,7);g.arc(sx+6*sc+sway*0.6,y-28*sc,7*sc,0,7);g.fill();
+  }else if(drawConImg(g,sx,y,sc,sway,sn,dim,v)){
   }else{
     g.fillStyle=tc('#5b3d24');g.fillRect(sx-2.5*sc,y-14*sc,5*sc,14*sc);
     g.fillStyle=tc(dim?'#1c4a28':'#245c33',sn*0.6);
@@ -2683,9 +2709,9 @@ function drawDecor(g,tm,pass){
     const sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
     if(r<B.tree){
       if(st.b==='wald'){
-        const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<0.28?'leaf':'con',sway,sn,pass===0);
+        const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<0.28?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
       }else if(st.b==='fjaell')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
-      else tree(g,sx,y,sc,hash(cx*3)<0.35?'leaf':'con',sway,sn,pass===0);
+      else tree(g,sx,y,sc,hash(cx*3)<0.35?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
     }else if(pass===1){
       if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
       else if(st.b==='berg'||st.b==='fjaell'||B.rock){
