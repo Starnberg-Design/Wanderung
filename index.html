@@ -3379,6 +3379,7 @@ function renderChar(){
    <div class="two"><div class="card"><canvas id="prev" width="240" height="260"></canvas>
      <div class="row"><span class="lbl">Name</span><input id="c-name" value="${esc(G.name)}" maxlength="18"></div>
      <div class="row"><span class="lbl">Kanalname</span><input id="c-chan" value="${esc(G.chan)}" maxlength="24"></div>
+     <div class="row"><span class="lbl">Kanalbilder</span><div class="imgbtns">${imgBtns()}</div></div><p class="hint">Eigenes Profilbild und Kanalbanner (optional) – du kannst sie später im Studio ändern.</p>
      <div class="row"><span class="lbl">Körperbau</span>${seg(LOOKS.builds,'build')}</div><p class="hint" id="c-bd">${BUILD_DESC[L.build]}</p>
      <div class="row"><span class="lbl">Hautton</span><div>${sw(LOOKS.skin,'skin')}</div></div>
      <div class="row"><span class="lbl">Haarfarbe</span><div>${sw(LOOKS.hair,'hair')}</div></div>
@@ -3403,6 +3404,7 @@ function renderChar(){
   requestAnimationFrame(paint);
   $$('[data-k]').forEach(el=>el.onclick=()=>{G.look[el.dataset.k]=+el.dataset.i;const n=$('#c-name').value,c=$('#c-chan').value;G.name=n;G.chan=c;renderChar()});
   const hs=$('#c-home');if(hs)hs.onchange=()=>{G.home=hs.value};
+  bindImgBtns($('#s-char'),()=>{G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
   $$('[data-gr]').forEach(el=>el.onclick=()=>{G.growth=el.dataset.gr==='1';G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
   $$('[data-tal]').forEach(el=>el.onclick=()=>{G.talent=el.dataset.tal;G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
   $$('[data-st]').forEach(el=>el.onclick=()=>{G.stats[el.dataset.st]+=+el.dataset.d;G.name=$('#c-name').value;G.chan=$('#c-chan').value;renderChar()});
@@ -3410,6 +3412,29 @@ function renderChar(){
     showModal({title:'Willkommen, '+esc(G.name)+'!',html:'<p>Dein Kanal <b>'+esc(G.chan)+'</b> startet mit einem einfachen Smartphone, Turnschuhen und 300 €. Wähle als Erstes eine leichte Tour, kaufe Proviant im Shop – und lies bei Bedarf das Spielprinzip.</p>',buttons:[{label:'Spielprinzip lesen',fn:showHowTo},{label:'Los!',primary:1}]})};
 }
 
+/* ---------- Eigene Bilder (Profilbild & Kanalbanner) ---------- */
+function pickChannelImg(kind,cb){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=()=>{const f=inp.files&&inp.files[0];if(!f)return;
+    const fr=new FileReader();
+    fr.onload=()=>{const im=new Image();
+      im.onload=()=>{
+        const W=kind==='avatar'?256:1500,Hh=kind==='avatar'?256:300,c=document.createElement('canvas');c.width=W;c.height=Hh;
+        const x=c.getContext('2d'),sc=Math.max(W/im.width,Hh/im.height),w=im.width*sc,h=im.height*sc;
+        x.fillStyle='#000';x.fillRect(0,0,W,Hh);x.drawImage(im,(W-w)/2,(Hh-h)/2,w,h); // Mitte zuschneiden
+        const old=G[kind];G[kind]=c.toDataURL('image/jpeg',0.85);
+        try{localStorage.setItem(SAVE_KEY,JSON.stringify(G))}catch(e){G[kind]=old;toast('Das Bild ist zu groß für den Speicher – bitte ein kleineres wählen.','bad');return}
+        toast(kind==='avatar'?'📷 Profilbild gesetzt.':'🖼️ Kanalbanner gesetzt.','good');if(cb)cb()};
+      im.onerror=()=>toast('Diese Datei konnte nicht als Bild gelesen werden.','bad');im.src=fr.result};
+    fr.readAsDataURL(f)};
+  inp.click();
+}
+const imgBtns=()=>`<button data-img="avatar">📷 Profilbild</button> <button data-img="banner">🖼️ Banner</button>${G.avatar?' <button data-img="x-avatar" title="Profilbild entfernen">✕ Profilbild</button>':''}${G.banner?' <button data-img="x-banner" title="Banner entfernen">✕ Banner</button>':''}`;
+function bindImgBtns(root,cb){
+  $$('[data-img]',root).forEach(b=>b.onclick=()=>{const k=b.dataset.img;
+    if(k.startsWith('x-')){G[k.slice(2)]=null;save();cb();return}
+    pickChannelImg(k,cb)});
+}
 /* ---------- Zentrale ---------- */
 function daysToPayout(){const d=dateOf(G.day);let n=0;while(dateOf(G.day+n).dom!==21&&n<40)n++;return n}
 function lookNow(){
@@ -3428,7 +3453,7 @@ function renderHub(){
   while(G.sp>0){const lo=STAT_DEFS.filter(x=>G.stats[x.id]<STAT_MAX).sort((a,b)=>G.stats[a.id]-G.stats[b.id])[0];if(!lo)break;G.stats[lo.id]++;G.sp--}
   const xpRow=STAT_DEFS.map(s=>{const v=G.stats[s.id],need=55*v,xp=G.xp[s.id]||0;return `<div class="stat"><div style="flex:1"><b>${s.name}</b> <small>Stufe ${v}${v>=STAT_MAX?' (max)':''}</small>${v<STAT_MAX?barHTML(xp/need*100,'var(--acc)',5):''}</div></div>`}).join('');
   $('#s-hub').innerHTML=`<div class="wrap">
-   <div class="topbar"><div><h2>${esc(G.chan)}</h2><small>${esc(G.name)} · ${dateStr(G.day)} · ${SEASON_E[s]} ${s}</small></div>
+   <div class="topbar"><div style="display:flex;align-items:center;gap:10px">${G.avatar?`<img src="${G.avatar}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #ffffff55">`:''}<div><h2>${esc(G.chan)}</h2><small>${esc(G.name)} · ${dateStr(G.day)} · ${SEASON_E[s]} ${s}</small></div></div>
     <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${fmtInt(G.subs)} Abos</span><button id="h-menu">☰ Menü</button></div></div>
    ${idleWarnHTML()}
    ${pend?`<div class="card" style="border-color:var(--warn);margin-bottom:14px"><h3>🎬 Unveröffentlichtes Material</h3><p>${esc(pend.name)} · ${fmtN(pend.km)} km · ${pend.clips.length} Clips${stalePct>0?' · <span class="badtxt">Material wird alt (−'+Math.round(stalePct)+' % Wirkung)</span>':''}</p><button class="primary" id="h-pub">Video veröffentlichen</button></div>`:''}
@@ -4347,10 +4372,11 @@ function renderStudio(){
     body=G.lives.length?`<div class="kpis"><div class="kpi">Livestreams<b>${G.lives.length}</b></div><div class="kpi">Spenden gesamt<b>${eur(G.liveEarned)}</b></div><div class="kpi">Ruf<b>${G.begHeat>4?'😠 schlecht':G.begHeat>1.5?'😐 angekratzt':'😊 gut'}</b></div></div>`+[...G.lives].reverse().map(l=>`<div class="cmt"><b>${dateStr(l.day)}</b> · Ø ${fmtN(l.avg,0)} Zuschauer (Spitze ${Math.round(l.peak)}) · Spenden ${eur(l.don)} · +${l.gain}${l.loss?' / −'+l.loss:''} Abos${l.begs>1?' · <span class="badtxt">'+l.begs+'× gebettelt</span>':''}</div>`).join(''):'<p class="hint">Noch kein Livestream. Beim Rasten unterwegs: Menü ☰ → Livestream. Kleine Kanäle haben sehr wenige Zuschauer. Ein Spendenaufruf pro Stream reicht.</p>';
   }
   $('#s-studio').innerHTML=`<div class="wrap"><div class="topbar"><h2>📺 Studio</h2><button id="st-back">◀ Zentrale</button></div>
-   <div class="yt"><div class="ytban"></div><div class="ythead"><div class="ytav" style="background:${jk}">${esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small></div></div>
+   <div class="yt"><div class="ytban" style="${G.banner?`background:url(${G.banner}) center/cover`:''}"></div><div class="ythead"><div class="ytav" style="${G.avatar?`background:url(${G.avatar}) center/cover`:`background:${jk}`}">${G.avatar?'':esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small><div class="imgbtns" style="margin-top:6px">${imgBtns()}</div></div></div>
     <div class="tabs" style="padding:0 16px">${tabs.map(t=>`<button data-stt="${t}" class="${STUDIOTAB===t?'on':''}">${t}</button>`).join('')}</div>
     <div style="padding:6px 16px 16px">${body}</div></div></div>`;
   $('#st-back').onclick=()=>{renderHub();show('hub')};
+  bindImgBtns($('#s-studio'),()=>renderStudio());
   const rnb=$('#ch-rn');if(rnb)rnb.onclick=()=>showModal({title:'Kanal umbenennen',html:'<p class="hint">Die Community reagiert darauf – je nachdem, wie gut der Name klingt.</p><input id="ch-new" maxlength="30" style="width:100%" value="'+esc(G.chan)+'">',buttons:[{label:'Umbenennen',primary:1,fn:()=>{const v=(RNV||'').trim();if(v.length<3||v===G.chan){toast('Bitte einen anderen Namen mit mindestens 3 Zeichen eingeben.');return}renderStudioAfterRename(v)}},{label:'Abbrechen'}],onOpen:m=>{RNV=G.chan;$('#ch-new',m).oninput=e=>RNV=e.target.value}});
   $$('[data-of]').forEach(b=>b.onclick=()=>{const id=+b.dataset.of,o=(G.offers||[]).find(x=>x.id===id);if(!o)return;G.offers=G.offers.filter(x=>x!==o);if(b.dataset.ok){if((G.sponsors||[]).length>=2){toast('Mehr als zwei Partner gleichzeitig sind nicht möglich.');G.offers.push(o);return}(G.sponsors=G.sponsors||[]).push({name:o.name,what:o.what,fee:o.fee,minS:o.minS,next:G.day+30,strikes:0});sfx('coin')}save();renderStudio()});
   $$('[data-stt]').forEach(b=>b.onclick=()=>{STUDIOTAB=b.dataset.stt;renderStudio()});
