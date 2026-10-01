@@ -169,6 +169,30 @@ canvas.chart{width:100%;height:140px;display:block}
  h2{font-size:1.15em}
 }
 @media(max-height:430px){.st{width:56px;font-size:10px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(82px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
+
+html[data-scr="menu"],html[data-scr="hub"]{--bg:#26292d;--panel:#31353b;--panel2:#3b4048;--line:#4b525b;--dim:#aab2ba;--acc:#cfd5db;--acc2:#6a7681}
+html[data-scr="hikes"]{--bg:#0e1b15;--panel:#16281f;--panel2:#1d3529;--line:#2c4a3a;--acc:#4cc38a;--acc2:#2f9e6b}
+html[data-scr="shop"]{--bg:#0c1824;--panel:#13263a;--panel2:#1a3552;--line:#2b4f78;--dim:#9db4cb;--acc:#4aa8e8;--acc2:#2a78c0}
+html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d3d3d;--dim:#aaaaaa;--acc:#ff3030;--acc2:#cc0000}
+.seasonbar{display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:14px;margin-bottom:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+.seasonbar .sb-e{font-size:46px;line-height:1}
+.seasonbar .sb-t{display:flex;flex-direction:column}
+.seasonbar .sb-t small{color:rgba(255,255,255,.85);font-size:.8em;text-transform:uppercase;letter-spacing:.08em}
+.seasonbar .sb-t b{font-size:1.9em;line-height:1.1}
+.seasonbar .sb-d{margin-left:auto;font-size:1.25em;font-weight:600;text-align:right}
+.sb-Frühling{background:linear-gradient(120deg,#2e8b57,#9acd32)}
+.sb-Sommer{background:linear-gradient(120deg,#f2a01a,#ff6a2b)}
+.sb-Herbst{background:linear-gradient(120deg,#b8561b,#7b2d12)}
+.sb-Winter{background:linear-gradient(120deg,#3c6c9c,#8fb8de)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:480px){.duo{grid-template-columns:1fr}.seasonbar .sb-d{font-size:1em}}
+.card.c-green{border-color:#2f9e6b;background:linear-gradient(160deg,#1f5a3d,#16281f 70%)}
+.card.c-blue{border-color:#2a78c0;background:linear-gradient(160deg,#1d4f80,#13263a 70%)}
+.card.c-red{border-color:#cc0000;background:linear-gradient(160deg,#5a1414,#212121 70%)}
+.card.c-green button.primary{background:#2f9e6b;border-color:#4cc38a}
+.card.c-blue button.primary{background:#2a78c0;border-color:#4aa8e8}
+.card.c-red button.primary{background:#cc0000;border-color:#ff3030}
+.bigact{width:100%;font-size:1.15em;padding:14px 12px;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -3731,6 +3755,7 @@ const DIFF_NAMES=['','Sehr leicht','Leicht','Mittel','Schwer','Sehr schwer','Ext
 const DIFF_COL=['','#4caf50','#8bc34a','#f7c948','#ff9800','#f4511e','#c2185b'];
 
 function show(id){
+  document.documentElement.dataset.scr=id;
   $$('.screen').forEach(s=>s.classList.toggle('active',s.id==='s-'+id));
   screen=id;window.scrollTo(0,0);
   if(id==='hike')document.body.style.overflow='hidden';else document.body.style.overflow='';
@@ -3886,15 +3911,18 @@ function renderHub(){
     <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${fmtInt(G.subs)} Abos</span><button id="h-menu">☰ Menü</button></div></div>
    ${idleWarnHTML()}
    ${pend?`<div class="card" style="border-color:var(--warn);margin-bottom:14px"><h3>🎬 Unveröffentlichtes Material</h3><p>${esc(pend.name)} · ${fmtN(pend.km)} km · ${pend.clips.length} Clips${stalePct>0?' · <span class="badtxt">Material wird alt (−'+Math.round(stalePct)+' % Wirkung)</span>':''}</p><button class="primary" id="h-pub">Video veröffentlichen</button></div>`:''}
-   <div class="grid">
-    <div class="card"><h3>🥾 Nächste Tour</h3><p class="hint">Wähle Tour und Startzeit. Die Jahreszeit entscheidet über Wetter, Kälte und Tageslicht.</p><button class="primary" id="h-hikes">Touren ansehen</button></div>
-    <div class="card"><h3>🛒 Ausrüstung & Proviant</h3><p class="hint">Rucksack packen, Proviant kaufen, Hund ausstatten.</p><button id="h-shop">Zum Shop</button> <button id="h-dog">🐕 Hund</button></div>
-    <div class="card"><h3>📺 Kanal & Studio</h3><p class="hint">Videos, Statistik, Kommentare, Livestreams, Auszahlungen.</p><button id="h-studio">Kanal öffnen</button></div>
-    <div class="card"><h3>🔧 Werkstatt</h3>${workshopHTML()}</div>
-    ${G.growth?`<div class="card"><h3>💈 Friseur</h3><p class="hint">Haare und Bart wachsen. Bart: ${['sauber','Stoppeln','Vollbart'][lookNow().beard]} · Frisur: ${LOOKS.styles[lookNow().style]}</p><button id="h-shave">🪒 Rasieren (gratis)</button> <button id="h-cut">✂️ Haare schneiden (18 €)</button></div>`:''}
-    <div class="card"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
+   <div class="seasonbar sb-${s}"><div class="sb-e">${SEASON_E[s]}</div><div class="sb-t"><small>Jahreszeit</small><b>${s}</b></div><div class="sb-d">${dateStr(G.day)}</div></div>
+    <div class="card c-time" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
       <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div>
 </div>
+   <div class="duo">
+    <div class="card c-green"><h3>🥾 Wandertouren</h3><p class="hint">Wähle Tour und Startzeit. Die Jahreszeit entscheidet über Wetter, Kälte und Tageslicht.</p><button class="primary bigact" id="h-hikes">🥾 Touren starten</button></div>
+    <div class="card c-blue"><h3>🛒 Ausrüstung & Proviant</h3><p class="hint">Rucksack packen, Proviant kaufen, Hund ausstatten.</p><button class="primary bigact" id="h-shop">🛒 Zum Shop</button> <button id="h-dog">🐕 Hund</button></div>
+   </div>
+   <div class="grid">
+    <div class="card c-red"><h3>📺 Kanal & Studio</h3><p class="hint">Videos, Statistik, Kommentare, Livestreams, Auszahlungen.</p><button class="primary" id="h-studio">▶ Kanal öffnen</button></div>
+    <div class="card"><h3>🔧 Werkstatt</h3>${workshopHTML()}</div>
+    ${G.growth?`<div class="card"><h3>💈 Friseur</h3><p class="hint">Haare und Bart wachsen. Bart: ${['sauber','Stoppeln','Vollbart'][lookNow().beard]} · Frisur: ${LOOKS.styles[lookNow().style]}</p><button id="h-shave">🪒 Rasieren (gratis)</button> <button id="h-cut">✂️ Haare schneiden (18 €)</button></div>`:''}
     <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Wachsen von selbst mit deiner Erfahrung: Je weiter und anspruchsvoller die Touren, desto schneller. Wer eine Strecke oder ähnliche Gegenden öfter geht, orientiert sich besser. Schwere Routen kannst du nur mit genug Fähigkeiten meistern – gute Ausrüstung allein reicht nicht.</p>${xpRow}</div>
    </div><p class="hint" style="margin-top:14px">Touren gesamt: ${G.hikes} · Kilometer: ${fmtInt(G.km)} · Einnahmen gesamt: ${eur(G.earned)}</p></div>`;
   $('#h-hikes').onclick=()=>{renderHikes();show('hikes')};
