@@ -795,14 +795,273 @@ function buildRoute(hk,seed){
   clean.sort((a,b)=>a.x-b.x);
   return {stages,elev,feats:clean,totalPx,totalKm,lakes};
 }
+/* ===== Wegscheiden, Wegweiser, Umkehren, Kletter-Abkürzungen ===== */
+const TRAIL_MARKS=[['#d32f2f','Rot-Weiß'],['#1e6fd9','Blau'],['#f2b705','Gelb'],['#2e9d4a','Grün'],['#8e44ad','Violett'],['#ef6c00','Orange'],['#e8e8e8','Weiß-Schwarz'],['#00a3a3','Türkis']];
+const DIRN={L:'links',S:'geradeaus',R:'rechts'},DIRL={L:'Links',S:'Geradeaus',R:'Rechts'},DIRE={L:'⬅️',S:'⬆️',R:'➡️'};
+function initForks(){
+  const hk=H.hk;let h=0;for(const ch of hk.id)h=(h*31+ch.charCodeAt(0))>>>0;
+  H.markCol=TRAIL_MARKS[h%TRAIL_MARKS.length];H.dir=1;H.cd=0;H.side=null;H.fork=null;H.townN=0;H.inUnm=false;
+  const R=H.route,d=hk.diff,rng=mulberry32((R.totalPx|0)+991);
+  R.unm=[];
+  const per=[0,0,0,75,62,50,38][clamp(d,0,6)];
+  const n=per?Math.round(R.totalKm/per):0;
+  for(let i=0;i<n;i++){
+    const len=(1.5+rng()*2.5)*PPK,x0=R.totalPx*(0.12+0.78*((i+0.2+rng()*0.6)/n));
+    if(R.unm.some(u=>Math.abs(u[0]-x0)<len*3))continue;
+    R.unm.push([x0,x0+len]);
+    const fx=x0+0.7*PPK;
+    if(!R.feats.some(f=>Math.abs(f.x-fx)<320)&&!(R.lakes||[]).some(L=>fx>L.xl-120&&fx<L.xr+120))R.feats.push({type:'junction',x:fx,id:90000+i,unm:true});
+  }
+  R.feats.sort((a,b)=>a.x-b.x);
+}
+function inUnmarked(x){const U=H.route.unm;if(!U)return false;for(const u of U)if(x>=u[0]&&x<=u[1])return true;return false}
+function forkOf(f){
+  if(f.fork)return f.fork;
+  const hk=H.hk,d=clamp(hk.diff,1,6),R=H.route,r=mulberry32(((f.id+1)*7919+(R.totalPx|0))>>>0);
+  const dirs=r()<0.5?['L','S','R']:(r()<0.5?['L','S']:['S','R']);
+  const main=dirs.includes('S')&&r()<0.55?'S':dirs[Math.floor(r()*dirs.length)];
+  const bm=stageAt(f.x).b,mount=bm==='berg'||bm==='fjaell'||bm==='schnee';
+  const pT=[0.22,0.18,0.12,0.05,0.025,0.015][d-1];
+  const others=TRAIL_MARKS.filter(m=>m[0]!==H.markCol[0]);
+  const br={};let hasClimb=false;const dm=0.8+0.12*d;
+  dirs.forEach(k=>{
+    if(k===main){br[k]={kind:'main'};return}
+    let kind;const u=r(),uc=r();
+    if(!hasClimb&&uc<(mount?0.34:0.07)){kind='climb';hasClimb=true}
+    else if(u<pT&&H.townN<(d>=4?1:2)&&f.x>PPK*2&&f.x<R.totalPx-PPK*3&&hk.km>=10){kind='town';H.townN++}
+    else kind=r()<0.28+0.04*d?'dead':'detour';
+    const o={kind};
+    if(kind==='climb'){o.len=Math.round((0.5+r()*0.9)*10)/10;const w=r();o.out=w<0.58?'short':w<0.84?'summit':'dead';o.gainF=1.7+r()*0.9}
+    else{const len=(kind==='town'?1.6+r()*3.2:kind==='dead'?0.6+r()*2.2:1.4+r()*2.8)*dm;o.len=Math.round(len*10)/10;o.gain=kind==='detour'?Math.round(len*(0.2+0.35*r())*10)/10:0}
+    if(kind==='town'){const T=TOWNS[hk.id];o.name=T?T[Math.floor(r()*T.length)][0]:'ein kleiner Ort'}
+    o.col=(kind==='detour'||kind==='town')&&r()<0.75?others[Math.floor(r()*others.length)][0]:null;
+    br[k]=o;
+  });
+  const unm=!!f.unm||inUnmarked(f.x);
+  const pMiss=clamp(0.02+0.045*(d-1),0,0.3),pBent=clamp(0.04+0.03*(d-1),0,0.25),u2=r();
+  let sign='ok';
+  if(unm&&u2<0.8)sign='missing';else if(u2<pMiss)sign='missing';else if(u2<pMiss+pBent)sign='bent';
+  const wrongs=dirs.filter(k=>k!==main);
+  const signDir=sign==='bent'?(r()<0.35?main:wrongs[Math.floor(r()*wrongs.length)]):main;
+  return f.fork={dirs,main,br,sign,signDir,tried:{},hint:null,lean:(r()-0.5)*0.55,bent:dirs.map(()=>(r()-0.5)*0.9),wrongs};
+}
+function openFork(f){
+  const F=forkOf(f);H.fork=f;H.walking=false;H.stopReason='fork';sfx('notify');
+  toast(F.sign==='missing'?'🪧 Wegscheide – hier fehlt der Wegweiser!':F.sign==='bent'?'🪧 Wegscheide – der Wegweiser ist umgeknickt und kaum lesbar.':'🪧 Wegscheide – folge der Markierung ('+H.markCol[1]+').','warn');
+}
+function chooseBranch(f,k){
+  const F=forkOf(f);H.fork=null;f.decided=true;H.stopReason=null;
+  if(k===F.main){H.dir=1;H.walking=true;xpAdd('nav',4);toast('🥾 Du gehst '+DIRN[k]+' weiter.');return}
+  const b=F.br[k],x0=H.x;let len=b.len*PPK,kind=b.kind,out=b.out;
+  const lk=(H.route.lakes||[]).find(L=>L.xr>x0&&L.xl<x0+len+160);
+  if(lk){len=Math.max(0.35*PPK,lk.xl-x0-180);if(kind!=='dead'){kind='dead';out=null}}
+  if(x0+len>H.route.totalPx-300){len=Math.max(0.3*PPK,H.route.totalPx-300-x0);if(kind!=='dead'){kind='dead';out=null}}
+  const nav=navInfo();
+  let ra=nav.live?(0.2+rnd(0,0.3))*PPK:nav.src==='map'?(0.5+(1-nav.q)*1.2+rnd(0,0.5))*PPK:(1.0+rnd(0,1.4))*PPK*clamp(1.1-0.04*ES('nav'),0.7,1.1);
+  ra=clamp(ra,0.15*PPK,len*0.9);
+  H.side={f,d:k,kind,out,len,x0,pos:0,gain:b.gain||0,gainF:b.gainF||1,realized:kind==='climb',realizeAt:ra,col:b.col,town:b.name,crux:false,liftM:kind==='climb'?Math.round(len*0.6):0};
+  H.dir=1;H.walking=true;
+  if(kind==='climb')toast('🧗 Der Pfad wird steil – du musst dich teils mit den Armen hochziehen. Das kostet viel Kraft.');
+}
+function checkNav(f){
+  const F=forkOf(f),nav=navInfo();
+  beginAction('orient',nav.live?'Prüft '+nav.label+' …':'Liest die Karte …',nav.live?1:6,()=>{
+    const ok=Math.random()<clamp(nav.q+0.02*ES('nav'),0.2,0.97);
+    F.hint={dir:ok?F.main:F.wrongs[Math.floor(Math.random()*F.wrongs.length)],src:nav.src};
+    toast((nav.live?'📡 ':'🗺️ ')+nav.label+': Der Hauptweg führt wohl '+DIRN[F.hint.dir]+'.','good');xpAdd('nav',3);
+  });
+}
+function orientSide(){
+  beginAction('orient','Orientiert sich …',10,()=>{
+    const S=H.side;if(!S)return;const nav=navInfo();
+    if(!S.realized&&Math.random()<clamp(nav.q+0.15+0.02*ES('nav'),0.2,0.97))realizeWrong();
+    else toast(S.realized?'🧭 Du weißt, dass du abseits des Hauptwegs bist.':'🧭 Du bist dir nicht sicher, ob das noch der richtige Weg ist …');
+  });
+}
+function reverseDir(){
+  if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
+  if(H.body.energy<=0){toast('Du bist zu erschöpft – rasten oder schlafen!','bad');return}
+  if(!H.side&&(H.dir||1)>0&&H.x<80){toast('Du stehst bereits am Start.');return}
+  H.dir=(H.dir||1)>0?-1:1;H.fork=null;H.stopReason=null;H.walking=true;
+  toast(H.dir<0?'🔄 Du drehst um und gehst zurück.':'🔄 Du drehst wieder um und gehst weiter.');
+}
+function atStart(){
+  H.walking=false;H.dir=1;
+  showModal({title:'🅿️ Zurück am Ausgangspunkt',text:'Du bist wieder am Start der Tour. Möchtest du hier aufgeben und nach Hause fahren – oder noch einmal losgehen?',buttons:[{label:'🚌 Tour hier beenden',fn:()=>{H.busCost=8;endHike('bus')}},{label:'🥾 Wieder losgehen',primary:1,fn:()=>{H.walking=true}}]});
+}
+function killSideIcons(){H.icons.forEach(i=>{if(i.sideTag)i.dead=true})}
+function walkStep(dpx){
+  const dir=H.dir||1;
+  if(H.side){sideStep(dpx);return}
+  const prev=H.x;
+  H.x=clamp(H.x+dir*dpx,0,H.route.totalPx);H.km=H.x/PPK;
+  if(dir>0){
+    checkFeatures(prev,H.x);
+    if(!H.fork&&!H.ended)for(const f of featsIn(H.x-1,H.x+140)){if(f.type==='junction'&&!f.decided){openFork(f);break}}
+  }else{
+    checkFeatures(H.x,prev);
+    if(H.x<=0&&!H.ended)atStart();
+  }
+  const u=inUnmarked(H.x);
+  if(u&&!H.inUnm){H.inUnm=true;toast('🪧 Seit einer Weile keine Wegmarkierung mehr – Karte oder GPS helfen.','warn')}
+  else if(!u&&H.inUnm){H.inUnm=false;toast('🪧 Wieder Markierungen am Weg.','good')}
+}
+function sideStep(dpx){
+  const S=H.side,dir=H.dir||1,km=dpx/PPK;
+  S.pos+=dir*dpx;
+  if(dir>0&&S.pos>S.len)S.pos=S.len;
+  H.x=S.x0+S.pos;
+  if(S.kind==='climb'){const u=(S.pos/S.len),steep=u>0.12&&u<0.9;if(steep){const lf=clamp(loadKg()/capacityKg()-0.4,0,1);H.body.energy=Math.max(0,H.body.energy-km*(dir>0?1:0.45)*(16-0.7*ES('aus')+8*lf)*((H.body.wet>40||env.precip)?1.2:1));xpAdd('aus',km*5);xpAdd('trag',km*2.5)}}
+  if(S.pos<=0){
+    killSideIcons();H.side=null;H.x=S.x0;H.km=H.x/PPK;H.dir=1;
+    S.f.decided=false;S.f.fork.tried[S.d]=true;H.walking=false;
+    toast('↩️ Zurück an der Wegscheide.');openFork(S.f);return;
+  }
+  if(dir>0){
+    if(!S.realized&&S.pos>=S.realizeAt){realizeWrong();return}
+    if(S.pos>=S.len)sideEnd();
+  }
+}
+function realizeWrong(){
+  const S=H.side;S.realized=true;H.stats.junctionsLost++;H.walking=false;sfx('warn');
+  const nav=navInfo(),town=S.kind==='town';
+  const txt=nav.live?('📡 '+nav.label+': Du bist vom Hauptweg abgekommen (ca. '+fmtN(S.pos/PPK)+' km). '):'Seit einer Weile hast du keine Markierung mehr gesehen – du bist wohl falsch abgebogen! ';
+  showModal({title:'🪧 Falsch abgebogen?',text:txt+(town?'Voraus siehst du allerdings Dächer – dieser Weg führt wohl in einen Ort.':'Du kannst zurückgehen oder darauf hoffen, dass der Pfad irgendwo wieder zum Weg führt.'),buttons:[{label:'🔄 Zurück zur Wegscheide ('+fmtN(S.pos/PPK)+' km)',primary:1,fn:()=>{H.dir=-1;H.walking=true}},{label:'➡️ Weitergehen',fn:()=>{H.walking=true}}]});
+}
+function climbLift(x){
+  const S=H&&H.side;if(!S||S.kind!=='climb')return 0;
+  const u=(x-S.x0)/S.len;if(u<=0)return 0;
+  let s=u<=0.14?0:u>=0.88?1:(u-0.14)/0.74;
+  s=s*0.8+s*s*(3-2*s)*0.2;
+  return s*S.liftM;
+}
+function sideEnd(){
+  const S=H.side,f=S.f;H.walking=false;
+  if(S.kind==='detour'||(S.kind==='climb'&&S.out==='short')){
+    const gp=S.kind==='detour'?S.gain*PPK:S.len*S.gainF;
+    killSideIcons();H.side=null;H.dir=1;H.fade=tm;
+    H.x=Math.min(H.route.totalPx-200,f.x+gp);H.km=H.x/PPK;f.decided=true;H.walking=true;H.camElev=elevAt(H.x);
+    if(S.kind==='detour'){const w=Math.max(0,S.len/PPK-S.gain);H.wasted+=w;toast('🔀 Du triffst wieder auf den Hauptweg – ein Umweg von ca. '+fmtN(w)+' km.','warn')}
+    else{const sv=Math.max(0,(S.len*S.gainF-S.len)/PPK);H.thrill+=1.5;xpAdd('aus',8);toast('⛰️ Abkürzung geschafft! Du sparst etwa '+fmtN(sv)+' km – anstrengend, aber effektiv.','good');sfx('success')}
+    return;
+  }
+  if(S.kind==='climb'&&S.out==='summit'){
+    if(!S.arrived){S.arrived=true;
+      const nm=pick(['Felsnase','Aussichtskanzel','Gratkopf','Steinmann-Gipfel','Kanzelfelsen']);
+      S.icon=spawnIcon({kind:'sight',fid:'bonus'+f.id,x:S.x0+S.len,e:'⛰️',label:'Zusatzgipfel – '+nm,base:64,life:1e9,sideTag:1});
+      H.stats.milestones++;H.thrill+=2.5;H.body.energy=Math.min(100-H.fatigue,H.body.energy+8);sfx('success');
+    }
+    showModal({title:'🏔️ Zusatzgipfel erreicht!',text:'Das hat sich gelohnt: ein freier Rundumblick, den nicht jeder Wanderer zu sehen bekommt. Tippe auf das Symbol über dem Gipfel, um den Ausblick zu filmen. Danach geht es auf demselben Weg zurück zur Wegscheide.',buttons:[{label:'🔄 Abstieg zur Wegscheide',primary:1,fn:()=>{H.dir=-1;H.walking=true}},{label:'Noch bleiben'}]});
+    return;
+  }
+  if(S.kind==='town'){
+    const cost=Math.round(clamp(6+H.km*0.35,8,45));
+    showModal({title:'🏘️ '+(S.town||'Ort'),text:'Der Weg führt in einen kleinen Ort. Von der Haltestelle fährt ein Bus Richtung Bahnhof – du könntest die Tour hier beenden. Oder du gehst zurück zur Wegscheide und suchst den Hauptweg.',buttons:[{label:'🚌 Bus nach Hause (ca. '+eur0(cost)+')',fn:()=>{H.busCost=cost;endHike('bus')}},{label:'🔄 Zurück zur Wegscheide ('+fmtN(S.len/PPK)+' km)',primary:1,fn:()=>{H.dir=-1;H.walking=true}},{label:'Noch bleiben'}]});
+    return;
+  }
+  showModal({title:'🚧 Der Pfad endet',text:S.kind==='climb'?'Der Fels wird zu ausgesetzt – ohne Seil geht es hier nicht weiter. Du musst auf demselben Weg zurück.':'Der Pfad verliert sich im Dickicht – kein Weiterkommen. Das war wohl der falsche Weg. Du musst umkehren.',buttons:[{label:'🔄 Umkehren',primary:1,fn:()=>{H.dir=-1;H.walking=true}}]});
+}
+function drawTrailMarks(g,tm){
+  const step=260,S=H.side,c0=Math.floor((camX-60)/step),c1=Math.ceil((camX+CW+60)/step);
+  for(let c=c0;c<=c1;c++){
+    const wx=c*step+hash(c*31+7)*70;
+    if(wx<200||wx>H.route.totalPx-100)continue;
+    let col;
+    if(S){if(wx<S.x0+160||wx>S.x0+S.len||S.kind==='dead'||S.kind==='climb'||!S.col)continue;col=S.col}
+    else{if(inUnmarked(wx))continue;col=H.markCol[0]}
+    const sx=wx-camX,y=groundY(wx);
+    g.fillStyle=tc('#6d4726');g.fillRect(sx-1.5,y-22,3,22);g.fillStyle=tc(col);g.fillRect(sx-1.5,y-22,3,8);
+  }
+}
+function drawFork(g,tm,f,sx,y){
+  const F=forkOf(f);
+  const rib=(dx,dy,w0,col)=>{g.fillStyle=tc(col);g.beginPath();g.moveTo(sx-w0,y+2);g.quadraticCurveTo(sx+dx*0.3,y-dy*0.2,sx+dx,y-dy);g.lineTo(sx+dx+3,y-dy);g.quadraticCurveTo(sx+dx*0.3+w0*1.2,y-dy*0.2+3,sx+w0,y+2);g.closePath();g.fill()};
+  if(F.dirs.includes('L'))rib(-230,66,13,F.br.L.kind==='climb'?'#8d8d86':'#b9a27a');
+  if(F.dirs.includes('R'))rib(230,70,13,F.br.R.kind==='climb'?'#8d8d86':'#b9a27a');
+  if(F.sign!=='missing'){
+    const stake=(px,col,al)=>{g.globalAlpha=al;g.fillStyle=tc('#6d4726');g.fillRect(px-1.5,y-20,3,20);g.fillStyle=tc(col);g.fillRect(px-1.5,y-20,3,8);g.globalAlpha=1};
+    const pos={L:-60,S:70,R:60};
+    F.dirs.forEach(k=>{const b=F.br[k];if(k===F.main)stake(sx+pos[k],H.markCol[0],F.sign==='bent'?0.4:1);else if(b.col)stake(sx+pos[k],b.col,0.9)});
+  }
+  g.save();g.translate(sx,y);
+  if(F.sign==='missing'){
+    g.fillStyle=tc('#6d4726');g.fillRect(-3,-13,6,13);g.fillStyle=tc('#8b6a40');g.beginPath();g.moveTo(-3,-13);g.lineTo(-1,-18);g.lineTo(1,-14);g.lineTo(3,-17);g.lineTo(3,-13);g.closePath();g.fill();
+    g.fillStyle=tc('#9aa0a6');g.fillRect(8,-3,6,3);
+  }else{
+    const bent=F.sign==='bent';
+    g.rotate(bent?F.lean:0);
+    g.fillStyle=tc('#6d4726');g.fillRect(-2,-52,4,52);
+    F.dirs.forEach((k,j)=>{
+      const isM=bent?(k===F.signDir):(k===F.main),col=isM?H.markCol[0]:(F.br[k].col||'#9aa0a6'),w=34,h=10;
+      g.save();g.translate(0,-48+j*14);if(bent)g.rotate(F.bent[j]);
+      g.fillStyle=tc('#d9b26f');g.beginPath();
+      if(k==='L'){g.moveTo(0,0);g.lineTo(-w+6,0);g.lineTo(-w,h/2);g.lineTo(-w+6,h);g.lineTo(0,h)}
+      else if(k==='R'){g.moveTo(0,0);g.lineTo(w-6,0);g.lineTo(w,h/2);g.lineTo(w-6,h);g.lineTo(0,h)}
+      else{g.moveTo(-16,h);g.lineTo(-16,3);g.lineTo(0,-3);g.lineTo(16,3);g.lineTo(16,h)}
+      g.closePath();g.fill();
+      const cx=k==='L'?-w+9:k==='R'?4:-4;
+      g.globalAlpha=bent&&isM?0.55:1;g.fillStyle=tc(col);g.fillRect(cx,2,12,h-4);g.globalAlpha=1;
+      if(F.br[k].kind==='climb'){const bx=k==='L'?-w+23:k==='R'?19:8;g.fillStyle='#c0392b';g.beginPath();g.moveTo(bx,h-2);g.lineTo(bx+3,2);g.lineTo(bx+6,h-2);g.closePath();g.fill()}
+      g.restore();
+    });
+  }
+  g.restore();
+  if(H.fork===f){g.strokeStyle='rgba(255,230,120,'+(0.5+0.4*Math.sin(tm*5)).toFixed(2)+')';g.lineWidth=3;g.beginPath();g.arc(sx,y-30,42,0,7);g.stroke()}
+}
+function drawForkUI(g,tm,sx,gy){
+  const f=H.fork,F=forkOf(f),y=gy-150,row=[],nav=navInfo();
+  F.dirs.forEach(k=>{
+    const b=F.br[k],tried=!!F.tried[k];let lab=DIRL[k];
+    if(b.kind==='climb'){const known=nav.q>=0.6&&b.out!=='dead';lab+=known?(b.out==='short'?' ⛰️Abkürzung':' ⛰️Gipfel'):' ⛰️steil'}
+    if(F.hint&&F.hint.dir===k)lab+=' 💡';
+    if(tried)lab+=' ✖';
+    row.push([DIRE[k],lab,()=>chooseBranch(f,k),!tried]);
+  });
+  if(!F.hint&&(nav.live||nav.src==='map'))row.push([nav.live?'📡':'🗺️',nav.live?'GPS prüfen':'Karte lesen',()=>checkNav(f),true]);
+  row.push(['🔄','Umkehren',()=>actClick('reverse'),true]);
+  const n=row.length,gap=n>6?60:72,x0=clamp(sx-(n-1)/2*gap,H.dog?175:135,Math.max(135,CW-(n-1)*gap-50));
+  row.forEach((r,i)=>ctxBubble(g,tm,x0+i*gap,y,r[0],r[1],r[2],r[3]));
+  const txt='🪧 Wegscheide – folge der Markierung '+H.markCol[1];
+  g.save();g.font='bold 14px sans-serif';g.textAlign='center';const w=g.measureText(txt).width+44;
+  g.fillStyle='rgba(10,20,15,0.74)';rr(g,CW/2-w/2,100,w,28,9);g.fill();
+  g.fillStyle=H.markCol[0];g.fillRect(CW/2-w/2+10,107,14,14);g.strokeStyle='#fff';g.lineWidth=1;g.strokeRect(CW/2-w/2+10,107,14,14);
+  g.fillStyle='#fff';g.fillText(txt,CW/2+10,119);g.restore();
+}
+function drawSideStuff(g,tm){
+  const S=H.side,f=S.f;
+  const ex=S.x0+S.len,sx=ex-camX;
+  if(sx<-420||sx>CW+420)return;
+  const y=groundY(ex);
+  if(S.kind==='town')drawVillage(g,sx,y,{type:'village',id:f.id+500,name:S.town||'Ort',x:ex});
+  else if(S.kind==='climb'&&S.out==='summit'){
+    g.fillStyle=tc('#7d8288');g.beginPath();g.moveTo(sx-46,y+2);g.lineTo(sx-16,y-24);g.lineTo(sx+8,y-32);g.lineTo(sx+48,y+2);g.fill();
+    g.fillStyle=tc('#6d4726');g.fillRect(sx-2,y-82,5,56);g.fillRect(sx-15,y-66,31,5);
+  }else if(S.kind==='dead'||(S.kind==='climb'&&S.out==='dead')){
+    g.save();g.translate(sx,y-6);g.rotate(-0.1);g.fillStyle=tc('#5b3d24');g.fillRect(-4,-10,70,12);g.restore();
+    g.fillStyle=tc('#3d6a30');for(let k=0;k<4;k++){g.beginPath();g.arc(sx+10+k*14,y-6,11,Math.PI,0);g.fill()}
+  }
+  if(S.kind==='climb'){
+    const a=S.x0+S.len*0.12,b=S.x0+S.len*0.92;
+    g.fillStyle=tc('#767b80');g.beginPath();
+    for(let x=a;x<=b;x+=14){const px=x-camX;if(x===a)g.moveTo(px,groundY(x)-3);else g.lineTo(px,groundY(x)-3)}
+    for(let x=b;x>=a;x-=14){g.lineTo(x-camX,groundY(x)+20)}
+    g.closePath();g.fill();
+    for(let x=a;x<=b;x+=26){const hx=x+hash(Math.floor(x)*3)*14,px=hx-camX;if(px<-40||px>CW+40)continue;const gy=groundY(hx);g.fillStyle=tc('#9aa0a6');g.fillRect(px,gy-4,6,4);g.fillStyle=tc('#4d5156');g.fillRect(px+2,gy+5,7,3)}
+  }
+}
+function drawForksTop(g,tm){
+  if(H.side){const f=H.side.f,fx=f.x-camX;if(fx>-360&&fx<CW+360)drawFork(g,tm,f,fx,groundY(f.x));return}
+  for(const f of featsIn(camX-300,camX+CW+300))if(f.type==='junction')drawFork(g,tm,f,f.x-camX,groundY(f.x));
+}
 function featsIn(a,b){ // sortiert nach x; Features im Bereich (a,b]
+  if(H.side)return [];
   const F=H.route.feats;let lo=0,hi=F.length;
   while(lo<hi){const m=(lo+hi)>>1;if(F[m].x<=a)lo=m+1;else hi=m}
   const out=[];for(let i=lo;i<F.length&&F[i].x<=b;i++)out.push(F[i]);return out;
 }
 function inLake(x){const L=H.route.lakes;if(!L)return false;for(const l of L)if(x>l.xl-30&&x<l.xr+30)return true;return false}
 function featNear(type,x,r){for(const f of featsIn(x-r,x+r)){if(f.type===type)return f}return null}
-function elevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)}
+function elevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)+climbLift(x)}
 function gradeAt(x){return (elevAt(x+10)-elevAt(x-10))/(20*1000/PPK)}
 function stageAt(x){const S=H.route.stages;return S[stageIndexAt(S,x)]}
 function netAt(x){
@@ -922,14 +1181,15 @@ function startHike(hikeId){
     dog:ds?{def:ds,hunger:85,thirst:85,fat:0,mood:78,paw:0,fed:0,leash:true,away:false,trust:G.dog&&G.dog.bond||0}:null,
     stats:{walkMin:0,camps:0,sleepH:0,junctionsLost:0,fires:0,animals:0,fish:0,forage:0,milestones:0,villages:0,streams:0,donations:0,repairs:0},
     flash:0,camElev:0,moving:false,levelups:[],xp0:JSON.stringify(G.stats)};
-  H.weather={type:'klar',until:0,wind:2,rainI:0};
-  computeEnv0();
+  initForks();
+H.weather={type:'klar',until:0,wind:2,rainI:0};
+computeEnv0();
   {let w0=nextWeather('');for(let k=0;k<6&&(w0==='sturm'||w0==='gewitter');k++)w0=nextWeather('');if(w0==='sturm'||w0==='gewitter')w0='wolkig';setWeather(w0)}
   computeEnv();
   H.camElev=env.alt;
   G.cons={};G.hikes++;
   H.started=true;
-  toast('Los geht\'s! '+hk.name+' · '+H.route.totalKm+' km','good');
+  toast('Los geht\'s! '+hk.name+' · '+H.route.totalKm+' km','good');toast('🪧 Wegmarkierung dieser Tour: '+H.markCol[1]+' – folge ihr an Wegscheiden.','good');
   save();
 }
 function computeEnv0(){ // erste Umgebung braucht Wetter-Grundwerte
@@ -1241,7 +1501,8 @@ function act(kind,arg){
   const g=H.g;
   switch(kind){
     case 'walk':
-      if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
+if(H.fork){toast('🪧 Wähle zuerst eine Richtung an der Wegscheide.');return}
+if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
       if(H.body.energy<=0){toast('Du bist zu erschöpft – rasten oder schlafen!','bad');return}
       H.stopReason=null;H.walking=!H.walking;break;
     case 'tent':
@@ -1347,9 +1608,12 @@ function act(kind,arg){
       const ids=repairable();if(!ids.length||condOf(ids[0])>=95){toast('Gerade ist nichts reparaturbedürftig.');return}
       beginAction('fix','Flickt Ausrüstung …',15,()=>{const id=ids[0];H.cond[id]=Math.min(100,condOf(id)+35);H.repairs--;H.stats.repairs++;reviveGear(id);toast('🧵 '+gearById(id).name+' notdürftig repariert.','good')});break}
     case 'orient':
-      if(!H.lost.on){toast('Du bist auf dem richtigen Weg.');return}
+      if(H.fork){checkNav(H.fork);return}
+if(H.side){orientSide();return}
+if(!H.lost.on){toast('Du bist auf dem richtigen Weg.');return}
       showOrient();break;
-    case 'live':startLiveDialog();break;
+    case 'reverse':reverseDir();break;
+case 'live':startLiveDialog();break;
     case 'shop':{
       const f=featNear('village',H.x,330);if(!f){toast('Hier ist kein Laden in der Nähe.');return}
       openVillageShop(f);break}
@@ -1682,7 +1946,7 @@ function checkFeatures(a,b){
       toast(f.type==='quelle'?(env.frozen?'❄️ Eine zugefrorene Quelle – du kannst Schnee sammeln.':'💧 Quelle – hier kannst du Wasser auffüllen.'):'🌉 Du überquerst einen Fluss über eine Brücke (Wasser entnehmbar, unbehandelt).');
       if(H.autoStop&&(waterTotal()<H.g.waterCap*0.75)){H.walking=false;H.stopReason='water';toast('⏸ Gestoppt an der Wasserstelle – „Wasser auffüllen“ und es geht automatisch weiter.')}
     }else if(f.type==='fluss')riverFord(f);
-    else if(f.type==='junction')navCheck();
+    else if(f.type==='junction'){}
   }
   for(const f of featsIn(a-200,b+200)){if(f.type==='see'&&!f.done&&f.lake.xl-90>=a&&f.lake.xl-90<b){f.done=true;lakeDialog(f.lake)}}
   for(const f of featsIn(a+175,b+175)){
@@ -2115,14 +2379,15 @@ function stepSim(h){
   if(H.fireTarp&&Math.abs(H.x-H.fireTarp.x)>250&&!H.action){H.fireTarp=null;toast('🏕️ Du packst das Tarp von der Feuerstelle ein.')}
   if(H.solarUp&&Math.abs(H.x-H.solarUp.x)>250&&!H.action){H.solarUp=null;toast('☀️ Das Solarpanel wird beim Weitergehen eingepackt.')}
   if(H.wood>0&&Math.abs(H.x-H.woodX)>180&&!H.action){H.wood=0;toast('🪵 Das Feuerholz bleibt zurück – du kannst es nicht mitnehmen.')}
-  let mode='rest',dkm=0;
+  if(H.fork&&H.walking)H.walking=false;
+let mode='rest',dkm=0;
   if(H.sleep.active){mode='sleep';stepSleep(h)}
   else if(H.action){stepAction(h)}
   else{
     autoConsume();
     if(H.shot){H.shot.left-=h;if(H.shot.left<=0)finishShot()}
     if(H.walking&&B.energy<=0){H.walking=false;H.autoResumeE=true;toast('Erschöpft! Du rastest, bis du wieder fit bist – dann geht es automatisch weiter.','bad')}
-    else if(H.walking&&!H.camp.pitched&&!H.action){
+    else if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork){
       const v=walkSpeedKmh();
       if(v>0.01){
         mode='walk';dkm=v*hr;const dpx=dkm*PPK,prev=H.x;
@@ -2141,7 +2406,7 @@ function stepSim(h){
         if(B.sat<35||B.hyd<35){xpAdd('food',dkm*0.3);xpAdd('water',dkm*0.3)}
         if(H.lost.on){H.lost.km-=dkm;H.wasted+=dkm;if(H.lost.km<=0){H.lost.on=false;toast('🧭 Du hast wieder auf den Weg gefunden.','good')}}
         else{
-          H.x=Math.min(H.route.totalPx,H.x+dpx);H.km=H.x/PPK;checkFeatures(prev,H.x);
+          walkStep(dpx);
           if(H.x>=H.route.totalPx&&!H.ended)endHike('goal');
         }
       }
@@ -2177,7 +2442,7 @@ function endHike(reason){
   H.ended=true;H.live=null;
   const hk=H.hk;
   if(reason!=='goal'){
-    const cost=reason==='abort'?40:80;
+    const cost=reason==='bus'?(H.busCost||15):reason==='abort'?40:80;
     H.rescueCost=Math.min(cost,G.money);G.money-=H.rescueCost;
     if(reason==='rescue'){
       const d=handheld();
@@ -2308,7 +2573,7 @@ function ambientUpdate(dt){
    Teil 5a: Zeichnen – Grundlagen, Figuren (Wanderer, Hund)
    ===================================================================== */
 let CW=960;const CH=540,VS=1.3;
-const CHAR_SX=()=>Math.round(CW*0.27);
+const CHAR_SX=()=>Math.round(CW*lerp(0.27,0.73,(H&&H.cd)||0));
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
 const mix=(a,b,t)=>a.map((v,i)=>Math.round(lerp(v,b[i],t)));
 const rgb=(a,al)=>al===undefined?`rgb(${a[0]},${a[1]},${a[2]})`:`rgba(${a[0]},${a[1]},${a[2]},${al})`;
@@ -2337,7 +2602,27 @@ function drawHiker(g,x,y,s,o){
     g.fillStyle=hair;g.beginPath();g.arc(-31,-14,7,Math.PI,0);g.fill();
     g.restore();return;
   }
-  const walk=mode==='walk',limp=walk&&o.limp;
+  if(mode==='swim'){
+const tt=(o.tm||0)*5,a1=tt,a2=tt+Math.PI;
+g.fillStyle=o.packColor||'#7f8c8d';rr(g,-24,-19,20,12,5);g.fill();
+g.fillStyle=jk;g.beginPath();g.ellipse(-2,-8,15,7,-0.08,0,7);g.fill();
+g.fillStyle=skin;g.beginPath();g.arc(15,-14+Math.sin(tt*0.5)*0.8,8,0,7);g.fill();
+g.fillStyle=hair;g.beginPath();g.arc(14,-16+Math.sin(tt*0.5)*0.8,8.2,Math.PI*1.02,Math.PI*1.95);g.fill();
+g.fillStyle='#222';g.beginPath();g.arc(19,-15,1.2,0,7);g.fill();
+g.strokeStyle=jk;g.lineWidth=4.5;
+ln(g,8,-10,8+Math.cos(a1)*17,-10-Math.max(0,Math.sin(a1))*15);
+ln(g,8,-10,8+Math.cos(a2)*17,-10-Math.max(0,Math.sin(a2))*15);
+g.strokeStyle=pants;g.lineWidth=5;
+ln(g,-14,-6,-33,-5+Math.sin(tt*2)*3);ln(g,-14,-6,-33,-8-Math.sin(tt*2)*3);
+g.fillStyle='rgba(61,143,214,0.62)';g.beginPath();g.moveTo(-44,6);
+for(let i=0;i<=18;i++){g.lineTo(-44+i*5.4,-3+Math.sin(tt*0.8+i*0.9)*1.7)}
+g.quadraticCurveTo(60,8,42,13);g.lineTo(-30,13);g.quadraticCurveTo(-50,10,-44,6);g.closePath();g.fill();
+g.strokeStyle='rgba(255,255,255,0.75)';g.lineWidth=1.5;
+for(let k=0;k<3;k++){const px=-34+k*7+Math.sin(tt+k)*2,py=-6-((tt*0.6+k)%3)*3;g.beginPath();g.arc(px,py,1.6+k*0.4,0,7);g.stroke()}
+g.beginPath();g.ellipse(18+Math.cos(a1)*17,-3,6,2,0,0,7);g.stroke();
+g.restore();return;
+}
+const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
   const tired=clamp((60-(o.energy===undefined?100:o.energy))/60,0,1);
   const sw=walk?Math.sin(ph)*(limp?5.5:9)*(1-0.3*tired):0,bob=walk?Math.abs(Math.sin(ph))*(limp?3.4:2.2)*(1-0.3*tired):0;
   if(limp)g.rotate(0.06);
@@ -2381,7 +2666,8 @@ function drawHiker(g,x,y,s,o){
     g.fillStyle='#fff';rr(g,20,hipY-78,30,18,6);g.fill();g.fillStyle='#333';g.font='12px sans-serif';g.textAlign='center';g.fillText('…',35,hipY-65)}
   else if(mode==='drone'){ln(g,shx,shy,12,hipY-14);ln(g,shx,shy,8,hipY-12);g.fillStyle='#222';rr(g,4,hipY-20,16,9,3);g.fill()}
   else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
-  else{ln(g,shx,shy,-sw*0.7+2,hipY-12);ln(g,shx,shy,sw*0.7+4,hipY-12);
+  else if(mode==='climb'){ln(g,shx,shy,17+Math.sin(ph)*3,hipY-60+Math.sin(ph)*6);ln(g,shx,shy,11,hipY-52-Math.sin(ph)*6)}
+else{ln(g,shx,shy,-sw*0.7+2,hipY-12);ln(g,shx,shy,sw*0.7+4,hipY-12);
     if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,sw*0.7+4,hipY-12,sw*0.7+18,-1)}}
   g.restore();g.restore();
 }
@@ -2702,7 +2988,7 @@ function drawDecor(g,tm,pass){
     const st=stageAt(clamp(wx,0,H.route.totalPx)),B=BIOMES[st.b],sx=wx-camX;
     const forest=B.tree>0.3;
     if(pass===0&&!forest)continue;
-    if(featsIn(wx-60,wx+60).some(f=>f.type!=='junction'&&f.type!=='animal'&&f.type!=='hiker'))continue;
+    if(featsIn(wx-60,wx+60).some(f=>f.type!=='animal'&&f.type!=='hiker'))continue;
     if(inLake(wx))continue;
     const y=groundY(wx)+(pass===0?-9:0);
     const r=hash(cx*13+1+pass*5),sc=(0.75+hash(cx*5+3)*0.75)*(pass===0?0.72:1);
@@ -2756,7 +3042,8 @@ function drawVillage(g,sx,y0,f){
 function pick2(r,a){return a[Math.floor(r()*a.length)]}
 function drawFeatures(g,tm){
   drawLakes(g,tm);
-  const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finish',x:H.route.totalPx}]);
+  drawTrailMarks(g,tm);if(H.side)drawSideStuff(g,tm);
+const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finish',x:H.route.totalPx}]);
   for(const f of gs){
     const sx=f.x-camX;if(sx<-340||sx>CW+340)continue;const y=groundY(f.x);
     if(f.type==='quelle'){
@@ -2777,8 +3064,6 @@ function drawFeatures(g,tm){
         g.fillStyle='rgba(255,255,255,0.9)';g.font='bold 12px sans-serif';g.textAlign='center';g.fillText('Furt',sx,y-14);
       }
     }else if(f.type==='junction'){
-      g.fillStyle=tc('#6d4726');g.fillRect(sx-2,y-46,4,46);
-      g.fillStyle=tc('#d9b26f');g.fillRect(sx,y-44,30,10);g.fillRect(sx-28,y-30,28,10);
       g.fillStyle=tc('#4a3417');g.fillRect(sx+22,y-42,6,6);g.fillRect(sx-22,y-28,6,6);
     }else if(f.type==='sight'&&f.summit){
       g.fillStyle=tc('#7d8288');g.beginPath();g.moveTo(sx-50,y+2);g.lineTo(sx-18,y-22);g.lineTo(sx+8,y-30);g.lineTo(sx+52,y+2);g.fill();
@@ -3183,8 +3468,10 @@ function ctxBubble(g,tm,x,y,e,label,fn,on=true){
 function drawCtx(g,tm,sx,gy){
   if(H.sleep.active&&!H.ended){const ax=H.camp.x-camX,ay=groundY(H.camp.x);ctxBubble(g,tm,clamp(ax+58,60,CW-60),ay-42,'⏰','Aufwachen',()=>{wakeUp(true);sfx('click');updateHUD(true)},true);return}
   if(H.action||H.sleep.active||H.ended||H.live||H.moving||H.walking){H.eatMenu=false;return}
-  const row=[];const y=gy-150;const B=H.body;
-  if(H.lost.on)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
+  if(H.fork){drawForkUI(g,tm,sx,gy);return}
+const row=[];const y=gy-150;const B=H.body;
+  if(H.lost.on||H.side)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
+row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
   const w=nearWater();
   if(w){
     const full=waterTotal()>=H.g.waterCap-0.05;
@@ -3233,11 +3520,13 @@ function drawCtx(g,tm,sx,gy){
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
   if(H.sleep.active)return 'sleep';
-  if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'||H.crossing.kind==='swim'))return 'walk';
+  if(H.crossing&&H.crossing.kind==='swim')return 'swim';
+if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'))return 'walk';
   if(H.live&&H.action&&H.action.kind==='live')return 'live';
   if(H.shot&&!H.shot.noclip||H.shot)return H.shot.type;
   if(H.action){const k=H.action.kind;if(['eat','cook','drink','fire','wood','feed','search','fix','aid','forage','fish','refill','treat','tent','talk','fans','ftarp','solar'].includes(k))return (k==='tent'||k==='forage'||k==='fans'||k==='talk'||k==='refill')?'idle':'work'}
-  if(H.moving)return 'walk';
+  if(H.moving&&H.side&&H.side.kind==='climb'&&env.grade>0.08)return 'climb';
+if(H.moving)return 'walk';
   if(H.camp.pitched||!H.walking)return 'sit';
   return 'idle';
 }
@@ -3257,6 +3546,7 @@ function drawScene(g,tm,dt){
   drawDecor(g,tm,0);
   drawFeatures(g,tm);
   drawDecor(g,tm,1);
+drawForksTop(g,tm);
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
   drawPackDown(g,tm);
@@ -3269,9 +3559,11 @@ function drawScene(g,tm,dt){
     const dm=H.sleep.active?'sleep':(H.moving?'walk':'sit');
     const lash=H.dog.leash;
     const off=H.moving?(lash?66+Math.sin(tm*0.9)*4:100+Math.sin(tm*0.9)*14):(H.fire.lit&&nearFire()?-46:-70);
-    const dx=sx-off,px=H.x-off;
+    const dr=(H.dir||1)<0?-1:1,dx=sx-off*dr,px=H.x-off*dr;
     const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px))+2;
-    drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
+    g.save();if(dr<0){g.translate(dgx,0);g.scale(-1,1);g.translate(-dgx,0)}
+drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
+g.restore();
     if(lash&&!H.sleep.active&&(H.moving||dm==='sit')&&!H.action){ // Leine
       const hx0=sx+(H.moving?10:8),hy0=gy-(H.moving?27:18),cx=dgx+(H.moving?12:10),cy=dgy-(H.moving?16:12);
       g.strokeStyle='#c0392b';g.lineWidth=1.8;g.beginPath();g.moveTo(hx0,hy0);g.quadraticCurveTo((hx0+cx)/2,Math.max(hy0,cy)+9,cx,cy);g.stroke();
@@ -3281,12 +3573,15 @@ function drawScene(g,tm,dt){
   if(!inTent){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
-    drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+    g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.38;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
+if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+g.restore();
   }
 
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
   if((H.action&&H.action.kind!=='live')||H.sleep.active){
-    const A=H.action,em={tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',wood:'🪵',feed:'🪵',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
+    const A=H.action,em={climb:'🧗',tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',wood:'🪵',feed:'🪵',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
     const prog=H.sleep.active?clamp(H.sleep.p,0,1):clamp(1-A.left/A.dur,0,1);
     const bx=(H.sleep.active&&H.camp.pitched?H.camp.x-70-camX:sx),by=(H.sleep.active&&H.camp.pitched?groundY(H.camp.x-70)-80:gy-122);
     g.save();g.translate(bx,by);
@@ -3305,7 +3600,8 @@ function drawScene(g,tm,dt){
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
   drawWeatherFx(g,tm,dt);
   drawLighting(g,tm,dt);
-  // Meilenstein-Banner
+  if(H.fade!==undefined){const fa=1-clamp((tm-H.fade)/1.1,0,1);if(fa>0){g.fillStyle='rgba(0,0,0,'+fa.toFixed(2)+')';g.fillRect(0,0,CW,CH)}else H.fade=undefined}
+// Meilenstein-Banner
   if(H.banner&&tm<H.banner.until){const b=H.banner,a=clamp((b.until-tm)/0.8,0,1)*clamp((tm-b.at)/0.4,0,1);g.save();g.globalAlpha=a;g.textAlign='center';g.fillStyle='rgba(10,20,15,0.6)';rr(g,CW/2-190,CH*0.3,380,44,10);g.fill();g.fillStyle='#ffd54a';g.font='bold 20px sans-serif';g.fillText(b.text,CW/2,CH*0.3+29);g.restore()}
 }
 /* ---------- Höhenprofil ---------- */
@@ -3832,7 +4128,7 @@ function buildDrawer(){
     ${btn('tent','⛺','Zelt auf/ab')}${btn('sleep','😴','Schlafen')}${btn('rest','🛌','Ausruhen')}${H.dog?btn('leash','🦮','Leine an/ab'):''}${btn('sleepOut','🌙','Draußen schlafen')}${btn('wood','🪵','Holz sammeln')}${btn('fire','🔥','Feuer machen')}${btn('feed','🪵','Holz nachlegen')}
     ${btn('drink','💧','Trinken')}${btn('refill','🚰','Wasser auffüllen')}${btn('treat','♨️','Wasser behandeln')}${btn('aid','🩹','Erste Hilfe')}
     ${btn('fix','🧵','Notreparatur')}${btn('orient','🧭','Orientieren')}${btn('live','📡','Livestream')}${btn('shop','🏪','Laden betreten')}
-    ${btn('forage','🧺','Sammeln')}${btn('fish','🎣','Angeln')}${btn('rescue','🆘','Tour abbrechen')}</div>
+    ${btn('forage','🧺','Sammeln')}${btn('fish','🎣','Angeln')}${btn('reverse','🔄','Umkehren')}${btn('rescue','🆘','Tour abbrechen')}</div>
    <h4>AUTOMATIK</h4>
    <label class="chk"><input type="checkbox" id="o-auto" ${H.auto?'checked':''}> Automatisch essen &amp; trinken</label>
    <label class="chk"><input type="checkbox" id="o-stop" ${H.autoStop?'checked':''}> An Wasserstellen anhalten</label>
@@ -3946,13 +4242,15 @@ function frame(ts){
     accum+=dt*TIME_SCALE*mult;
     let n=0;const x0=H.x,ph0=H.phase;
     while(accum>=1/6&&n<70&&!MODAL&&!H.ended){stepSim(1/6);accum-=1/6;n++}
-    if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n}
+    if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n;if(Math.abs(H.vdx)>40)H.vdx=0}
     if(accum>2)accum=0;
     updateIcons(dt*Math.min(SPEEDS[H.speed],4));
     if(H.speed>0&&!H.sleep.active)ambientUpdate(dt);
   }
   if(!H)return;
   H.camElev+=(elevAt(H.x)-H.camElev)*Math.min(1,dt*2.2);
+if(H.side&&H.side.kind==='climb')H.camElev=clamp(H.camElev,elevAt(H.x)-55,elevAt(H.x)+55);
+H.cd=(H.cd||0)+(((H.dir||1)<0?1:0)-(H.cd||0))*Math.min(1,dt*2.2);
   const rx=H.x,rph=H.phase;
   if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=6&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
   drawScene(cv.getContext('2d'),tm,dt);
@@ -4028,7 +4326,7 @@ function openMap(){
   showModal({wide:true,title:'🗺️ Karte & Navigation',html:`<div class="two"><div><canvas id="mapcv" width="560" height="330" style="width:100%;border-radius:10px;background:#12281d"></canvas></div>
    <div><p><b>${nav.label}</b>${nav.live?' <span class="goodtxt">· Live-Position</span>':nav.src==='map'?' · <span>Position aus Zeit &amp; Tempo geschätzt</span>':''}</p>
    ${nav.note?`<div class="warnbox warn">${esc(nav.note)}</div>`:''}
-   ${H.lost.on?`<div class="warnbox bad">🧭 Du bist ca. ${fmtN(H.lost.km)} km vom Weg ab! „Orientieren“ im Menü ☰.</div>`:''}
+   ${H.side&&nav.live?`<div class="warnbox bad">📡 Du bist vom Hauptweg abgekommen – dein Gerät zeigt die Abweichung.</div>`:''}${H.lost.on?`<div class="warnbox bad">🧭 Du bist ca. ${fmtN(H.lost.km)} km vom Weg ab! „Orientieren“ im Menü ☰.</div>`:''}
    <div class="stat"><span>💧 Nächste Wasserstelle</span><b>${fmtD(dW)}</b></div>
    <div class="stat"><span>🏘️ Nächster Ort (Laden)</span><b>${known?(dV===null?(hk.villageEvery?'> 60 km':'keiner'):fmtN(dV)+' km'):'unbekannt'}</b></div>
    <div class="stat"><span>⭐ Nächster Meilenstein</span><b>${fmtD(dS)}</b></div>
@@ -4094,7 +4392,7 @@ function onHikeEnd(reason){
 }
 function renderResult(){
   const h=LAST,p=G.pending,hk=h.hk;
-  const titles={goal:['🏁 Ziel erreicht!','Du hast '+esc(hk.name)+' geschafft.'],abort:['🚐 Tour abgebrochen','Du hast dich abholen lassen (−'+eur0(h.rescueCost||0)+').'],rescue:['🚁 Bergrettung','Deine Gesundheit war am Ende – du wurdest gerettet (−'+eur0(h.rescueCost||0)+').']};
+  const titles={goal:['🏁 Ziel erreicht!','Du hast '+esc(hk.name)+' geschafft.'],bus:['🚌 Heimreise mit dem Bus','Du hast die Tour in einem Ort beendet und bist mit dem Bus nach Hause gefahren (−'+eur0(h.rescueCost||0)+').'],abort:['🚐 Tour abgebrochen','Du hast dich abholen lassen (−'+eur0(h.rescueCost||0)+').'],rescue:['🚁 Bergrettung','Deine Gesundheit war am Ende – du wurdest gerettet (−'+eur0(h.rescueCost||0)+').']};
   const t=titles[h.reason]||titles.abort;
   const top=[...p.clips].sort((a,b)=>b.value-a.value).slice(0,14);
   const st=h.stats;
