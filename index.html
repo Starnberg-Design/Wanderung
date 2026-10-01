@@ -1655,6 +1655,7 @@ if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
         if(n<1)n=(yMul<0.5&&Math.random()<0.5)?0:1;
         if(n<1){toast('🪵 Nur nasse, dürre Zweige – hier findest du kaum brauchbares Holz. Nimm beim nächsten Mal eigenes Brennholz mit.','warn');return}
         H.wood=Math.min(10,H.wood+n);H.woodX=H.x;
+        {H.stumps=H.stumps||[];const sc_=stumpCell(H.x);if(sc_!=null){H.stumps.push(sc_);if(H.stumps.length>14)H.stumps.shift()}}
         toast('🪵 '+n+' Bündel Feuerholz gesammelt (insgesamt '+H.wood+').'+(yMul<0.5?' Hier ist Holz rar.':'')+(D&&!D.leash?' '+G.dog.name+' hat mitgeholfen.':''),'good')
       });break}
     case 'feed':
@@ -2589,6 +2590,17 @@ function endHike(reason){
     }
   }
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
+  { // Übriger Proviant bleibt erhalten und kann auf der nächsten Tour mitgenommen werden (Frisches verdirbt)
+    const keep={},kept=[],lost=[];
+    for(const f of FOODS){const n=H.food[f.id]||0;if(n<=0)continue;const nm=f.name.replace(/ \((kochen|garen)\)/,'');
+      const sh=f.fish?1:SHELF[f.id],r=H.fs&&H.fs[f.id];
+      if(f.fish||f.id==='berries'||f.id==='mushroom'||(sh&&r&&(H.t-r.t0)>sh*1440*0.55)){lost.push(n+'× '+nm);continue}
+      keep[f.id]=n;kept.push(n+'× '+nm)}
+    const gs=Math.floor(H.gas/5+0.4);if(gs>0){keep.gas=gs;kept.push(gs+'× Gaskartusche')}
+    const df=Math.floor((H.dogfood||0)+0.3);if(df>0){keep.dogfood=df;kept.push(df+' kg Hundefutter')}
+    if(H.carry>0){keep.firewood=H.carry;kept.push(H.carry+'× Brennholz')}
+    G.cons=keep;H.kept=kept;H.keptLost=lost;
+  }
   if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
   const days=Math.floor(H.t/1440)+1;
   G.pending={teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
@@ -3179,6 +3191,94 @@ function tree(g,sx,y,sc,kind,sway,sn,dim,v){
     for(let k=0;k<3;k++){const w=(22-k*5)*sc,yy=y-(10+k*17)*sc,sw=sway*(k+1)*0.3;g.beginPath();g.moveTo(sx-w,yy);g.lineTo(sx+w,yy);g.lineTo(sx+sw,yy-24*sc);g.closePath();g.fill()}
   }
 }
+/* ---------- Landschafts-Grafiken (assets/Landschafts Assets_*.svg): Büsche, Gras, Hölzer, Stumpf, Schilf ---------- */
+const LS_P='Landschafts Assets_';
+const LS_one=n=>[n,n,n,n];
+const LS_V={ /* Dateien je Jahreszeit F/S/H/W; fehlt eine Jahreszeit, gilt die Grundvariante */
+  busch:['Buschwerk Frühling','Buschwerk Sommer','Buschwerk Herbst','Buschwerk Winter'],
+  strauch:['kleiner Strauch Frühling','kleiner Strauch Sommer','kleiner Strauch Herbst','kleiner Strauch Winter'],
+  nstr:['niedrige Sträucher Frühling','niedrige Sträucher Sommer','niedrige Sträucher Herbst','niedrige Sträucher Winter'],
+  nstein:['niedrige Sträucher mit Stein Frühling','niedrige Sträucher mit Stein Sommer','niedrige Sträucher mit Stein herbst','niedrige Sträucher mit Stein Winter'],
+  bgras:['Buschgras Frühling','Buschgras Sommer','Buschgras Sommer','Buschgras Winter'],
+  nbgras:['niedriges Buschiges Gras Frühling','niedriges Buschiges Gras Sommer','niedriges Buschiges Gras Sommer','niedriges Buschiges Gras Winter'],
+  ngras:['niedriges Gras Frühling','niedriges Gras Sommer','niedriges Gras Sommer','niedriges Gras Winter'],
+  hgras:['hohes Gras','hohes Gras','hohes Gras','hohes Gras Winter'],
+  mgras:['mittelhohes Gras','mittelhohes Gras','mittelhohes Gras','mittelhohes Gras Winter'],
+  stump:LS_one('Baumstumpf'),bk:LS_one('Bieberbaumstumpf kurz'),bl:LS_one('Bieberbaumstumpf lang'),
+  schilf:LS_one('Schilf'),rkb:LS_one('Rohrkolbenstaude breit'),rks:LS_one('Rohrkolbenstaude schmal'),
+  anz:LS_one('Anzündholz'),ast1:LS_one('Ast 1'),ast2:LS_one('Ast 2'),zw1:LS_one('Zweig 1'),zw2:LS_one('Zweig 2'),zst:LS_one('Zweige Stapel')};
+const LS_BMP={},LS_PRE={};let LS_N=0;
+function lsSeason(sn){return sn>=0.3?3:Math.max(0,['Frühling','Sommer','Herbst','Winter'].indexOf(env.season||'Sommer'))}
+function lsPre(si){if(LS_PRE[si])return;LS_PRE[si]=1;for(const k in LS_V)img(LS_P+LS_V[k][si],'svg')}
+function lsBmp(file,dim){
+  const step=Math.round(NM_*4),key=file+'|'+(dim?1:0)+'|'+step;
+  let c=LS_BMP[key];if(c)return c;
+  const im=img(LS_P+file,'svg');if(!im)return null;
+  if(LS_N++>240){for(const k in LS_BMP)delete LS_BMP[k];LS_N=0}
+  c=document.createElement('canvas');c.width=c.height=224;const x=c.getContext('2d');
+  x.drawImage(im,0,0,224,224);x.globalCompositeOperation='source-atop';
+  if(dim){x.fillStyle='rgba(0,0,0,0.16)';x.fillRect(0,0,224,224)}
+  if(step>0){x.globalAlpha=Math.min(1,step/4);x.fillStyle=rgb(NIGHT);x.fillRect(0,0,224,224)}
+  return LS_BMP[key]=c;
+}
+function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
+  const si=lsSeason(sn||0),v=LS_V[kind];if(!v)return false;
+  lsPre(si);
+  const bmp=lsBmp(v[si],dim);if(!bmp)return false;
+  g.save();g.translate(sx,y+S*0.004);if(flip)g.scale(-1,1);
+  if(sway)g.transform(1,0,-0.8*sway/S,1,0,0);
+  g.drawImage(bmp,-S/2,-S,S,S);g.restore();
+  return true;
+}
+const LS_SZ={busch:165,strauch:175,nstr:165,nstein:155,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
+const LS_MIX={ /* Bewuchs je Biom: [Anteil der Zellen, [[Art, Gewicht], …]] */
+  wald:[0.34,[['mgras',.22],['hgras',.12],['nbgras',.16],['bgras',.1],['nstr',.14],['strauch',.12],['busch',.14]]],
+  tal:[0.36,[['ngras',.24],['mgras',.16],['nbgras',.14],['strauch',.16],['nstr',.12],['busch',.1],['hgras',.08]]],
+  wiese:[0.55,[['ngras',.3],['nbgras',.2],['mgras',.2],['hgras',.12],['strauch',.08],['nstr',.06],['busch',.04]]],
+  fjaell:[0.32,[['ngras',.3],['nbgras',.25],['nstr',.2],['nstein',.15],['strauch',.1]]],
+  berg:[0.2,[['nstein',.35],['ngras',.35],['nbgras',.15],['nstr',.15]]],
+  kies:[0.1,[['nstein',.5],['ngras',.5]]],
+  schnee:[0.1,[['nstein',.5],['ngras',.5]]],
+  sand:[0.1,[['bgras',.6],['hgras',.4]]]};
+function lsGround(g,biome,cx,sx,y,sn,sway,dim){
+  const M=LS_MIX[biome];if(!M)return;
+  if(hash(cx*29+4)>=M[0])return;
+  let a=hash(cx*31+17)*M[1].reduce((t,q)=>t+q[1],0),k=M[1][0][0];
+  for(const q of M[1]){a-=q[1];if(a<0){k=q[0];break}}
+  const S=LS_SZ[k]*(0.78+0.55*hash(cx*5+3));
+  lsDraw(g,k,sx+(hash(cx*41+2)-0.5)*14,y+1,S,dim,/gras/.test(k)?sway*1.6:sway*0.5,sn,hash(cx*43+9)<0.5);
+}
+function stumpCell(x0){ /* Baum der vorderen Reihe, der beim Holzholen gefällt wird */
+  let best=null,bd=1e9;const c0=Math.floor((x0-220)/26),c1=Math.floor((x0+220)/26);
+  for(let cx=c0;cx<=c1;cx++){
+    const wx=cx*26+hash(cx*7+99)*26*0.9;if(wx<80||wx>H.route.totalPx)continue;
+    const B=BIOMES[stageAt(wx).b];if(hash(cx*13+1+5)>=B.tree)continue;
+    if(H.stumps.includes(cx))continue;
+    if(featsIn(wx-60,wx+60).some(f=>f.type!=='animal'&&f.type!=='hiker'))continue;
+    if(inLake(wx))continue;
+    const d=Math.abs(wx-(x0+60));if(d<bd){bd=d;best=cx}
+  }
+  return best;
+}
+function drawStump(g,sx,y,cx,sn,dim){
+  if(!lsDraw(g,'stump',sx,y+1,150*(0.9+0.35*hash(cx*3+1)),dim,0,sn,hash(cx*7)<0.5)){g.fillStyle=tc('#6d4726');g.fillRect(sx-9,y-12,18,12);g.fillStyle=tc('#c9a46a');g.beginPath();g.ellipse(sx,y-12,9,3,0,0,7);g.fill()}
+}
+function drawShoreLife(g,tm,L,ys){ /* Schilf & Rohrkolben im Uferwasser, Biberstümpfe am Ufer */
+  const seed=Math.floor(L.xl);
+  for(let i=0;i<9;i++){
+    const left=i%2===0,x=left?L.xl+22+hash(seed+i*3)*Math.min(110,(L.xr-L.xl)*0.3):L.xr-22-hash(seed+i*5+1)*Math.min(110,(L.xr-L.xl)*0.3);
+    if(x<camX-80||x>camX+CW+80)continue;
+    const gy=groundY(x);if(gy<ys+3)continue;
+    const k=['schilf','rkb','rks','schilf'][Math.floor(hash(seed+i*7+2)*4)],S=(k==='schilf'?125:115)*(0.85+0.4*hash(seed+i*11));
+    lsDraw(g,k,x-camX,Math.min(gy-1,ys+9),S,false,Math.sin(tm*1.6+x*0.05)*env.wind*0.3,0,hash(seed+i*13)<0.5);
+  }
+  for(const side of [0,1]){
+    if(hash(seed*0.37+side*5.1)>0.62)continue;
+    const x=side?L.xr+16+hash(seed+side)*30:L.xl-16-hash(seed+side+3)*30;
+    if(x<camX-80||x>camX+CW+80)continue;
+    lsDraw(g,hash(seed+side*9)<0.5?'bk':'bl',x-camX,groundY(x)+1,150,false,0,0,side===1);
+  }
+}
 function drawDecor(g,tm,pass){
   const CELL=pass?26:24,c0=Math.floor((camX-80)/CELL),c1=Math.floor((camX+CW+80)/CELL);
   const sn=snowAmt();
@@ -3193,7 +3293,8 @@ function drawDecor(g,tm,pass){
     const r=hash(cx*13+1+pass*5),sc=(0.75+hash(cx*5+3)*0.75)*(pass===0?0.72:1);
     const sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
     if(r<B.tree){
-      if(st.b==='wald'){
+      if(pass===1&&H.stumps&&H.stumps.includes(cx)){drawStump(g,sx,y,cx,sn,false)}
+      else if(st.b==='wald'){
         const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<leafP(wx,false)?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
       }else if(st.b==='fjaell')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
       else tree(g,sx,y,sc,hash(cx*3)<leafP(wx,true)?'leafo':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
@@ -3201,11 +3302,9 @@ function drawDecor(g,tm,pass){
       if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
       else if(st.b==='berg'||st.b==='fjaell'||B.rock){
         if(r<B.tree+(B.rock?0.32:0.22)){g.fillStyle=tc('#7c8088',sn);g.beginPath();g.ellipse(sx,y-4*sc,14*sc,9*sc,0,Math.PI,0);g.fill()}
-      }else if(r<B.tree+0.3){
-        g.fillStyle=tc('#4c8f3b',sn);g.beginPath();g.arc(sx,y-5*sc,7*sc,Math.PI,0);g.fill();
-        if(st.b==='wiese'&&hash(cx*11)<0.5){g.fillStyle=['#fff','#f7d84a','#e57ab8'][cx&3&&(cx%3)];g.fillRect(sx+3,y-9*sc,2.5,2.5)}
       }
     }
+    if(pass===1)lsGround(g,st.b,cx,sx,y,sn,sway,false);
     if(pass===1&&st.b==='wald'&&hash(cx*19)<0.5){ // Farn/Unterholz
       g.strokeStyle=tc('#2d6a2f',sn);g.lineWidth=1.6;const fy=groundY(wx+9)+3;
       for(let k=-2;k<=2;k++){g.beginPath();g.moveTo(sx+9,fy);g.quadraticCurveTo(sx+9+k*4,fy-8,sx+9+k*7+sway*0.3,fy-14+Math.abs(k)*3);g.stroke()}
@@ -3254,6 +3353,9 @@ const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finis
       g.fillStyle=env.frozen?tc('#cfe3ef'):tc('#3d8fd6');g.fillRect(sx-46,y-1,92,18);
       if(!env.frozen){g.strokeStyle='rgba(255,255,255,0.55)';g.lineWidth=1.5;
         for(let k=0;k<4;k++){const wx=sx-40+k*24+((tm*20)%24);g.beginPath();g.moveTo(wx,y+4+k%2*6);g.quadraticCurveTo(wx+6,y+1+k%2*6,wx+12,y+4+k%2*6);g.stroke()}}
+      {const sd=Math.floor(f.x);
+        [-1,1].forEach((s2,i)=>{const k=['schilf','rkb','rks'][Math.floor(hash(sd+i*3)*3)];lsDraw(g,k,sx+s2*(36+hash(sd+i)*8),y+10,k==='schilf'?120:110,false,Math.sin(tm*1.6+i)*env.wind*0.3,0,i===1)});
+        if(hash(sd*0.31)<0.65){const s3=hash(sd*0.17)<0.5?-1:1;lsDraw(g,hash(sd+9)<0.5?'bk':'bl',sx+s3*72,groundY(f.x+s3*72)+1,150,false,0,0,s3>0)}}
       if(f.bridge){
         g.fillStyle=tc('#8b5e34');g.fillRect(sx-56,y-9,112,6);
         g.fillStyle=tc('#6d4726');g.fillRect(sx-50,y-3,5,14);g.fillRect(sx+45,y-3,5,14);
@@ -3294,6 +3396,7 @@ const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finis
         if(env.dark>0.4){g.fillStyle='rgba(255,210,110,0.85)';g.fillRect(sx-28,y-30,16,14);g.fillRect(sx+12,y-30,16,14)}
         g.fillStyle=tc('#6d4726');g.fillRect(sx+34,y-88,3,48);g.fillStyle='#2d7d46';g.fillRect(sx+37,y-88,16,10);
       }
+      {const sd=hash(Math.floor(f.x))<0.5?-1:1,bx=f.x+sd*(k==='shelter'||k==='bothy'?58:66);lsDraw(g,'stump',bx-camX,groundY(bx)+1,140,false,0,snowAmt(),sd>0)}
       g.font='bold 12px sans-serif';g.textAlign='center';
       const tl=({stuga:'Stuga',huette:'Hütte',bothy:'Bothy',shelter:'Windschutz'})[k]+' '+f.name;const w=g.measureText(tl).width+14;
       g.fillStyle='rgba(20,30,20,0.72)';rr(g,sx-w/2,y+8,w,19,6);g.fill();g.fillStyle='#fff';g.fillText(tl,sx,y+21);
@@ -3412,15 +3515,19 @@ function drawCamp(g,tm,dt){
     g.strokeStyle=tc('#8fb3e8');g.lineWidth=1;g.beginPath();g.moveTo(px-2-mis*4,py-22);g.lineTo(px-2,py-46);g.moveTo(px-28-mis*4,py-34);g.lineTo(px+28-mis*4,py-34);g.stroke();
     g.font='bold 11px sans-serif';g.textAlign='center';g.fillStyle=eff>0.66?'#9be564':eff>0.25?'#ffd54a':'#ff6b5a';g.fillText('☀️ '+Math.round(eff*100)+' %',px,py-52);
   }
-  if(H.wood>0&&!H.ended){ // Feuerholz-Stapel
-    const wx=H.woodX-52-camX,wy=groundY(H.woodX-52);g.fillStyle=tc('#7a5230');
-    for(let k=0;k<Math.min(6,H.wood+1);k++){const r=k%3,row=Math.floor(k/3);g.fillRect(wx-13+r*9-row*4,wy-4-row*6,20,5)}
-    g.fillStyle=tc('#5b3d24');for(let k=0;k<Math.min(6,H.wood+1);k++){const r=k%3,row=Math.floor(k/3);g.fillRect(wx-13+r*9-row*4,wy-4-row*6,3,5)}
+  if(H.wood>0&&!H.ended){ // Holzvorrat ums Lager: wächst beim Sammeln, schrumpft beim Nachlegen
+    const PILE=[['zw1',-6,95],['anz',-34,115],['zw2',22,95],['zst',-2,135],['ast1',-70,125],['ast2',46,125],['zst',-44,115],['anz',30,120],['ast1',70,105],['zst',-22,100]];
+    const bx=H.woodX-52,n=Math.min(H.wood,PILE.length);let ok=true;
+    for(let k=0;k<n;k++){const q=PILE[k];if(!lsDraw(g,q[0],bx+q[1]-camX,groundY(bx+q[1])+1,q[2],false,0,0,k%2===1)){ok=false;break}}
+    if(!ok){const wx=bx-camX,wy=groundY(bx);g.fillStyle=tc('#7a5230');
+      for(let k=0;k<Math.min(6,H.wood+1);k++){const r=k%3,row=Math.floor(k/3);g.fillRect(wx-13+r*9-row*4,wy-4-row*6,20,5)}
+      g.fillStyle=tc('#5b3d24');for(let k=0;k<Math.min(6,H.wood+1);k++){const r=k%3,row=Math.floor(k/3);g.fillRect(wx-13+r*9-row*4,wy-4-row*6,3,5)}}
   }
   const fl=H.fire.lit;
   if(fl){
     const sx=H.fire.x-camX,y=groundY(H.fire.x),fsz=clamp(0.7+H.fire.left/230,0.7,1.6);
-    g.fillStyle=tc('#6d4726');g.save();g.translate(sx,y-3);g.rotate(0.3);g.fillRect(-15,-2,30,5);g.rotate(-0.6);g.fillRect(-15,-2,30,5);g.restore();
+    {const fk=clamp(0.55+H.fire.left/190,0.55,1.05);
+    if(!(lsDraw(g,'ast1',sx-3,y+1,70*fk,false,0,0)&&lsDraw(g,'ast2',sx+5,y+2,62*fk,false,0,0,true))){g.fillStyle=tc('#6d4726');g.save();g.translate(sx,y-3);g.rotate(0.3);g.fillRect(-15,-2,30,5);g.rotate(-0.6);g.fillRect(-15,-2,30,5);g.restore()}}
     g.fillStyle=tc('#8a8d90');for(let k=0;k<7;k++){g.beginPath();g.ellipse(sx-18+k*6,y+1,3.5,2.6,0,0,7);g.fill()}
     g.save();g.globalCompositeOperation='lighter';
     for(let k=0;k<4;k++){
@@ -3479,6 +3586,7 @@ function drawLakes(g,tm){
     else{g.strokeStyle='rgba(255,255,255,0.45)';g.lineWidth=1.4;
       for(let k=0;k<7;k++){const cx=L.xl+(L.xr-L.xl)*((k*0.29+0.05)%1)-camX+Math.sin(tm*0.8+k)*6;const cy=ys+5+(k%3)*7;g.beginPath();g.moveTo(cx-10,cy);g.quadraticCurveTo(cx,cy-3,cx+10,cy);g.stroke()}}
     g.restore();
+    drawShoreLife(g,tm,L,ys);
     const mx=(L.xl+L.xr)/2-camX;
     g.font='bold 12px sans-serif';g.textAlign='center';const w=g.measureText(L.name).width+14;
     g.fillStyle='rgba(20,30,20,0.6)';rr(g,mx-w/2,ys-22,w,18,6);g.fill();g.fillStyle='#fff';g.fillText(L.name,mx,ys-9);
@@ -4406,6 +4514,7 @@ function startHikeUI(id){
 function startHikeUI2(id){
   startHike(id);
   try{const se=env.season||'Sommer';LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,se),'svg'));LEAF_PRE[se]=1}catch(e){}
+  try{lsPre(lsSeason(snowAmt()))}catch(e){}
   MODALQ=[];
   buildHikeDOM();show('hike');resizeStage();
   accum=0;lastTs=performance.now();hudT=0;livePanelOn=false;LIGHT.next=8;FX.sparks=[];FX.smoke=[];BIRDS.length=0;
@@ -4741,6 +4850,8 @@ function renderResult(){
     <div class="stat"><span>Gesammelt · gefangen</span><b>${st.forage} · ${st.fish}</b></div>
     <div class="stat"><span>Livestreams · Spenden</span><b>${st.streams} · ${eur(st.donations)}</b></div>
     ${ups.length?`<div class="stat"><span>💪 Aufgestiegen</span><b class="goodtxt">${ups.join(', ')}</b></div>`:''}
+    ${h.kept&&h.kept.length?`<div class="stat"><span>🎒 Übrig &amp; für die nächste Tour behalten</span><b>${h.kept.map(esc).join(', ')}</b></div>`:''}
+    ${h.keptLost&&h.keptLost.length?`<div class="hint">🤢 Frisches hält nicht: ${h.keptLost.map(esc).join(', ')} ${h.keptLost.length>1?'sind':'ist'} verdorben.</div>`:''}
     ${h.damaged&&h.damaged.length?`<div class="warnbox warn">🔧 Beschädigt oder defekt: ${h.damaged.map(esc).join(', ')} – in der Werkstatt reparieren oder ersetzen!</div>`:''}
    </div><div class="card"><h3>🎬 Beste Clips</h3><div class="cliplist">${top.map(c=>`<div class="clip"><span>${c.e} ${esc(c.name)}${c.rar>=0?`<i class="rar" style="background:${RARITY[c.rar].color}">${RARITY[c.rar].name}</i>`:''}</span><span>Qualität ${Math.round(c.q*100)} %</span></div>`).join('')||'<p class="hint">Keine Clips aufgenommen – ohne Material kein Video.</p>'}</div></div></div>
    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="primary big" id="r-pub">🎬 Video veröffentlichen</button><button class="big" id="r-later">Später – zurück zur Zentrale</button></div>
