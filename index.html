@@ -76,7 +76,7 @@ input[type=range]{accent-color:var(--acc)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
 .pill{background:rgba(8,16,12,.76);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
-#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:6px 8px}
+#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:4px 7px;display:flex;gap:8px;align-items:center}#h-tl .st{width:68px;font-size:11px}#h-tl .sb{gap:1px 5px}#h-tl .dogb{margin:0;padding:0 0 0 7px;border-top:0;border-left:1px solid #ffffff22;grid-template-columns:auto;gap:1px}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 .dl{font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25;margin-bottom:1px}.se{font-size:14px;font-weight:700;margin-left:4px;white-space:nowrap}
 .se-Frühling{color:#8fe388}.se-Sommer{color:#ffd54a}.se-Herbst{color:#ff9a4a}.se-Winter{color:#9fd4ff}
@@ -125,7 +125,7 @@ input[type=range]{accent-color:var(--acc)}
 #rtrk:before{content:"";position:absolute;left:12px;width:6px;top:0;bottom:0;background:#0009;border:1px solid #fff4;border-radius:4px}
 #rknob{position:absolute;left:3px;width:24px;height:24px;margin-top:-12px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:top .12s}
 .rcam{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:17px}
-#livepanel{position:absolute;right:calc(8px + var(--sr));bottom:calc(58px + var(--sb));width:min(46vw,310px);z-index:4;pointer-events:auto}
+#livepanel .seg button{font-size:12px;padding:5px 7px;min-height:30px}#livepanel{position:absolute;right:calc(188px + var(--sr));bottom:calc(58px + var(--sb));width:min(42vw,270px);z-index:4;pointer-events:auto}
 #rot{display:none;position:absolute;inset:0;z-index:9;background:#000d;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:10px;font-size:1.2em}
 @media(orientation:portrait){#s-hike.active #rot{display:flex}}
 /* Modal */
@@ -1558,8 +1558,29 @@ function rollShots(hr){
 function setRec(v){H.rec=v;H.droneTimer=Math.min(H.droneTimer,DRONE_INT[v])}
 
 /* ---------- Symbole (Kamera, Laden, Sammeln …) ---------- */
+function askWalker(ic){
+  const W=ic.W;if(W)W.wait=true;H.walking=false;
+  const resume=()=>{if(W)W.wait=false;if(!H.camp.pitched&&!H.action&&!H.sleep.active)H.walking=true};
+  const st=W||{};
+  showModal({title:'🙋 Wanderer ansprechen',text:'Du sprichst den Wanderer an. Was möchtest du fragen?',buttons:[
+    {label:'🍫 Nach etwas zu essen fragen',fn:()=>{
+      if(st.fAsked){toast('🥾 „Ich hab dir doch eben schon geantwortet …“');resume();return}
+      st.fAsked=true;st.asked=true;
+      if(Math.random()<0.55){const f=pick(FOODS.filter(x=>x.shop&&!x.cook&&x.sat));H.food[f.id]=(H.food[f.id]||0)+1;toast('🥾 „Klar, nimm ruhig!“ Du bekommst '+f.e+' '+f.name+'.','good')}
+      else toast(pick(['🥾 „Tut mir leid, ich habe selbst kaum etwas übrig.“','🥾 „Leider nein, mein Proviant reicht gerade so für mich.“','🥾 „Nein, sorry – frag besser im nächsten Ort.“']));
+      resume()}},
+    {label:'💧 Nach Wasser fragen',fn:()=>{
+      if(st.wAsked){toast('🥾 „Ich hab dir doch eben schon geantwortet …“');resume();return}
+      st.wAsked=true;st.asked=true;
+      const room=Math.max(0,H.g.waterCap-waterTotal());
+      if(room<0.05){toast('💧 Deine Behälter sind schon voll.');resume();return}
+      if(Math.random()<0.65){const a=Math.min(room,Math.round(rnd(2,5))/10);H.water.clean+=a;sfx('drink');toast('🥾 „Hier, ein paar Schlucke für dich!“ +'+fmtN(a,1)+' L Wasser.','good')}
+      else toast(pick(['🥾 „Tut mir leid, mein Wasser wird knapp.“','🥾 „Ich brauche selbst jeden Tropfen, sorry.“']));
+      resume()}},
+    {label:'Nichts, danke',fn:resume}]});
+}
 function spawnIcon(o){o.max=o.life;o.born=tm;H.icons.push(o);return o}
-const TAP_KINDS=['shop','forage','fish','special','summit'];
+const TAP_KINDS=['shop','forage','fish','special','summit','ask'];
 function captureIcon(ic){
   if(ic.taken)return;
   if(TAP_KINDS.includes(ic.kind))return tapIcon(ic);
@@ -1587,6 +1608,7 @@ function captureIcon(ic){
   return c;
 }
 function tapIcon(ic){
+  if(ic.kind==='ask'){ic.dead=true;askWalker(ic);return}
   const d=Math.abs(ic.x-H.x);
   if(d>230){toast('Geh etwas näher heran.');return}
   if(ic.kind==='shop')actClick('shop');
@@ -1655,7 +1677,7 @@ function trackFeatures(){
     }else if(f.type==='lodge'){lodgeHint(f,d);
     }else if(f.type==='village'){villageHint(f,d);
       if(d<460&&!f.seen){f.seen=true;toast('🏘️ Ort voraus: '+f.name+' – hier kannst du einkaufen.','good');sfx('notify')}
-      if(d<300&&!hasIcon('shop',f.id)&&!f.left)spawnIcon({kind:'shop',fid:f.id,f,x:f.x+40,e:'🏪',label:f.name,life:1e9});
+      if(d<300&&!hasIcon('shop',f.id)&&!f.left)spawnIcon({kind:'shop',fid:f.id,f,x:f.x+40,e:'🏪',get label(){const s=shopOpenInfo(f);return s.open?f.name:f.name+' · zu, öffnet '+s.txt},life:1e9});
     }else if(f.type==='forage'){
       const F=FORAGE[f.f];
       if(!f.done&&d<380*forageMul()&&F.months.includes(env.month)&&!hasIcon('forage',f.id))
@@ -2237,7 +2259,9 @@ function deviceTick(hr,mode){
     else if(id==='torch'){if(walking&&env.dark>0.55)drain=11}
     else if(id==='vest'){drain=VEST_DRAIN[H.vestMode]||0}
     d.batt=Math.max(0,d.batt-drain*hr);
-    if(d.batt<=0&&!d.warned){d.warned=true;toast('🪫 Akku leer: '+def.name,'bad');sfx('bad')}
+    if(d.batt<=0&&!d.warned){d.warned=true;toast('🪫 Akku leer: '+def.name,'bad');sfx('batt')}
+    else if(d.batt<=15&&d.batt>0&&!d.lowW){d.lowW=true;toast('🪫 Akku fast leer: '+def.name+' ('+Math.round(d.batt)+' %)','warn');sfx('batt')}
+    if(d.batt>20)d.lowW=false;
     if(d.batt>10)d.warned=false;
     if(drain>0){const p=0.5*(def.fragile||0.0004)*(env.precip?3:1)*(hasWaterProof(id)?1:1)*hr;
       if(Math.random()<p){d.broken=true;H.cond[id]=0;toast('💥 '+def.name+' ist kaputtgegangen!','bad');sfx('bad')}}
@@ -2380,7 +2404,7 @@ function hikerEvent(W){
   if(H.water.clean>=0.6)opts.push('trade');
   opts.push('info');
   const k=pick(opts);
-  const interview=()=>spawnIcon({kind:'hiker',x:W?W.x:H.x+120,follow:W||null,e:'🎤',label:'Interview',base:8,life:14});
+  const interview=()=>{spawnIcon({kind:'hiker',x:W?W.x:H.x+120,follow:W||null,e:'🎤',label:'Interview',base:8,life:14});if(W&&!W.asked)spawnIcon({kind:'ask',x:W.x,follow:W,e:'🙋',label:'Fragen',base:0,life:16,W})};
   const done=(msg)=>{toast(msg,'good');interview()};
   H.walking=false;
   const resume=()=>{if(W)W.wait=false;if(!H.camp.pitched)H.walking=true};
@@ -3871,6 +3895,8 @@ function drawIcons(g,tm){
       const sy=120+Math.sin(tm*1.5)*4;sx=CW*0.5;emoji(g,'🌌',sx,sy,46);by=sy+38;ic._sx=sx;
     }else if(ic.kind==='storm'){
       const sy=150+Math.sin(tm*2)*4;sx=CW*0.62;emoji(g,ic.e,sx,sy,44);by=sy+40;ic._sx=sx;
+    }else if(ic.kind==='ask'){
+      by=gy-112;sx+=50;
     }else if(ic.kind==='hiker'){
       by=gy-112;
     }else if(ic.kind==='sight'){
@@ -4308,6 +4334,7 @@ function drawProfile(cv){
   g.strokeStyle='#4cc38a';g.lineWidth=1.2;g.beginPath();ys.forEach((e,i)=>i?g.lineTo(i/N*w,h-3-(e-lo)/span*(h-8)):g.moveTo(0,h-3-(e-lo)/span*(h-8)));g.stroke();
   // Orte & Meilensteine
   for(const f of R.feats){if(f.type==='village'){g.fillStyle='#ffb54a';g.fillRect(f.x/R.totalPx*w-1,h-9,2,9)}else if(f.type==='lodge'){g.fillStyle='#6cb8ff';g.fillRect(f.x/R.totalPx*w-1,h-7,2,7)}else if(f.type==='sight'){g.fillStyle='#ffd54a';g.beginPath();g.arc(f.x/R.totalPx*w,6,2.2,0,7);g.fill()}}
+  if(typeof COOP!=='undefined'&&COOP&&COOP.peers){const nw=Date.now();for(const u in COOP.peers){const p=COOP.peers[u];if(!p||nw-(p.t||0)>60000||p.x==null)continue;const qx=Math.max(3,Math.min(w-3,p.x/R.totalPx*w));g.fillStyle='#4aa8e8';g.strokeStyle='#fff';g.lineWidth=1.2;g.beginPath();g.arc(qx,h-3-(elevAt(p.x)-lo)/span*(h-8),3.6,0,7);g.fill();g.stroke()}}
   const px=H.x/R.totalPx*w;g.fillStyle='#fff';g.beginPath();g.arc(px,h-3-(elevAt(H.x)-lo)/span*(h-8),3.4,0,7);g.fill();
 }
 
@@ -4560,7 +4587,7 @@ function showFriends(){
 function frCoopHTML(){
   const gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
   const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
-  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p><div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
+  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p>'+lobbyLine()+'<div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
 }
 function frRender(){
   const S=FR_ST,on=!!G.pubOn;
@@ -4590,6 +4617,7 @@ function frRender(){
         const v=q('#fr-in').value;S.err='';S.msg='';
         fbAddFriend(v).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='✅ Freund hinzugefügt.';frRender()}).catch(er=>{S.err=er.message||String(er);frRender()});
       };
+      const cl=q('#co-leave');if(cl)cl.onclick=()=>{lobbyLeave();S.msg='Lobby verlassen.';frRender()};
       const cn=q('#co-new');if(cn)cn.onclick=()=>{
         const id=q('#co-hike').value;S.err='';S.msg='Raum wird angelegt …';frRender();
         coopHost(id).then(code=>coopBriefingModal({code,hike:id,day:COOP.day,name:G.name},true)).catch(er=>{S.err=er.message||String(er);S.msg='';frRender()});
@@ -4623,16 +4651,35 @@ function friendChannel(f){
     }});
 }
 /* ---------- Gemeinsame Tour (Firebase) ---------- */
-let COOP=null;let HIKE_SNAP=null;let SHOP_RE=null,SHOP_SC=null;
+let COOP=null;
+let LOBBY=null;try{LOBBY=JSON.parse(localStorage.getItem('wk_lobby')||'null')}catch(e){}
+let LOBBY_REF=null,LOBBY_PEND=null,LOBBY_TM=0;
+function lobbySave(){try{if(LOBBY)localStorage.setItem('wk_lobby',JSON.stringify(LOBBY));else localStorage.removeItem('wk_lobby')}catch(e){}}
+function lobbySet(room,host,gen){if(!LOBBY||LOBBY.room!==room||LOBBY.host!==!!host){try{if(LOBBY_REF){LOBBY_REF.off();LOBBY_REF=null}}catch(e){}LOBBY={room,host:!!host,gen:gen||0}}else if(gen!=null)LOBBY.gen=gen;lobbySave();lobbyWatch()}
+function lobbyLeave(){try{if(LOBBY_REF){LOBBY_REF.off();LOBBY_REF=null}}catch(e){}LOBBY=null;LOBBY_PEND=null;lobbySave()}
+function lobbyLine(){if(!LOBBY)return '';return '<p class="hint">👥 Lobby <b>'+esc(LOBBY.room)+'</b> – '+(LOBBY.host?'du bist Admin: Startest du eine neue Tour, werden alle automatisch eingeladen.':'der Admin lädt dich automatisch zur nächsten gemeinsamen Tour ein.')+' <button id="co-leave" style="margin-left:6px">Lobby verlassen</button></p>'}
+function lobbyWatch(){
+  if(!LOBBY||LOBBY.host||LOBBY_REF)return;
+  fbLoad().then(db=>{if(!LOBBY||LOBBY.host||LOBBY_REF)return;const code=LOBBY.room;LOBBY_REF=db.ref('rooms/'+code+'/meta');LOBBY_REF.on('value',s=>{const m=s.val();if(!m||!m.hike||!LOBBY)return;const g=m.gen||0;if(g>(LOBBY.gen||0)){LOBBY_PEND=Object.assign({code},m);lobbyInvite()}})}).catch(()=>{})
+}
+function lobbyInvite(){
+  const m=LOBBY_PEND;if(!m||!LOBBY)return;
+  if(screen!=='hub'||MODAL||(COOP&&COOP.live)){clearTimeout(LOBBY_TM);LOBBY_TM=setTimeout(lobbyInvite,4000);return}
+  const hk=HIKES.find(h=>h.id===m.hike);if(!hk){LOBBY_PEND=null;return}
+  const done=()=>{LOBBY.gen=m.gen||0;lobbySave();LOBBY_PEND=null};
+  sfx('notify');
+  showModal({title:'👥 Lobby: neue Tour',text:(m.name||'Der Admin')+' startet eine neue gemeinsame Tour: '+hk.name+' ('+hk.km+' km) am '+dateStr(m.day)+'. Möchtest du mitwandern?',buttons:[{label:'🥾 Mitwandern',primary:1,fn:()=>{done();coopJoinFlow(m.code).catch(er=>toast(er.message||String(er),'bad'))}},{label:'Später',fn:done}]});
+}let HIKE_SNAP=null;let SHOP_RE=null,SHOP_SC=null;
 async function coopHost(hikeId){
   const db=await fbLoad();let code='',ok=false;
+  if(LOBBY&&LOBBY.host&&LOBBY.room){try{const mr=db.ref('rooms/'+LOBBY.room+'/meta');const old=(await mr.get()).val();if(old&&old.host===FB_UID){await mr.update({hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:G.day|0,gen:(old.gen||0)+1,name:String(G.name||'Wanderer').slice(0,40)});code=LOBBY.room;ok=true}}catch(e){}}
   for(let i=0;i<6&&!ok;i++){
     code=fbRandCode();
     try{await db.ref('rooms/'+code+'/meta').set({host:FB_UID,hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:G.day|0,name:String(G.name||'Wanderer').slice(0,40),created:firebase.database.ServerValue.TIMESTAMP});ok=true}catch(e){}
   }
   if(!ok)throw new Error('Der Raum konnte nicht angelegt werden.');
   const m=(await db.ref('rooms/'+code+'/meta').get()).val();
-  COOP={room:code,seed:m.seed,hike:hikeId,host:true,live:false,peers:{},vis:{},ok:false,unlocked:false,day:m.day};
+  lobbySet(code,true,m.gen||0);COOP={room:code,seed:m.seed,hike:hikeId,host:true,live:false,peers:{},vis:{},ok:false,unlocked:false,day:m.day};
   return code;
 }
 async function coopRead(code){
@@ -4644,6 +4691,7 @@ async function coopRead(code){
   return Object.assign({code},m);
 }
 function coopArm(m,host){
+  lobbySet(m.code,host,m.gen||0);
   COOP={room:m.code,seed:m.seed,hike:m.hike,host:!!host,live:false,peers:{},vis:{},ok:false,unlocked:false,day:m.day};
 }
 function coopBriefingModal(m,host){
@@ -4817,7 +4865,7 @@ function coopDraw(g,tm){
     g.fillStyle='#fff';g.fillText(nm,sx,gy-97);g.restore();
   }
 }
-function renderHub(){
+function renderHub(){setTimeout(()=>{try{lobbyWatch();lobbyInvite()}catch(e){}},700);
   try{coopStop()}catch(e){}
   H=null;
   const d=dateOf(G.day),s=seasonOfM(d.m),pend=G.pending;
@@ -5511,9 +5559,8 @@ function updateLivePanel(){
   if(!livePanelOn){
     livePanelOn=true;
     p.innerHTML=`<div class="pill" style="padding:8px"><b style="color:#ff5d5d">🔴 LIVE</b> <span id="lv-v"></span><div class="bar"><i id="lv-m" style="background:#ff5d73;width:50%"></i></div><small class="dim" style="color:#cde">Stimmung der Zuschauer</small>
-     <div id="lv-c" style="height:74px;overflow:hidden;font-size:11px;margin:4px 0;display:flex;flex-direction:column;justify-content:flex-end"></div>
-     <div class="seg"><button id="lv-t">🗣️ Plaudern</button><button id="lv-d" class="warnb">🙏 Spenden</button><button id="lv-e">⏹</button></div>
-     <small style="color:#cde">Ein Aufruf ist okay, jeder weitere vergrault Zuschauer.</small></div>`;
+     <div id="lv-c" style="height:48px;overflow:hidden;font-size:11px;margin:4px 0;display:flex;flex-direction:column;justify-content:flex-end"></div>
+     <div class="seg"><button id="lv-t">🗣️ Plaudern</button><button id="lv-d" class="warnb">🙏 Um Spenden bitten</button><button id="lv-e">⏹</button></div></div>`;
     $('#lv-t').onclick=()=>{liveTalk()};
     $('#lv-d').onclick=()=>{liveCall()};
     $('#lv-e').onclick=()=>{if(H.action&&H.action.kind==='live'){H.action=null;liveEnd()}};
@@ -5625,7 +5672,7 @@ H.cd=(H.cd||0)+(((H.dir||1)<0?1:0)-(H.cd||0))*Math.min(1,dt*2.2);
   if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=6&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
   drawScene(cv.getContext('2d'),tm,dt);
   H.x=rx;H.phase=rph;
-  hudT-=dt;if(hudT<=0){hudT=0.2;updateHUD()}
+  hudT-=dt;if(hudT<=0){hudT=0.2;try{updateHUD()}catch(e){console.error(e)}try{updateLivePanel()}catch(e){}}
   if(Math.floor(tm*0.2)%15===0&&Math.floor(tm)%25===0&&!H.ended&&!H._sv){H._sv=1;save()}else if(Math.floor(tm)%25===1)H._sv=0;
 }
 window.addEventListener('keydown',e=>{
@@ -5726,8 +5773,10 @@ function openMap(){
 }
 
 /* ---------- Ortsladen ---------- */
+function shopOpenInfo(f){const h=(H.t/60)%24;const a=f.type==='lodge'?6:7,b=f.type==='lodge'?22:20;const open=h>=a&&h<b;const nx=open?0:(h<a?a-h:a+24-h);const wait=Math.ceil(nx*60);return {open,a,b,wait,txt:String(a).padStart(2,'0')+':00 Uhr'}}
 function openVillageShop(f){
   if(!f)return;
+  {const si=shopOpenInfo(f);if(!si.open){H.walking=false;const wt=si.wait>=60?Math.floor(si.wait/60)+' Std. '+(si.wait%60)+' Min.':si.wait+' Min.';showModal({title:'🔒 '+esc(f.name||'Laden')+' ist geschlossen',text:'Der Laden öffnet wieder um '+si.txt+' (in '+wt+'). Öffnungszeiten: '+String(si.a).padStart(2,'0')+':00 – '+String(si.b).padStart(2,'0')+':00 Uhr.',buttons:[{label:'⏳ Bis zur Öffnung warten ('+wt+')',primary:1,fn:()=>beginAction('wait','Wartet vor dem Laden …',si.wait,()=>{toast('🏪 '+(f.name||'Der Laden')+' hat jetzt geöffnet.','good');openVillageShop(f)})},{label:'Weiterwandern',fn:()=>{if(!H.camp.pitched&&!H.sleep.active)H.walking=true}}]});return}}
   H.walking=false;
   HUTMUL=f.type==='lodge'?2.3:1;
   const items=f.type==='lodge'?[...FOODS.filter(x=>['bar','choc','nuts','dry','noodles','coffee','bread'].includes(x.id)),GAS,...(H.dog?[DOGFOOD]:[])]:[...FOODS.filter(x=>x.shop),GAS,...(H.dog?[DOGFOOD]:[])];
