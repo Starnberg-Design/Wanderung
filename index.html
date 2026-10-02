@@ -1460,7 +1460,6 @@ const TAP_KINDS=['shop','forage','fish','special','summit'];
 function captureIcon(ic){
   if(ic.taken)return;
   if(TAP_KINDS.includes(ic.kind))return tapIcon(ic);
-  if(H.rec===0){toast('📷 Aufnahme ist aus – stelle sie über den Kamera-Knopf höher!','warn');return}
   const dev=handheld();
   if(!dev){toast('📷 Kein funktionierendes Aufnahmegerät!','bad');return}
   ic.taken=true;
@@ -3255,7 +3254,9 @@ function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
   const si=lsSeason(sn||0),v=LS_V[kind];if(!v)return false;
   lsPre(si);
   const bmp=lsBmp(v[si],dim);if(!bmp)return false;
-  g.save();g.translate(sx,y+S*0.004);if(flip)g.scale(-1,1);
+  g.save();g.translate(sx,y+S*0.004);
+  {const k=clamp((groundY(sx+camX+14)-groundY(sx+camX-14))/28,-0.9,0.9);if(k)g.transform(1,k,0,1,0,0)} /* Boden-Neigung: Unterkante folgt dem Hang */
+  if(flip)g.scale(-1,1);
   if(sway)g.transform(1,0,-0.8*sway/S,1,0,0);
   const dm=LS_DIM[v[si]],Wd=dm?dm[0]*S/100:S,Ht=dm?dm[1]*S/100:S;
   g.drawImage(bmp,-Wd/2,-Ht,Wd,Ht);g.restore();
