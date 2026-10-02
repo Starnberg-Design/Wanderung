@@ -162,6 +162,9 @@ input[type=range]{accent-color:var(--acc)}
 .vrow .mt{flex:1;min-width:0}
 .badge{display:inline-block;border-radius:6px;font-size:.75em;padding:1px 6px;margin-left:4px;background:#333}.badge.hot{background:#c0392b}
 .cmt{padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:.9em}
+.hl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.hl-live{background:#d22;color:#fff;font-weight:700;font-size:.8em;padding:2px 8px;border-radius:6px;animation:hlp 1.4s infinite}@keyframes hlp{50%{opacity:.55}}
+.hl-chat{height:270px;overflow:auto;background:#0d1812;border-radius:8px;padding:8px;font-size:.92em}.hl-chat>div{padding:3px 0;animation:hlin .35s}.hl-chat b{color:#8fd19e}.hl-chat .sys{color:#f2c14e}@keyframes hlin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fr-v{cursor:pointer}.fc-in{display:flex;gap:8px;margin-top:8px}.fc-in input{flex:1}
 canvas.chart{width:100%;height:140px;display:block}
 /* Landscape phone */
 @media(max-height:520px){
@@ -5089,7 +5092,7 @@ function friendChannel(f){
   const c=f.c,ban=safeImg(c.banner),av=safeImg(c.avatar);
   const vids=(Array.isArray(c.videos)?c.videos:Object.values(c.videos||{})).filter(Boolean);
   const pos=clamp(+c.bannerPos||50,0,100),fit=c.bannerFit==='contain'?'contain':'cover';
-  const tiles=vids.map((v,i)=>'<div class="fr-v"><canvas data-fv="'+i+'" width="176" height="99"></canvas>'+(v.ab?'<i>abgebrochen</i>':'')+'<b>'+esc(v.t||'Video')+'</b><small>👁 '+fmtInt(v.v||0)+' · 👍 '+fmtInt(v.l||0)+' · 👎 '+fmtInt(v.d||0)+'</small></div>').join('');
+  const tiles=vids.map((v,i)=>'<div class="fr-v" title="Kommentare ansehen"><canvas data-fv="'+i+'" width="176" height="99"></canvas>'+(v.ab?'<i>abgebrochen</i>':'')+'<b>'+esc(v.t||'Video')+'</b><small>👁 '+fmtInt(v.v||0)+' · 👍 '+fmtInt(v.l||0)+' · 👎 '+fmtInt(v.d||0)+' · 💬</small></div>').join('');
   showModal({replace:true,wide:true,title:'📺 '+esc(c.chan||c.name||'Kanal'),
     html:'<div class="fr-ban" style="background:#12281d '+(ban?'url('+ban+') 50% '+pos+'%/'+fit+' no-repeat':'')+'"></div>'+
       '<div class="fr-head"><div class="fr-av big">'+(av?'<img src="'+av+'" alt="">':'🥾')+'</div><div><b>'+esc(c.chan||'')+'</b><small>'+esc(c.name||'')+' · '+fmtInt(c.subs||0)+' Abonnenten<br>'+(c.hikes||0)+' Touren · '+fmtInt(c.km||0)+' km gewandert</small></div></div>'+
@@ -5097,11 +5100,44 @@ function friendChannel(f){
     buttons:[{label:'◀ Zurück',fn:()=>frRender()}],
     onOpen:m=>{
       const old=G.look;
+      m.querySelectorAll('.fr-v').forEach((el,i)=>el.onclick=()=>friendVideo(f,vids[i]));
       m.querySelectorAll('canvas[data-fv]').forEach(cv=>{
         const v=vids[+cv.dataset.fv];if(!v||!v.th)return;
         try{if(c.look)G.look=Object.assign({},old,c.look);drawThumb(cv,{thumb:{id:String(v.th.id||'pano'),biome:String(v.th.biome||'wald'),e:String(v.th.e||'🥾'),seed:+v.th.seed||1,hikeId:v.th.hikeId}})}catch(e){}finally{G.look=old}
       });
     }});
+}
+let FC_LAST=0;
+function fcLine(c){return '<div class="cmt"><b>'+esc(String(c.n||'Wanderer').slice(0,30))+'</b> <small>· '+(c.ts?new Date(+c.ts).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'')+'</small><br>'+esc(String(c.t||'').slice(0,140))+'</div>'}
+function friendVideo(f,v){
+  if(!v)return;const vid=String(+v.id||0);
+  showModal({replace:true,wide:true,title:'💬 '+esc(String(v.t||'Video').slice(0,60)),
+    html:'<p class="hint">Kommentiere zum Spaß das Video von '+esc(f.c.name||f.c.chan||'deinem Freund')+' – er sieht es im Studio unter „Community“.</p><div id="fc-list" style="max-height:260px;overflow:auto"><p class="hint">Lade Kommentare …</p></div><div class="fc-in"><input id="fc-txt" maxlength="140" placeholder="Dein Kommentar …"><button class="primary" id="fc-send">Senden</button></div>',
+    buttons:[{label:'◀ Zurück',fn:()=>friendChannel(f)}],
+    onOpen:m=>{
+      const list=m.querySelector('#fc-list'),inp=m.querySelector('#fc-txt'),btn=m.querySelector('#fc-send');
+      const items=[];const draw=()=>{list.innerHTML=items.length?items.sort((a,b)=>(b.ts||0)-(a.ts||0)).map(fcLine).join(''):'<p class="hint">Noch keine Kommentare – schreib den ersten!</p>'};
+      fbLoad().then(db=>db.ref('vcomments/'+f.uid+'/'+vid).limitToLast(40).get()).then(sn=>{const o=sn.val()||{};Object.keys(o).forEach(k=>{if(o[k]&&typeof o[k]==='object')items.push(o[k])});draw()}).catch(()=>{list.innerHTML='<p class="hint">Kommentare sind gerade nicht erreichbar.</p>'});
+      const send=async()=>{
+        const t=inp.value.replace(/\s+/g,' ').trim().slice(0,140);if(!t)return;
+        if(Date.now()-FC_LAST<8000){toast('Bitte kurz warten …');inp.placeholder='Bitte kurz warten …';return}
+        FC_LAST=Date.now();btn.disabled=true;
+        const c={n:String(G.name||'Wanderer').slice(0,30),t,ts:Date.now(),u:FB_UID||''};
+        try{const db=await fbLoad();await db.ref('vcomments/'+f.uid+'/'+vid).push(c);items.push(c);draw();inp.value='';sfx('success')}
+        catch(e){list.insertAdjacentHTML('afterbegin','<p class="hint">Das Kommentieren hat nicht geklappt.</p>')}
+        btn.disabled=false;
+      };
+      btn.onclick=send;inp.onkeydown=e=>{if(e.key==='Enter')send()};
+    }});
+}
+let FC_PULL=0;
+async function fbPullComments(){
+  if(!G||!G.pubOn||!navigator.onLine||Date.now()-FC_PULL<120000)return;FC_PULL=Date.now();
+  const db=await fbLoad(),sn=await db.ref('vcomments/'+FB_UID).get(),o=sn.val()||{},since=G.fbCmtTs||0,add=[];
+  Object.keys(o).forEach(vid=>{const cs=o[vid]||{};Object.keys(cs).forEach(k=>{const c=cs[k];if(c&&+c.ts>since)add.push({vid:+vid||null,user:String(c.n||'Wanderer').slice(0,30),text:String(c.t||'').slice(0,140),ts:+c.ts})})});
+  if(!add.length)return;add.sort((a,b)=>a.ts-b.ts);
+  add.forEach(a=>{G.comments.unshift({day:G.day,vid:a.vid,user:a.user,text:a.text,fr:1});G.fbCmtTs=Math.max(G.fbCmtTs||0,a.ts)});
+  if(G.comments.length>80)G.comments.length=80;save();
 }
 /* ---------- Gemeinsame Tour (Firebase) ---------- */
 let COOP=null;
@@ -5342,7 +5378,7 @@ function renderHub(){setTimeout(()=>{try{lobbyWatch();lobbyInvite()}catch(e){}},
   $('#h-shop').onclick=()=>{SHOPTAB='Rucksack';renderShop();show('shop')};
   $('#h-dog').onclick=()=>{SHOPTAB='Hund';renderShop();show('shop')};
   $('#h-studio').onclick=()=>{STUDIOTAB='Übersicht';renderStudio();show('studio')};
-  $('#h-menu').onclick=hubMenu;$('#h-friends').onclick=()=>showFriends();try{fbAuto()}catch(e){}
+  $('#h-menu').onclick=hubMenu;$('#h-friends').onclick=()=>showFriends();try{fbAuto()}catch(e){}try{fbPullComments().catch(()=>{})}catch(e){}
   if(pend)$('#h-pub').onclick=()=>openPublish();
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hub';waitDays(+b.dataset.w)});
   $$('[data-fix]').forEach(b=>b.onclick=()=>workshop(b.dataset.fix,b.dataset.how));
@@ -6519,9 +6555,35 @@ function homeLiveRun(){
   G.lives.push({day:G.day,avg,peak,don:0,gain,loss,begs:0,home:true,aff:comm+bonus});if(G.lives.length>40)G.lives.shift();
   save();
   const sl=sold.length?'<p>🛒 <b>Käufe über deinen Partnerlink:</b><br>'+sold.map(x=>x.n+'× '+esc(x.name)+' → Provision '+eur(x.c)).join('<br>')+'</p>':(ad&&spam===0?'<p class="hint">🛒 Niemand hat über deinen Link gekauft. '+(G.subs<10000?'Bei einem kleinen Kanal ist das normal – erst ab etwa 10.000 Abonnenten gibt es hin und wieder Käufe.':'Diesmal hat es nicht gereicht – das ist Zufall.')+'</p>':'');
-  showModal({wide:true,title:'📡 Stream beendet',html:`<p>Ø Zuschauer: <b>${fmtN(avg)}</b> · Spitze: <b>${Math.round(peak)}</b><br>Abonnenten: <b class="goodtxt">+${gain}</b>${loss?' · <b class="badtxt">−'+loss+' (genervt)</b>':''}</p>${sl}${bonus?'<p>🤝 Sponsoren-Bonus fürs Vorstellen der Leihgabe: <b>'+eur(bonus)+'</b></p>':''}${comm+bonus>0?'<p class="hint">Provisionen und Boni kommen mit der nächsten Auszahlung am 21. auf dein Konto (unter „Ausstehend“).</p>':''}${hk?'<p>🗺️ Du hast <b>'+esc(hk.name)+'</b> angeteasert: Das Tourvideo bekommt später etwas mehr Aufmerksamkeit.</p>':''}<h4>Chat</h4><div class="cmt">${chat.map(x=>esc(x)).join('<br>')}</div>${loss?'<div class="warnbox bad">'+(spam>=2?'Die Community ist sauer: Dauerwerbung! ':'Die Zuschauer wollen keine Dauerwerbesendung. ')+'Geh bald wieder auf Tour, sonst springen mehr ab.</div>':''}`,
+  const showRes=()=>showModal({replace:true,wide:true,title:'📡 Stream beendet',html:`<p>Ø Zuschauer: <b>${fmtN(avg)}</b> · Spitze: <b>${Math.round(peak)}</b><br>Abonnenten: <b class="goodtxt">+${gain}</b>${loss?' · <b class="badtxt">−'+loss+' (genervt)</b>':''}</p>${sl}${bonus?'<p>🤝 Sponsoren-Bonus fürs Vorstellen der Leihgabe: <b>'+eur(bonus)+'</b></p>':''}${comm+bonus>0?'<p class="hint">Provisionen und Boni kommen mit der nächsten Auszahlung am 21. auf dein Konto (unter „Ausstehend“).</p>':''}${hk?'<p>🗺️ Du hast <b>'+esc(hk.name)+'</b> angeteasert: Das Tourvideo bekommt später etwas mehr Aufmerksamkeit.</p>':''}<h4>Chat</h4><div class="cmt">${chat.map(x=>esc(x)).join('<br>')}</div>${loss?'<div class="warnbox bad">'+(spam>=2?'Die Community ist sauer: Dauerwerbung! ':'Die Zuschauer wollen keine Dauerwerbesendung. ')+'Geh bald wieder auf Tour, sonst springen mehr ab.</div>':''}`,
     buttons:[{label:'OK',fn:()=>{try{renderStudio()}catch(e){}}}]});
-  sfx('success');
+  homeLiveStage(chat,sold,peak,showRes);
+}
+function homeLiveStage(chat,sold,peak,showRes){
+  const msgs=[];
+  for(let i=0;i<2;i++)msgs.push({u:pick(NAMES),t:pick(CHAT_HOME)});
+  const mid=chat.slice();
+  sold.forEach(x=>mid.splice(Math.floor(Math.random()*(mid.length+1)),0,'\u0001🛒 '+pick(NAMES)+' hat gerade '+x.name+' über deinen Link bestellt!'));
+  mid.forEach((t,i)=>{if(t.charAt(0)==='\u0001')msgs.push({u:'',t:t.slice(1),sys:1});else msgs.push({u:pick(NAMES),t});if(i%3===2)msgs.push({u:pick(NAMES),t:pick(CHAT_HOME)})});
+  while(msgs.length<12)msgs.push({u:pick(NAMES),t:pick(CHAT_HOME)});
+  let fin=false,i=0,tm=0,vw=1;
+  const finish=()=>{if(fin)return;fin=true;clearTimeout(tm);sfx('success');showRes()};
+  showModal({replace:true,wide:true,title:'🔴 Livestream von zu Hause',
+    html:'<div class="hl-top"><span class="hl-live">● LIVE</span><span id="hl-v">👁 1 Zuschauer</span></div><div class="hl-chat" id="hl-chat"></div><p class="hint">Der Chat läuft live mit – die Community kommentiert, während du sendest.</p>',
+    buttons:[{label:'⏹ Stream beenden',primary:1,fn:finish}]});
+  const tick=()=>{
+    const box=document.getElementById('hl-chat');if(fin)return;if(!box){finish();return}
+    const target=Math.max(1,Math.round(peak*Math.min(1,0.35+i/Math.max(6,msgs.length)*0.75)*rnd(0.9,1.05)));
+    vw+=Math.sign(target-vw)*Math.max(1,Math.round(Math.abs(target-vw)*0.4));
+    const ve=document.getElementById('hl-v');if(ve)ve.textContent='👁 '+vw+' Zuschauer';
+    if(i<msgs.length){
+      const m=msgs[i++],d=document.createElement('div');
+      d.innerHTML=m.sys?'<span class="sys">'+esc(m.t)+'</span>':'<b>'+esc(m.u)+':</b> '+esc(m.t);
+      box.appendChild(d);while(box.children.length>40)box.removeChild(box.firstChild);box.scrollTop=box.scrollHeight;
+      sfx('click');tm=setTimeout(tick,rnd(650,1600));
+    }else tm=setTimeout(finish,1800);
+  };
+  tm=setTimeout(tick,500);
 }
 function takeTeaser(id){const t=(G.teasers||{})[id];if(t&&G.day-t.day<=90){delete G.teasers[id];return t.boost}if(t)delete G.teasers[id];return 0}
 function loanHTML(){
@@ -6659,7 +6721,7 @@ function renderStudio(){
     body=`<h4>Abonnenten-Verlauf</h4><canvas class="chart" id="ch2"></canvas><h4>Einnahmen pro Tag (gutgeschrieben)</h4><canvas class="chart" id="ch3"></canvas><h4>Aufrufe pro Tag (120 Tage)</h4><canvas class="chart" id="ch4"></canvas>
      <p class="hint">Videos bringen die meisten Aufrufe in den ersten ein bis zwei Wochen und dann noch lange einen kleinen Rest. Selten läuft ein Video plötzlich viral. Zu häufiges Betteln im Livestream senkt Reichweite und Abos für mehrere Tage (aktuell: ${G.begHeat>2?'<span class="badtxt">Ruf angeschlagen</span>':'okay'}).</p>`;
   }else if(STUDIOTAB==='Community'){
-    body=G.comments.length?G.comments.slice(0,30).map(c=>{const v=(G.videos||[]).find(x=>x.id===c.vid);return `<div class="cmt"><b>${esc(c.user)}</b> <small>· ${dateStr(c.day)}${v?' · '+esc(v.title.slice(0,40)):''}</small><br>${esc(c.text)}</div>`}).join(''):'<p class="hint">Noch keine Kommentare.</p>';
+    body=G.comments.length?G.comments.slice(0,30).map(c=>{const v=(G.videos||[]).find(x=>x.id===c.vid);return `<div class="cmt"><b>${esc(c.user)}</b>${c.fr?' 👥':''} <small>· ${dateStr(c.day)}${v?' · '+esc(v.title.slice(0,40)):''}</small><br>${esc(c.text)}</div>`}).join(''):'<p class="hint">Noch keine Kommentare.</p>';
   }else if(STUDIOTAB==='Partner'){
     const of=G.offers||[],sp=G.sponsors||[];
     body=`<h4>Anfragen</h4>${of.length?of.map(o=>`<div class="cmt"><b>${esc(o.name)}</b> · ${esc(o.what)}<br><small>${eur0(o.fee)} pro Monat · verlangt mindestens ein Video pro Monat mit gutem Material · Angebot gilt noch ${o.until-G.day} Tage</small><div class="seg" style="margin-top:6px"><button class="primary" data-of="${o.id}" data-ok="1">Annehmen</button><button data-of="${o.id}">Ablehnen</button></div></div>`).join(''):'<p class="hint">Aktuell keine Anfragen. Werbepartner melden sich bei größeren Kanälen von selbst.</p>'}
