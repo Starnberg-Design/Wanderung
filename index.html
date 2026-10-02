@@ -1326,9 +1326,11 @@ function setWeather(type){
   const hk=H.hk,W=WEATHER[type];
   H.weather={type,until:H.t+rnd(260,760),wind:W.wind*rnd(0.75,1.3)*hk.regD.wind*(0.85+0.15*hk.ext),rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.ext*0.4):0};
   H.nextW=nextWeather(type);H.wxWarned=false;
+  if((type==='gewitter'||type==='sturm')&&H.started)try{comEv('storm')}catch(e){}
   if((type==='gewitter'||type==='sturm')&&H.started)spawnIcon({kind:'storm',x:H.x+320,e:type==='gewitter'?'⛈️':'🌪️',label:type==='gewitter'?'Gewitter':'Sturm',base:30,life:12});
 }
 function updateWeather(){
+  try{comTick()}catch(e){}
   if(H.lodge&&H.lodge.until&&H.t>=H.lodge.until&&!(H.sleep.active&&H.indoor==='lodge')){H.lodge=null;toast('🏨 Check-out: Dein Zimmer ist nicht mehr gebucht.')}
   if(H.t>=H.weather.until){setWeather(H.nextW||nextWeather(H.weather.type));return}
   if(!H.wxWarned&&H.weather.until-H.t<110&&(H.nextW==='gewitter'||H.nextW==='sturm')){
@@ -1617,7 +1619,7 @@ function tapIcon(ic){
   else if(ic.kind==='special'){ic.dead=true;runSpecial(ic.f)}
   else if(ic.kind==='summit')openSummitBook(ic.f);
 }
-function attackByAnimal(a){
+function attackByAnimal(a){try{comEv('attack')}catch(e){}
   H.body.hp=Math.max(1,H.body.hp-(a.id==='bear'?28:14));
   for(const id in H.food)H.food[id]=Math.floor(H.food[id]*0.75);
   if(Math.random()<0.35)H.inj.sprain=H.t+1440;
@@ -2478,6 +2480,39 @@ function cafeCharge(id){
   const d=H.dev[id];if(!d||d.broken)return;
   beginAction('charge','Lädt '+d.def.name+' im Laden …',30,()=>{d.batt=100;toast('🔌 '+d.def.name+' ist voll geladen.','good')});
 }
+/* ---------- Community reagiert auf Ereignisse ---------- */
+const COM_EV={
+ tent:{re:/mitgerissen/,chat:['WAS?! Dein Zelt ist weg?! 😱','Das Zelt ist einfach weggeflogen 😂 Sorry, aber krass!','Wo schläfst du jetzt?? Hoffentlich hast du ein Tarp','Hab die Böe live gesehen – Wahnsinn!','Zelt weg … Respekt, dass du ruhig bleibst'],cmt:['Das Zelt ist weggeflogen 😂 Legendär.','Billigzelt gegen Wind: 0:1','Sowas passiert nur dir! Danke fürs Mitnehmen.','Ein besseres Zelt hätte gehalten, nur so am Rande 😉']},
+ dog:{re:/abgehauen/,chat:['Wo ist {n} hin?? 😰','Hoffentlich findest du {n} schnell!','Beim nächsten Mal Leine dran 🐕','{n} kommt bestimmt zurück!'],cmt:['Oh nein, {n} ist abgehauen! Zum Glück wieder da 🐕','Bitte pass besser auf {n} auf, wir lieben den Kleinen!','Hund ohne Leine … da hatte ich schon Angst.']},
+ attack:{re:/@@@/,chat:['Oh nein, hat dich das Tier angegriffen?!','Alles ok bei dir??','Das war gefährlich – pass auf dich auf!'],cmt:['Der Angriff war heftig. Gut, dass du heil davongekommen bist!','Mehr Abstand zu Wildtieren halten, bitte!','Mein Herz hat gerast bei der Szene 😳']},
+ injury:{re:/@@@/,chat:['Autsch, das sah schmerzhaft aus 🙈','Gute Besserung, geh es ruhig an!','Hoffentlich nichts Schlimmes.'],cmt:['Gute Besserung! Bitte nicht übertreiben.','Mit Wanderstöcken wäre das vielleicht nicht passiert.','Autsch! Aber du ziehst das durch, Respekt.']},
+ drone:{re:/Drohne ist abgestürzt/,chat:['Die Drohne!! RIP 😭','Drohnenverlust … das tut weh.'],cmt:['Die Drohne ist abgestürzt 😭 F im Chat.','Schade um die schönen Luftaufnahmen.']},
+ sick:{re:/verunreinigt/,chat:['Nicht aus Pfützen trinken! 🤢','Wasser immer filtern!'],cmt:['Bitte immer Wasser filtern – gute Besserung!','Das hätte man mit einem Filter vermeiden können.']},
+ storm:{re:/@@@/,chat:['Da zieht ein Unwetter auf ⛈️ Such Schutz!','Gewitter? Sei bloß vorsichtig!'],cmt:['Das Unwetter sah wild aus ⛈️ Mut hast du!','Bei Gewitter bitte nicht auf dem Grat bleiben!']},
+ cold:{re:/Notfall: Du baust bei Kälte/,chat:['Brr, das sah kalt aus 🥶','Zieh dich wärmer an!'],cmt:['Mir wurde beim Zuschauen kalt 🥶 Wärmer einpacken!']}
+};
+function comTxt(s){return String(s).replace(/\{n\}/g,(G.dog&&G.dog.name)||'der Hund')}
+function comScan(msg){if(!H||!H.hk||typeof msg!=='string')return;for(const k in COM_EV){const r=COM_EV[k].re;if(r&&r.source!=='@@@'&&r.test(msg)){comEv(k);return}}}
+function comEv(k,detail){
+  if(!H||!H.hk||!COM_EV[k])return;
+  H.evLog=H.evLog||[];const last=H.evLog.filter(e=>e.k===k).pop();if(last&&H.t-last.t<60)return;
+  H.evLog.push({k,t:H.t,d:detail});
+  if(H.live){comLiveReact(k,0)}
+  else if(G.subs>=30){H.evQ=H.evQ||[];if(H.evQ.length<2)H.evQ.push({k,at:H.t+rnd(25,70)})}
+}
+function comLiveReact(k,mirror){
+  const L=H.live;if(!L)return;const E=COM_EV[k];if(!E)return;
+  L.pm=L.pm||[];const n=mirror?1:2+(Math.random()<0.5?1:0);
+  const pool=E.chat.slice();
+  for(let i=0;i<n&&pool.length;i++){const m=pool.splice(Math.floor(Math.random()*pool.length),1)[0];L.pm.push((mirror?'Eben noch gesehen: ':'')+comTxt(m))}
+  if(!mirror)L.mood=Math.min(100,L.mood+6);
+}
+function comTick(){
+  if(!H||!H.evQ||!H.evQ.length)return;
+  const e=H.evQ[0];if(H.t<e.at)return;H.evQ.shift();
+  const E=COM_EV[e.k];if(!E)return;
+  toast('💬 '+pick(NAMES)+' (Community): „'+comTxt(pick(E.cmt))+'“');
+}
 /* ---------- Livestream ---------- */
 const CHAT_GOOD=['Endlich live! 🔥','Wie ist das Wetter bei dir?','Mega Ausblick!','Zeig mal den Rucksack!','Grüße aus Hamburg 👋','Was gibt es heute zu essen?','Respekt für die Etappe!','Wie schwer ist dein Rucksack?','Bin von der Arbeit aus dabei 😅','Schönes Licht gerade!'];
 const CHAT_SMALL=['Hallo? Jemand da?','Nur ich hier 😄','Immerhin zwei Leute!','Bin neu hier, cooler Kanal!'];
@@ -2643,6 +2678,7 @@ function liveStart(mins){
   H.live={dur:mins,viewers:0,peak:0,sumV:0,n:0,donations:0,begs:0,mood:62,chat:[],lastCall:-999,lastTalk:-999,subsGain:0,subsLoss:0,chatT:0,msgCd:2};
   H.stats.streams++;
   liveMsg('🔴 Stream gestartet!','sys');
+  try{const rc=(H.evLog||[]).filter(e=>H.t-e.t<150).slice(-2);rc.forEach(e=>comLiveReact(e.k,1))}catch(er){}
   beginAction('live','Livestream läuft …',mins,()=>liveEnd(),{tick:h=>liveTick(h)});
 }
 /* Spendenbereitschaft: normal sehr gering (klein am Anfang); in echter Notlage deutlich mehr – wird dem Spieler nicht verraten */
@@ -2667,6 +2703,7 @@ function liveTick(h){
   L.mood+=(60-L.mood)*h*0.004;L.mood=clamp(L.mood,0,100);
   if(Math.random()<0.0025*L.viewers*(L.mood/70)*h*Math.min(1,donF()*3)){const a=+(rnd(1,4)*Math.max(0.15,donF()*2)).toFixed(2);L.donations+=a;G.money+=a;G.liveEarned+=a;liveMsg('💶 Kleine Spende: '+eur(a),'don');sfx('coin')}
   L.msgCd-=h;
+  if(L.pm&&L.pm.length&&L.viewers>0.6){L.pmCd=(L.pmCd||0)-h;if(L.pmCd<=0){liveMsg(L.pm.shift(),'ev');L.pmCd=rnd(0.4,1.4)}}
   if(L.msgCd<=0){L.msgCd=rnd(2.5,5);if(L.viewers>=0.6)liveMsg((L.viewers<3?pick(CHAT_SMALL):pick(CHAT_GOOD)))}
 }
 function liveTalk(){
@@ -2859,8 +2896,7 @@ function endHike(reason){
   if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
   const days=Math.floor(H.t/1440)+1;
   G.pending={teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
-    thrill:H.thrill,risk:H.startRisk,flags:H.flags,lostN:H.stats.junctionsLost,hadDog:!!H.dog,
-    clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
+    thrill:H.thrill,risk:H.startRisk,flags:H.flags,lostN:H.stats.junctionsLost,hadDog:!!H.dog,evs:(H.evLog||[]).map(e=>e.k),clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
   H.pendingSummary={clips:H.clips.length};
   save();
   onHikeEnd(reason);
@@ -4051,7 +4087,7 @@ function pushAlert(key,e,label,fn,secs,keep){
   if(i>=0)ALERTS[i]=a;else ALERTS.push(a);
 }
 function hintSay(txt,secs){TH.cur={txt,say:true,t0:tm,dur:secs||Math.max(4,3.8+txt.length*0.045)}}
-function injuryAlert(txt){
+function injuryAlert(txt){try{comEv('injury')}catch(e){}
   const kit=H.g.tools.kit&&H.kit>0;
   hintSay(txt+(kit?' Mein Erste-Hilfe-Set hilft jetzt.':' Ohne Erste-Hilfe-Set hilft nur Rast.'),7);
   if(kit)pushAlert('aid','🩹','Erste Hilfe',()=>actClick('aid'),10,()=>isInjured());
@@ -4376,6 +4412,7 @@ function closeModal(){
   if(MODALQ.length){const n=MODALQ.shift();setTimeout(()=>showModal(n),30)}
 }
 function toast(msg,cls=''){
+  try{comScan(msg)}catch(e){}
   if(screen!=='hike')return;
   const box=$('#toasts');if(!box)return;
   const el=document.createElement('div');el.className='toast '+cls;el.textContent=msg;box.appendChild(el);
@@ -5969,6 +6006,7 @@ function feedbackComments(p,v){
   else if(ok&&hard){add('Was für eine Leistung! Endlich eine echte Tour 🙌');add('Gänsehaut pur, danke fürs Mitnehmen!')}
   else if(ok&&easy&&(p.thrill||0)<1&&p.km>15){add('Netter Spaziergang, aber ein bisschen ereignislos.')}
   // Was kann man besser machen / was ist falsch gelaufen
+  for(const k of [...new Set(p.evs||[])].slice(0,3)){const E=COM_EV[k];if(E)out.unshift(comTxt(pick(E.cmt)))}
   const q=p.clips.length?p.clips.reduce((a,c)=>a+c.q,0)/p.clips.length:0;
   if(q<0.5&&p.clips.length>2)add('Die Bildqualität ist schwach – eine bessere Kamera würde sich lohnen.');
   if(p.clips.length<8&&p.km>20)add('Zu wenig Material für so eine Tour. Mehr filmen!');
