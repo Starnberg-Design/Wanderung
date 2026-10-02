@@ -746,23 +746,39 @@ const FEAT_RAD={see:140,lodge:300,village:380,sight:260,animal:170,forage:160,sp
 function stageWaterF(hk,i){let h=0;for(const ch of hk.id)h=(h*31+ch.charCodeAt(0))>>>0;const r=mulberry32(h+i*131)();return r<0.3?0.15:r<0.62?0.7:1.5}
 function stageSprings(hk,st){const B=BIOMES[st.b];let n=Math.round(st.km/(B.water*1.7)*stageWaterF(hk,st.i));if(hk.stages.length<=4||st.km>=13)n=Math.max(n,1);return n}
 function waterInfo(hk){let n=0,dry=0,maxDry=0;hk.stages.forEach((s,i)=>{const c=stageSprings({stages:hk.stages,id:hk.id},{i,b:s.b,km:s.km});n+=c;if(c===0){dry++;maxDry=Math.max(maxDry,s.km)}});const per10=n/hk.km*10;return {n,per10,dry,maxDry,lbl:per10<0.55?'wenige Wasserstellen':per10<1.0?'mäßig viele Wasserstellen':'viele Wasserstellen'}}
+/* Zusätzliche Biomabschnitte: jede Etappe wird in bis zu STRETCH Teilstücke geteilt (Wald/Wiese/Tal wechseln sich ab). km-Angaben bleiben unverändert. */
+function splitStages(groups,seed){
+  const r=mulberry32((seed^0x5bd1e995)>>>0),FLEX=['wald','wiese','tal'],out=[];
+  groups.forEach(g=>{
+    const n=Math.max(1,Math.min(STRETCH,Math.round(g.km/0.9)));let prevB=g.b;
+    for(let j=0;j<n;j++){
+      let b=g.b;
+      if(j>0&&FLEX.includes(g.b)&&r()<0.75){const opts=FLEX.filter(x=>x!==prevB);b=opts[Math.floor(r()*opts.length)]}
+      const km=g.km/n,k0=g.km0+km*j;
+      out.push({i:out.length,gi:g.i,b,km0:k0,km,x0:j===0?g.x0:k0*PPK,x1:j===n-1?g.x1:(k0+km)*PPK,a0:g.a0,a1:g.a1});
+      prevB=b;
+    }
+  });
+  return out;
+}
 function buildRoute(hk,seed){
   const rng=mulberry32(seed);
-  const stages=[];let acc=0,prev=hk.startAlt;
-  hk.stages.forEach((s,i)=>{stages.push({i,b:s.b,km0:acc,km:s.km,x0:acc*PPK,x1:(acc+s.km)*PPK,a0:prev,a1:s.alt});acc+=s.km;prev=s.alt});
+  const groups=[];let acc=0,prev=hk.startAlt;
+  hk.stages.forEach((s,i)=>{groups.push({i,b:s.b,km0:acc,km:s.km,x0:acc*PPK,x1:(acc+s.km)*PPK,a0:prev,a1:s.alt});acc+=s.km;prev=s.alt});
   const totalPx=acc*PPK,totalKm=acc;
+  const stages=splitStages(groups,seed);
   const N=Math.ceil((totalPx+3200)/10)+2;const elev=new Float32Array(N);
   const ph=[rng()*6.28,rng()*6.28,rng()*6.28];let si=0;const rough=1+0.1*hk.diff;
   for(let i=0;i<N;i++){
     const x=i*10;while(si<stages.length-1&&x>=stages[si].x1)si++;
-    const st=stages[si];const t=clamp((x-st.x0)/(st.x1-st.x0),0,1);const s=t*t*(3-2*t);
+    const st=stages[si],g=groups[st.gi];const t=clamp((x-g.x0)/(g.x1-g.x0),0,1);const s=t*t*(3-2*t);
     const amp=BIOMES[st.b].noise*rough;
-    elev[i]=lerp(st.a0,st.a1,s)+amp*(0.6*Math.sin(x/STRETCH*0.0055+ph[0])+0.3*Math.sin(x/STRETCH*0.0135+ph[1])+0.1*Math.sin(x/STRETCH*0.03+ph[2]));
+    elev[i]=lerp(g.a0,g.a1,s)+amp*(0.6*Math.sin(x/STRETCH*0.0055+ph[0])+0.3*Math.sin(x/STRETCH*0.0135+ph[1])+0.1*Math.sin(x/STRETCH*0.03+ph[2]));
   }
   const feats=[];let fid=0;const add=o=>{o.id=fid++;feats.push(o);return o};
   const reg=hk.regD;
   // Wasserstellen, Flüsse, Wegkreuzungen
-  stages.forEach(st=>{
+  groups.forEach(st=>{
     const L=st.x1-st.x0,B=BIOMES[st.b];
     const nW=stageSprings(hk,st);
     for(let k=0;k<nW;k++)add({type:'quelle',x:st.x0+L*((k+0.25+rng()*0.5)/nW)});
@@ -831,7 +847,7 @@ function buildRoute(hk,seed){
      placeKind(kinds.main,gap,0.6);
      placeKind(kinds.free,nor?13:sco?19:24,0.35);
    }}
-  stages.forEach(st=>{
+  groups.forEach(st=>{
     for(const key in FORAGE){
       const F=FORAGE[key];if(!F.biomes.includes(st.b))continue;
       const n=Math.round(st.km/(key==='pilze'?9:13));
