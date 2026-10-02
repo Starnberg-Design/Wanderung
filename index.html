@@ -2299,8 +2299,8 @@ function dogTick(mode,hr,dkm){
   }
   D.hunger=clamp(D.hunger-(mode==='walk'?6.4:3.2)*hr,0,100);
   D.thirst=clamp(D.thirst-(mode==='walk'?7:3)*hr,0,100);
-  if(mode==='walk'){const eN=H.body.energy,hd=Math.max(0,(H.eLast==null?eN:H.eLast)-eN);H.eLast=eN;let mul=D.leash?1.15:1;const sw=H.crossing&&H.crossing.kind==='swim',cl=H.side&&H.side.kind==='climb',steep=env.grade>0.15;if(sw||cl||steep)mul+=0.10;else if(env.grade<=0.04)mul-=0.05;D.fat=Math.min(100,D.fat+hd*mul)}
-  else{H.eLast=H.body.energy;D.fat=Math.max(0,D.fat-(mode==='sleep'?9:4)*hr)};
+  if(mode==='walk'){let mul=1;const sw=H.crossing&&H.crossing.kind==='swim',cl=H.side&&H.side.kind==='climb',steep=env.grade>0.15;if(sw||cl||steep)mul+=0.10;else if(env.grade<=0.04)mul-=0.05;D.fat=Math.min(100,D.fat+dkm*100/(def.stam*1.8)*(D.leash?1.4:1)*mul)}
+  else D.fat=Math.max(0,D.fat-(mode==='sleep'?9:4)*hr);
   const ration=def.food*0.5;
   if(D.hunger<45){
     if(H.dogfood>=ration){H.dogfood-=ration;D.hunger=Math.min(100,D.hunger+50);toast('🐕 '+G.dog.name+' frisst sein Futter.');sfx('eat')}
