@@ -208,6 +208,12 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 .timebar .seg button{padding:3px 9px;min-height:26px;font-size:.9em}
 .seasonbar.hasbar{margin-bottom:0;border-radius:14px 14px 0 0}
 .seasonbar.slim{padding:8px 14px;gap:10px}.seasonbar.slim .sb-e{font-size:26px}.seasonbar.slim .sb-t b{font-size:1.2em}.seasonbar.slim .sb-d{font-size:1em}
+#h-bot{align-items:flex-end}
+#spdwrap{display:flex;flex-direction:column;align-items:stretch;gap:5px;pointer-events:auto}
+#b-walk.rb{width:100%;min-width:132px;height:48px;border-radius:24px;flex-direction:row;gap:7px;font-size:20px;padding:0 14px}
+#b-walk.rb small{font-size:15px;font-weight:700;margin:0;white-space:nowrap}
+#spdctl{justify-content:center}
+#drawer details.moreacts{margin:6px 0}#drawer details.moreacts summary{cursor:pointer;color:var(--dim);font-size:.9em;padding:4px 0}
 </style>
 </head>
 <body>
@@ -1623,7 +1629,8 @@ function trackFeatures(){
           sfx(a.r>=3?'discover':'notify');
         }else if(d<40)f.spawned=true;
       }
-    }else if(f.type==='village'){
+    }else if(f.type==='lodge'){lodgeHint(f,d);
+    }else if(f.type==='village'){villageHint(f,d);
       if(d<460&&!f.seen){f.seen=true;toast('🏘️ Ort voraus: '+f.name+' – hier kannst du einkaufen.','good');sfx('notify')}
       if(d<300&&!hasIcon('shop',f.id)&&!f.left)spawnIcon({kind:'shop',fid:f.id,f,x:f.x+40,e:'🏪',label:f.name,life:1e9});
     }else if(f.type==='forage'){
@@ -1717,7 +1724,7 @@ function drinkWater(dirtyOK){
   if(c+dirt<=0.01)return;
   H.body.hyd=clamp(H.body.hyd+(c+dirt)*33,0,100);
   toast('💧 '+fmtN(c+dirt)+' L getrunken');sfx('drink');
-  if(dirt>0.05&&Math.random()<0.4){H.sick=H.t+480;toast('🤢 Das Wasser war verunreinigt – du bist krank (8 h).','bad')}
+  if(dirt>0.05&&Math.random()<0.4){H.sick=H.t+480;toast('🤢 Das Wasser war verunreinigt – du bist krank (8 h).','bad');injuryAlert('Mir ist schlecht … das Wasser war wohl nicht sauber.')}
 }
 function canCook(){return (H.g.tools.stove&&H.gas>=1)||nearFire()}
 function act(kind,arg){
@@ -1890,7 +1897,7 @@ function doForage(f){
     H.food[F.food]=(H.food[F.food]||0)+n;H.stats.forage+=n;
     toast('🧺 '+n+'× '+gearById(F.food).name.replace(/ \((kochen|garen)\)/,'')+' gesammelt.','good');sfx('notify');
     if(F.risky&&!hasT('natur')&&Math.random()<0.17-0.012*ES('food')){
-      H.sick=H.t+600;toast('🤢 Ein Pilz war doch nicht bekömmlich – du bist krank (10 h). Talent „Naturkundler“ verhindert das.','bad');
+      H.sick=H.t+600;toast('🤢 Ein Pilz war doch nicht bekömmlich – du bist krank (10 h). Talent „Naturkundler“ verhindert das.','bad');injuryAlert('Mir wird übel – der Pilz war wohl nicht gut.');
     }
   });
 }
@@ -2079,10 +2086,10 @@ function bodyTick(mode,hr){
   // Verletzungen
   if(mode==='walk'){
     const shoeF=g.shoes?g.shoes.blister*(1+(1-cf(g.shoes.id))*1.2):1.8;
-    if(!blister&&Math.random()<0.02*shoeF*(1+B.wet/50)*(0.85+0.15*hk.hard)*hr){H.inj.blister=H.t+(hasT('zaeh')?900:1440);toast('🩹 Du hast dir eine Blase gelaufen – das kostet spürbar Energie und Tempo.','bad');sfx('bad')}
+    if(!blister&&Math.random()<0.02*shoeF*(1+B.wet/50)*(0.85+0.15*hk.hard)*hr){H.inj.blister=H.t+(hasT('zaeh')?900:1440);toast('🩹 Du hast dir eine Blase gelaufen – das kostet spürbar Energie und Tempo.','bad');injuryAlert('Aua – ich glaub, ich hab mir eine Blase gelaufen.');sfx('bad')}
     const ls=lightSource();
     const risky=(gr<-0.12?1:0)+(env.dark>0.6?(ls==='lamp'?0.2:ls==='phone'?0.9:1.8):0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
-    if(!sprain&&Math.random()<0.018*risky*(1+0.12*H.gap)*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
+    if(!sprain&&Math.random()<0.018*risky*(1+0.12*H.gap)*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');injuryAlert('Autsch, umgeknickt!');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
   }
   let dhp=0;
   if(B.sat<=0)dhp-=3;if(B.hyd<=0)dhp-=6;if(B.warm<15)dhp-=4;if(B.warm<=0)dhp-=6;if(sick)dhp-=0.8;
@@ -2230,7 +2237,7 @@ function riverFord(f){
       const wr=H.g.shoes?H.g.shoes.wetRes:0;
       H.body.wet=clamp(H.body.wet+35*(1-wr*0.6)*(H.g.tools.drybag?0.85:1),0,100);
       if(env.frozen||env.temp<3)H.body.warm=clamp(H.body.warm-25,0,100);
-      if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.14:0.06)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist ausgerutscht und hast dir den Fuß verstaucht.','bad');
+      if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.14:0.06)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist ausgerutscht und hast dir den Fuß verstaucht.','bad');injuryAlert('Ausgerutscht! Mein Fuß tut weh.');
         if(!H.g.tools.drybag&&Math.random()<0.15){const ph=H.g.phones.find(p=>H.dev[p.id]&&!H.dev[p.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Smartphone hat Wasser abbekommen und ist defekt!','bad')}}}
       else toast('Du bist durch – die Beine sind nass.');
       H.walking=true},{resume:false})},
@@ -3884,14 +3891,49 @@ function ctxBubble(g,tm,x,y,e,label,fn,on=true){
   g.fillStyle='rgba(15,25,20,0.8)';rr(g,x-w/2,y+27,w,18,6);g.fill();g.fillStyle='#fff';g.fillText(label,x,y+40);
   if(on)HITS.push({fn,x,y,r:36,ic:null});
 }
+/* ---------- Hinweise (Sprechblase) und Schnellaktionen über dem Charakter ---------- */
+const ALERTS=[];
+function pushAlert(key,e,label,fn,secs,keep){
+  const a={h:H,key,e,label,fn,until:tm+secs,keep:keep||null},i=ALERTS.findIndex(x=>x.key===key&&x.h===H);
+  if(i>=0)ALERTS[i]=a;else ALERTS.push(a);
+}
+function hintSay(txt,secs){TH.cur={txt,say:true,t0:tm,dur:secs||Math.max(4,3.8+txt.length*0.045)}}
+function injuryAlert(txt){
+  const kit=H.g.tools.kit&&H.kit>0;
+  hintSay(txt+(kit?' Mein Erste-Hilfe-Set hilft jetzt.':' Ohne Erste-Hilfe-Set hilft nur Rast.'),7);
+  if(kit)pushAlert('aid','🩹','Erste Hilfe',()=>actClick('aid'),45,()=>isInjured());
+}
+function villageHint(f,d){
+  if(d<460&&!f.hinted){f.hinted=true;
+    hintSay('Ein Ort! Hier kann ich sicher einkaufen'+(f.town?' oder einkehren':'')+'.',6);
+    const near=()=>Math.abs(f.x-H.x)<420;
+    pushAlert('shop'+f.id,'🏪','Einkaufen',()=>openVillageShop(f),40,near);
+    if(f.town)pushAlert('lodge'+f.id,'🏨','Unterkunft',()=>lodgeHere(f),40,near);
+  }
+}
+function lodgeHint(f,d){
+  if(d<420&&!f.hinted){f.hinted=true;
+    const free=lodgeFreeKind(f),k=f.kind;
+    hintSay(k==='shelter'?'Ein Windschutz! Hier finde ich ganz gut Schutz vor Wind und Regen.':k==='bothy'?'Eine Bothy – ein einfacher, kostenloser Unterstand.':'Eine Hütte! Hier könnte ich übernachten.',6);
+    pushAlert('lodge'+f.id,free?'🛖':'🏨',free?'Unterstand':'Unterkunft',()=>lodgeHere(f),30,()=>Math.abs(f.x-H.x)<520);
+  }
+}
+function drawAlerts(g,tm,sx,gy){
+  const A=ALERTS.filter(a=>a.h===H&&a.until>tm&&(!a.keep||a.keep()));
+  if(!A.length)return;
+  const gap=62,x0=Math.max(sx-(A.length-1)/2*gap,H.dog?175:135);
+  A.forEach((a,i)=>ctxBubble(g,tm,x0+i*gap,gy-150,a.e,a.label,()=>{H.walking=false;a.until=0;a.fn();updateHUD(true)},true));
+}
 function drawCtx(g,tm,sx,gy){
   if(H.sleep.active&&!H.ended){const ax=H.camp.x-camX,ay=groundY(H.camp.x);ctxBubble(g,tm,clamp(ax+58,60,CW-60),ay-42,'⏰','Aufwachen',()=>{wakeUp(true);sfx('click');updateHUD(true)},true);return}
-  if(H.action||H.sleep.active||H.ended||H.live||H.moving||H.walking){H.eatMenu=false;return}
+  if(H.action||H.sleep.active||H.ended||H.live){H.eatMenu=false;return}
+  if(H.moving||H.walking){H.eatMenu=false;drawAlerts(g,tm,sx,gy);return}
   if(H.fork){drawForkUI(g,tm,sx,gy);return}
 const row=[];const y=gy-150;const B=H.body;
   if(H.lost.on||H.side)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
   else if(atSummit())row.push(['🧭','Umschauen',()=>actClick('orient'),true]);
 row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
+  if(isInjured()&&H.g.tools.kit&&H.kit>0)row.unshift(['🩹','Erste Hilfe',()=>actClick('aid'),true]);
   const w=nearWater();
   if(w){
     const full=waterTotal()>=H.g.waterCap-0.05;
@@ -4735,12 +4777,12 @@ function buildHikeDOM(){
    <div id="toasts"></div>
    <div class="hud" id="h-bot"><div class="prow"><canvas id="prof"></canvas><span id="ptxt"></span></div>
     <div id="dock">
-     <button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button>
+     
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
-     <div id="spdctl"><button id="sp-dn">◀</button><div id="sp-v"><span>⏩</span><small>1×</small></div><button id="sp-up">▶</button></div>
+     <div id="spdwrap"><button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button><div id="spdctl"><button id="sp-dn">◀</button><div id="sp-v"><span>⏩</span><small>1×</small></div><button id="sp-up">▶</button></div></div>
      <button class="rb" id="b-sleep"><span>😴</span><small>Schlaf</small></button>
-     <button class="rb" id="b-menu"><span>☰</span><small>Mehr</small></button></div></div>
+     <button class="rb" id="b-menu"><span>☰</span><small>Menü</small></button></div></div>
    <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
    <div id="rot">📱<br>Bitte das Gerät quer halten</div></div>`;
@@ -4772,11 +4814,11 @@ function buildDrawer(){
   const d=$('#drawer');if(!d)return;
   const hh=Object.keys(H.dev).filter(id=>['phone','cam'].includes(H.dev[id].def.kind));
   const btn=(k,e,t)=>`<button data-a="${k}">${e} ${t}</button>`;
-  d.innerHTML=`<h4>AKTIONEN</h4><div class="acts">
+  d.innerHTML=`<details class="moreacts"><summary>⚙️ Weitere Aktionen</summary><div class="acts">
     ${btn('tent','⛺','Zelt auf/ab')}${btn('sleep','😴','Schlafen')}${btn('rest','🛌','Ausruhen')}${H.dog?btn('leash','🦮','Leine an/ab'):''}${btn('sleepOut','🌙','Draußen schlafen')}${btn('wood','🪵','Holz sammeln')}${btn('fire','🔥','Feuer machen')}${btn('feed','🪵','Holz nachlegen')}
     ${btn('drink','💧','Trinken')}${btn('refill','🚰','Wasser auffüllen')}${btn('treat','♨️','Wasser behandeln')}${btn('aid','🩹','Erste Hilfe')}
     ${btn('fix','🧵','Notreparatur')}${btn('orient','🧭','Orientieren')}${btn('live','📡','Livestream')}${btn('shop','🏪','Laden betreten')}
-    ${btn('forage','🧺','Sammeln')}${btn('fish','🎣','Angeln')}${btn('reverse','🔄','Umkehren')}${btn('rescue','🆘','Tour abbrechen')}</div>
+    ${btn('forage','🧺','Sammeln')}${btn('fish','🎣','Angeln')}${btn('reverse','🔄','Umkehren')}${btn('rescue','🆘','Tour abbrechen')}</div></details>
    <h4>AUTOMATIK</h4>
    <label class="chk"><input type="checkbox" id="o-auto" ${H.auto?'checked':''}> Automatisch essen &amp; trinken</label>
    <label class="chk"><input type="checkbox" id="o-stop" ${H.autoStop?'checked':''}> An Wasserstellen anhalten</label>
