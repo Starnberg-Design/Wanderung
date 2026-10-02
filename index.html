@@ -148,7 +148,7 @@ input[type=range]{accent-color:var(--acc)}
 .bottle{text-align:center;font-size:.8em;cursor:pointer}
 /* Studio */
 .yt{background:#0f0f0f;border:1px solid #303030;border-radius:12px;overflow:hidden}
-.ytban{height:90px;background:linear-gradient(120deg,#1e4d36,#2b6f8f 60%,#6a4c93)}
+.ytban{height:150px;background:linear-gradient(120deg,#1e4d36,#2b6f8f 60%,#6a4c93)}
 .ythead{display:flex;gap:14px;align-items:center;padding:12px 16px;margin-top:-34px}
 .ytav{width:72px;height:72px;border-radius:50%;border:3px solid #0f0f0f;display:flex;align-items:center;justify-content:center;font-size:34px}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:8px 0}
@@ -194,6 +194,20 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 .card.c-blue button.primary{background:#2a78c0;border-color:#4aa8e8}
 .card.c-red button.primary{background:#cc0000;border-color:#ff3030}
 .bigact{width:100%;font-size:1.15em;padding:14px 12px;margin-bottom:6px}
+.ytav{flex:none;aspect-ratio:1/1;overflow:hidden}
+.hk-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:6px;margin:8px 0}
+.hk-stat{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px 9px;display:flex;flex-direction:column;gap:3px;min-width:0}
+.hk-stat b{font-size:1.08em;line-height:1.2}.hk-stat small{color:var(--dim);font-size:.78em;line-height:1.25}
+.hk-stat.bad{border-color:var(--bad)}.hk-stat.bad b{color:var(--bad)}.hk-stat .risk{align-self:flex-start}
+.hk-more{margin:6px 0 10px}.hk-more summary{cursor:pointer;color:var(--acc);font-size:.9em;padding:4px 0}.hk-more .facts{margin:6px 0 0}
+.chs{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 2px}
+.chs .ch{background:#0f2018aa;border:1px solid var(--line);border-radius:12px;padding:1px 8px;font-size:.8em;line-height:1.5;white-space:nowrap}
+.chs .ch.bad{border-color:var(--bad);color:var(--bad)}
+.inf small.dsc{color:var(--dim);font-size:.85em}
+.timebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:6px 10px;background:var(--panel);border:1px solid var(--line);border-radius:0 0 12px 12px;font-size:.85em}
+.timebar .seg button{padding:3px 9px;min-height:26px;font-size:.9em}
+.seasonbar.hasbar{margin-bottom:0;border-radius:14px 14px 0 0}
+.seasonbar.slim{padding:8px 14px;gap:10px}.seasonbar.slim .sb-e{font-size:26px}.seasonbar.slim .sb-t b{font-size:1.2em}.seasonbar.slim .sb-d{font-size:1em}
 </style>
 </head>
 <body>
@@ -470,7 +484,52 @@ const HIKES=[
  {id:'camino',name:'Camino Francés (Pilgerweg)',country:'Frankreich · Spanien',reg:'camino',km:780,diff:3,mult:3.6,permit:20,hard:1.05,ext:1.1,villageEvery:0,startAlt:170,lodgeKind:'none',
   desc:'780 km von den Pyrenäen nach Santiago de Compostela: Weinberge, Meseta-Weite und Pilgerherbergen in fast jedem Ort.',
   sights:[S_('Pyrenäen-Pass','⛰️',84),S_('Kathedrale von Burgos','⛪',88),S_('Cruz de Ferro','✝️',80),S_('Santiago-Kathedrale','⛪',96)],
-  stages:P('t8 m10 m12 w6 m14 b5 m10 t8 m16',780,170,260,260,59)}
+  stages:P('t8 m10 m12 w6 m14 b5 m10 t8 m16',780,170,260,260,59)},
+{id:'brockenrunde',name:'Brocken-Dreitagestour',country:'Deutschland',reg:'harz',km:45,diff:2,mult:1.3,permit:10,hard:1.0,ext:0.8,villageEvery:0,startAlt:250,
+desc:'Drei Tage durch Harzer Wälder, Moore und über den Brockengipfel – eine gute Mitteltour zum Einstieg in längere Strecken.',
+sights:[S_('Brocken-Gipfel','⛰️',85)],stages:P('w8 b5 w9 t6 w7 m5',45,250,800,250,87)},
+{id:'zugspitzrunde',name:'Zugspitz-Umrundung',country:'Deutschland',reg:'alpen',km:52,diff:3,mult:1.55,permit:20,hard:1.2,ext:1.2,villageEvery:0,startAlt:1000,lodgeKind:'huette',
+desc:'Mehrtägige Runde um das Zugspitzmassiv mit Hüttenübernachtung: Eibsee, Geröllfelder und Schneereste.',
+sights:[S_('Eibsee','🏞️',80),S_('Zugspitz-Gipfel','⛰️',90)],stages:P('t6 w5 b8 e2 b6 t5',52,1000,2200,800,89)},
+{id:'hoga_nord',name:'Höga Kustenleden Nordabschnitt',country:'Schweden',reg:'hoga',km:52,diff:3,mult:1.5,permit:15,hard:1.1,ext:1.0,villageEvery:26,startAlt:20,
+desc:'Steile Küstenwälder, Aussichtsberge und Strandabschnitte im Norden der Höga Kusten.',
+sights:[S_('Ulvön-Fjord','🏞️',76),S_('Aussichtsberg','⛰️',66)],stages:P('w10 b4 k3 w9 s2 t5',52,20,260,110,63)},
+{id:'dolo_rosen',name:'Rosengarten-Höhenweg',country:'Italien',reg:'dolo',km:48,diff:3,mult:1.6,permit:14,hard:1.2,ext:1.2,villageEvery:0,startAlt:1850,lodgeKind:'huette',
+desc:'Mehrere Tage über die Felsbastionen des Rosengartens, mit Rifugios und starker Sonne.',
+sights:[S_('Rosengarten','⛰️',84),S_('Vajolet-Türme','🪨',78)],stages:P('m6 b8 e2 b7 t5 b9',48,1850,2100,350,65)},
+{id:'tmb_west',name:'Tour du Mont Blanc – Westabschnitt',country:'Frankreich · Italien',reg:'mtblanc',km:62,diff:3,mult:1.9,permit:20,hard:1.25,ext:1.3,villageEvery:30,startAlt:1010,
+desc:'Von Les Houches über den Col de la Seigne nach Courmayeur: Gletscherblick, Pässe und Hütten.',
+sights:[S_('Col de la Seigne','⛰️',70),S_('Refuge Elisabetta','🛖',60)],stages:P('t6 b8 w5 b9 e2 t5',62,1010,1900,600,71)},
+{id:'hornstrandir',name:'Hornstrandir – Hornvík',country:'Island',reg:'island',km:55,diff:4,mult:1.9,permit:40,hard:1.35,ext:1.5,villageEvery:0,startAlt:20,
+desc:'Unbewohntes Nordwest-Island: Klippen, Strand, Nebel und Polarfüchse, ohne Läden.',
+sights:[S_('Hornbjarg-Klippen','🏞️',88),S_('Fuchsbucht','🦊',70)],stages:P('k4 f8 b6 s3 f9 k3',55,20,300,160,73)},
+{id:'abisko_alesjaure',name:'Kungsleden Abisko – Alesjaure',country:'Schweden',reg:'lappland',km:66,diff:3,mult:1.8,permit:30,hard:1.3,ext:1.4,villageEvery:0,startAlt:390,
+desc:'Der Einstiegsabschnitt der Kungsleden ins Fjäll: Birkenwald, weite Täler und Samische Hütten.',
+sights:[S_('Abisko-Schlucht','🏞️',72),S_('Alesjaure-Hütte','🛖',62)],stages:P('w9 f12 t8 f14 e3 f10',66,390,500,200,75)},
+{id:'jotun_huetten',name:'Jotunheimen-Hüttentour',country:'Norwegen',reg:'norwegen',km:72,diff:3,mult:1.8,permit:25,hard:1.2,ext:1.3,villageEvery:0,startAlt:990,lodgeKind:'huette',
+desc:'Hüttentour durch Norwegens höchstes Gebirge: Seen, Grate und Schneefelder.',
+sights:[S_('Gjende-See','🏞️',80),S_('Galdhøpiggen-Blick','⛰️',88)],stages:P('f8 b6 e2 t7 f9 b5',72,990,1400,450,77)},
+{id:'stubai',name:'Stubaier Höhenweg',country:'Österreich',reg:'alpen',km:80,diff:4,mult:2.0,permit:30,hard:1.3,ext:1.3,villageEvery:0,startAlt:1000,lodgeKind:'huette',
+desc:'Hochalpine Hüttenrunde im Stubaital mit Gletschern, Jöchern und langen Etappen.',
+sights:[S_('Sulzenauferner','🏞️',80),S_('Peiljoch','⛰️',74)],stages:P('t6 w5 b9 e3 b8 t5 b9 e3',80,1000,2200,700,67)},
+{id:'affric',name:'Affric Kintail Way',country:'Schottland',reg:'scot',km:71,diff:2,mult:1.4,permit:12,hard:1.0,ext:1.1,villageEvery:35,startAlt:60,
+desc:'Von Drumnadrochit durch Glen Affric zur Westküste: Kiefernwald, Lochs und Moor. Meist nass.',
+sights:[S_('Loch Affric','🏞️',74),S_('Plodda Falls','💧',66)],stages:P('w8 m6 f9 t6 w6',71,60,110,70,69)},
+{id:'peddars',name:'Peddars Way',country:'England',reg:'eng',km:77,diff:1,mult:1.15,permit:0,hard:0.9,ext:0.7,villageEvery:20,startAlt:40,lodgeKind:'none',
+desc:'Römerstraße durch Norfolk: flach, weit und mit vielen Dörfern. Ideal für lange, ruhige Tage.',
+sights:[S_('Castle Acre Priory','🏰',58)],stages:P('m10 w4 m8 t3 m9',77,40,10,25,79)},
+{id:'sheepshead',name:'Sheep\'s Head Way',country:'Irland',reg:'irland',km:93,diff:2,mult:1.5,permit:10,hard:1.05,ext:1.1,villageEvery:30,startAlt:20,
+desc:'Rund um die Sheep\'s Head Halbinsel: Klippen, Moor und Atlantikwind.',
+sights:[S_('Leuchtturm','🗼',70),S_('Dunmanus Bay','🌊',66)],stages:P('k4 m8 b5 m9 w4 k3',93,20,150,100,81)},
+{id:'mareemonti',name:'Mare e Monti Nord',country:'Frankreich',reg:'korsika',km:95,diff:3,mult:1.8,permit:25,hard:1.2,ext:1.2,villageEvery:30,startAlt:40,
+desc:'Von der Küste Korsikas in die Berge und zurück ans Meer: Macchia, Granit und Badebuchten.',
+sights:[S_('Girolata-Bucht','🏖️',84),S_('Calanche von Piana','🪨',90)],stages:P('k3 w8 b9 t5 w8 b8 m4',95,40,150,500,83)},
+{id:'forststeig',name:'Forststeig Elbsandstein',country:'Deutschland',reg:'sachsen',km:100,diff:2,mult:1.45,permit:20,hard:1.0,ext:0.9,villageEvery:30,startAlt:140,
+desc:'Sieben Etappen durch Sandsteinwälder, Schluchten und Felsen mit Biwakplätzen.',
+sights:[S_('Kuhstall','🪨',58),S_('Schrammsteine','⛰️',66)],stages:P('w9 t5 b4 w8 m5 t6',100,140,380,110,61)},
+{id:'sarria',name:'Camino: Sarria – Santiago',country:'Spanien',reg:'camino',km:100,diff:2,mult:1.5,permit:15,hard:1.0,ext:0.9,villageEvery:12,startAlt:450,lodgeKind:'none',
+desc:'Die letzten 100 Kilometer des Pilgerwegs: Eukalyptus, Weiden und Herbergen alle paar Kilometer.',
+sights:[S_('Portomarín-Stausee','🌉',66),S_('Santiago-Kathedrale','⛪',96)],stages:P('w8 m10 t6 w7 m12',100,450,260,120,85)}
 ];
 /* ---------- Heimat-Grundrouten: je Land 3 (Anreise 0 / 5 / 10 EUR) ---------- */
 const HOME_HIKES=[
@@ -4116,20 +4175,29 @@ function pickChannelImg(kind,cb){
     const fr=new FileReader();
     fr.onload=()=>{const im=new Image();
       im.onload=()=>{
-        const W=kind==='avatar'?256:1500,Hh=kind==='avatar'?256:300,c=document.createElement('canvas');c.width=W;c.height=Hh;
+        const bs=kind==='banner'?Math.min(1,1600/im.width,1200/im.height):1;const W=kind==='avatar'?256:Math.round(im.width*bs),Hh=kind==='avatar'?256:Math.round(im.height*bs),c=document.createElement('canvas');c.width=W;c.height=Hh;
         const x=c.getContext('2d'),sc=Math.max(W/im.width,Hh/im.height),w=im.width*sc,h=im.height*sc;
         x.fillStyle='#000';x.fillRect(0,0,W,Hh);x.drawImage(im,(W-w)/2,(Hh-h)/2,w,h); // Mitte zuschneiden
         const old=G[kind];G[kind]=c.toDataURL('image/jpeg',0.85);
         try{localStorage.setItem(SAVE_KEY,JSON.stringify(G))}catch(e){G[kind]=old;toast('Das Bild ist zu groß für den Speicher – bitte ein kleineres wählen.','bad');return}
-        toast(kind==='avatar'?'📷 Profilbild gesetzt.':'🖼️ Kanalbanner gesetzt.','good');if(cb)cb()};
+        toast(kind==='avatar'?'📷 Profilbild gesetzt.':'🖼️ Kanalbanner gesetzt.','good');if(kind==='banner'){G.bannerFit='cover';G.bannerPos=50;save();bannerAdjust(cb)}else if(cb)cb()};
       im.onerror=()=>toast('Diese Datei konnte nicht als Bild gelesen werden.','bad');im.src=fr.result};
     fr.readAsDataURL(f)};
   inp.click();
 }
-const imgBtns=()=>`<button data-img="avatar">📷 Profilbild</button> <button data-img="banner">🖼️ Banner</button>${G.avatar?' <button data-img="x-avatar" title="Profilbild entfernen">✕ Profilbild</button>':''}${G.banner?' <button data-img="x-banner" title="Banner entfernen">✕ Banner</button>':''}`;
+const imgBtns=()=>`<button data-img="avatar">📷 Profilbild</button> <button data-img="banner">🖼️ Banner</button>${G.avatar?' <button data-img="x-avatar" title="Profilbild entfernen">✕ Profilbild</button>':''}${G.banner?' <button data-img="adj-banner">✂️ Banner anpassen</button> <button data-img="x-banner" title="Banner entfernen">✕ Banner</button>':''}`;
+function bannerAdjust(cb){
+  if(!G.banner)return;
+  const pos=()=>G.bannerPos==null?50:G.bannerPos;
+  const draw=m=>{$('#bn-prev',m).style.background='#000 url('+G.banner+') 50% '+pos()+'%/'+(G.bannerFit||'cover')+' no-repeat';
+    $$('[data-bf]',m).forEach(b=>b.classList.toggle('on',b.dataset.bf===(G.bannerFit||'cover')));$('#bn-pos',m).disabled=G.bannerFit==='contain'};
+  showModal({title:'🖼️ Banner anpassen',html:'<div id="bn-prev" class="ytban" style="border-radius:10px"></div><div class="seg" style="margin:10px 0"><button data-bf="cover">Füllen (zuschneiden)</button><button data-bf="contain">Ganz einpassen</button></div><div class="row"><span class="lbl">Ausschnitt</span><input type="range" id="bn-pos" min="0" max="100" style="flex:1" value="'+pos()+'"><span class="hint">oben ↔ unten</span></div>',
+    buttons:[{label:'Fertig',primary:true,fn:()=>{save();if(cb)cb()}}],
+    onOpen:m=>{draw(m);$$('[data-bf]',m).forEach(b=>b.onclick=()=>{G.bannerFit=b.dataset.bf;draw(m)});$('#bn-pos',m).oninput=e=>{G.bannerPos=+e.target.value;draw(m)}}});
+}
 function bindImgBtns(root,cb){
   $$('[data-img]',root).forEach(b=>b.onclick=()=>{const k=b.dataset.img;
-    if(k.startsWith('x-')){G[k.slice(2)]=null;save();cb();return}
+    if(k==='adj-banner'){bannerAdjust(cb);return}if(k.startsWith('x-')){G[k.slice(2)]=null;save();cb();return}
     pickChannelImg(k,cb)});
 }
 /* ---------- Zentrale ---------- */
@@ -4150,14 +4218,12 @@ function renderHub(){
   while(G.sp>0){const lo=STAT_DEFS.filter(x=>G.stats[x.id]<STAT_MAX).sort((a,b)=>G.stats[a.id]-G.stats[b.id])[0];if(!lo)break;G.stats[lo.id]++;G.sp--}
   const xpRow=STAT_DEFS.map(s=>{const v=G.stats[s.id],need=55*v,xp=G.xp[s.id]||0;return `<div class="stat"><div style="flex:1"><b>${s.name}</b> <small>Stufe ${v}${v>=STAT_MAX?' (max)':''}</small>${v<STAT_MAX?barHTML(xp/need*100,'var(--acc)',5):''}</div></div>`}).join('');
   $('#s-hub').innerHTML=`<div class="wrap">
-   <div class="topbar"><div style="display:flex;align-items:center;gap:10px">${G.avatar?`<img src="${G.avatar}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #ffffff55">`:''}<div><h2>${esc(G.chan)}</h2><small>${esc(G.name)} · ${dateStr(G.day)} · ${SEASON_E[s]} ${s}</small></div></div>
+   <div class="topbar"><div style="display:flex;align-items:center;gap:10px">${G.avatar?`<img src="${G.avatar}" alt="" style="width:46px;height:46px;flex:none;border-radius:50%;object-fit:cover;border:2px solid #ffffff55">`:''}<div><h2>${esc(G.chan)}</h2><small>${esc(G.name)} · ${dateStr(G.day)} · ${SEASON_E[s]} ${s}</small></div></div>
     <div class="chips"><span class="chip">💶 ${eur(G.money)}</span><span class="chip">👥 ${fmtInt(G.subs)} Abos</span><button id="h-menu">☰ Menü</button></div></div>
    ${idleWarnHTML()}
    ${pend?`<div class="card" style="border-color:var(--warn);margin-bottom:14px"><h3>🎬 Unveröffentlichtes Material</h3><p>${esc(pend.name)} · ${fmtN(pend.km)} km · ${pend.clips.length} Clips${stalePct>0?' · <span class="badtxt">Material wird alt (−'+Math.round(stalePct)+' % Wirkung)</span>':''}</p><button class="primary" id="h-pub">Video veröffentlichen</button></div>`:''}
-   <div class="seasonbar sb-${s}"><div class="sb-e">${SEASON_E[s]}</div><div class="sb-t"><small>Jahreszeit</small><b>${s}</b></div><div class="sb-d">${dateStr(G.day)}</div></div>
-    <div class="card c-time" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Einnahmen kommen über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'}</p>
-      <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div>
-</div>
+   <div class="seasonbar hasbar sb-${s}"><div class="sb-e">${SEASON_E[s]}</div><div class="sb-t"><small>Jahreszeit</small><b>${s}</b></div><div class="sb-d">${dateStr(G.day)}</div></div>
+    <div class="timebar"><span>⏳ Zeit vergehen lassen</span><div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div><small class="hint">${G.pendCur+G.pendPrev>0?'Auszahlung in '+daysToPayout()+' Tagen':''}</small></div>
    <div class="duo">
     <div class="card c-green"><h3>🥾 Wandertouren</h3><p class="hint">Wähle Tour und Startzeit. Die Jahreszeit entscheidet über Wetter, Kälte und Tageslicht.</p><button class="primary bigact" id="h-hikes">🥾 Touren starten</button></div>
     <div class="card c-blue"><h3>🛒 Ausrüstung & Proviant</h3><p class="hint">Rucksack packen, Proviant kaufen, Hund ausstatten.</p><button class="primary bigact" id="h-shop">🛒 Zum Shop</button> <button id="h-dog">🐕 Hund</button></div>
@@ -4302,7 +4368,7 @@ let HIKECTRY=null;
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
 const HS={km:(a,b)=>a.km-b.km,diff:(a,b)=>a.diff-b.diff||a.km-b.km,cost:(a,b)=>travelInfo(a).cost-travelInfo(b).cost||a.km-b.km};
 let HIKESORT=(function(){try{const v=localStorage.getItem('wk_hs');return HS[v]?v:'km'}catch(e){return 'km'}})();
-function hikeCard(hk){
+function hikeCard0(hk){
   const fee=travelInfo(hk).cost,poor=G.money<fee;
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
@@ -4320,6 +4386,31 @@ function hikeCard(hk){
       <span>Risiko jetzt: <span class="risk" style="background:${b.col}">${b.lbl}</span>${bad?` <span class="badtxt">${bad}× Warnung</span>`:''}</span></div>
       ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing & Start</button>`}</div>`;
 }
+function hikeCard(hk){
+  const t=travelInfo(hk),fee=t.cost,poor=G.money<fee,walk=t.mode==='Zu Fuß';
+  const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
+  const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
+  const stat=(top,sub,cls='')=>`<div class="hk-stat ${cls}">${top}<small>${sub}</small></div>`;
+  const low=skillAvg(hk)<SKILL_REQ[hk.diff];
+  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
+    <div class="hk-top">
+      ${stat('<b>📏 '+hk.km+' km</b>',dayLbl(hk))}
+      ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück'+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
+      ${stat('<span class="risk" style="background:'+DIFF_COL[hk.diff]+'">'+DIFF_NAMES[hk.diff]+'</span>','Erlös ×'+hk.mult)}
+      ${stat('<span class="risk" style="background:'+b.col+'">'+b.lbl+'</span>','Risiko jetzt'+(bad?' · <span class="badtxt">'+bad+'× Warnung</span>':''))}
+    </div>
+    ${low?'<p class="badtxt" style="margin:4px 0">⚠ Deine Fähigkeiten liegen unter der Empfehlung (Ø '+SKILL_REQ[hk.diff]+')</p>':''}
+    <p class="hint">${esc(hk.desc)}</p>
+    <details class="hk-more"><summary>Mehr Details</summary><div class="facts">
+      <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
+      <span>💪 Empfohlene Fähigkeiten Ø ${SKILL_REQ[hk.diff]} · du: Ø ${fmtN(skillAvg(hk),1)}</span>
+      <span>🏪 ${f.towns?esc(f.towns):'keine Läden am Weg'}</span>
+      <span>🚰 ${f.wi.lbl}${f.wi.dry?' · '+f.wi.dry+' trockene Abschnitte (bis '+fmtN(f.wi.maxDry,0)+' km)':''}</span>
+      <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
+      ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
+    </div></details>
+    ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing &amp; Start</button>`}</div>`;
+}
 function renderHikes(){
   let body='';
   if(HIKEVIEW==='land'){
@@ -4331,8 +4422,7 @@ function renderHikes(){
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
    <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📋 Alle Routen</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
    <div class="seg" style="margin-bottom:10px"><button data-hs="km" class="${HIKESORT==='km'?'on':''}">📏 Sortiert nach Länge</button><button data-hs="diff" class="${HIKESORT==='diff'?'on':''}">⛰️ nach Schwierigkeit</button><button data-hs="cost" class="${HIKESORT==='cost'?'on':''}">💶 nach Kosten</button></div>
-   <div class="card" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Die Jahreszeit ändert Wetter, Kälte und Tageslicht der Touren, und Einnahmen deiner Videos kommen erst über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'} Wenn du wartest, ändert sich also das Risiko in den Karten unten.</p>
-    <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
+   <div class="seasonbar hasbar slim sb-${seasonOfM(dateOf(G.day).m)}"><div class="sb-e">${SEASON_E[seasonOfM(dateOf(G.day).m)]}</div><div class="sb-t"><small>Jahreszeit</small><b>${seasonOfM(dateOf(G.day).m)}</b></div><div class="sb-d">${dateStr(G.day)}</div></div><div class="timebar"><span>⏳ Zeit vergehen lassen</span><div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div><small class="hint">${G.pendCur+G.pendPrev>0?'Auszahlung in '+daysToPayout()+' Tagen':''}</small></div>
    ${body}</div>`;
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
@@ -4360,6 +4450,15 @@ function openBriefing(id){
 let SHOPTAB='Rucksack';
 function gearPrice(g){return Math.round(g.price*priceMod())}
 function loadNow(){return gearKg()+consKg()}
+function shopChips(h){
+  return h.replace(/<div class="inf"><b>([^]*?)<\/b><small>([^]*?)<\/small><small>([^]*?)<\/small>/,(m,nm,a,b)=>{
+    const cons=/^\s*[\d.,]+ kg\s*$/.test(b),chipsInfo=cons&&(a.includes(' · ')||a.length<40);
+    const parts=(chipsInfo?a+' · '+b:b).split(' · ').map(x=>x.trim()).filter(Boolean);
+    const desc=chipsInfo?'':a;
+    const chips=parts.map(p=>{const bad=/badtxt|⚠|KAPUTT/.test(p),kg=/^[\d.,]+ kg$/.test(p);return '<span class="ch'+(bad?' bad':'')+'">'+(kg?'⚖️ ':'')+p+'</span>'}).join('');
+    return '<div class="inf"><b>'+nm+'</b><div class="chs">'+chips+'</div>'+(desc?'<small class="dsc">'+desc+'</small>':'');
+  });
+}
 function renderShop(){
   const ds=dogSize();
   const items=SHOPTAB==='Hund'?[]:GEAR.filter(g=>TAB_OF[g.cat]===SHOPTAB&&g.cat!=='dogpack');
@@ -4404,7 +4503,7 @@ function renderShop(){
   const fl=packedGear().length;
   $('#s-shop').innerHTML=`<div class="wrap"><div class="topbar"><h2>🛒 Ausrüstung</h2><div class="chips"><span class="chip">💶 ${eur(G.money)}</span><button id="sh-back">◀ Zurück</button></div></div>
    <div class="tabs">${tabs}</div>
-   <div class="shopgrid"><div class="items">${dogHTML}${items.map(itemHTML).join('')}${cons.map(consHTML).join('')}${SHOPTAB==='Rucksack'?'<p class="hint">Es kann immer nur ein Rucksack eingepackt sein. Bei mehreren Ausführungen eines Typs wählst du das Aussehen per Klick auf die kleinen Bilder. Ein größerer Rucksack trägt mehr und sitzt bequemer.</p>':''}</div>
+   <div class="shopgrid"><div class="items">${dogHTML}${items.map(itemHTML).map(shopChips).join('')}${cons.map(consHTML).map(shopChips).join('')}${SHOPTAB==='Rucksack'?'<p class="hint">Es kann immer nur ein Rucksack eingepackt sein. Bei mehreren Ausführungen eines Typs wählst du das Aussehen per Klick auf die kleinen Bilder. Ein größerer Rucksack trägt mehr und sitzt bequemer.</p>':''}</div>
    <div class="card side"><h3>🎒 Packliste</h3>
     <div>Last: <b>${fmtN(load)} kg</b> <small>(Rucksack max. ${maxL} kg · bequem bis ${fmtN(cap)} kg)</small></div>
     <div class="mbar"><i class="${load>maxL?'bad':load>cap?'warn':''}" style="width:${clamp(load/maxL*100,0,100)}%"></i><b style="left:${clamp(cap/maxL*100,0,100)}%"></b></div>
@@ -5098,7 +5197,7 @@ function advanceDay(){
     const r=dv*rpv;
     const conv=0.004*(0.6+0.8*clamp(v.S/120,0,1.4))*(hasT('charme')?1.25:1)*rep*(v.promo?0.75:1)*(v.hype&&age-v.hype.start>=0&&age-v.hype.start<v.hype.len?1.4:1);
     const sg=Math.floor(dv*conv+Math.random());
-    v.views+=dv;v.rev+=r;v.likes+=Math.round(dv*0.04*rnd(0.7,1.3));v.subsG+=sg;v.h.push(dv);if(v.h.length>150)v.h.shift();
+    v.views+=dv;v.rev+=r;v.likes+=Math.round(dv*0.04*rnd(0.7,1.3));v.dislikes=(v.dislikes||0)+Math.floor(dv*0.004*(1.5-0.8*clamp(v.S/120,0,1.4))*(v.promo?1.3:1)*rnd(0.7,1.3)+Math.random());v.subsG+=sg;v.h.push(dv);if(v.h.length>150)v.h.shift();
     const sgx=(G.dogSale&&G.day<G.dogSale.day+180)?Math.floor(sg*0.5+Math.random()):sg;   // Kanal wächst 6 Monate 50 % langsamer
     G.subs+=sgx;G.totalViews+=dv;views+=dv;rev+=r;
     if(age<8&&Math.random()<0.06)addComments(v,1);
@@ -5256,7 +5355,7 @@ function publishVideos(){
     const exc=(p.thrill||0)>=3;
     const luck=Math.exp(rnd(-0.5,exc?0.6:0.15));   // außergewöhnlich gut nur bei spannenden Ereignissen
     const V=(2500+G.subs*12)*Math.pow(Math.max(S,2)/45,0.8)*(exc?1:0.85)*luck*(1+0.08*(n-1))*tm2*tl*promo*(1+(p.teaser||0));
-    const v={id:++G.vid,title:n>1?title+' – Teil '+(i+1)+'/'+n:title,day:G.day+i*3,tour:p.name,S,V,tau:rnd(5,9),views:0,likes:0,rev:0,subsG:0,h:[],
+    const v={id:++G.vid,title:n>1?title+' – Teil '+(i+1)+'/'+n:title,day:G.day+i*3,tour:p.name,S,V,tau:rnd(5,9),views:0,likes:0,dislikes:0,rev:0,subsG:0,h:[],
       thumb:{id:th,biome:pick(['wald','berg','tal','wiese','fjaell']),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
     if(exc&&Math.random()<0.05+(cl.some(c=>c.rar>=3)?0.05:0)+Math.min(0.08,(p.thrill-3)*0.02)){v.hype={start:rnd(1,3)|0,len:Math.round(rnd(5,11)),mul:rnd(6,16)};v.hyped=1}
     (G.videos=G.videos||[]).push(v);
@@ -5307,7 +5406,7 @@ function renderStudio(){
   }else if(STUDIOTAB==='Videos'){
     body=vids.length?[...vids].reverse().map(v=>{const on=v.day<=G.day,age=G.day-v.day;
       return `<div class="vrow"><canvas width="150" height="84" data-v="${v.id}"></canvas><div class="mt"><b>${esc(v.title)}</b>${v.hype&&on&&age>=v.hype.start&&age<v.hype.start+v.hype.len?'<span class="badge hot">🚀 Viral</span>':''}${v.promo?'<span class="badge">📣 beworben</span>':''}<br>
-        <small>${on?(age===0?'Heute':'vor '+age+' Tagen')+' · ':'Geplant für '+dateStr(v.day)+' · '}${fmtInt(v.views)} Aufrufe · 👍 ${fmtInt(v.likes)} · +${v.subsG} Abos · ${eur(v.rev)}</small></div></div>`}).join(''):'<p class="hint">Noch keine Videos.</p>';
+        <small>${on?(age===0?'Heute':'vor '+age+' Tagen')+' · ':'Geplant für '+dateStr(v.day)+' · '}${fmtInt(v.views)} Aufrufe · 👍 ${fmtInt(v.likes)} · 👎 ${fmtInt(v.dislikes||0)} · +${v.subsG} Abos · ${eur(v.rev)}</small></div></div>`}).join(''):'<p class="hint">Noch keine Videos.</p>';
   }else if(STUDIOTAB==='Analytics'){
     body=`<h4>Abonnenten-Verlauf</h4><canvas class="chart" id="ch2"></canvas><h4>Einnahmen pro Tag (gutgeschrieben)</h4><canvas class="chart" id="ch3"></canvas><h4>Aufrufe pro Tag (120 Tage)</h4><canvas class="chart" id="ch4"></canvas>
      <p class="hint">Videos bringen die meisten Aufrufe in den ersten ein bis zwei Wochen und dann noch lange einen kleinen Rest. Selten läuft ein Video plötzlich viral. Zu häufiges Betteln im Livestream senkt Reichweite und Abos für mehrere Tage (aktuell: ${G.begHeat>2?'<span class="badtxt">Ruf angeschlagen</span>':'okay'}).</p>`;
@@ -5322,7 +5421,7 @@ function renderStudio(){
     body=G.lives.length?`<div class="kpis"><div class="kpi">Livestreams<b>${G.lives.length}</b></div><div class="kpi">Spenden gesamt<b>${eur(G.liveEarned)}</b></div><div class="kpi">Ruf<b>${G.begHeat>4?'😠 schlecht':G.begHeat>1.5?'😐 angekratzt':'😊 gut'}</b></div></div>`+[...G.lives].reverse().map(l=>`<div class="cmt"><b>${dateStr(l.day)}</b> · Ø ${fmtN(l.avg,0)} Zuschauer (Spitze ${Math.round(l.peak)}) · Spenden ${eur(l.don)} · +${l.gain}${l.loss?' / −'+l.loss:''} Abos${l.begs>1?' · <span class="badtxt">'+l.begs+'× gebettelt</span>':''}</div>`).join(''):'<p class="hint">Noch kein Livestream. Beim Rasten unterwegs: Menü ☰ → Livestream. Kleine Kanäle haben sehr wenige Zuschauer. Ein Spendenaufruf pro Stream reicht.</p>';
   }
   $('#s-studio').innerHTML=`<div class="wrap"><div class="topbar"><h2>📺 Studio</h2><button id="st-back">◀ Zentrale</button></div>
-   <div class="yt"><div class="ytban" style="${G.banner?`background:url(${G.banner}) center/cover`:''}"></div><div class="ythead"><div class="ytav" style="${G.avatar?`background:url(${G.avatar}) center/cover`:`background:${jk}`}">${G.avatar?'':esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small><div class="imgbtns" style="margin-top:6px">${imgBtns()}</div></div></div>
+   <div class="yt"><div class="ytban" style="${G.banner?`background:#000 url(${G.banner}) 50% ${G.bannerPos==null?50:G.bannerPos}%/${G.bannerFit||'cover'} no-repeat`:''}"></div><div class="ythead"><div class="ytav" style="${G.avatar?`background:url(${G.avatar}) center/cover`:`background:${jk}`}">${G.avatar?'':esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small><div class="imgbtns" style="margin-top:6px">${imgBtns()}</div></div></div>
     <div class="tabs" style="padding:0 16px">${tabs.map(t=>`<button data-stt="${t}" class="${STUDIOTAB===t?'on':''}">${t}</button>`).join('')}</div>
     <div style="padding:6px 16px 16px">${body}</div></div></div>`;
   $('#st-back').onclick=()=>{renderHub();show('hub')};
