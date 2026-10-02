@@ -3224,8 +3224,8 @@ function drawRange(g,par,baseY,amp,colHex,seed,haze){
   g.beginPath();g.moveTo(0,CH);
   for(let x=0;x<=CW;x+=8)g.lineTo(x,ridgeY(par,baseY,amp,seed,x));
   g.lineTo(CW,CH);g.closePath();g.fill();
-  if(env.snow>0.25&&(env.biome==='berg'||env.biome==='fjaell')){ // verschneite Kämme
-    g.fillStyle=rgb(mix([240,244,250],NIGHT,NM_),0.55*env.snow);
+  if(env.snow>0.25&&BGM1_>0.03){ // verschneite Kämme
+    g.fillStyle=rgb(mix([240,244,250],NIGHT,NM_),0.55*env.snow*BGM1_);
     g.beginPath();g.moveTo(0,ridgeY(par,baseY,amp,seed,0));
     for(let x=0;x<=CW;x+=8)g.lineTo(x,ridgeY(par,baseY,amp,seed,x));
     for(let x=CW;x>=0;x-=8)g.lineTo(x,ridgeY(par,baseY,amp,seed,x)+14+8*Math.sin(x*0.05));
@@ -4189,16 +4189,21 @@ function bogMist(g){
   gr.addColorStop(0,'rgba(205,212,190,0)');gr.addColorStop(0.7,'rgba(205,212,190,'+a.toFixed(3)+')');gr.addColorStop(1,'rgba(205,212,190,'+(a*0.4).toFixed(3)+')');
   g.fillStyle=gr;g.fillRect(0,CH*0.5,CW,CH*0.35);
 }
+let BGM1_=-1,BGM2_=0,BGMX_=0,BGMH_=null;
+function lerpHex(a,b,t){const A=[1,3,5].map(i=>parseInt(a.substr(i,2),16)),B=[1,3,5].map(i=>parseInt(b.substr(i,2),16));return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
 function drawScene(g,tm,dt){
   NM_=clamp(env.dark*0.62,0,0.7);
   camX=H.x-CHAR_SX();
   // Himmel & Ferne
   drawSky(g,tm);updateBirds(dt,tm);drawBirds(g,tm);
   const st=stageAt(H.x);envBlend(dt,st);
-  if(SEA_<0.985){g.globalAlpha=1-SEA_;drawRange(g,0.06,CH*0.56,190,st.b==='berg'||st.b==='fjaell'?'#7f8aa0':'#8ea3b2',1.3,0.35);
-  drawRange(g,0.13,CH*0.62,150,st.b==='berg'?'#66738a':'#6f8e8a',4.1,0.22);
+  {const t1=(st.b==='berg'||st.b==='fjaell')?1:0,t2=st.b==='berg'?1:0;
+   if(BGM1_<0||BGMH_!==H){BGM1_=t1;BGM2_=t2;BGMX_=H.x;BGMH_=H}
+   const k=Math.min(1,Math.abs(H.x-BGMX_)/1400+dt*0.03);BGMX_=H.x;BGM1_+=(t1-BGM1_)*k;BGM2_+=(t2-BGM2_)*k}
+  if(SEA_<0.985){g.globalAlpha=1-SEA_;drawRange(g,0.06,CH*0.56,190,lerpHex('#8ea3b2','#7f8aa0',BGM1_),1.3,0.35);
+  drawRange(g,0.13,CH*0.62,150,lerpHex('#6f8e8a','#66738a',BGM2_),4.1,0.22);
   drawTreeBand(g,0.2,CH*0.68,90,2.2,26,'#456b55',0.22);
-  drawRange(g,0.3,CH*0.73,80,st.b==='berg'?'#5b6572':'#4f7357',7.3,0.1);
+  drawRange(g,0.3,CH*0.73,80,lerpHex('#4f7357','#5b6572',BGM2_),7.3,0.1);
   drawTreeBand(g,0.42,CH*0.76,60,5.5,34,'#2f5c3a',0.06);
   g.globalAlpha=1}
   drawSea(g,tm,SEA_);
