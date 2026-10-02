@@ -1760,8 +1760,7 @@ function updateWalkers(h){
   coopStep(h);
   const w=H.walkers;if(!w.length)return;
   for(const W of w){
-    if(!W.wait)W.x+=(W.dir||-1)*W.v*PPK*h/60;
-    W.ph+=(W.wait?0:0.25*((W.v||4)/4.2))*h*2;
+    {const dx=W.wait?0:(W.dir||-1)*W.v*PPK*h/60;W.x+=dx;W.dx=dx;W.dph=Math.abs(dx)*0.06;W.ph+=W.dph}
     if(!W.met&&Math.abs(W.x-H.x)<70){
       W.met=true;
       if(H.walking&&!H.action&&!H.sleep.active){W.wait=true;hikerEvent(W)}
@@ -2472,7 +2471,18 @@ function pestTick(mode,hr){
 }
 function drawPest(g,tm,sx,gy){
   const Pt=H&&H.pest;if(!Pt)return;
-  if(Pt.P>0.15){const n=Math.round(clamp(Pt.P,0,1)*28);g.save();for(let i=0;i<n;i++){const x=((i*97.3+tm*(10+(i%5)*5))%(CW+40))-20,y=CH*0.12+((i*53.7)%(CH*0.62))+Math.sin(tm*0.9+i)*9;g.globalAlpha=0.35+0.3*((i%3)/2);g.fillStyle=(i%4)?'#e8cf4a':'#f4e58a';g.beginPath();g.arc(x,y,1.1+(i%3)*0.5,0,7);g.fill()}g.restore()}
+  if(Pt.P>0.15){ // Pollen: jedes Korn hat eigene Lebensdauer (schnelles Ein-/Ausblenden), eigene Driftrichtung und eigene Verwirbelung
+    const n=Math.round(clamp(Pt.P,0,1)*46),wd=(env.wind||0);g.save();
+    for(let i=0;i<n;i++){
+      const T=2.2+(i*0.61%3.6),ph=tm/T+hash(i*7.1)*9,k=Math.floor(ph),age=(ph-k)*T;
+      const fa=Math.min(1,age/0.35)*Math.min(1,(T-age)/0.55);if(fa<=0.02)continue;
+      const h1=hash(i*13.7+k*3.1),h2=hash(i*5.3+k*9.7),h3=hash(i*2.9+k*4.3),par=0.55+0.9*hash(i*3.3);
+      const bx=h1*(CW+160)-80-camX*par,by=CH*0.1+h2*CH*0.64;
+      const x=(((bx+(wd*3+6+h3*14)*age+Math.sin(age*(1.1+h3*2.6)+i)*(10+h1*30)+Math.sin(age*3.7+i*2.1)*4)%(CW+160))+(CW+160))%(CW+160)-80;
+      const y=by+Math.cos(age*(0.9+h1*2.2)+i*1.7)*(8+h2*26)+Math.sin(age*2.9+i)*5-age*(2+h3*5);
+      g.globalAlpha=(0.3+0.4*h3)*fa;g.fillStyle=(i%4)?'#e8cf4a':'#f4e58a';g.beginPath();g.arc(x,y,1+(i%3)*0.55+h2*0.4,0,7);g.fill();
+    }
+    g.restore()}
   const ie=Pt.I*Pt.E;
   if(Pt.I>0.2){const n=Math.round(clamp(Pt.I,0,1.6)*12*(0.3+0.7*Pt.E))+(ie>0.25?2:0)+Math.round((Pt.wn||0)*4);g.save();g.fillStyle='rgba(20,20,20,0.85)';g.strokeStyle='rgba(40,40,40,0.5)';g.lineWidth=0.8;
    for(let i=0;i<n;i++){const a=tm*(2.6+(i%4)*0.7)+i*1.9,r=(Pt.E<0.3?36:20)+(i%5)*8+Math.sin(tm*3+i)*4;const x=sx+10+Math.cos(a)*r,y=gy-70+Math.sin(a*1.3)*r*0.6;g.beginPath();g.arc(x,y,1.5,0,7);g.fill();g.beginPath();g.moveTo(x-2,y-1.5);g.lineTo(x+2,y-1.5);g.stroke()}
@@ -2532,6 +2542,7 @@ function walkedSet(){const s=new Set(Object.keys(G.walked||{}));(G.videos||[]).f
 const FLAGU={};
 function flagURL(name){const n=flagCode(name);if(FLAGU[n]===undefined){try{FLAGU[n]=flagBmp(name).toDataURL()}catch(e){FLAGU[n]=''}}return FLAGU[n]}
 function flagsHTML(country){return String(country||'').split('·').map(p=>p.trim()).filter(Boolean).map(p=>{const u=flagURL(p);return u?'<img src="'+u+'" alt="" style="height:15px;vertical-align:-3px;border-radius:2px;margin-right:3px;border:1px solid rgba(0,0,0,.35)">':''}).join('')}
+function fordStones(f){const w=f.fw,n=Math.max(4,Math.round(w/62)),o=[];for(let i=0;i<n;i++){const t2=(i+0.5+((((f.x*7+i*131)%100)+100)%100/100-0.5)*0.6)/n;o.push({x:f.x+10+t2*(w-20),rx:6+Math.floor(f.x+i*53)%4})}return o}
 function drawFord(g,f,sx,tm){
   const w=f.fw,x0=Math.max(-24,sx),x1=Math.min(CW+24,sx+w);if(x1<=x0)return;
   const fr=env.frozen,gyAt=x=>groundY(f.x+(x-sx)),dep=x=>3+17*Math.sin(Math.PI*clamp((x-sx)/w,0,1));
@@ -2544,8 +2555,10 @@ function drawFord(g,f,sx,tm){
   if(fr){gr.addColorStop(0,tc('#e6f3fb'));gr.addColorStop(1,tc('#a9cbe0'))}else{gr.addColorStop(0,tc('#62b6ea'));gr.addColorStop(1,tc('#2b79bd'))}
   g.fillStyle=gr;g.fill();
   if(!fr){g.strokeStyle='rgba(255,255,255,0.5)';g.lineWidth=1.4;for(let k=0;k<Math.floor(w/42);k++){const wx=sx+10+((k*42+tm*16)%(w-20));if(wx<-20||wx>CW+20)continue;const wy=gyAt(wx)+4+(k%3)*4;g.beginPath();g.moveTo(wx,wy);g.quadraticCurveTo(wx+6,wy-3,wx+12,wy);g.stroke()}}
-  const n=Math.max(4,Math.round(w/62));
-  for(let i=0;i<n;i++){const t2=(i+0.5+((((f.x*7+i*131)%100)+100)%100/100-0.5)*0.6)/n,wx=sx+10+t2*(w-20);if(wx<-20||wx>CW+20)continue;const rx=9+Math.floor(f.x+i*53)%6,wy=gyAt(wx)-1;g.fillStyle=tc('#98a0a6');g.beginPath();g.ellipse(wx,wy,rx,5,0,Math.PI,0);g.fill();g.fillStyle=tc('#bcc3c8');g.beginPath();g.ellipse(wx-2,wy-1.5,rx*0.5,1.6,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,0.35)';g.beginPath();g.ellipse(wx+rx*0.6,wy+1.5,rx*0.6,1.1,0,0,7);g.fill()}
+  for(const st of fordStones(f)){const wx=sx+(st.x-f.x);if(wx<-20||wx>CW+20)continue;const rx=st.rx,wy=gyAt(wx)-1;
+    g.fillStyle=tc('#98a0a6');g.beginPath();g.ellipse(wx,wy,rx,4.6,0,Math.PI,0);g.fill();
+    g.fillStyle=tc('#aab1b6');g.beginPath();g.ellipse(wx+rx*0.95,wy,rx*0.45,2.6,0,Math.PI,0);g.fill();
+    g.fillStyle=tc('#bcc3c8');g.beginPath();g.ellipse(wx-2,wy-2,rx*0.45,1.4,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,0.35)';g.beginPath();g.ellipse(wx+rx*0.6,wy+1.5,rx*0.6,1.1,0,0,7);g.fill()}
   g.strokeStyle=tc('#4f7a35');g.lineWidth=1.6;for(const e of [0,w]){for(let k=0;k<4;k++){const bx=sx+e+(e?6:-6)+(k-1.5)*4,by=gyAt(sx+e)+1;if(bx<-10||bx>CW+10)continue;g.beginPath();g.moveTo(bx,by);g.lineTo(bx+Math.sin(tm*1.6+k)*2,by-14-k*2);g.stroke()}}
   {const cx=sx+w/2;if(cx>-40&&cx<CW+40){g.fillStyle='rgba(255,255,255,0.9)';g.font='bold 12px sans-serif';g.textAlign='center';g.fillText('Furt',cx,gyAt(cx)-16)}}
   g.restore();
@@ -2630,18 +2643,24 @@ function lakeDialog(L){
   }
   showModal({title:'🏞️ '+esc(L.name),text:'Vor dir liegt ein See mit etwa '+fmtN(km,2)+' km Breite, der den Weg unterbricht.'+(frozen?' Er ist zugefroren, aber wie dick ist das Eis?':' Im Wasser wirst du nass, dein Proviant und das Handy sind gefährdet'+(dry?' – der Seesack schützt sie.':'.')),buttons:btns,wide:true});
 }
+function hopAt(pr){ // Stein-zu-Stein-Sprung: Kontaktphase (Landen/Abstoßen) + Flugphase mit Bogen, Beine wechseln
+  const wp=H.crossing.wp,m=wp.length-1,sS=clamp(pr,0,0.99999)*m,i=Math.floor(sS),u=sS-i,fl=clamp((u-0.3)/0.7,0,1),c=clamp(u/0.3,0,1);
+  const off=j=>(j>0&&j<m)?-9:0,d=wp[i+1]-wp[i];
+  return {x:wp[i]+d*fl,dy:lerp(off(i),off(i+1),fl)-Math.sin(Math.PI*fl)*clamp(9+d*0.1,11,20),air:fl,c,leg:i%2,fly:fl>0}
+}
 function startCross(L,kind,dur,done){
   const x0=H.x,x1=Math.min(H.route.totalPx,L.xr+70),label={detour:'Umrundet den See …',swim:'Schwimmt durch den See …',boat:'Rudert über den See …',ice:'Geht über das Eis …',wade:'Springt von Stein zu Stein …'}[kind];
-  H.crossing={kind,x0,x1,L};
-  const fin=()=>{H.crossing=null;H.detourDy=0;H.x=x1;H.km=H.x/PPK;if(done)done();H.walking=true};
-  beginAction('ford',label,dur,fin,{tick:h=>{const pr=clamp(1-H.action.left/dur,0,1);H.x=lerp(x0,x1,pr);H.km=H.x/PPK;H.phase+=h*0.35;
+  H.crossing={kind,x0,x1,L};H.hopPr=0;H.hop=null;
+  if(kind==='wade'&&L.ford){const wp=[x0];for(const st of fordStones(L.ford))if(st.x>wp[wp.length-1]+22&&st.x<x1-30)wp.push(st.x);wp.push(Math.max(x1,wp[wp.length-1]+40));H.crossing.wp=wp}
+  const fin=()=>{H.crossing=null;H.hop=null;H.detourDy=0;H.x=x1;H.km=H.x/PPK;if(done)done();H.walking=true};
+  beginAction('ford',label,dur,fin,{tick:h=>{const pr=clamp(1-H.action.left/dur,0,1);H.x=lerp(x0,x1,pr);if(H.crossing&&H.crossing.wp){H.hopPr=pr;H.hop=hopAt(pr)}H.km=H.x/PPK;H.phase+=h*0.35;
     H.detourDy=kind==='detour'?34*Math.sin(Math.PI*pr):kind==='swim'?8:0}});
 }
 function riverFord(f){
   if((H.dir||1)<0)return;
   H.walking=false;
-  const w=f.fw||260,L={xl:f.x,xr:f.x+w,L:elevAt(f.x),name:'Furt'};
-  const dur=Math.round(9+w/40),det=Math.round(24+w/9);
+  const w=f.fw||260,L={xl:f.x,xr:f.x+w,L:elevAt(f.x),name:'Furt',ford:f};
+  const dur=Math.round((9+w/40)*1.4),det=Math.round(24+w/9);
   showModal({title:'🌊 Flussfurt',text:'Kein Steg in Sicht – nur eine breite Furt mit einzelnen Steinen im Wasser. Du kannst von Stein zu Stein hüpfen und durchwaten ('+dur+' Min., nass werden, Ausrutschgefahr) oder nach einer besseren Überquerung suchen und außen um die Furt herumgehen (ca. '+det+' Min., trocken, kostet Zeit und Kraft).'+(env.frozen?' Das Wasser ist eiskalt – Durchwaten kühlt dich stark aus.':''),buttons:[
     {label:'Über die Steine hüpfen',fn:()=>startCross(L,'wade',dur,()=>{
       const wr=H.g.shoes?H.g.shoes.wetRes:0;
@@ -3321,18 +3340,21 @@ for(let k=0;k<3;k++){const px=-34+k*7+Math.sin(tt+k)*2,py=-6-((tt*0.6+k)%3)*3;g.
 g.beginPath();g.ellipse(18+Math.cos(a1)*17,-3,6,2,0,0,7);g.stroke();
 g.restore();return;
 }
-const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
+const hopM=mode==='hop',hp=o.hop||{air:0,c:0,leg:0},walk=mode==='walk'||mode==='climb'||hopM,limp=walk&&o.limp&&!hopM;
   const tired=clamp((60-(o.energy===undefined?100:o.energy))/60,0,1);
-  const sw=walk?Math.sin(ph)*(limp?5.5:9)*(1-0.3*tired):0,bob=walk?Math.abs(Math.sin(ph))*(limp?3.4:2.2)*(1-0.3*tired):0;
+  const sw=walk?Math.sin(ph)*(limp?5.5:9)*(1-0.3*tired):0,bob=walk&&!hopM?Math.abs(Math.sin(ph))*(limp?3.4:2.2)*(1-0.3*tired):0;
   if(limp)g.rotate(0.06);
   const drop=(mode==='sit'||mode==='work')?14:0;
   const fem=!!L.gender,climbM=mode==='climb';
   let legs=null,hipY=-26+drop-bob;
   if(walk&&!drop){ // Beine mit Knie: Oberschenkel + Unterschenkel (Klettern: Knie hoch)
     const L1=11.5,L2=11.5,A=(limp?0.3:0.5)*(1-0.3*tired);
-    legs=[0,Math.PI].map(off=>{
+    legs=[0,Math.PI].map((off,li)=>{
       const p=ph+off,s=Math.sin(p),c=Math.cos(p);let a1,fl;
-      if(climbM){a1=0.12+0.95*Math.max(0,s)-0.3*Math.max(0,-s);fl=0.12+1.35*Math.max(0,s)}
+      if(hopM){const st=li===hp.leg,t=hp.air,E=x=>x*x*(3-2*x);
+        if(st){if(!hp.fly){const q=Math.sin(Math.PI*hp.c);a1=0.6*q;fl=1.2*q}else{const e=Math.min(1,t*2.5);a1=-0.6*E(e);fl=0.7*E(e)}}
+        else{if(!hp.fly){a1=lerp(-0.6,-0.2,hp.c);fl=lerp(0.7,0.9,hp.c)}else if(t<0.5){const e=E(t/0.5);a1=lerp(-0.2,0.85,e);fl=lerp(0.9,0.8,e)}else{const e=E((t-0.5)/0.5);a1=lerp(0.85,0.25,e);fl=lerp(0.8,0.15,e)}}
+      }else if(climbM){a1=0.12+0.95*Math.max(0,s)-0.3*Math.max(0,-s);fl=0.12+1.35*Math.max(0,s)}
       else{a1=A*s;fl=(0.06+0.62*Math.pow(Math.max(0,c),1.5))*(limp?0.7:1)}
       const kx=L1*Math.sin(a1),ky=L1*Math.cos(a1),b=a1-fl;
       return {a1,b,kx,ky,fx:kx+L2*Math.sin(b),fy:ky+L2*Math.cos(b)};
@@ -3348,7 +3370,7 @@ const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
   if(drop){g.beginPath();g.ellipse(12,-1,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(6,-1,6,3,0,0,7);g.fill()}
   else if(legs){[1,0].forEach(i=>{const l=legs[i];g.beginPath();g.ellipse(l.fx+2.5,hipY+l.fy+0.5,6,3,Math.max(0,-l.b)*0.45,0,7);g.fill()})}
   else{g.beginPath();g.ellipse(-sw+2,-2,6,3,0,0,7);g.fill();g.beginPath();g.ellipse(sw+2,-2,6,3,0,0,7);g.fill()}
-  g.save();g.translate(0,hipY);g.rotate(0.02+0.26*tired+(climbM?0.22:0));g.translate(0,-hipY); // Haltung: müde = vorgebeugt, Klettern = nach vorn gelehnt
+  g.save();g.translate(0,hipY);g.rotate(0.02+0.26*tired+(climbM?0.22:0)+(hopM?0.14*Math.sin(Math.PI*hp.air)+0.05:0));g.translate(0,-hipY); // Haltung: müde = vorgebeugt, Klettern = nach vorn gelehnt
   if(!o.nopack){const ps=o.packScale||1,ph=32*ps,pw=(15*bw+2)*(0.85+0.15*ps);
     g.fillStyle=o.packColor||'#7f8c8d';rr(g,-6*bw-pw+2,hipY-4-ph,pw,ph,5);g.fill();
     g.fillStyle='rgba(0,0,0,0.18)';rr(g,-6*bw-pw+2,hipY-4-ph*0.45,pw,ph*0.45,5);g.fill(); // dunklere Unterseite
@@ -3401,6 +3423,7 @@ const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
     g.fillStyle='#fff';rr(g,20,hipY-78,30,18,6);g.fill();g.fillStyle='#333';g.font='12px sans-serif';g.textAlign='center';g.fillText('…',35,hipY-65)}
   else if(mode==='drone'){ln(g,shx,shy,12,hipY-14);ln(g,shx,shy,8,hipY-12);g.fillStyle='#222';rr(g,4,hipY-20,16,9,3);g.fill()}
   else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
+  else if(hopM){arm(0.95+0.5*hp.air,-0.4);const hd=arm(-0.8-0.4*hp.air,0.3);if(o.torch)drawTorchHand(g,hd,o.torch);if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,hd[0],hd[1],hd[0]+14,hd[1]+10)}}
   else if(legs){ // gegengleicher Armschwung mit Ellbogen
     const k=climbM?1.1:0.7,bd=climbM?1.0:0.45;
     arm(-legs[1].a1*k-0.05,bd*0.8);const hd=(o.torch&&!climbM)?arm(1.2,-0.2):arm(-legs[0].a1*k+0.1,bd);
@@ -3800,7 +3823,7 @@ function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
   g.drawImage(bmp,-Wd/2,-Ht,Wd,Ht);g.restore();
   return true;
 }
-const LS_SZ={busch:165,strauch:175,nstr:165,nstein:98,s1:32,s2:30,s3:31,s4:31,s5:36,s6:28,hg:32,hk:34,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
+const LS_SZ={busch:165,strauch:175,nstr:165,nstein:62,s1:19,s2:17,s3:18,s4:18,s5:21,s6:16,hg:13,hk:16,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
 const LS_MIX={ /* Bewuchs je Biom: [Anteil der Zellen, [[Art, Gewicht], …]] */
   wald:[0.34,[['mgras',.22],['hgras',.12],['nbgras',.16],['bgras',.1],['nstr',.14],['strauch',.12],['busch',.14]]],
   tal:[0.36,[['ngras',.24],['mgras',.16],['nbgras',.14],['strauch',.16],['nstr',.12],['busch',.1],['hgras',.08]]],
@@ -4146,7 +4169,7 @@ const LIGHT={t:0,next:8,flash:0,bolt:null};
 function heroY(x){
   const c=H&&H.crossing;if(!c)return groundY(x);
   const ys=380-(c.L.L-H.camElev)*VS;
-  if(c.kind==='wade'){return groundY(x)+1-Math.abs(Math.sin((x-c.x0)/68*Math.PI))*7}
+  if(c.kind==='wade'){return groundY(x)+1+(H.hop&&Math.abs(x-H.x)<1?H.hop.dy:0)}
   if(c.kind==='detour'){const pr=clamp((x-c.x0)/Math.max(1,c.x1-c.x0),0,1);return lerp(groundY(c.x0),groundY(c.x1),pr)+8+30*Math.sin(Math.PI*pr)}
   return Math.min(groundY(x),ys)+(c.kind==='boat'?10:c.kind==='swim'?14:2);
 }
@@ -4180,11 +4203,12 @@ function drawWalkers(g,tm){
   if(H.crossing&&H.crossing.kind==='boat'){const sx=CHAR_SX(),gy=heroY(H.x);emoji(g,'🛶',sx,gy+14+Math.sin(tm*3)*2,54)}
   if(H.crossing&&H.crossing.kind==='swim'){const sx=CHAR_SX(),gy=heroY(H.x);g.fillStyle='rgba(255,255,255,0.5)';for(let k=0;k<4;k++){g.beginPath();g.arc(sx-16+k*11+Math.sin(tm*6+k)*3,gy+10+Math.sin(tm*5+k*2)*2,3,0,7);g.fill()}}
   for(const W of H.walkers){
-    const sx=W.x-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(W.x);
+    const fi=clamp(accum*6,0,1),wxx=W.x+(W.dx||0)*fi,wph=W.ph+(W.dph||0)*fi;
+    const sx=wxx-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(wxx);
     g.save();g.translate(sx,0);g.scale(W.dir>0?1:-1,1);
-    drawHiker(g,0,gy,1.15,{look:W.look,phase:W.ph,mode:W.wait?'idle':'walk',packColor:W.pack,tm,poles:false});
-    if(W.grp)W.grp.forEach((m,i)=>drawHiker(g,-(i+1)*46,gy,1.15,{look:m.look,phase:W.ph+(i+1)*1.3,mode:W.wait?'idle':'walk',packColor:m.pack,tm,poles:false}));
-    if(W.dg){const ds=DOG_SIZES.find(x=>x.id===W.dg.s);if(ds){try{drawDog(g,W.dg.side<0?-64-46*(W.grp?W.grp.length:0):72,gy+2,ds,{color:W.dg.c,patch:W.dg.p,name:'Hund'},W.wait?'sit':'walk',W.ph*1.15,tm,null)}catch(e){}}}
+    drawHiker(g,0,gy,1.15,{look:W.look,phase:wph,mode:W.wait?'idle':'walk',packColor:W.pack,tm,poles:false});
+    if(W.grp)W.grp.forEach((m,i)=>drawHiker(g,-(i+1)*46,gy,1.15,{look:m.look,phase:wph+(i+1)*1.3,mode:W.wait?'idle':'walk',packColor:m.pack,tm,poles:false}));
+    if(W.dg){const ds=DOG_SIZES.find(x=>x.id===W.dg.s);if(ds){try{drawDog(g,W.dg.side<0?-64-46*(W.grp?W.grp.length:0):72,gy+2,ds,{color:W.dg.c,patch:W.dg.p,name:'Hund'},W.wait?'sit':'walk',wph*1.15,tm,null)}catch(e){}}}
     g.restore();
   }
 }
@@ -4545,6 +4569,7 @@ function heroMode(){
   if(typeof COOP!=='undefined'&&COOP&&COOP.wait)return 'sit';
   if(H.sleep.active)return 'sleep';
   if(H.crossing&&H.crossing.kind==='swim')return 'swim';
+  if(H.crossing&&H.crossing.kind==='wade'&&H.hop)return 'hop';
 if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'))return 'walk';
   if(H.live&&H.action&&H.action.kind==='live')return 'live';
   if(H.shot&&!H.shot.noclip||H.shot)return H.shot.type;
@@ -4702,7 +4727,7 @@ g.restore();
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
-drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,hop:H.hop,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
 
@@ -6085,9 +6110,9 @@ function frame(ts){
     if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork&&!H.sleep.active)mult/=STRETCH; // beim Gehen läuft die Uhr langsamer, damit der längere Weg gleich schnell vorbeizieht
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
     accum+=dt*TIME_SCALE*mult/1.15;
-    let n=0;const x0=H.x,ph0=H.phase;
+    let n=0;const x0=H.x,ph0=H.phase,hp0=H.hopPr||0;
     while(accum>=1/6&&n<70&&!MODAL&&!H.ended){stepSim(1/6);accum-=1/6;n++}
-    if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n;if(Math.abs(H.vdx)>40)H.vdx=0}
+    if(n>0){H.vdpr=((H.hopPr||0)-hp0)/n;H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n;if(Math.abs(H.vdx)>40)H.vdx=0}
     if(accum>2)accum=0;
     updateIcons(dt*Math.min(SPEEDS[H.speed],4));
     thoughtTick(dt);
@@ -6098,7 +6123,8 @@ function frame(ts){
 if(H.side&&H.side.kind==='climb')H.camElev=clamp(H.camElev,elevAt(H.x)-55,elevAt(H.x)+55);
 H.cd=(H.cd||0)+(((H.dir||1)<0?1:0)-(H.cd||0))*Math.min(1,dt*2.2);
   const rx=H.x,rph=H.phase;
-  if(H.moving&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=6&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
+  if((H.moving||H.crossing)&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended&&H.vdx&&SPEEDS[H.speed]<=6&&!H.sleep.active){const f=clamp(accum*6,0,1);H.x=rx+H.vdx*f;H.phase=rph+(H.vdph||0)*f}
+  if(H.crossing&&H.crossing.wp&&!MODAL&&SPEEDS[H.speed]>0&&!H.ended){const f=clamp(accum*6,0,1),o=hopAt(clamp((H.hopPr||0)+(H.vdpr||0)*f,0,1));H.x=o.x;H.hop=o}
   drawScene(cv.getContext('2d'),tm,dt);
   H.x=rx;H.phase=rph;
   hudT-=dt;if(hudT<=0){hudT=0.2;try{updateHUD()}catch(e){console.error(e)}try{updateLivePanel()}catch(e){}}
