@@ -61,6 +61,8 @@ input[type=range]{accent-color:var(--acc)}
 .ico.pk{width:64px}.ico.pk img{width:60px;height:74px}
 .pvs{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}.pvs button{width:34px;height:40px;padding:2px;border:2px solid transparent;border-radius:6px;background:rgba(255,255,255,.07);min-width:0}.pvs button.on{background:rgba(255,255,255,.18)}.pvs img{width:100%;height:100%;object-fit:contain}
 .ico.wide{width:112px}.ico.wide img{width:104px;height:47px}
+.ico.sq{width:76px}.ico.sq img{width:72px;height:72px}
+.pl .lp img{width:24px;height:24px;vertical-align:middle;margin-right:2px;object-fit:contain}
 .inf{flex:1;display:flex;flex-direction:column;gap:2px}
 .qty{min-width:24px;text-align:center}
 .side{position:sticky;top:10px;align-self:start}
@@ -253,9 +255,15 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 
 /* ---- Optionale eigene Grafiken: assets/<pfad>.png (oder .svg, z. B. img('Zelte_Tarp','svg')) ---- */
 const IMG={};
+const ROOTA=/^(Shopprodukte_|Feuerzeug|Sturmfeuerzeug|Tee Sorten_|Laterne|Straßenlaterne|Strassenlaterne|Lampe|Laternen)/;
+function aurl(n,ext='svg'){return (ROOTA.test(n)?'':'assets/')+n.split('/').map(encodeURIComponent).join('/')+'.'+ext}
+function aFB(i){if(i.dataset.fb)return;i.dataset.fb=1;const u=i.getAttribute('src');i.src=u.indexOf('assets/')===0?u.slice(7):'assets/'+u}
+function aimg(n,alt){return '<img src="'+aurl(n)+'" alt="'+esc(alt||'')+'" loading="lazy" onerror="aFB(this)">'}
 function img(path,ext='png'){
   const key=ext==='png'?path:path+'.'+ext;
-  if(!(key in IMG)){IMG[key]=null;const i=new Image();i.onload=()=>{IMG[key]=i};i.onerror=()=>{IMG[key]=false};i.src='assets/'+path.split('/').map(encodeURIComponent).join('/')+'.'+ext;}
+  if(!(key in IMG)){IMG[key]=null;const i=new Image();let fb=0;i.onload=()=>{IMG[key]=i};
+    i.onerror=()=>{if(!fb){fb=1;const u=aurl(path,ext);i.src=u.indexOf('assets/')===0?u.slice(7):'assets/'+u}else IMG[key]=false};
+    i.src=aurl(path,ext);}
   return IMG[key]||null;
 }
 
@@ -343,7 +351,8 @@ const BIOMES={
   sand:{name:'Sandstrand',wind:1.3,net:0.6,rain:1,scenic:1.25,tree:0,ground:'#e0cf9c',far:'#8fb0c4',noise:3,water:14,spd:0.78,bare:1},
   kies:{name:'Steinstrand',wind:1.2,net:0.5,rain:1,scenic:1.2,tree:0,ground:'#9d9b95',far:'#7d8fa0',noise:6,water:13,spd:0.86,rock:1},
   sumpf:{name:'Moor & Sumpf',wind:0.5,net:0.35,rain:1.2,scenic:1.05,tree:0.1,ground:'#7a6a43',far:'#8a8f72',noise:4,water:7,spd:0.88,feet:6},
-  schnee:{name:'Schneefeld',wind:1.7,net:0.15,rain:1,scenic:1.5,tree:0,ground:'#eef2f7',far:'#a9b6c9',noise:14,water:12,spd:0.74,snowfield:1,rock:1}};
+  schnee:{name:'Schneefeld',wind:1.7,net:0.15,rain:1,scenic:1.5,tree:0,ground:'#eef2f7',far:'#a9b6c9',noise:14,water:12,spd:0.74,snowfield:1,rock:1},
+  strasse:{name:'Straße',wind:0.8,net:0.95,rain:1,scenic:0.55,tree:0.1,ground:'#76a05a',far:'#7d8a96',noise:1,water:8,spd:1.05,road:1}};
 
 /* ---- Wetter ---- */
 const WEATHER={
@@ -612,8 +621,8 @@ const TOWNS={
 const SP_REWARD=[0,1,1,2,3,4,5];
 
 /* ---- Ausrüstung ---- */
-const TABS=['Rucksack','Schlafen','Kleidung','Ausrüstung','Navigation','Technik','Proviant','Hund'];
-const TAB_OF={wood:'Proviant',pack:'Rucksack',shelter:'Schlafen',bag:'Schlafen',mat:'Schlafen',mid:'Kleidung',shell:'Kleidung',shoes:'Kleidung',tool:'Ausrüstung',water:'Ausrüstung',nav:'Navigation',rec:'Technik',power:'Technik',food:'Proviant',gas:'Proviant',dog:'Hund',dogpack:'Hund',dogfood:'Hund'};
+const TABS=['Rucksack','Schlafen','Kleidung','Ausrüstung','Licht & Feuer','Navigation','Technik','Proviant','Hund'];
+const TAB_OF={wood:'Licht & Feuer',pack:'Rucksack',shelter:'Schlafen',bag:'Schlafen',mat:'Schlafen',mid:'Kleidung',shell:'Kleidung',shoes:'Kleidung',tool:'Ausrüstung',water:'Ausrüstung',nav:'Navigation',rec:'Technik',power:'Technik',food:'Proviant',gas:'Proviant',dog:'Hund',dogpack:'Hund',dogfood:'Hund'};
 const EXCLUSIVE=['pack','shelter','bag','mat','mid','shell','shoes'];
 const GEAR=[
   {id:'pack_school',cat:'pack',name:'Schul-Rucksack 18 L',e:'🎒',price:15,kg:0.6,max:9,comfort:-0.3,vol:18,wbig:1.5,wcap:1.5,imgs:['Rucksäcke_Schul-Rucksack 1','Rucksäcke_Schul-Rucksack 2'],cols:['#e8b410','#c75b14'],color:'#e8b410',desc:'Winzig und leicht, nur für Tagesausflüge. Ein Wassersack passt nicht hinein, höchstens eine Flasche.'},
@@ -689,8 +698,60 @@ const GEAR=[
 
   {id:'dogpack',cat:'dogpack',name:'Hunderucksack',e:'🎒',price:0,kg:0.3,desc:'Der Hund trägt zuerst sein eigenes Futter, den Rest deiner Last. Größe passt zur Hunderasse.'}
 ];
+/* ---------- Neue Produktgrafiken, Lampen, Feuerzeuge, Thermoskannen … ---------- */
+const LF='Licht & Feuer',SP_='Shopprodukte_';
+const gp=(id,o)=>Object.assign(GEAR.find(g=>g.id===id),o);
+gp('lamp',{name:'Stirnlampe Outdoor (wiederaufladbar)',pic:SP_+'Stirnlampe Outdoor',tab:LF,desc:'Mittlerer Lichtkegel, nachts fast volles Tempo. Eigener Akku (per Powerbank ladbar, ca. 18 h Gehzeit). Ohne Licht ist die Nacht sehr zäh.'});
+gp('torch',{name:'Taschenlampe Outdoor (LED)',pic:SP_+'Taschenlampe Outdoor',tab:LF,desc:'Breiter, weit reichender Lichtkegel in der Hand – nachts fast so schnell wie mit guter Stirnlampe und sicherer. Akku hält ca. 9 h Gehzeit. Die beste vorhandene Lampe wird automatisch benutzt.'});
+gp('fire',{tab:LF});gp('firetarp',{tab:LF});
+gp('lighter',{name:'Billig-Feuerzeug',tab:LF,pics:[SP_.slice(0,0)+'Feuerzeug Billig Blau','Feuerzeug Billig Grün','Feuerzeug Billig Pink','Feuerzeug Billig Rot'],cols:['#3aa0e8','#3bb84c','#f03fa6','#e84a2d']});
+gp('stormlighter',{tab:LF,pics:['Sturmfeuerzeug Silber','Sturmfeuerzeug Silberblau'],cols:['#a9a9a9','#7da3cc']});
+gp('bag_s',{pic:SP_+'Sommerschlafsack (+8 °C)',picPk:SP_+'Sommerschlafsack (+8 °C) gepackt'});
+gp('bag_3',{pic:SP_+'3-Jahreszeiten-Schlafsack (0 °C)',picPk:SP_+'3-Jahreszeiten-Schlafsack (0 °C) gepackt'});
+gp('bag_w',{pic:SP_+'Winterschlafsack (−12 °C)',picPk:SP_+'Winterschlafsack (−12 °C) gepackt'});
+gp('bag_x',{pic:SP_+'Expeditionsschlafsack (−25 °C)',picPk:SP_+'Expeditionsschlafsack (−25 °C) gepackt'});
+gp('mat_foam',{name:'Isomatte (dick)',pic:SP_+'Isomatte dick',kg:0.55,warm:2.5,desc:'Dicke Schaumstoffmatte, dämmt vom kalten Boden (+2,5 °C).'});
+gp('mat_air',{pic:SP_+'Luftmatraze',picPk:SP_+'Luftmatraze gepackt'});
+gp('gps',{pic:SP_+'GPS Tracker'});gp('kit',{pic:SP_+'Erste Hilfe Set'});
+gp('phone_cheap',{pic:SP_+'Smartphone einfach'});gp('phone_good',{pic:SP_+'Smartphone Hightech'});gp('camera',{pic:SP_+'Systemkamera'});
+gp('drybag',{});
+GEAR.push(
+ {id:'lamp_s',cat:'tool',tool:'lamp_s',kind:'lamp',tab:LF,name:'Stirnlampe einfach',e:'🔦',pic:SP_+'Strinlampe einfach',price:9,kg:0.08,stby:0,fragile:0.0005,desc:'Kleiner, schwacher Lichtkegel. Besser als nichts, aber nachts kommst du nur mühsam voran und stolperst öfter. Akku ca. 11 h Gehzeit.'},
+ {id:'lamp_h',cat:'tool',tool:'lamp_h',kind:'lamp',tab:LF,name:'Stirnlampe Heimwerker',e:'🔦',pic:SP_+'Strinlampe Heimwerker',price:16,kg:0.15,stby:0,fragile:0.0003,desc:'Solide Baustellenlampe mit breitem Kegel, aber ohne Feinschliff. Nachts ordentliches Tempo. Akku ca. 14 h Gehzeit.'},
+ {id:'lamp_x',cat:'tool',tool:'lamp_x',kind:'lamp',tab:LF,name:'Stirnlampe Expedition',e:'🔦',pic:SP_+'Strinlampe Expedition',price:58,kg:0.2,stby:0,fragile:0.0001,desc:'Kräftiger Fernlichtkegel mit großem Nahfeld, wasserdicht und sehr sparsam: Akku ca. 24 h Gehzeit. Nachts fast wie am Tag.'},
+ {id:'torch_s',cat:'tool',tool:'torch_s',kind:'torch',tab:LF,name:'Taschenlampe einfach',e:'🔦',pic:SP_+'Taschenlampe einfach',price:6,kg:0.12,stby:0,fragile:0.0007,desc:'Schmaler, kurzer Lichtkegel in der Hand. Billig, aber nachts bremst sie dich. Akku ca. 7 h Gehzeit.'},
+ {id:'torch_hd',cat:'tool',tool:'torch_hd',kind:'torch',tab:LF,name:'Taschenlampe Home Defense',e:'🔦',pic:SP_+'Taschenlampe Home Defense',price:38,kg:0.65,stby:0,fragile:0.0001,desc:'Extrem helle, schwere Handlampe mit langem, breitem Lichtkegel. Nachts fast volles Tempo und kaum Stolpergefahr. Frisst Akku (ca. 6 h Gehzeit).'},
+ {id:'spot',cat:'tool',tool:'spot',kind:'torch',tab:LF,name:'Handscheinwerfer',e:'🔦',pic:SP_+'Scheinwerfer',price:49,kg:1.35,stby:0,fragile:0.0002,desc:'Riesiger Scheinwerfer: der längste und breiteste Kegel, nachts wie Tag – aber 1,3 kg schwer und der Akku hält nur ca. 4 h Gehzeit.'},
+ {id:'lantern',cat:'tool',tool:'lantern',tab:LF,name:'Lager-Lampe',e:'🏮',pic:SP_+'Lager Lampe',price:19,kg:0.45,desc:'Steht im Lager neben dem Zelt und erhellt den Platz. Im Dunkeln gehen Arbeiten im Camp etwas schneller von der Hand (−10 % Zeit).'},
+ {id:'lighterG',cat:'tool',tool:'lighterG',tab:LF,name:'Marken-Feuerzeug',e:'🪔',pics:['Feuerzeug Gut Gelb','Feuerzeug Gut Grün','Feuerzeug Gut Wellen-Design'],cols:['#f2c500','#8fd13a','#a9c7e6'],price:8,kg:0.03,desc:'Zuverlässiges Gasfeuerzeug (ca. 100 Zündungen pro Tour), auch bei Wind deutlich besser als das Billig-Feuerzeug.'},
+ {id:'repel1',cat:'tool',tool:'repel1',name:'Mückenspray (einfach)',e:'🧴',pic:SP_+'Mückenspray einfach',price:6,kg:0.15,desc:'Hält Mücken im Freien etwas ab (−40 % Stiche). Wirkt nicht im Zelt – dort brauchst du es nicht.'},
+ {id:'repel2',cat:'tool',tool:'repel2',name:'Mückenspray (stark)',e:'🧴',pic:SP_+'Mückenspray stark',price:12,kg:0.2,desc:'Starkes Insektenschutzmittel (−65 % Stiche im Freien). Kombinierbar mit dem Mückennetz.'},
+ {id:'uvtrap',cat:'tool',tool:'uvtrap',name:'UV-Insektenfalle',e:'🪰',pic:SP_+'UV-Insektenfalle',price:38,kg:0.9,desc:'Steht im Lager und lockt Mücken mit UV-Licht in ein Gitter: am Rastplatz und beim Schlafen am Tarp spürbar weniger Stiche (−55 %). Sie summt dabei laut.'},
+ {id:'mat_thin',cat:'mat',name:'Isomatte (dünn)',e:'🟫',pic:SP_+'Isomatte dünn',price:12,kg:0.3,warm:1.2,desc:'Dünn, leicht und billig: dämmt kaum (+1,2 °C), besser als nackter Boden.'},
+ {id:'th05',cat:'water',cap:0.5,thermo:1,name:'Thermoskanne 0,5 L',e:'🥤',pics:[SP_+'Thermoskanne Lila 500ml',SP_+'Thermoskanne Silber 500ml'],cols:['#8a56d4','#aeb4ba'],price:12,kg:0.35,desc:'Kleine Isolierflasche (0,5 Liter). Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
+ {id:'th1',cat:'water',cap:1,thermo:1,name:'Thermoskanne 1 L',e:'🥤',pics:[SP_+'Thermoskanne Grün 1 Liter',SP_+'Thermoskanne Türkis 1 Liter'],cols:['#8fd13a','#2fb9e0'],price:18,kg:0.55,desc:'Isolierflasche mit 1 Liter. Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
+ {id:'thtea',cat:'water',cap:1,thermo:1,name:'Teekanne-Thermos 1 L',e:'🫖',pic:SP_+'Thermoskanne',price:20,kg:0.65,desc:'Isolierkanne im Retro-Stil mit Becher (1 Liter). Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
+ {id:'th15',cat:'water',cap:1.5,thermo:1,name:'Thermoskanne 1,5 L',e:'🥤',pic:SP_+'Thermoskanne Silber eineinhalb Liter',price:26,kg:0.8,desc:'Edelstahl-Thermoskanne mit Henkel (1,5 Liter). Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
+ {id:'th2',cat:'water',cap:2,thermo:1,name:'Thermoskanne 2 L',e:'🥤',pic:SP_+'Thermoskanne Schwarz-Blau 2 Liter',price:34,kg:1.1,desc:'Große Stahl-Thermoskanne (2 Liter). Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
+ {id:'phone_old',cat:'rec',kind:'phone',nonav:1,name:'Tastenhandy',e:'📞',pics:[SP_+'Altes Handy mit Tastatur-18',SP_+'Altes Handy mit Tastatur-19'],cols:['#26327a','#1d6b7a'],price:18,kg:0.1,q:0.2,time:1.6,rate:1.0,fragile:0.0004,desc:'Unkaputtbar und der Akku hält ewig, aber die Videoqualität ist erbärmlich und es kann nicht navigieren. Nur für Notfälle und Mini-Clips.'},
+ {id:'phone_mid',cat:'rec',kind:'phone',name:'Smartphone Mittelklasse',e:'📱',pic:SP_+'Smartphone Mittelklasse',price:110,kg:0.19,q:0.62,time:1.1,rate:3.4,fragile:0.0008,desc:'Solide Aufnahmen und Navigation, Akku ca. 3 Tage bei wenigen Clips.'},
+ {id:'cam_s',cat:'rec',kind:'cam',name:'Digitalkamera einfach',e:'📷',pic:SP_+'Digitalkamera einfach',price:90,kg:0.35,q:0.72,time:1.3,rate:2.2,fragile:0.0007,desc:'Kompaktkamera mit ordentlicher Bildqualität und sparsamem Akku.'},
+ {id:'cam_h',cat:'rec',kind:'cam',name:'Digitalkamera hochwertig',e:'📷',pic:SP_+'Digitalkamera hochwertig',price:190,kg:0.5,q:0.9,time:1.35,rate:2.5,fragile:0.0005,desc:'Hochwertige Kompaktkamera: scharfe Aufnahmen, auch bei wenig Licht.'},
+ {id:'gopro',cat:'rec',kind:'cam',name:'Action-Cam',e:'📷',pic:SP_+'Go Pro Kamera',price:140,kg:0.15,q:0.8,time:1.0,rate:3.2,fragile:0.0001,desc:'Robust, wasserdicht und schnell einsatzbereit. Etwas weitwinkliger Look, sehr unempfindlich.'}
+);
+const LIGHTS={ // kind: head=Stirnlampe, hand=Handlampe; f=Tempo nachts; risk=Stolpergefahr; drain=Akku %/h; cx/rx/ry=Lichtkegel (Mitte, Breite, Höhe)
+ lamp_s:{kind:'head',f:0.9,risk:0.5,drain:9,cx:70,rx:140,ry:120,a:0.85},
+ lamp_h:{kind:'head',f:0.93,risk:0.32,drain:7,cx:95,rx:185,ry:160,a:0.9},
+ lamp:{kind:'head',f:0.96,risk:0.2,drain:5.5,cx:120,rx:230,ry:230,a:0.95},
+ lamp_x:{kind:'head',f:0.985,risk:0.1,drain:4.2,cx:170,rx:310,ry:250,a:0.97},
+ torch_s:{kind:'hand',f:0.91,risk:0.4,drain:14,cx:110,rx:220,ry:90,a:0.9},
+ torch:{kind:'hand',f:0.97,risk:0.15,drain:11,cx:205,rx:380,ry:380,a:0.97},
+ torch_hd:{kind:'hand',f:0.985,risk:0.08,drain:17,cx:290,rx:520,ry:300,a:0.98},
+ spot:{kind:'hand',f:0.99,risk:0.05,drain:26,cx:340,rx:640,ry:360,a:0.99}};
+const ORD={lamp_s:10,lamp_h:11,lamp:12,lamp_x:13,torch_s:20,torch:21,torch_hd:22,spot:23,lantern:30,lighter:40,lighterG:41,stormlighter:42,fire:50,firetarp:51,mat_thin:1,mat_foam:2,mat_air:3,repel1:10,repel2:11,uvtrap:12,th05:1,th1:2,thtea:3,th15:4,th2:5,phone_cheap:1,phone_old:0,phone_mid:2,phone_good:3,cam_s:10,cam_h:11,gopro:12,camera:13};
+GEAR.forEach(g=>{if(ORD[g.id]!==undefined)g.ord=ORD[g.id]});
 GEAR.forEach(g=>{if(g.w===undefined)g.w=g.price||10});
-GEAR.forEach(g=>{if(g.img){img(g.img,'svg');if(g.imgClosed)img(g.imgClosed,'svg')}if(g.imgs)g.imgs.forEach(m=>img(m,'svg'))}); // Zelt- und Rucksack-Grafiken vorladen
+GEAR.forEach(g=>{if(g.cat!=='pack'&&g.cat!=='shelter')return;if(g.img){img(g.img,'svg');if(g.imgClosed)img(g.imgClosed,'svg')}if(g.imgs)g.imgs.forEach(m=>img(m,'svg'))}); // Zelt- und Rucksack-Grafiken vorladen
 const GEAR_REPAIRABLE=g=>['pack','shelter','bag','mid','shell','shoes','tool','rec','nav','water','power'].includes(g.cat)&&!(g.id==='offline');
 
 /* ---- Proviant ---- */
@@ -704,6 +765,9 @@ const FOODS=[
   {id:'noodles',cat:'food',name:'Instant-Nudelsuppe (kochen)',e:'🍜',price:2.5,kg:0.15,sat:32,en:2,cook:true,warm:20,water:0.45,hyd:10,shop:1},
   {id:'dry',cat:'food',name:'Trockennahrung (kochen)',e:'🍲',price:7.5,kg:0.13,sat:52,en:6,cook:true,warm:26,water:0.5,hyd:3,shop:1},
   {id:'coffee',cat:'food',name:'Kaffee (kochen)',e:'☕',price:1.4,kg:0.05,sat:2,cook:true,warm:8,water:0.3,hyd:9,stim:'coffee',shop:1},
+  {id:'tea_h',cat:'food',name:'Hibiskus-Zimt-Tee (kochen)',e:'🍵',pic:'Tee Sorten_Tee Beutel Hibiskus-Zimt Tee',price:0.9,kg:0.02,sat:1,cook:true,warm:9,water:0.3,hyd:9,shop:1},
+  {id:'tea_v',cat:'food',name:'Vanille-Zimt-Muskat-Tee (kochen)',e:'🍵',pic:'Tee Sorten_Tee Beutel Vanille, Zimt und Muskat Tee',price:0.9,kg:0.02,sat:2,cook:true,warm:9,water:0.3,hyd:9,shop:1},
+  {id:'tea_z',cat:'food',name:'Zitrone-Minze-Tee (kochen)',e:'🍵',pic:'Tee Sorten_Tee Beutel Zitrone-Minze Tee',price:0.9,kg:0.02,sat:1,cook:true,warm:7,water:0.3,hyd:10,shop:1},
   {id:'edrink',cat:'food',name:'Energydrink',e:'🥤',price:2.6,kg:0.5,sat:3,hyd:13,cook:false,stim:'edrink',shop:1},
   // Gesammelt / geangelt (nicht käuflich)
   {id:'berries',cat:'food',name:'Wilde Beeren',e:'🫐',price:0,kg:0.1,sat:10,cook:false,wild:1},
@@ -716,7 +780,7 @@ const FOODS=[
 const GAS={id:'gas',cat:'gas',name:'Gaskartusche (5 Einsätze)',e:'🛢️',price:6,kg:0.22,uses:5,shop:1};
 const DOGFOOD={id:'dogfood',cat:'dogfood',name:'Hundefutter (1 kg)',e:'🦴',price:3.5,kg:1.0,shop:1};
 const FIREWOOD={id:'firewood',cat:'wood',name:'Brennholz-Bündel',e:'🪵',price:4.5,kg:1.6,shop:1};
-const MATCHBOX={id:'matchbox',cat:'wood',name:'Streichhölzer (Schachtel, 38 Stück)',e:'🔥',price:1.5,kg:0.04,shop:1};
+const MATCHBOX={id:'matchbox',cat:'wood',name:'Streichhölzer (Schachtel, 38 Stück)',e:'🔥',pic:'Shopprodukte_Streichhölzer',price:1.5,kg:0.04,shop:1};
 const FCUBE={id:'fcube',cat:'wood',name:'Grillanzünder (8 Würfel)',e:'🧱',price:3,kg:0.1,shop:1};
 const CONS=[...FOODS.filter(f=>!f.wild&&!f.fish),GAS,FIREWOOD,MATCHBOX,FCUBE,DOGFOOD];
 const gearById=id=>GEAR.find(g=>g.id===id)||FOODS.find(g=>g.id===id)||(id==='gas'?GAS:id==='dogfood'?DOGFOOD:id==='firewood'?FIREWOOD:id==='matchbox'?MATCHBOX:id==='fcube'?FCUBE:null);
@@ -805,7 +869,8 @@ const packedGear=()=>GEAR.filter(g=>G.packed[g.id]&&G.owned[g.id]&&(G.cond[g.id]
 const slotOf=cat=>packedGear().find(g=>g.cat===cat)||null;
 function consKg(){let k=0;for(const id in G.cons){const c=gearById(id);if(c)k+=c.kg*G.cons[id]}return k}
 const gearKg=()=>{const no=waterFit().no;return packedGear().filter(g=>g.cat!=='dogpack'&&!no.includes(g)).reduce((a,g)=>a+g.kg,0)};
-const packVar=g=>{const n=(g.imgs||[]).length;return n?clamp(((G.var||{})[g.id]|0),0,n-1):0};
+const packVar=g=>{const n=(g.imgs||g.pics||[]).length;return n?clamp(((G.var||{})[g.id]|0),0,n-1):0};
+const gearPic=g=>g?(g.pics?g.pics[packVar(g)]:g.pic||null):null;
 const packImg=g=>g&&g.imgs?g.imgs[packVar(g)]:null;
 const packCol=g=>g?(g.cols?g.cols[packVar(g)]:g.color):null;
 // Welche gepackten Wasserbehälter passen in den Rucksack? (einzelne Größe + Gesamtmenge)
@@ -852,7 +917,7 @@ function buildRoute(hk,seed){
   const groups=[];let acc=0,prev=hk.startAlt;
   hk.stages.forEach((s,i)=>{groups.push({i,b:s.b,km0:acc,km:s.km,x0:acc*PPK,x1:(acc+s.km)*PPK,a0:prev,a1:s.alt});acc+=s.km;prev=s.alt});
   const totalPx=acc*PPK,totalKm=acc;
-  const stages=splitStages(groups,seed);
+  let stages=splitStages(groups,seed);
   const N=Math.ceil((totalPx+3200)/10)+2;const elev=new Float32Array(N);
   const ph=[rng()*6.28,rng()*6.28,rng()*6.28];let si=0;const rough=1+0.1*hk.diff;
   for(let i=0;i<N;i++){
@@ -966,7 +1031,39 @@ function buildRoute(hk,seed){
   for(let i=1;i<clean.length;i++){const a=clean[i-1],b=clean[i];const need=((FEAT_RAD[b.type]||120)+(FEAT_RAD[a.type]||120))*0.55;
     if(b.x-a.x<need){if(b.summit&&!a.summit)a.x=b.x-need;else if(!b.summit)b.x=a.x+need}}  // Gipfel bleiben exakt auf dem Höhepunkt
   clean.sort((a,b)=>a.x-b.x);
-  return {stages,elev,feats:clean,totalPx,totalKm,lakes};
+  // Biom „Straße“: vor und nach jeder Ortschaft ein flaches Stück Straße mit Laternen
+  const roads=[],lamps=[];
+  try{
+    const rr=mulberry32((seed^0x2c9277b)>>>0);
+    for(const v of clean){
+      if(v.type!=='village')continue;
+      const x0=Math.max(PPK*0.6,v.x-1250),x1=Math.min(totalPx-PPK*0.6,v.x+1750);
+      if(x1-x0<1500)continue;
+      if(roads.length&&x0<roads[roads.length-1].x1+200)continue;
+      if(lakes.some(L=>x1>L.xl-200&&x0<L.xr+200))continue;
+      const iv=Math.round(v.x/10),i0=Math.round(x0/10),i1=Math.round(x1/10);
+      if(i1+60>=elev.length||Math.abs(elev[i0]-elev[iv])>45||Math.abs(elev[i1]-elev[iv])>45)continue;
+      const BL_=60,ref=elev[iv],tilt=(rr()-0.5)*0.05;
+      for(let i=i0-BL_;i<=i1+BL_;i++){if(i<0||i>=elev.length)continue;const w=i<i0?(i-(i0-BL_))/BL_:i>i1?1-(i-i1)/BL_:1;const s=w*w*(3-2*w);elev[i]=lerp(elev[i],ref+(i-iv)*tilt+0.6*Math.sin(i*0.05),s)}
+      const mod=rr()<(v.town?0.72:0.4),vv=Math.floor(rr()*4);
+      roads.push({x0,x1,mod,v:vv,vx:v.x});
+      const L1=[],A=[],B=[];
+      for(let x=v.x-420;x<=v.x+470;x+=200)L1.push(x);
+      for(let x=v.x-420-340,n=0;x>=x0+100&&n<4;x-=340,n++)A.unshift(x);
+      for(let x=v.x+470+340,n=0;x<=x1-100&&n<4;x+=340,n++)B.push(x);
+      for(const x of A.concat(L1,B))lamps.push({x:x+(rr()-0.5)*30,mod,v:vv});
+    }
+    if(roads.length){
+      const out=[];
+      for(const s of stages){
+        let cur=s.x0;const ov=roads.filter(z=>z.x1>s.x0&&z.x0<s.x1);
+        for(const z of ov){const a=Math.max(s.x0,z.x0),b=Math.min(s.x1,z.x1);if(a>cur+1)out.push(Object.assign({},s,{x0:cur,x1:a}));out.push(Object.assign({},s,{b:'strasse',base:s.b,x0:a,x1:b}));cur=b}
+        if(cur<s.x1-1||!ov.length)out.push(Object.assign({},s,{x0:cur,x1:s.x1}));
+      }
+      out.forEach((s,i)=>{s.i=i;s.km0=s.x0/PPK;s.km=(s.x1-s.x0)/PPK});stages=out;
+    }
+  }catch(e){console.error('Strassenbau',e)}
+  return {stages,elev,feats:clean,totalPx,totalKm,lakes,roads,lamps};
 }
 /* ===== Wegscheiden, Wegweiser, Umkehren, Kletter-Abkürzungen ===== */
 const TRAIL_MARKS=[['#d32f2f','Rot-Weiß'],['#1e6fd9','Blau'],['#f2b705','Gelb'],['#2e9d4a','Grün'],['#8e44ad','Violett'],['#ef6c00','Orange'],['#e8e8e8','Weiß-Schwarz'],['#00a3a3','Türkis']];
@@ -1414,8 +1511,8 @@ function startHike(hikeId){
   const dev={};
   gear.filter(x=>x.cat==='rec').forEach(x=>{dev[x.id]={batt:100,broken:false,def:x}});
   if(g.gps)dev.gps={batt:100,broken:false,def:g.gps};
-  if(g.tools.torch)dev.torch={batt:100,broken:false,def:gear.find(x=>x.id==='torch')};
-  if(g.tools.lamp)dev.lamp={batt:100,broken:false,def:gear.find(x=>x.id==='lamp')};
+  for(const id in LIGHTS){if(g.tools[id])dev[id]={batt:100,broken:false,def:gear.find(x=>x.id===id)}}
+  gear.forEach(x=>{if(x.pic&&(LIGHTS[x.id]||x.id==='uvtrap'||x.id==='lantern'))try{img(x.pic,'svg')}catch(e){}});
   if(g.tools.vest)dev.vest={batt:100,broken:false,def:gear.find(x=>x.id==='vest')};
   const handhelds=gear.filter(x=>x.kind==='phone'||x.kind==='cam').sort((a,b)=>b.q-a.q);
   const food={};FOODS.forEach(f=>{if(G.cons[f.id])food[f.id]=G.cons[f.id]});
@@ -1426,7 +1523,7 @@ function startHike(hikeId){
   const ds=dogSize();
   let startRisk=3;try{startRisk=briefing(hk).score}catch(e){}
   const gap0=skillGap(hk);
-  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,matches:(G.cons.matchbox||0)*38+(G.mpart||0),fcubes:(G.cons.fcube||0)*8+(G.fpart||0),lfuel:g.tools.lighter?60:0,sfuel:g.tools.stormlighter?120:0,mWet:0,carry:G.cons.firewood||0,walkers:[],teaserBoost:0,teaserDay:-1,lodge:null,indoor:false,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
+  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,matches:(G.cons.matchbox||0)*38+(G.mpart||0),fcubes:(G.cons.fcube||0)*8+(G.fpart||0),lfuel:g.tools.lighter?60:0,gfuel:g.tools.lighterG?100:0,sfuel:g.tools.stormlighter?120:0,mWet:0,carry:G.cons.firewood||0,walkers:[],teaserBoost:0,teaserDay:-1,lodge:null,indoor:false,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
     x:0,km:0,phase:0,t:startH*60,dayIdx:0,awakeSince:startH*60-60,cond,startDay:G.day,
     speed:1,wood:0,woodX:0,thrill:0,flags:{},walking:true,auto:true,autoStop:true,autoNight:hk.km>=60,autoWake:false,sleptTonight:false,
     body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},fatigue:0,
@@ -1478,30 +1575,38 @@ function fillContainers(){ // Verteilt Wasser auf Flaschen (sauber zuerst, dann 
   return H.g.containers.map(def=>{const a=Math.min(def.cap,c);c-=a;const b=Math.min(def.cap-a,d);d-=b;return {def,clean:a,dirty:b}});
 }
 function deviceOK(id){const d=H.dev[id];return !!d&&!d.broken&&d.batt>0}
+function lightDev(){let best=null;for(const id in LIGHTS){if(deviceOK(id)){const L=LIGHTS[id];if(!best||L.f>best.L.f)best={id,L}}}return best}
 function lightSource(){
-  if(deviceOK('torch'))return 'torch';
-  if(deviceOK('lamp'))return 'lamp';
+  const b=lightDev();if(b)return b.L.kind==='hand'?'torch':'lamp';
   if(H.g.phones.some(p=>deviceOK(p.id)))return 'phone';
   return null;
 }
+// Strassenlaternen: Licht am Wegesrand wirkt wie eine gute Lampe (nur in Ortsnähe)
+function lampNear(x){const A=H&&H.route&&H.route.lamps;if(!A||!A.length)return null;let lo=0,hi=A.length-1;while(lo<hi){const m=(lo+hi)>>1;if(A[m].x<x)lo=m+1;else hi=m}let best=null,bd=1e9;for(let i=Math.max(0,lo-2);i<=Math.min(A.length-1,lo+1);i++){const d=Math.abs(A[i].x-x);if(d<bd){bd=d;best=A[i]}}return best?{lamp:best,d:bd}:null}
+function streetW(){const n=lampNear(H.x);if(!n||H.side)return 0;return clamp((340-n.d)/160,0,1)}
+function streetF(){const w=streetW();if(!w)return 0;const n=lampNear(H.x);return w*(n.lamp.mod?0.985:0.965)}
+function lightF(){const b=lightDev();const dv=b?b.L.f:(H.g.phones.some(p=>deviceOK(p.id))?0.6:0.3);return Math.max(dv,streetF())}
+function lightRisk(){const b=lightDev();const dv=b?b.L.risk:(H.g.phones.some(p=>deviceOK(p.id))?0.9:1.8);const w=streetW();return w?Math.min(dv,lerp(dv,0.1,w)):dv}
+const hasLightT=t=>Object.keys(LIGHTS).some(k=>t.has(k));
 function lampInUse(){return env.dark>0.55&&H.moving}
 function navPhone(){ // Smartphone, das gerade zur Navigation genutzt wird
   if(H.g.gps&&deviceOK('gps'))return null;
-  const ok=H.g.phones.filter(p=>deviceOK(p.id)&&(H.g.offline||env.net));
+  const ok=H.g.phones.filter(p=>!p.nonav&&deviceOK(p.id)&&(H.g.offline||env.net));
   if(!ok.length)return null;
   return ok.find(p=>p.id!==H.activeDev)||ok[0];
 }
 function navInfo(){
   const g=H.g;let best={q:0.12,label:'Kein Navi – nach Gefühl',src:null,live:false,note:''};
-  const light=lightSource()==='lamp'||lightSource()==='torch';
+  const light=!!lightDev();
   if(g.map){let q=0.6;if(env.fog)q-=0.15;if(env.dark>0.6&&!light)q-=0.2;if(H.body.wet>70)q-=0.1;if(q>best.q)best={q,label:'Landkarte & Kompass',src:'map',live:false,note:''}}
   let note='';
-  const anyPhone=g.phones.length>0;
+  const NPH=g.phones.filter(p=>!p.nonav);
+  const anyPhone=NPH.length>0;
   if(anyPhone){
-    const np=g.phones.some(p=>deviceOK(p.id)&&(g.offline||env.net));
+    const np=NPH.some(p=>deviceOK(p.id)&&(g.offline||env.net));
     if(np){if(0.82>best.q)best={q:0.82,label:'Smartphone-Navi',src:'phone',live:true,note:''}}
-    else if(!g.phones.some(p=>!H.dev[p.id].broken))note='Smartphone kaputt';
-    else if(!g.phones.some(p=>deviceOK(p.id)))note='Handy-Akku leer';
+    else if(!NPH.some(p=>!H.dev[p.id].broken))note='Smartphone kaputt';
+    else if(!NPH.some(p=>deviceOK(p.id)))note='Handy-Akku leer';
     else note='Kein Netz (Offline-Karten fehlen)';
   }
   if(g.gps){const d=H.dev.gps;if(d.broken)note='GPS kaputt';else if(d.batt<=0)note='GPS-Akku leer';else if(0.92>best.q)best={q:0.92,label:'GPS-Gerät',src:'gps',live:true,note:''}}
@@ -1746,6 +1851,7 @@ function actionClip(kind){
 function beginAction(kind,label,dur,done,opts={}){
   if(SHOP_RE){const f0=SHOP_RE;SHOP_RE=null;const d1=done;done=()=>{try{if(d1)d1()}catch(e){console.error(e)}if(H&&!H.ended)setTimeout(()=>openVillageShop(f0),60)}}
   if(ACTION_CLIPS[kind]){const d0=done;done=()=>{try{actionClip(kind)}catch(e){}if(d0)d0()}}
+  if(H.g&&H.g.tools.lantern&&env.dark>0.55&&dur>=5&&!H.moving&&kind!=='sleep')dur=Math.max(1,Math.round(dur*0.9));
   H.action={kind,label,dur,left:dur,done,tick:opts.tick,resume:opts.force?true:(!!opts.resume&&H.walking)};
   H.walking=false;
 }
@@ -1780,6 +1886,7 @@ function drinkWater(dirtyOK){
   if(c+dirt<=0.01)return;
   H.body.hyd=clamp(H.body.hyd+(c+dirt)*33,0,100);
   toast('💧 '+fmtN(c+dirt)+' L getrunken');sfx('drink');
+  if(env.temp<7&&H.g.containers.some(c=>c.thermo)){H.body.warm=clamp(H.body.warm+2.5,0,100);if(H.t-(H.thermoMsg||-999)>300){H.thermoMsg=H.t;toast('☕ Etwas Warmes aus der Thermoskanne – das wärmt (+Wärme).','good')}}
   if(dirt>0.05&&Math.random()<0.4){H.sick=H.t+480;toast('🤢 Das Wasser war verunreinigt – du bist krank (8 h).','bad');injuryAlert('Mir ist schlecht … das Wasser war wohl nicht sauber.')}
 }
 function canCook(){return (H.g.tools.stove&&H.gas>=1)||nearFire()}
@@ -1833,13 +1940,14 @@ if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
       beginAction('fire','Macht Feuer …',cube?10:20,()=>{
         const dryWood=H.wood<1&&H.carry>0; // mitgebrachtes Holz ist trocken
         const src=pickIgniter();let used=0;
-        if(src==='storm')H.sfuel--;else if(src==='lighter')H.lfuel--;else if(src==='steel')H.fireUses--;
+        if(src==='storm')H.sfuel--;else if(src==='lg')H.gfuel--;else if(src==='lighter')H.lfuel--;else if(src==='steel')H.fireUses--;
         else if(src==='match'){used=Math.min(H.matches,1+Math.floor(Math.random()*7));if((H.mWet||0)>50)used=Math.min(H.matches,used+1+Math.floor(Math.random()*3));H.matches-=used}
         useWood();
         let p=env.precip?(H.camp.pitched||env.biome==='wald'?0.6:0.3):0.92;
         if(env.precip&&fireCovered(H.x+70))p=Math.max(p,0.85);
         if(env.precip&&dryWood)p=Math.max(p,0.8);
         if(src==='storm')p=p+(1-p)*0.75;
+        else if(src==='lg')p=p+(1-p)*(env.wind>9?0.4:0.55);
         else if(src==='lighter')p=p+(1-p)*(env.wind>9?0.25:0.35);
         else if(src==='match'){if((H.mWet||0)>50)p*=0.25;else p=p+(1-p)*0.2}
         if(cube){H.fcubes--;p=p+(1-p)*0.7}
@@ -2248,7 +2356,7 @@ function bodyTick(mode,hr){
     const shoeF=g.shoes?g.shoes.blister*(1+(1-cf(g.shoes.id))*1.2):1.8;
     if(!blister&&Math.random()<0.02*shoeF*(1+B.wet/50)*(0.85+0.15*hk.hard)*hr){H.inj.blister=H.t+(hasT('zaeh')?900:1440);toast('🩹 Du hast dir eine Blase gelaufen – das kostet spürbar Energie und Tempo.','bad');injuryAlert('Aua – ich glaub, ich hab mir eine Blase gelaufen.');sfx('bad')}
     const ls=lightSource();
-    const risky=(gr<-0.12?1:0)+(env.dark>0.6?(ls==='torch'?0.15:ls==='lamp'?0.2:ls==='phone'?0.9:1.8):0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
+    const risky=(gr<-0.12?1:0)+(env.dark>0.6?lightRisk():0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
     if(!sprain&&Math.random()<0.018*risky*(1+0.12*H.gap)*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');injuryAlert('Autsch, umgeknickt!');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
   }
   let dhp=0;
@@ -2274,10 +2382,9 @@ function deviceTick(hr,mode){
       if(H.activeDev===id&&H.rec>0&&(walking||H.shot))drain+=def.rate*H.rec;
       if(live&&H.activeDev===id)drain+=def.rate*2.5;
       if(walking&&np&&np.id===id)drain+=0.9;
-      if(walking&&env.dark>0.55&&!deviceOK('lamp')&&lightSource()==='phone'&&H.g.phones.find(p=>deviceOK(p.id)).id===id)drain+=13;
+      if(walking&&env.dark>0.55&&!lightDev()&&lightSource()==='phone'&&H.g.phones.find(p=>deviceOK(p.id)).id===id)drain+=13;
     }else if(id==='gps'){if(walking)drain=0.8}
-    else if(id==='lamp'){if(walking&&env.dark>0.55&&lightSource()==='lamp')drain=5.5}
-    else if(id==='torch'){if(walking&&env.dark>0.55)drain=11}
+    else if(LIGHTS[id]){const b=lightDev();if(walking&&env.dark>0.55&&b&&b.id===id&&streetF()<b.L.f)drain=LIGHTS[id].drain}
     else if(id==='vest'){drain=VEST_DRAIN[H.vestMode]||0}
     d.batt=Math.max(0,d.batt-drain*hr);
     if(d.batt<=0&&!d.warned){d.warned=true;toast('🪫 Akku leer: '+def.name,'bad');sfx('batt')}
@@ -2306,6 +2413,7 @@ const hasWaterProof=()=>false;
 /* ---------- Zündquellen, Mücken, Pollen, Thumbnail, Flaggen ---------- */
 function pickIgniter(){const g=H.g,wet=(H.mWet||0)>50;
  if(g.tools.stormlighter&&H.sfuel>0)return 'storm';
+ if(g.tools.lighterG&&H.gfuel>0)return 'lg';
  if(g.tools.lighter&&H.lfuel>0)return 'lighter';
  if((H.matches||0)>0&&!wet)return 'match';
  if(g.tools.fire&&H.fireUses>0)return 'steel';
@@ -2330,21 +2438,30 @@ function pollenBase(hk,m){const k=pestKind(hk),i=k==='n'?(m+11)%12:k==='s'?(m+1)
 function pestWord(v){return v<0.12?'kaum':v<0.4?'mäßig':v<0.8?'stark':'Schwärme'}
 function mosqLabel(hk){const m=dateOf(G.day).m;return pestWord(pestMonthW(m,pestKind(hk))*pestRegion(hk)*0.8)}
 function pollenLabel(hk){const v=pollenBase(hk,dateOf(G.day).m);return v<0.15?'kaum':v<0.5?'mäßig':'stark'}
+function waterNear(x){ // 0..1: Nähe zu Seen, Flüssen, Quellen, Moor – Mücken lieben Wasser
+  const R=H&&H.route;if(!R)return 0;let w=0;
+  if(BIOMES[env.biome]&&(env.biome==='sumpf'))w=0.7;
+  for(const L of (R.lakes||[])){const d=x<L.xl?L.xl-x:x>L.xr?x-L.xr:0;if(d<800)w=Math.max(w,1-d/800)}
+  for(const f of featsIn(x-420,x+420)){if(f.type==='fluss'){const d=Math.abs(f.x+(f.fw||0)/2-x);w=Math.max(w,0.85*clamp(1-d/420,0,1))}else if(f.type==='quelle'){const d=Math.abs(f.x-x);w=Math.max(w,0.5*clamp(1-d/300,0,1))}}
+  return clamp(w,0,1);
+}
 function pestTick(mode,hr){
   if(!H||!H.hk||!H.g)return;
   const hk=H.hk,g=H.g,B=H.body,m=env.month,alt=env.alt||0,hour=env.hour||0;
-  const bio={wald:1.2,tal:1.1,wiese:1,sumpf:1.6,fjaell:0.9,berg:0.5,kies:0.5,sand:0.35,schnee:0}[env.biome];
+  const bio={wald:1.2,tal:1.1,wiese:1,sumpf:1.6,fjaell:0.9,berg:0.5,kies:0.5,sand:0.35,schnee:0,strasse:0.7}[env.biome];
   let I=pestMonthW(m,pestKind(hk))*pestRegion(hk)*clamp((env.temp-7)/12,0,1)*((hour>=18||hour<8)?1:0.55)*(bio===undefined?1:bio)*clamp(1-env.wind/9,0.05,1)*(env.precip?0.35:1)*(alt>1800?0.15:alt>1200?0.5:1)*(1-clamp(env.snow||0,0,1));
-  I=clamp(I,0,1.3);
+  const wn=waterNear(H.x);I*=0.7+1.2*wn;I=clamp(I,0,1.6);
   const sleeping=H.sleep.active;let E=1;
   if(H.indoor)E=0;
   else if(sleeping&&H.camp.pitched&&g.shelter)E=g.shelter.id==='tarp'?(g.tools.mtarp?0.08:1):0.05;
   else E=g.tools.mnet?0.25:1;
   if(nearFire())E*=0.6;
-  const pb={wald:0.9,wiese:1.1,tal:1,berg:0.4,fjaell:0.3,sand:0.3,kies:0.2,sumpf:0.7,schnee:0}[env.biome];
+  if(!H.indoor&&!(sleeping&&H.camp.pitched&&g.shelter&&g.shelter.id!=='tarp')){if(g.tools.repel2)E*=0.35;else if(g.tools.repel1)E*=0.6}
+  if(g.tools.uvtrap&&H.camp.pitched&&mode!=='walk')E*=0.45;
+  const pb={wald:0.9,wiese:1.1,tal:1,berg:0.4,fjaell:0.3,sand:0.3,kies:0.2,sumpf:0.7,schnee:0,strasse:0.6}[env.biome];
   let P=pollenBase(hk,m)*(alt>1800?0.2:alt>1200?0.5:1)*(pb===undefined?1:pb)*(env.precip?0.1:(env.wind>2?1.15:1))*clamp((env.sun||0)*1.4,0.25,1);
   P=clamp(H.indoor?0:P,0,1.2);
-  H.pest={I,E,P};
+  H.pest={I,E,P,wn};
   const ie=I*E;
   if(ie>0.05&&B)B.energy=Math.max(0,B.energy-(sleeping?5:7)*ie*hr);
   if(ie>0.32&&!sleeping&&H.t-(H.pestMsgT||-9999)>200){H.pestMsgT=H.t;toast(g.tools.mnet?'🦟 Mückenschwärme – dein Netz hält sie vom Gesicht fern, lästig bleibt es trotzdem.':'🦟 Mückenschwärme! Sie stechen überall. Ein Mückennetz würde jetzt helfen.','warn')}
@@ -2357,7 +2474,7 @@ function drawPest(g,tm,sx,gy){
   const Pt=H&&H.pest;if(!Pt)return;
   if(Pt.P>0.15){const n=Math.round(clamp(Pt.P,0,1)*28);g.save();for(let i=0;i<n;i++){const x=((i*97.3+tm*(10+(i%5)*5))%(CW+40))-20,y=CH*0.12+((i*53.7)%(CH*0.62))+Math.sin(tm*0.9+i)*9;g.globalAlpha=0.35+0.3*((i%3)/2);g.fillStyle=(i%4)?'#e8cf4a':'#f4e58a';g.beginPath();g.arc(x,y,1.1+(i%3)*0.5,0,7);g.fill()}g.restore()}
   const ie=Pt.I*Pt.E;
-  if(Pt.I>0.2){const n=Math.round(clamp(Pt.I,0,1)*12*(0.3+0.7*Pt.E))+(ie>0.25?2:0);g.save();g.fillStyle='rgba(20,20,20,0.85)';g.strokeStyle='rgba(40,40,40,0.5)';g.lineWidth=0.8;
+  if(Pt.I>0.2){const n=Math.round(clamp(Pt.I,0,1.6)*12*(0.3+0.7*Pt.E))+(ie>0.25?2:0)+Math.round((Pt.wn||0)*4);g.save();g.fillStyle='rgba(20,20,20,0.85)';g.strokeStyle='rgba(40,40,40,0.5)';g.lineWidth=0.8;
    for(let i=0;i<n;i++){const a=tm*(2.6+(i%4)*0.7)+i*1.9,r=(Pt.E<0.3?36:20)+(i%5)*8+Math.sin(tm*3+i)*4;const x=sx+10+Math.cos(a)*r,y=gy-70+Math.sin(a*1.3)*r*0.6;g.beginPath();g.arc(x,y,1.5,0,7);g.fill();g.beginPath();g.moveTo(x-2,y-1.5);g.lineTo(x+2,y-1.5);g.stroke()}
    g.restore()}
 }
@@ -2905,7 +3022,7 @@ function walkSpeedKmh(){
   m*=g.shoes?g.shoes.spd*(0.9+0.1*cf(g.shoes.id)):0.85;
   if(H.inj.blister>H.t)m*=0.86;if(H.inj.sprain>H.t)m*=0.75;if(H.sick>H.t)m*=0.9;
   if(env.dark>0.3){
-    const ls=lightSource(),f=ls==='torch'?0.97:ls==='lamp'?0.96:ls==='phone'?0.6:0.3;
+    const f=lightF();
     m*=lerp(1,f,clamp((env.dark-0.3)/0.4,0,1));
   }
   if(B.energy<15)m*=0.6;if(B.warm<35)m*=0.9;
@@ -3026,7 +3143,7 @@ function endHike(reason){
     for(const id in H.cond)G.cond[id]=Math.round(H.cond[id]*10)/10;
     for(const id in H.dev){
       if(H.dev[id].broken)G.cond[id]=0;
-      else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp'||id==='torch')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
+      else if(H.dev[id].def.cat==='rec'||id==='gps'||LIGHTS[id])G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
     }
   }
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
@@ -3172,6 +3289,7 @@ function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);
 function ln(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
 
 /* ---------- Wanderer ---------- */
+function drawTorchHand(g,hd,pic){const im=img(pic,'svg');if(!im)return;const big=/Scheinwerfer|Home Defense/.test(pic),w=big?44:34;g.save();g.translate(hd[0],hd[1]);g.rotate(-0.1);g.drawImage(im,-w*0.2,-w*0.5-1,w,w);g.restore()}
 function drawHiker(g,x,y,s,o){
   const L=o.look,ph=o.phase||0,mode=o.mode||'idle';
   const bw=[0.92,1,1.1][L.build||0]*(L.gender?0.94:1);
@@ -3285,9 +3403,11 @@ const walk=mode==='walk'||mode==='climb',limp=walk&&o.limp;
   else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
   else if(legs){ // gegengleicher Armschwung mit Ellbogen
     const k=climbM?1.1:0.7,bd=climbM?1.0:0.45;
-    arm(-legs[1].a1*k-0.05,bd*0.8);const hd=arm(-legs[0].a1*k+0.1,bd);
+    arm(-legs[1].a1*k-0.05,bd*0.8);const hd=(o.torch&&!climbM)?arm(1.2,-0.2):arm(-legs[0].a1*k+0.1,bd);
+    if(o.torch&&!climbM)drawTorchHand(g,hd,o.torch);
     if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,hd[0],hd[1],hd[0]+14,-1)}}
-  else{arm(0.06,0.14);const hd=arm(0.16,0.14);
+  else{arm(0.06,0.14);const hd=o.torch?arm(1.2,-0.2):arm(0.16,0.14);
+    if(o.torch)drawTorchHand(g,hd,o.torch);
     if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,hd[0],hd[1],hd[0]+14,-1)}}
   g.restore();g.restore();
 }
@@ -3956,6 +4076,13 @@ function drawCamp(g,tm,dt){
       g.strokeStyle='rgba(0,0,0,0.3)';g.lineWidth=2;ln(g,sx,y-52,sx,y-30);
     }
   }
+  if(H.camp.pitched&&H.g.tools&&!H.indoor){const cx0=H.camp.x-70,cy0=groundY(cx0);
+    if(H.g.tools.lantern){const im=img('Shopprodukte_Lager Lampe','svg'),lx=cx0+104-camX;
+      if(im)g.drawImage(im,lx-20,cy0-40,40,40);else{g.fillStyle=tc('#c97b2c');g.fillRect(lx-6,cy0-22,12,20);g.fillStyle='#ffe9a8';g.fillRect(lx-4,cy0-20,8,12)}}
+    if(H.g.tools.uvtrap){const im=img('Shopprodukte_UV-Insektenfalle','svg'),ux=cx0+150-camX;
+      if(im)g.drawImage(im,ux-17,cy0-36,34,34);else{g.fillStyle=tc('#2f4f3a');g.fillRect(ux-8,cy0-26,16,24)}
+      if(env.dark>0.4&&Math.random()<0.22){g.fillStyle='rgba(200,170,255,0.9)';g.beginPath();g.arc(ux+(Math.random()-0.5)*26,cy0-8-Math.random()*18,1.6,0,7);g.fill()}}
+  }
   if(H.fireTarp){ // Tarp über der Feuerstelle
     const tx=H.fireTarp.x-camX,ty=groundY(H.fireTarp.x);
     g.strokeStyle=tc('#3d2c1c');g.lineWidth=3;ln(g,tx-50,ty,tx-50,ty-84);ln(g,tx+50,ty,tx+50,ty-66);
@@ -4166,13 +4293,91 @@ function drawWeatherFx(g,tm,dt){
     }else LIGHT.bolt=null;
   }
 }
+/* ---------- Strasse, Laternen, Glühwürmchen ---------- */
+const LAMPS={mod:[],old:[]}; // Dateinamen (ohne .svg) der Laternen-Grafiken: je Typ eine Liste von Unterarten
+function lampsIn(x0,x1){const A=H&&H.route&&H.route.lamps;if(!A||!A.length||H.side)return [];let lo=0,hi=A.length;while(lo<hi){const m=(lo+hi)>>1;if(A[m].x<x0)lo=m+1;else hi=m}const out=[];for(let i=lo;i<A.length&&A[i].x<=x1;i++)out.push(A[i]);return out}
+function drawLamps(g,tm){
+  if(H.side)return;
+  const on=env.dark>0.28;
+  for(const l of lampsIn(camX-160,camX+CW+160)){
+    const sx=l.x-camX,y=groundY(l.x)+4,set=l.mod?LAMPS.mod:LAMPS.old,nm=set.length?set[l.v%set.length]:null,im=nm?img(nm,'svg'):null;
+    if(im){const h=l.mod?190:170,w=h*im.width/im.height;g.drawImage(im,sx-w/2,y-h,w,h);continue}
+    g.save();g.translate(sx,y);
+    if(l.mod){ // moderne Laterne: Stahlmast mit Ausleger und LED-Kopf
+      g.strokeStyle=tc('#6d7379');g.lineWidth=5;g.lineCap='round';ln(g,0,0,0,-158);g.beginPath();g.moveTo(0,-158);g.quadraticCurveTo(2,-176,28,-174);g.stroke();
+      g.fillStyle=tc('#4d5359');rr(g,14,-180,30,8,3);g.fill();
+      g.fillStyle=on?'#f2f8ff':tc('#aab3ba');rr(g,18,-173,24,3,1.5);g.fill();
+      g.fillStyle=tc('#50565c');g.fillRect(-7,-6,14,6)
+    }else{ // alte Laterne: gusseiserner Mast mit Glaslaterne
+      g.strokeStyle=tc('#2b2f2e');g.lineWidth=5;g.lineCap='round';ln(g,0,0,0,-138);g.lineWidth=7;ln(g,0,-6,0,-30);
+      g.fillStyle=tc('#2b2f2e');g.beginPath();g.moveTo(-9,-140);g.lineTo(9,-140);g.lineTo(13,-152);g.lineTo(-13,-152);g.closePath();g.fill();
+      g.fillStyle=on?'#ffd072':tc('#c9c7b8');rr(g,-10,-174,20,24,3);g.fill();
+      g.strokeStyle=tc('#2b2f2e');g.lineWidth=2.5;g.strokeRect(-10,-174,20,24);
+      g.fillStyle=tc('#2b2f2e');g.beginPath();g.moveTo(-14,-174);g.lineTo(0,-188);g.lineTo(14,-174);g.closePath();g.fill();g.fillRect(-2,-194,4,7)
+    }
+    g.restore();
+  }
+}
+function drawRoad(g,tm){
+  const R=H.route;if(!R||!R.roads||!R.roads.length||H.side)return;
+  const sn=snowAmt();
+  for(const z of R.roads){
+    if(z.x1<camX-60||z.x0>camX+CW+60)continue;
+    const a=Math.max(z.x0,Math.floor(camX/12)*12),b=Math.min(z.x1,camX+CW+12);
+    for(let x=a;x<b;x+=12){
+      const ed=clamp(Math.min(x-z.x0,z.x1-x)/220,0,1);if(ed<=0.01)continue;
+      const y1=groundY(x),y2=groundY(x+12),sx=x-camX;
+      g.globalAlpha=ed;
+      g.fillStyle=tc(sn>0.4?'#9aa0a6':'#585d62',sn*0.5);
+      g.beginPath();g.moveTo(sx,y1+8);g.lineTo(sx+13,y2+8);g.lineTo(sx+13,y2+34);g.lineTo(sx,y1+34);g.closePath();g.fill();
+      g.fillStyle=tc('#b4b7ba');g.fillRect(sx,Math.min(y1,y2)+6.5,13.5,2.2);
+      if(Math.floor(x/12)%4<2){g.fillStyle=tc('#e9e6d4');g.fillRect(sx,(y1+y2)/2+20.5,13,1.8)}
+    }
+    g.globalAlpha=1;
+    // Autos
+    const len=z.x1-z.x0,n=Math.max(2,Math.round(len/900));
+    for(let k=0;k<n;k++){
+      const dir=k%2?1:-1,v=(55+hash(k*7+Math.floor(z.vx)*0.013)*70),off=hash(k*13+z.x0*0.01)*len;
+      const px=z.x0+(((tm*v*dir+off)%len)+len)%len,sx=px-camX;
+      if(sx<-70||sx>CW+70)continue;
+      const ed=clamp(Math.min(px-z.x0,z.x1-px)/160,0,1);if(ed<=0.05)continue;
+      const y=groundY(px)+(dir>0?32:24),cols=['#b43b3b','#3b6fb4','#e4e2dc','#2d2f33','#d9a62c','#5a8f4a'],c=cols[Math.floor(hash(k*5+z.x0)*cols.length)];
+      g.save();g.globalAlpha=ed;g.translate(sx,y);if(dir<0)g.scale(-1,1);
+      g.fillStyle=tc(c);rr(g,-22,-12,44,10,3);g.fill();rr(g,-12,-20,26,10,4);g.fill();
+      g.fillStyle=tc('#bfd7e6');g.fillRect(-9,-18,10,7);g.fillRect(3,-18,9,7);
+      g.fillStyle=tc('#1f2124');g.beginPath();g.arc(-13,-2,4.2,0,7);g.fill();g.beginPath();g.arc(13,-2,4.2,0,7);g.fill();
+      if(env.dark>0.4){g.globalCompositeOperation='lighter';const gr=g.createLinearGradient(22,-8,90,-8);gr.addColorStop(0,'rgba(255,240,190,0.55)');gr.addColorStop(1,'rgba(255,240,190,0)');g.fillStyle=gr;g.beginPath();g.moveTo(22,-9);g.lineTo(90,-20);g.lineTo(90,4);g.lineTo(22,-5);g.closePath();g.fill();g.fillStyle='rgba(255,60,40,0.8)';g.fillRect(-23,-9,2.4,3)}
+      g.restore();
+    }
+  }
+  g.globalAlpha=1;
+}
+function fireflyDens(){
+  if(!H||!env||env.dark<0.55||env.precip||env.temp<8||H.indoor||(env.wind||0)>7)return 0;
+  const W=[0,0,0,0,0.25,0.9,1,0.85,0.3,0,0,0][((env.month%12)+12)%12];if(!W)return 0;
+  const bio={wald:1,tal:0.5,wiese:0.45,sumpf:0.7}[env.biome]||0;if(!bio)return 0;
+  return W*bio*(pestKind(H.hk)==='n'?0.3:1)*(1+0.5*((H.pest&&H.pest.wn)||0))*clamp((env.dark-0.5)*3,0,1);
+}
+function drawFireflies(g,tm){
+  const D=fireflyDens();if(D<0.08||H.sleep.active&&H.indoor)return;
+  const N=Math.round(D*40);g.save();g.globalCompositeOperation='lighter';
+  for(let i=0;i<N;i++){
+    const par=0.75+0.2*(i%3)/2,sxp=(((i*137.3-camX*par+Math.sin(tm*0.31+i*1.7)*34)%(CW+80))+(CW+80))%(CW+80)-40;
+    const gyy=groundY(camX+sxp),y=gyy-14-hash(i*3+1)*(CH*0.3)+Math.sin(tm*0.8+i*2.3)*16;
+    const bl=Math.pow(Math.max(0,Math.sin(tm*(1.3+(i%5)*0.28)+i*1.9)),3);if(bl<0.04)continue;
+    const r=15*(0.7+0.3*(i%2)),gr=g.createRadialGradient(sxp,y,0.5,sxp,y,r);
+    gr.addColorStop(0,`rgba(225,255,120,${bl})`);gr.addColorStop(0.35,`rgba(190,250,80,${0.45*bl})`);gr.addColorStop(1,'rgba(170,240,70,0)');g.fillStyle=gr;g.fillRect(sxp-r,y-r,r*2,r*2);
+    g.fillStyle=`rgba(245,255,190,${bl})`;g.beginPath();g.arc(sxp,y,1.9,0,7);g.fill();
+  }
+  g.restore();
+}
 /* ---------- Beleuchtung ---------- */
 function drawLighting(g,tm,dt){
   if(!LC||LC.width!==CW||LC.height!==CH){LC=document.createElement('canvas');LC.width=CW;LC.height=CH;LG=LC.getContext('2d')}
   const dark=clamp(env.dark*0.78+(H.weather.type==='gewitter'?0.08:0),0,0.86);
   const gold=env.gold*(1-SKYG[H.weather.type]*0.7);
   const sx0=CHAR_SX();
-  const torch=lightSource()==='torch'&&env.dark>0.5&&(H.moving||H.walking),lamp=lightSource()==='lamp'&&env.dark>0.5&&(H.moving||H.walking),phone=!lamp&&!torch&&lightSource()==='phone'&&env.dark>0.55&&H.moving;
+  const LD=lightDev(),litUp=env.dark>0.5&&(H.moving||H.walking),torch=!!LD&&LD.L.kind==='hand'&&litUp,lamp=!!LD&&LD.L.kind==='head'&&litUp,phone=!LD&&lightSource()==='phone'&&env.dark>0.55&&H.moving;
   // Wärmeschein vor Sonnenuntergang/-aufgang
   if(gold>0.05){
     const sp=sunPos();
@@ -4186,17 +4391,20 @@ function drawLighting(g,tm,dt){
     const L=LG;L.globalCompositeOperation='source-over';L.clearRect(0,0,CW,CH);
     L.fillStyle=`rgba(6,12,34,${dark})`;L.fillRect(0,0,CW,CH);
     L.globalCompositeOperation='destination-out';
+    const punchE=(x,y,rx,ry,a,inner=0.15)=>{L.save();L.translate(x,y);L.scale(1,ry/rx);const gr=L.createRadialGradient(0,0,rx*inner,0,0,rx);gr.addColorStop(0,`rgba(0,0,0,${a})`);gr.addColorStop(1,'rgba(0,0,0,0)');L.fillStyle=gr;L.fillRect(-rx,-rx,rx*2,rx*2);L.restore()};
     const punch=(x,y,r,a,inner=0.15)=>{const gr=L.createRadialGradient(x,y,r*inner,x,y,r);gr.addColorStop(0,`rgba(0,0,0,${a})`);gr.addColorStop(1,'rgba(0,0,0,0)');L.fillStyle=gr;L.fillRect(x-r,y-r,r*2,r*2)};
     // Feuer
     if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.9+0.07*Math.sin(tm*3.1)+0.03*Math.sin(tm*7.3);punch(fx,fy,300*fl,0.95);}
     // Zelt-Glimmen
     if(H.camp.pitched&&(H.sleep.active||env.dark>0.5)&&H.g.shelter){const tx=H.camp.x-70-camX;punch(tx,groundY(H.camp.x-70)-24,H.sleep.active?70:110,0.5)}
     // Stirnlampe: Lichtkegel nach vorn
-    if(torch){const y=groundY(H.x)-52;punch(sx0+205,y+30,380,0.97,0.22);punch(sx0+20,y+10,84,0.62)}else if(lamp){
-      const y=groundY(H.x)-58;
-      punch(sx0+120,y+22,230,0.95,0.3);punch(sx0+16,y+8,70,0.6);
-    }else if(phone){const y=groundY(H.x)-40;punch(sx0+34,y+16,90,0.75,0.3)}
+    if(torch||lamp){const Lt=LD.L,y=groundY(H.x)-(torch?52:58);punchE(sx0+Lt.cx,y+(torch?30:22),Lt.rx,Lt.ry,Lt.a,torch?0.22:0.3);punch(sx0+(torch?20:16),y+(torch?10:8),torch?84:70,0.6)}else if(phone){const y=groundY(H.x)-40;punch(sx0+34,y+16,90,0.75,0.3)}
     else if(env.dark>0.5&&!H.sleep.active&&lightSource()===null){punch(sx0,groundY(H.x)-30,42,0.25)}
+    // Lager-Lampe, UV-Falle
+    if(H.camp.pitched&&H.g.tools.lantern&&(env.dark>0.4||H.sleep.active)){const lx=H.camp.x-70+104-camX;punch(lx,groundY(H.camp.x)-22,H.sleep.active?150:230,0.88,0.15)}
+    if(H.camp.pitched&&H.g.tools.uvtrap&&env.dark>0.4){const ux=H.camp.x-70+150-camX;punch(ux,groundY(H.camp.x)-20,70,0.5,0.2)}
+    // Strassenlaternen
+    if(env.dark>0.28){for(const l of lampsIn(camX-340,camX+CW+340)){const lx=l.x-camX,ly=groundY(l.x)-150;punch(lx,ly+60,l.mod?330:260,l.mod?0.97:0.9,0.12)}}
     // Ortschaften: warme Fenster
     for(const f of featsIn(camX-300,camX+CW+300))if(f.type==='village'){const vx=f.x+40-camX;punch(vx,groundY(f.x)-30,280,0.7,0.2)}
     // Mond
@@ -4205,6 +4413,9 @@ function drawLighting(g,tm,dt){
     // Warmes Leuchten der Lichtquellen (additiv)
     g.save();g.globalCompositeOperation='lighter';
     if(H.fire.lit){const fx=H.fire.x-camX,fy=groundY(H.fire.x)-14,fl=0.9+0.07*Math.sin(tm*3.1)+0.03*Math.sin(tm*7.3);const gr=g.createRadialGradient(fx,fy,4,fx,fy,190*fl);gr.addColorStop(0,`rgba(255,150,60,${0.5*dark+0.12})`);gr.addColorStop(1,'rgba(255,110,30,0)');g.fillStyle=gr;g.fillRect(fx-200,fy-200,400,400)}
+    if(H.camp.pitched&&H.g.tools.lantern&&(env.dark>0.4||H.sleep.active)){const lx=H.camp.x-70+104-camX,ly=groundY(H.camp.x)-22,gr=g.createRadialGradient(lx,ly,3,lx,ly,H.sleep.active?100:150);gr.addColorStop(0,`rgba(255,226,150,${0.42*dark+0.1})`);gr.addColorStop(1,'rgba(255,210,120,0)');g.fillStyle=gr;g.fillRect(lx-160,ly-160,320,320)}
+    if(H.camp.pitched&&H.g.tools.uvtrap&&env.dark>0.4){const ux=H.camp.x-70+150-camX,uy=groundY(H.camp.x)-20,fl=0.8+0.2*Math.sin(tm*40),gr=g.createRadialGradient(ux,uy,2,ux,uy,70);gr.addColorStop(0,`rgba(170,110,255,${0.34*fl})`);gr.addColorStop(1,'rgba(140,80,255,0)');g.fillStyle=gr;g.fillRect(ux-80,uy-80,160,160)}
+    if(env.dark>0.28){for(const l of lampsIn(camX-340,camX+CW+340)){const lx=l.x-camX,ly=groundY(l.x)-136,gr=g.createRadialGradient(lx,ly,4,lx,ly,l.mod?210:170),c=l.mod?'210,232,255':'255,196,100';gr.addColorStop(0,`rgba(${c},${(l.mod?0.34:0.3)*clamp(env.dark*1.2,0,1)})`);gr.addColorStop(1,`rgba(${c},0)`);g.fillStyle=gr;g.fillRect(lx-220,ly-220,440,440)}}
     if(lamp){const y=groundY(H.x)-58;const gr=g.createRadialGradient(sx0+110,y+20,6,sx0+110,y+20,200);gr.addColorStop(0,`rgba(255,244,205,${0.2*dark})`);gr.addColorStop(1,'rgba(255,244,205,0)');g.fillStyle=gr;g.fillRect(sx0-100,y-180,420,380)}
     g.restore();
   }
@@ -4432,7 +4643,7 @@ function drawScene(g,tm,dt){
   // Himmel & Ferne
   drawSky(g,tm);updateBirds(dt,tm);drawBirds(g,tm);
   const st=stageAt(H.x);envBlend(dt,st);
-  {const t1=(st.b==='berg'||st.b==='fjaell')?1:0,t2=st.b==='berg'?1:0;
+  {const sb=st.base||st.b,t1=(sb==='berg'||sb==='fjaell')?1:0,t2=sb==='berg'?1:0;
    if(BGM1_<0||BGMH_!==H){BGM1_=t1;BGM2_=t2;BGMX_=H.x;BGMH_=H}
    const k=Math.min(1,Math.abs(H.x-BGMX_)/1400+dt*0.03);BGMX_=H.x;BGM1_+=(t1-BGM1_)*k;BGM2_+=(t2-BGM2_)*k}
   if(SEA_<0.985){g.globalAlpha=1-SEA_;drawRange(g,0.06,CH*0.56,190,lerpHex('#8ea3b2','#7f8aa0',BGM1_),1.3,0.35);
@@ -4442,12 +4653,12 @@ function drawScene(g,tm,dt){
   drawTreeBand(g,0.42,CH*0.76,60,5.5,34,'#2f5c3a',0.06);
   g.globalAlpha=1}
   drawSea(g,tm,SEA_);
-  drawTerrain(g,tm);bogDecor(g,tm,0);
+  drawTerrain(g,tm);try{drawRoad(g,tm)}catch(e){}bogDecor(g,tm,0);
   CROWNS.length=0;
   drawDecor(g,tm,0);
   drawFeatures(g,tm,0);
   drawDecor(g,tm,1);drawFeatures(g,tm,1);bogDecor(g,tm,1);bogMist(g);
-drawForksTop(g,tm);drawStartFlag(g,tm);
+drawForksTop(g,tm);drawStartFlag(g,tm);try{drawLamps(g,tm)}catch(e){}
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
   try{coopBench(g)}catch(e){}
@@ -4491,7 +4702,7 @@ g.restore();
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
-drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(lightSource()==='lamp'||lightSource()==='torch')&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
 
@@ -4517,6 +4728,7 @@ g.restore();
   // Wolken-Schatten der Sturmzeit, Wetter, Licht
   drawWeatherFx(g,tm,dt);
   drawLighting(g,tm,dt);
+  try{drawFireflies(g,tm)}catch(e){}
   if(H.fade!==undefined){const fa=1-clamp((tm-H.fade)/1.1,0,1);if(fa>0){g.fillStyle='rgba(0,0,0,'+fa.toFixed(2)+')';g.fillRect(0,0,CW,CH)}else H.fade=undefined}
 // Meilenstein-Banner
   if(H.banner&&tm<H.banner.until){const b=H.banner,a=clamp((b.until-tm)/0.8,0,1)*clamp((tm-b.at)/0.4,0,1);g.save();g.globalAlpha=a;g.textAlign='center';g.fillStyle='rgba(10,20,15,0.6)';rr(g,CW/2-190,CH*0.3,380,44,10);g.fill();g.fillStyle='#ffd54a';g.font='bold 20px sans-serif';g.fillText(b.text,CW/2,CH*0.3+29);g.restore()}
@@ -5170,7 +5382,7 @@ function briefing(hk){
   if(sT<0.5&&!tools.has('snowshoes')&&hk.diff>=3){w.push({l:'warn',t:'Schnee zu erwarten – Schneeschuhe helfen enorm.'});score+=0.5}
   if(sT<-4){w.push({l:'warn',t:'Quellen sind zugefroren: Du brauchst Kocher + Gas (oder Feuer), um Schnee zu schmelzen.'});if(!tools.has('stove'))score+=0.8}
   if(sT<-1&&hk.diff>=4)w.push({l:'info',t:'Winterbedingungen: Stürme und Kälteeinbrüche möglich. Beste Ausrüstung (Winterschlafsack/Parka/Winterzelt) ist Pflicht.'});
-  if(dl<9&&!(tools.has('lamp')||tools.has('torch')))w.push({l:'bad',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht – ohne Stirnlampe kommst du kaum voran.`});
+  if(dl<9&&!hasLightT(tools))w.push({l:'bad',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht – ohne Stirnlampe kommst du kaum voran.`});
   else if(dl<9)w.push({l:'info',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht: viel Nachtwanderung, Lampen-Akku beachten.`});
   if(R.lat>66&&dl>20)w.push({l:'info',t:'Mitternachtssonne: kaum Dunkelheit, dafür schlechter Schlaf.'});
   if(R.lat>66&&dl<4)w.push({l:'warn',t:'Polarnacht: fast kein Tageslicht. Stirnlampe und Powerbank sind lebenswichtig.'});
@@ -5196,7 +5408,7 @@ function briefing(hk){
   if(hk.regD.lat>65&&(dm.m>=10||dm.m<=2)&&hk.diff>=5){score+=1.5}
   if(sT<-8)score+=1.2;else if(sT<-2)score+=0.6;
   const cheap=packedGear().some(g=>g.id==='phone_cheap')&&!packedGear().some(g=>g.kind==='phone'&&g.id!=='phone_cheap');
-  if(!(tools.has('lamp')||tools.has('torch'))&&dl<12)score+=0.5;
+  if(!hasLightT(tools)&&dl<12)score+=0.5;
   const lbl=score<2.2?'Entspannt':score<3.4?'Machbar':score<4.8?'Fordernd':score<6.2?'Sehr hart':score<7.6?'Extrem':'Lebensgefährlich';
   const col=score<2.2?'#4caf50':score<3.4?'#8bc34a':score<4.8?'#f7c948':score<6.2?'#ff9800':score<7.6?'#f4511e':'#c2185b';
   return {tDay,tNight,dl,days,w,score,lbl,col,start:dateStr(G.day),end:dateStr(G.day+days),load,sT};
@@ -5346,23 +5558,23 @@ function shopChips(h){
 }
 function renderShop(){
   const ds=dogSize();
-  const items=SHOPTAB==='Hund'?[]:GEAR.filter(g=>TAB_OF[g.cat]===SHOPTAB&&g.cat!=='dogpack');
-  const cons=SHOPTAB==='Proviant'?CONS.filter(c=>c.cat!=='dogfood'):SHOPTAB==='Hund'&&G.dog?[DOGFOOD]:[];
+  const items=SHOPTAB==='Hund'?[]:GEAR.filter(g=>(g.tab||TAB_OF[g.cat])===SHOPTAB&&g.cat!=='dogpack').sort((a,b)=>(a.ord||0)-(b.ord||0));
+  const cons=SHOPTAB==='Hund'?(G.dog?[DOGFOOD]:[]):CONS.filter(c=>c.cat!=='dogfood'&&(c.tab||TAB_OF[c.cat])===SHOPTAB);
   const load=playerLoad(loadNow(),G.cons.dogfood||0),pk=slotOf('pack');
   const cap=capacityKg(),maxL=pk?pk.max:8;
   const itemHTML=g=>{
     const own=!!G.owned[g.id],packed=!!G.packed[g.id],br=own&&G.cond[g.id]!==undefined&&G.cond[g.id]<=0;
     const excl=EXCLUSIVE.includes(g.cat);
-    const pimg=packImg(g),nv=(g.imgs||[]).length;
+    const pimg=packImg(g),va=g.imgs||g.pics||[],nv=va.length,ppic=gearPic(g);
     const wno=g.cat==='water'&&pk&&pk.wbig&&g.cap>pk.wbig;
     const pinfo=g.cat==='pack'?` · ${g.vol} L · trägt max. ${g.max} kg · 💧 Behälter bis ${fmtN(g.wbig)} L, gesamt ${fmtN(g.wcap)} L${g.tough?' · robust':''}`:'';
     const winfo=g.cat==='shelter'&&g.wres?` · 💨 hält bis ca. ${Math.round(g.wres*3.6)} km/h`:'';
-    const pv=nv>1?`<div class="pvs">${g.imgs.map((m,i)=>`<button data-pv="${g.id}:${i}" class="${i===packVar(g)?'on':''}" style="border-color:${i===packVar(g)?g.cols[i]:'transparent'}" title="Variante ${i+1}"><img src="assets/${encodeURIComponent(m)}.svg" alt=""></button>`).join('')}</div>`:'';
-    return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${pimg?`<div class="ico pk"><img src="assets/${encodeURIComponent(pimg)}.svg" alt="${g.e}"></div>`:g.img?`<div class="ico wide"><img src="assets/${encodeURIComponent(g.img)}.svg" alt="${g.e}"></div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${pinfo}${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${winfo}${wno?' · <span class="badtxt">⚠ passt nicht in deinen Rucksack</span>':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small>${pv}</div>
+    const pv=nv>1?`<div class="pvs">${va.map((m,i)=>`<button data-pv="${g.id}:${i}" class="${i===packVar(g)?'on':''}" style="border-color:${i===packVar(g)?g.cols[i]:'transparent'}" title="Variante ${i+1}">${aimg(m,'')}</button>`).join('')}</div>`:'';
+    return `<div class="item ${packed?'packed':''} ${br?'broken':''}">${pimg?`<div class="ico pk">${aimg(pimg,g.e)}</div>`:ppic?`<div class="ico sq">${aimg(ppic,g.e)}</div>`:g.img?`<div class="ico wide">${aimg(g.img,g.e)}</div>`:`<div class="ico">${g.e}</div>`}<div class="inf"><b>${g.name}</b><small>${g.desc||''}</small><small>${fmtN(g.kg,2)} kg${pinfo}${g.cat==='shelter'?' · ⏱ Aufbau '+g.setup+' Min · Abbau '+g.down+' Min':''}${winfo}${wno?' · <span class="badtxt">⚠ passt nicht in deinen Rucksack</span>':''}${own&&G.cond[g.id]!==undefined&&G.cond[g.id]<99.5?' · Zustand '+Math.round(G.cond[g.id])+' %':''}${br?' · <span class="badtxt">KAPUTT</span>':''}</small>${pv}</div>
      <div class="seg">${own?`<button data-pack="${g.id}" class="${packed?'on':''}" ${br?'disabled':''}>${packed?'✔ Eingepackt':'Einpacken'}</button>`:`<button class="primary" data-buy="${g.id}" ${G.money<gearPrice(g)?'disabled':''}>${g.price?eur0(gearPrice(g)):'Kostenlos'}</button>`}</div></div>`};
   const consHTML=c=>{const n=G.cons[c.id]||0,p=(c.price*priceMod());
-    const info=c.sat?`Sättigung +${c.sat}${c.warm?' · wärmt +'+c.warm:''}${c.hyd?' · Durst +'+c.hyd:''}${c.water?' · braucht '+fmtN(c.water)+' L Wasser':''}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':c.id==='firewood'?'Trockenes Holz fürs Feuer – lohnt sich dort, wo es kaum Holz gibt (Gebirge, Fjäll, Strand, Schnee)':'für den Hund, 1 kg';
-    return `<div class="item"><div class="ico">${c.e}</div><div class="inf"><b>${c.name}</b><small>${info}</small><small>${fmtN(c.kg,2)} kg</small></div>
+    const info=c.sat?`Sättigung +${c.sat}${c.warm?' · wärmt +'+c.warm:''}${c.hyd?' · Durst +'+c.hyd:''}${c.water?' · braucht '+fmtN(c.water)+' L Wasser':''}${c.cook?' · kochen nötig':''}${c.stim?' · Energieschub, später Tief':''}`:c.id==='gas'?'5 Kochvorgänge, nötig für Kocher':c.id==='matchbox'?'38 Streichhölzer: pro Lagerfeuer gehen 1–7 drauf. Werden bei Regen schnell nass und zünden dann schlecht.':c.id==='fcube'?'8 Würfel: Feuer geht schneller und sicherer an, auch bei Regen und Wind.':c.id==='firewood'?'Trockenes Holz fürs Feuer – lohnt sich dort, wo es kaum Holz gibt (Gebirge, Fjäll, Strand, Schnee)':'für den Hund, 1 kg';
+    return `<div class="item">${c.pic?`<div class="ico sq">${aimg(c.pic,c.e)}</div>`:`<div class="ico">${c.e}</div>`}<div class="inf"><b>${c.name}</b><small>${info}</small><small>${fmtN(c.kg,2)} kg</small></div>
      <div class="ctl"><button data-cm="${c.id}" ${n<=0?'disabled':''}>−</button><span class="qty">${n}</span><button data-cp="${c.id}" ${G.money<p?'disabled':''}>+ ${eur(p)}</button></div></div>`};
   let dogHTML='';
   if(SHOPTAB==='Hund'){
@@ -5393,7 +5605,7 @@ function renderShop(){
     <div>Last: <b>${fmtN(load)} kg</b> <small>(Rucksack max. ${maxL} kg · bequem bis ${fmtN(cap)} kg)</small></div>
     <div class="mbar"><i class="${load>maxL?'bad':load>cap?'warn':''}" style="width:${clamp(load/maxL*100,0,100)}%"></i><b style="left:${clamp(cap/maxL*100,0,100)}%"></b></div>
     ${load>maxL?'<div class="warnbox bad">Rucksack überladen!</div>':load>cap?'<div class="warnbox warn">Schwer: du wirst langsamer und verbrauchst mehr Energie.</div>':''}
-    <ul class="pl">${packedGear().map(g=>`<li>${g.e} ${g.name}</li>`).join('')}${Object.keys(G.cons).filter(k=>G.cons[k]>0).map(k=>{const c=gearById(k);return `<li>${c.e} ${G.cons[k]}× ${c.name.replace(/ \((kochen|garen)\)/,'')}</li>`}).join('')}</ul>
+    <ul class="pl">${packedGear().map(g=>{const pi=g.picPk||gearPic(g);return `<li>${pi?'<span class="lp">'+aimg(pi,g.e)+'</span>':g.e} ${g.name}</li>`}).join('')}${Object.keys(G.cons).filter(k=>G.cons[k]>0).map(k=>{const c=gearById(k);return `<li>${c.e} ${G.cons[k]}× ${c.name.replace(/ \((kochen|garen)\)/,'')}</li>`}).join('')}</ul>
     <div class="hint">Wasserkapazität: ${fmtN(waterCapL())} L${waterCapL()<2?' <span class="badtxt">(wenig!)</span>':''}${waterFit().no.length?'<br><span class="badtxt">⚠ Passt nicht in den Rucksack: '+waterFit().no.map(c=>c.name).join(', ')+'</span>':''}</div>
     <button class="primary" id="sh-hikes" style="margin-top:8px;width:100%">Touren ansehen ▶</button></div></div></div>`;
   $$('[data-tab]').forEach(b=>b.onclick=()=>{SHOPTAB=b.dataset.tab;renderShop()});
@@ -5727,7 +5939,7 @@ function updateHUD(force){
   const phIds=allIds.filter(id=>H.dev[id].def.kind==='phone').sort((a,b)=>(H.dev[b].def.price||0)-(H.dev[a].def.price||0));
   const showPh=phIds.find(id=>H.dev[id].batt>0&&!H.dev[id].broken)||phIds[0];
   const visIds=new Set();if(showPh)visIds.add(showPh);if(H.activeDev&&H.dev[H.activeDev])visIds.add(H.activeDev);
-  {const ls=lightSource();if(env.dark>0.3&&(ls==='lamp'||ls==='torch')&&H.dev[ls])visIds.add(ls)}
+  {const b=lightDev();if(env.dark>0.3&&b)visIds.add(b.id)}
   allIds.forEach(id=>{const d=H.dev[id];if(d.def.kind!=='phone'&&id!==H.activeDev&&id!=='vest'&&(d.broken||d.batt<=0))visIds.add(id)});
   const hidN=allIds.filter(id=>!visIds.has(id)).length;
   const devs=(H.devOpen?allIds:allIds.filter(id=>visIds.has(id))).map(id=>battHTML(id,H.dev[id])).join('')+((hidN>0||H.devOpen)?'<span class="dev" data-devtoggle style="cursor:pointer">'+(H.devOpen?'▴ weniger':'▾ +'+hidN)+'</span>':'');
