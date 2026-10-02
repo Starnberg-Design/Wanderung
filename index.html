@@ -93,7 +93,7 @@ input[type=range]{accent-color:var(--acc)}
 .dev .bt i{position:absolute;left:0;top:0;bottom:0;background:var(--c-batt)}
 .dev.vm{background:#ffffff1c;border:1px solid #ffffff33;border-radius:9px;padding:0 6px;margin-left:3px;cursor:pointer}
 .dev.low .bt i{background:var(--bad)}.dev.dead{color:var(--bad)}
-#toasts{position:absolute;right:calc(6px + var(--sr,0px));top:96px;display:flex;flex-direction:column;gap:2px;width:170px;max-width:30%;max-height:50px;text-align:left;overflow:hidden;justify-content:flex-start;pointer-events:none;z-index:3}
+#toasts{position:absolute;right:calc(98px + var(--sr,0px));top:96px;display:flex;flex-direction:column;gap:2px;width:170px;max-width:30%;max-height:50px;text-align:left;overflow:hidden;justify-content:flex-start;pointer-events:none;z-index:3}
 .toast{background:rgba(10,20,15,.82);border-left:3px solid var(--dim);padding:3px 6px;border-radius:5px;font-size:11.2px;line-height:1.25;animation:in .25s;transition:opacity .6s}
 .toast.good{border-color:var(--acc)}.toast.bad{border-color:var(--bad)}.toast.warn{border-color:var(--warn)}.toast.out{opacity:0}
 @keyframes in{from{transform:translateX(-10px);opacity:0}to{transform:none;opacity:1}}
@@ -1586,7 +1586,7 @@ function captureIcon(ic){
   if(TAP_KINDS.includes(ic.kind))return tapIcon(ic);
   const dev=handheld();
   if(!dev){toast('📷 Kein funktionierendes Aufnahmegerät!','bad');return}
-  ic.taken=true;
+  ic.taken=true;if(ic.f)ic.f.capt=true;
   const q=shotQ(dev.def,1.1);
   let name,e,value,rar=-1,key;
   if(ic.kind==='animal'){name=ic.a.name;e=ic.a.e;rar=ic.a.r;value=RARITY[rar].base*q*rnd(0.95,1.2);key='tier:'+ic.a.id;H.stats.animals++}
@@ -1660,7 +1660,7 @@ function trackFeatures(){
   for(const f of featsIn(H.x-320,H.x+900)){
     const d=f.x-H.x;
     if(f.type==='sight'){
-      if(d<380&&!f.iconMade){f.iconMade=true;spawnIcon({kind:'sight',fid:f.id,x:f.x,e:f.s.e,label:f.s.n,base:f.s.v,life:1e9});toast('📍 Meilenstein voraus: '+f.s.n,'good');sfx('discover')}
+      if(d<380&&d>-240&&!f.capt&&!hasIcon('sight',f.id)){const first=!f.iconMade;f.iconMade=true;spawnIcon({kind:'sight',fid:f.id,f,x:f.x,e:f.s.e,label:f.s.n,base:f.s.v,life:1e9});if(first){toast('📍 Meilenstein voraus: '+f.s.n,'good');sfx('discover')}}
       if(f.summit&&d<260&&!hasIcon('summit',f.id))spawnIcon({kind:'summit',fid:f.id,f,x:f.x+74,e:'📖',label:'Gipfelbuch',life:1e9});
       if(d<50&&!f.reached){f.reached=true;H.stats.milestones++;H.body.energy=Math.min(100-H.fatigue,H.body.energy+8);toast('🏆 Meilenstein erreicht: '+f.s.n+' – das gibt Motivation (+Energie)!','good');sfx('success')}
     }else if(f.type==='hiker'){
@@ -1677,16 +1677,16 @@ function trackFeatures(){
     }else if(f.type==='lodge'){lodgeHint(f,d);
     }else if(f.type==='village'){villageHint(f,d);
       if(d<460&&!f.seen){f.seen=true;toast('🏘️ Ort voraus: '+f.name+' – hier kannst du einkaufen.','good');sfx('notify')}
-      if(d<300&&!hasIcon('shop',f.id)&&!f.left)spawnIcon({kind:'shop',fid:f.id,f,x:f.x+40,e:'🏪',get label(){const s=shopOpenInfo(f);return s.open?f.name:f.name+' · zu, öffnet '+s.txt},life:1e9});
+      if(d<300&&d>-240&&!hasIcon('shop',f.id))spawnIcon({kind:'shop',fid:f.id,f,x:f.x+40,e:'🏪',get label(){const s=shopOpenInfo(f);return s.open?f.name:f.name+' · zu, öffnet '+s.txt},life:1e9});
     }else if(f.type==='forage'){
       const F=FORAGE[f.f];
-      if(!f.done&&d<380*forageMul()&&F.months.includes(env.month)&&!hasIcon('forage',f.id))
+      if(!f.done&&d<380*forageMul()&&d>-240&&F.months.includes(env.month)&&!hasIcon('forage',f.id))
         spawnIcon({kind:'forage',fid:f.id,f,x:f.x,e:F.e,label:F.name,life:1e9});
     }else if(f.type==='see'&&H.g.tools.rod&&!H.side){if(d<380&&d>-80&&!hasIcon('fish',f.id))spawnIcon({kind:'fish',fid:f.id,f:f,x:f.lake.xl-30,e:'🎣',label:'Angeln',life:1e9});
     }else if(f.type==='fluss'&&H.g.tools.rod){
-      if(d<300&&!hasIcon('fish',f.id))spawnIcon({kind:'fish',fid:f.id,f,x:f.x,e:'🎣',label:'Angeln',life:1e9});
+      if(d<300&&d>-240&&!hasIcon('fish',f.id))spawnIcon({kind:'fish',fid:f.id,f,x:f.x,e:'🎣',label:'Angeln',life:1e9});
     }else if(f.type==='special'){
-      if(d<380&&!f.iconMade&&!f.done){f.iconMade=true;spawnIcon({kind:'special',fid:f.id,f,x:f.x,e:f.kind==='fans'?'🎉':'❗',label:f.kind==='fans'?'Fans':'Fremder',life:1e9});toast(f.kind==='fans'?'🎉 Da wartet eine Gruppe auf dich!':'❗ Ein Fremder steht am Weg …','warn')}
+      if(d<380&&d>-240&&!f.done&&!hasIcon('special',f.id)){const first=!f.iconMade;f.iconMade=true;spawnIcon({kind:'special',fid:f.id,f,x:f.x,e:f.kind==='fans'?'🎉':'❗',label:f.kind==='fans'?'Fans':'Fremder',life:1e9});if(first)toast(f.kind==='fans'?'🎉 Da wartet eine Gruppe auf dich!':'❗ Ein Fremder steht am Weg …','warn')}
     }
   }
 }
@@ -4396,7 +4396,7 @@ function renderMenu(){
       <button class="${has?'':'primary '}big" id="m-new">${has?'Neues Spiel':'▶ Neues Spiel'}</button>
       <button id="m-how">📖 Spielprinzip</button>
       <button id="m-admin">🛠️ Admin-Modus: ${adminOn()?'AN (10.000 €)':'AUS'}</button>
-      <button id="m-fs">📱 Vollbild / Querformat</button>
+      <button id="m-fs">📱 Vollbild ein/aus</button>
     </div>
     <p class="hint">Tipp am Handy: Vollbild aktivieren und quer halten. Der Spielstand wird automatisch gespeichert.</p></div>`;
   if(has)$('#m-cont').onclick=()=>{auUnlock();G=loadSave();auVol();renderHub();show('hub')};
@@ -4405,9 +4405,12 @@ function renderMenu(){
   $('#m-how').onclick=showHowTo;$('#m-fs').onclick=goFullscreen;
 }
 function goFullscreen(){
-  const el=document.documentElement;
-  try{const p=el.requestFullscreen?el.requestFullscreen():el.webkitRequestFullscreen&&el.webkitRequestFullscreen();
-    Promise.resolve(p).then(()=>{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}).catch(()=>{})}catch(e){}
+  const el=document.documentElement,fs=document.fullscreenElement||document.webkitFullscreenElement;
+  try{
+    if(fs){const p=document.exitFullscreen?document.exitFullscreen():(document.webkitExitFullscreen&&document.webkitExitFullscreen());Promise.resolve(p).then(()=>{try{window.screen.orientation.unlock()}catch(e){}}).catch(()=>{});return}
+    const p=el.requestFullscreen?el.requestFullscreen():(el.webkitRequestFullscreen&&el.webkitRequestFullscreen());
+    Promise.resolve(p).then(()=>{try{window.screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{});
+  }catch(e){}
 }
 function showHowTo(){
   showModal({title:'📖 Spielprinzip',wide:true,html:`<div style="line-height:1.5;font-size:.95em">
@@ -4910,7 +4913,7 @@ function renderHub(){setTimeout(()=>{try{lobbyWatch();lobbyInvite()}catch(e){}},
 function hubMenu(){
   showModal({title:'☰ Menü',buttons:[
     {label:(G.mute?'🔇 Ton ist aus – einschalten':'🔊 Ton ausschalten'),fn:()=>{G.mute=!G.mute;auVol();save()}},
-    {label:'📖 Spielprinzip',fn:showHowTo},{label:'📱 Vollbild / Querformat',fn:goFullscreen},
+    {label:'📖 Spielprinzip',fn:showHowTo},{label:'📱 Vollbild ein/aus',fn:goFullscreen},
     {label:'🏠 Hauptmenü',fn:()=>{save();renderMenu();show('menu')}},{label:'Schließen'}]});
 }
 let WAITCTX='hub';
@@ -5479,7 +5482,7 @@ function buildDrawer(){
    <h4>TON &amp; ANSICHT</h4>
    <label class="chk"><input type="checkbox" id="o-mute" ${G.mute?'checked':''}> Ton aus</label>
    <div class="chk">Lautstärke <input type="range" id="o-vol" min="0" max="1" step="0.05" value="${G.vol}" style="flex:1"></div>
-   <button id="o-fs" style="width:100%;margin-top:4px">📱 Vollbild / Querformat</button>
+   <button id="o-fs" style="width:100%;margin-top:4px">📱 Vollbild ein/aus</button>
    <button id="o-quit" style="width:100%;margin-top:6px;border-color:#c0392b">🚪 Tour abbrechen (ohne Wertung)</button>
    <button id="o-close" style="width:100%;margin-top:6px">Schließen</button>`;
   $$('[data-a]',d).forEach(b=>b.onclick=()=>{const k=b.dataset.a;if(k!=='rescue')d.classList.remove('open');actClick(k)});
