@@ -217,6 +217,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 .hk-hist{display:flex;gap:8px;align-items:center;margin:6px 0 2px}.hk-th{position:relative;flex:none;line-height:0}.hk-th canvas{width:84px;height:47px;border-radius:6px;border:1px solid #ffffff22}.hk-th i{position:absolute;left:0;right:0;bottom:0;background:#a82f22dd;color:#fff;font:700 9px/14px sans-serif;text-align:center;font-style:normal;border-radius:0 0 6px 6px}.hk-chips{display:flex;flex-wrap:wrap;gap:4px}.hk-chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#ffffff14;font-size:.76rem}.hk-chip.ok{background:#1f5a34;color:#c9f5d8}.hk-chip.ab{background:#8a2f24;color:#ffd9d2}
 .fr h4{margin:12px 0 6px}.fr-code{display:flex;gap:8px;align-items:center}.fr-code span{font:700 1.7rem/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;background:#ffffff12;padding:8px 14px;border-radius:10px}.fr-add{display:flex;gap:8px}.fr-add input{flex:1;text-transform:uppercase;letter-spacing:.12em;font-size:1rem}.fr-err{color:#ffb4a8}.fr-ok{color:#9be7b2}.fr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff14}.fr-av{width:42px;height:42px;flex:none;border-radius:50%;overflow:hidden;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:1.3rem}.fr-av img{width:100%;height:100%;object-fit:cover;display:block}.fr-av.big{width:64px;height:64px;margin-top:-34px;border:3px solid #1b2b22;background:#1b2b22}.fr-nm{flex:1;min-width:0}.fr-nm b,.fr-head b{display:block}.fr-nm small,.fr-head small{opacity:.75}.fr-ban{height:120px;border-radius:10px}.fr-head{display:flex;gap:12px;align-items:flex-start;padding:0 8px 8px}.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.fr-v{position:relative;font-size:.85rem}.fr-v canvas{width:100%;border-radius:8px;display:block}.fr-v b{display:block;margin-top:4px;line-height:1.2}.fr-v small{opacity:.75}.fr-v i{position:absolute;left:0;top:0;background:#a82f22dd;color:#fff;font:700 10px/16px sans-serif;padding:0 6px;border-radius:8px 0 8px 0;font-style:normal}
 #coop{position:absolute;left:10px;top:104px;z-index:20;max-width:230px;background:rgba(10,24,16,.78);border:1px solid #ffffff22;border-radius:12px;padding:8px 10px;font-size:.78rem;line-height:1.35;color:#fff;backdrop-filter:blur(4px)}#coop .coop-h{opacity:.8;margin-bottom:2px}#coop button{margin-top:6px;width:100%;font-size:.78rem;padding:6px 8px;min-height:32px}#coop button.on{background:#1f5a34;border-color:#2f8a52}
+#dock{align-items:flex-end}#spdctl{height:54px;box-sizing:border-box;padding:0 3px}#spdctl button{height:100%}
 </style>
 </head>
 <body>
@@ -3458,7 +3459,7 @@ function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
   g.drawImage(bmp,-Wd/2,-Ht,Wd,Ht);g.restore();
   return true;
 }
-const LS_SZ={busch:165,strauch:175,nstr:165,nstein:155,s1:50,s2:46,s3:48,s4:48,s5:56,s6:44,hg:32,hk:34,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
+const LS_SZ={busch:165,strauch:175,nstr:165,nstein:98,s1:32,s2:30,s3:31,s4:31,s5:36,s6:28,hg:32,hk:34,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
 const LS_MIX={ /* Bewuchs je Biom: [Anteil der Zellen, [[Art, Gewicht], …]] */
   wald:[0.34,[['mgras',.22],['hgras',.12],['nbgras',.16],['bgras',.1],['nstr',.14],['strauch',.12],['busch',.14]]],
   tal:[0.36,[['ngras',.24],['mgras',.16],['nbgras',.14],['strauch',.16],['nstr',.12],['busch',.1],['hgras',.08]]],
@@ -3529,9 +3530,9 @@ function drawDecor(g,tm,pass){
       }else if(st.b==='fjaell'||st.b==='sumpf')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
       else tree(g,sx,y,sc,hash(cx*3)<leafP(wx,true)?'leafo':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
     }else if(pass===1){
-      if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
+      if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,6*sc,3,0,Math.PI,0);g.fill()} }
       else if(st.b==='berg'||st.b==='fjaell'||B.rock){
-        if(r<B.tree+(B.rock?0.32:0.22)){g.fillStyle=tc('#7c8088',sn);g.beginPath();g.ellipse(sx,y-4*sc,14*sc,9*sc,0,Math.PI,0);g.fill()}
+        if(r<B.tree+(B.rock?0.32:0.22)){g.fillStyle=tc('#7c8088',sn);g.beginPath();g.ellipse(sx,y-3*sc,8*sc,5*sc,0,Math.PI,0);g.fill()}
       }
     }
     if(pass===1)lsGround(g,st.b,cx,sx,y,sn,sway,false);
@@ -4063,6 +4064,7 @@ row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),tru
     row.push(['🛌','Ausruhen',()=>actClick('rest'),true]);
     row.push(['⛺','Abbauen',()=>actClick('tent'),true]);
   }else if(resting&&H.g.shelter&&Math.abs(env.grade)<0.09)row.push(['⛺','Zelt',()=>actClick('tent'),true]);
+  if(resting&&!H.g.shelter&&!H.camp.pitched)row.push(['🌙','Draußen schlafen',()=>actClick('sleepOut'),true]);
   if(resting&&H.g.tools.fire){
     if(H.wood<6)row.push(['🪵',H.wood>0?'Holz +'+H.wood:'Holz sammeln',()=>actClick('wood'),true]);
     if(H.fire.lit&&nearFire()&&woodAvail()>0)row.push(['🔥','Nachlegen',()=>actClick('feed'),true]);
@@ -5263,7 +5265,6 @@ function buildHikeDOM(){
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
      <div id="spdwrap"><button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button><div id="spdctl"><button id="sp-dn">◀</button><div id="sp-v"><span>⏩</span><small>1×</small></div><button id="sp-up">▶</button></div></div>
-     <button class="rb" id="b-sleep"><span>😴</span><small>Schlaf</small></button>
      <button class="rb" id="b-menu"><span>☰</span><small>Menü</small></button></div></div>
    <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
@@ -5288,7 +5289,6 @@ function buildHikeDOM(){
   $('#rlab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!==''){setRec(+l);sfx('click');updateHUD(true)}});
   $('#b-pack').onclick=()=>{sfx('click');openPack()};
   $('#b-map').onclick=()=>{sfx('click');openMap()};
-  $('#b-sleep').onclick=()=>{if(H.sleep.active){wakeUp(true);sfx('click');updateHUD(true);return}actClick(H.camp.pitched||!H.g.shelter?'sleep':'sleep')};
   $('#b-menu').onclick=()=>{buildDrawer();$('#drawer').classList.toggle('open');sfx('click')};
   buildDrawer();
 }
