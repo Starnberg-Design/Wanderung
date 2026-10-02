@@ -1,0 +1,2598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .uuid-0ab000b5-8f7e-46a5-8125-82fcc86e53a9 {
+        fill: #66163b;
+      }
+
+      .uuid-dbff6d4e-e5a8-4880-a73e-b0ee5c915756 {
+        fill: #942927;
+      }
+
+      .uuid-d087fbbd-10f6-4ddf-99b2-a71d43f1a013, .uuid-990a01e0-08be-4207-b25e-043802770eaf {
+        opacity: .6;
+      }
+
+      .uuid-b0440c39-6d80-4857-bbff-3e5c578b748a {
+        fill: #cc3584;
+      }
+
+      .uuid-fc207227-b45b-4849-a088-0cfea18356a3 {
+        fill: #bc3634;
+      }
+
+      .uuid-7ea54141-0129-4b0a-b3e8-de725fc700e3 {
+        fill: #16010a;
+      }
+
+      .uuid-a318e553-6b48-4498-9ff3-6fc51e6c96dd {
+        fill: #020001;
+      }
+
+      .uuid-ac45d671-9727-4204-8234-3e7bb8c9806c {
+        fill: #5d1336;
+      }
+
+      .uuid-91bb4e07-b27f-4a2a-b581-9b83d944e02c {
+        fill: #2f0518;
+      }
+
+      .uuid-526748f0-1d0c-453e-9ac1-8bf0c47383d1 {
+        fill: #6b1b19;
+      }
+
+      .uuid-ca9fa804-d784-45e5-8e0c-eea80c5d9828 {
+        fill: #ab302f;
+      }
+
+      .uuid-203e9b58-6f41-4f7a-89f0-6f1218104f44 {
+        clip-path: url(#uuid-68442f21-e8dd-468f-a330-13e9c4c66bbc);
+      }
+
+      .uuid-a595501d-d7e8-49fc-ad19-ee88a2c0c499 {
+        fill: #040001;
+      }
+
+      .uuid-5e170492-7b3a-4aef-8208-97e15824d176 {
+        fill: #962927;
+      }
+
+      .uuid-822deae2-1d8b-4177-8483-b1b80e268ae3 {
+        fill: #200403;
+      }
+
+      .uuid-b4e299aa-40a4-4746-812a-a593525dbc99 {
+        fill: #bb3634;
+      }
+
+      .uuid-2d674922-5984-48f4-a583-43d2ef5e510d {
+        fill: #ba3179;
+      }
+
+      .uuid-ccd28fe7-5871-4835-90c6-1b98c4b8f398 {
+        fill: #7a1c47;
+      }
+
+      .uuid-aaed316f-590e-4d1d-b4bd-e06a20db06c3 {
+        fill: #86204f;
+      }
+
+      .uuid-ed43e5da-a27b-4cbc-b253-7a80986d91d9 {
+        fill: #2a0515;
+      }
+
+      .uuid-6bd26454-4d7d-4550-9fc8-7eb6f4c44ea4 {
+        fill: #400a27;
+      }
+
+      .uuid-71cbfdb8-9c76-4d0d-9c5d-a050a0c62111 {
+        fill: #791f1e;
+      }
+
+      .uuid-2ecc45a1-204d-4657-8feb-7945edf5cafa {
+        fill: #470d2c;
+      }
+
+      .uuid-b13a1f8f-3170-4f9b-b320-52698eadcdc2 {
+        fill: #9b2c2a;
+      }
+
+      .uuid-ee9d6899-a99c-494c-bd77-10f0a5efe128 {
+        fill: #cf3787;
+      }
+
+      .uuid-903675c7-79b8-4fc6-a328-24a632b0bf62 {
+        fill: #62143c;
+      }
+
+      .uuid-f0c2c320-0fd5-4a40-91bc-9cbc807dcc27 {
+        fill: #230310;
+      }
+
+      .uuid-41498024-dea8-470e-aec3-f1c35d6598d2 {
+        fill: #872157;
+      }
+
+      .uuid-233798a2-c42a-4d6f-b7e7-5935a081cf92 {
+        fill: #c63480;
+      }
+
+      .uuid-80d269a9-2828-4493-bdf3-01cefe6af265 {
+        fill: #862050;
+      }
+
+      .uuid-4b822944-8f9c-4826-9f05-8f4ea7060dff {
+        fill: #310706;
+      }
+
+      .uuid-4a673d28-5625-4b49-a5fe-e2d80b8e0215 {
+        fill: #591413;
+      }
+
+      .uuid-c43e6cf9-4295-4bd4-9b79-3d90f79773a5 {
+        fill: #c73a38;
+      }
+
+      .uuid-7e6c01cd-0608-4e00-915d-20b5d85b60e0 {
+        fill: #260415;
+      }
+
+      .uuid-003eefef-3f2a-4271-8810-1d14963ec202 {
+        fill: #8b2253;
+      }
+
+      .uuid-fbd29e45-24ee-4982-9d83-1f6cbf296232 {
+        fill: #9f2d2b;
+      }
+
+      .uuid-52d33555-0952-4545-bf8f-1f1c56cfce16 {
+        fill: #882158;
+      }
+
+      .uuid-6f080701-acb2-43b3-88e6-bcf231bc8bf0 {
+        fill: #3d0a22;
+      }
+
+      .uuid-b519ffe2-3f5d-492e-8328-bd3dafe322df {
+        fill: #19020b;
+      }
+
+      .uuid-0fe3a8f6-c96a-4ad1-a46a-50615d2854a7 {
+        fill: #8c2253;
+      }
+
+      .uuid-aa9494a9-6516-4913-a1c7-f7dc95228481 {
+        fill: #621816;
+      }
+
+      .uuid-84510783-ee6c-4cf5-a7aa-a15a92150065 {
+        fill: #2b0505;
+      }
+
+      .uuid-1e5a1588-5880-489c-b70c-1e647c05c104 {
+        fill: #a5296b;
+      }
+
+      .uuid-222b5360-868e-459a-9c21-10be3f626c69 {
+        fill: #761f1e;
+      }
+
+      .uuid-dba1cdee-8387-49a0-92f6-d26e44dc4e53 {
+        fill: #571413;
+      }
+
+      .uuid-9a1756b0-4481-4a7f-9031-4ccc9c1c44b5 {
+        fill: #c53380;
+      }
+
+      .uuid-ce26a994-4fad-4a09-a2c7-65a05102f860 {
+        fill: #ac312f;
+      }
+
+      .uuid-d12394ad-4ce4-4f69-87b7-4cae6ba8ef69 {
+        fill: #801f52;
+      }
+
+      .uuid-37cecbe5-a604-480a-92b0-05ceae7596fd {
+        fill: #5c1615;
+      }
+
+      .uuid-53a23730-26f0-409c-bac4-bea759414119 {
+        fill: #0c0101;
+      }
+
+      .uuid-04f605b8-3a6c-4cf4-9ac8-0e43769c0b82 {
+        fill: #989bcc;
+      }
+
+      .uuid-04f605b8-3a6c-4cf4-9ac8-0e43769c0b82, .uuid-8fa169cf-b5e0-46bb-ad52-d9f0bf201ac9, .uuid-4feb0a21-e9cc-4b36-b40f-2d425922b8ee, .uuid-521f24dc-5b9b-40d5-a34e-332c6c377098, .uuid-701d9e57-8ecd-44d2-84bf-1524dd8c5ce1, .uuid-21c8bcbc-178c-4a38-a2ca-4b727f219e8f, .uuid-97f70f1d-bb38-4a59-acfd-75a296864918 {
+        mix-blend-mode: multiply;
+      }
+
+      .uuid-04f605b8-3a6c-4cf4-9ac8-0e43769c0b82, .uuid-8fa169cf-b5e0-46bb-ad52-d9f0bf201ac9, .uuid-4de9474a-0b11-4d23-95fc-e47123b1c173, .uuid-521f24dc-5b9b-40d5-a34e-332c6c377098, .uuid-701d9e57-8ecd-44d2-84bf-1524dd8c5ce1, .uuid-de1eb21f-d257-424a-89d4-66930bd30a7f, .uuid-21c8bcbc-178c-4a38-a2ca-4b727f219e8f, .uuid-97f70f1d-bb38-4a59-acfd-75a296864918 {
+        opacity: .3;
+      }
+
+      .uuid-f447fcae-0365-4316-a2ff-503dcc7e4962 {
+        fill: #f9edff;
+      }
+
+      .uuid-6b442489-2739-46df-a2d6-3ff32456d3db {
+        fill: #892152;
+      }
+
+      .uuid-36839037-d7fc-4c2a-a632-2a65e67fb8d4 {
+        fill: #d8398c;
+      }
+
+      .uuid-fdac6bf3-bea1-48e3-9bb3-b5df5da5a522, .uuid-97f70f1d-bb38-4a59-acfd-75a296864918 {
+        fill: #504954;
+      }
+
+      .uuid-8e410b84-4fb6-4d71-9f4f-85467bef7648 {
+        fill: #741a49;
+      }
+
+      .uuid-f74b3b05-b078-4372-88bc-711a9c70deb9 {
+        fill: #6b183f;
+      }
+
+      .uuid-ebda97bc-ecec-40d7-b0c3-4631f49d3375 {
+        fill: #781c46;
+      }
+
+      .uuid-c6fcea00-2954-4534-9d04-ea424e5421cf {
+        fill: #520f2f;
+      }
+
+      .uuid-22aed2ae-3cf1-4867-81e3-fe1849ac8f0f {
+        clip-path: url(#uuid-02d15e04-34bd-403e-a56c-7a0dd62a0adc);
+      }
+
+      .uuid-4a5adb21-471a-4523-8530-a289c293e068 {
+        fill: #6a1744;
+      }
+
+      .uuid-31a94684-7b48-4eca-97ed-437d07ec0030 {
+        fill: #360720;
+      }
+
+      .uuid-751ce65f-f826-48d0-8f68-557438d2af81 {
+        fill: #3b0b09;
+      }
+
+      .uuid-7e8591cd-895e-44f3-a0cb-b10cd7ea6ccc {
+        fill: #8c2625;
+      }
+
+      .uuid-739cf0f5-bc86-4366-9dd1-47542af44346 {
+        fill: #671640;
+      }
+
+      .uuid-5728a4ba-8e2e-459e-a006-eca9741f0f3e {
+        fill: #8b2625;
+      }
+
+      .uuid-6a55f3c5-3b7e-4adc-bd08-6e23163c5f73 {
+        fill: #6c1844;
+      }
+
+      .uuid-33202891-2e99-4075-a079-e385f85c4648 {
+        fill: #d03787;
+      }
+
+      .uuid-259859fd-6721-4770-9f7d-8b5116de9407 {
+        fill: #711947;
+      }
+
+      .uuid-8e905485-14e0-4321-8de0-36ade994f3d0 {
+        fill: #460c2b;
+      }
+
+      .uuid-21f9e946-e84a-4b75-987b-b9bd263a7b42 {
+        fill: #ac2c70;
+      }
+
+      .uuid-58a6c4b6-9259-4270-ae3c-85cf7f1fb04c {
+        fill: #691a19;
+      }
+
+      .uuid-a139f5aa-c964-4bdb-b7ec-e833a6ac0605 {
+        fill: #1c020d;
+      }
+
+      .uuid-0401a661-dc43-4ac1-94f1-c550d188e91c {
+        fill: #b53432;
+      }
+
+      .uuid-48b995c6-7cde-4500-abee-0b13f19786bd {
+        fill: #480f0f;
+      }
+
+      .uuid-842cb91e-b51d-4fc1-ac85-4a815138cb77 {
+        fill: #591132;
+      }
+
+      .uuid-92736c17-405f-4aef-b0f6-e6fe56749b34 {
+        fill: #b52f75;
+      }
+
+      .uuid-cb6ab66e-eb76-4e2e-a053-09e8f47056ab {
+        fill: #a22969;
+      }
+
+      .uuid-64646c88-6d36-4fd0-9191-2226e6bdcc52 {
+        fill: #5d1615;
+      }
+
+      .uuid-8c4b030c-acb7-4c0a-9924-4602681f47ce {
+        fill: #220312;
+      }
+
+      .uuid-01b71188-d61b-410d-a5df-ca362deeffc8 {
+        fill: #240412;
+      }
+
+      .uuid-d95746fb-3c2d-4012-9800-37d146b24e9f {
+        fill: #370909;
+      }
+
+      .uuid-4968c459-bc98-4665-99c6-6b4d45e4d5ef {
+        fill: #8b215a;
+      }
+
+      .uuid-4cba4d14-2e63-4d2e-a43e-19d0f6a6528b {
+        fill: #7e211f;
+      }
+
+      .uuid-30f8c0ca-b7e1-4d23-9d3d-224b120f517d {
+        fill: #050002;
+      }
+
+      .uuid-3b0adba0-a340-4d09-ada7-c22e5a9cfd20 {
+        fill: #771f1e;
+      }
+
+      .uuid-3e5cc489-3efd-48f3-a972-172e616dabb0 {
+        fill: #a72f2e;
+      }
+
+      .uuid-8fcd8fcd-b6a0-484a-a24f-178b5ee13ef3 {
+        fill: #5e1616;
+      }
+
+      .uuid-b7b0f321-3cac-4002-9bb8-322af42925ad {
+        fill: #711a42;
+      }
+
+      .uuid-536731a0-d6d4-43ce-be05-cbaa7ac585be {
+        fill: #992a29;
+      }
+
+      .uuid-aa021235-4187-49c7-abcf-0f7108ca6b4b {
+        fill: #731a48;
+      }
+
+      .uuid-94ca47b3-03dd-4e0c-83ec-d515e4ecfc56 {
+        fill: #1d020d;
+      }
+
+      .uuid-f8b76464-d216-42bb-8f6a-010745c913dd {
+        fill: #b53433;
+      }
+
+      .uuid-8d1a640f-3bcd-4140-a123-af33c9ec41f8 {
+        fill: #841f55;
+      }
+
+      .uuid-27eda300-3771-466e-9f4c-1a672d7dd00b {
+        fill: #69173e;
+      }
+
+      .uuid-457113be-6702-40ee-9475-d02b7be0402e {
+        fill: #701941;
+      }
+
+      .uuid-27f5fa74-5e97-4891-b968-59f21e4aaa99 {
+        fill: #17020b;
+      }
+
+      .uuid-a69d77e0-94ac-4094-8586-49bba46d4caf {
+        fill: #631816;
+      }
+
+      .uuid-79f31065-4ec2-4d39-b453-c4917c4c5ce5 {
+        fill: #cb3b39;
+      }
+
+      .uuid-0aba1cc2-cb72-42b2-a795-1992aedfd110 {
+        fill: #4a0d29;
+      }
+
+      .uuid-d7b19a6d-0060-4e92-b326-e02db8f096f1 {
+        fill: #831f53;
+      }
+
+      .uuid-2648a858-df0a-4f96-b415-fe19baa1e96b {
+        fill: #4f0f30;
+      }
+
+      .uuid-b798ef6a-c9be-4600-8551-7115d9950bfc {
+        fill: #842422;
+      }
+
+      .uuid-3ca034c2-542b-4048-b920-b466b1257c37 {
+        fill: #a42f2d;
+      }
+
+      .uuid-2ec7580b-5bcf-4bbb-baf8-a52e9251822b {
+        fill: #c2337e;
+      }
+
+      .uuid-a3148850-3f9e-43d3-9f54-3ae4cbdf72dd {
+        fill: #561135;
+      }
+
+      .uuid-598ec86b-fee1-435d-b48e-0a0062d4a6d2 {
+        fill: #681a19;
+      }
+
+      .uuid-d8747edf-e1f8-4672-b744-07389452659e {
+        fill: #410a24;
+      }
+
+      .uuid-1f89696e-7142-4f1d-a106-611bcdbaf396 {
+        fill: #3c0a24;
+      }
+
+      .uuid-34a17010-5ddb-4f19-8134-e40a9c9a94fd {
+        fill: #3c0921;
+      }
+
+      .uuid-7349a61b-39b7-4bf9-9af4-e9ad85bd01a6 {
+        fill: #4b0d2f;
+      }
+
+      .uuid-0f6739c4-9721-4e4b-bc5a-97341ec72ce3 {
+        fill: #bf317c;
+      }
+
+      .uuid-8cf9b423-e5c4-4ab4-aa10-293984a40f29 {
+        fill: #0f0101;
+      }
+
+      .uuid-b0c93bf4-01eb-43f4-86d4-0680a0a8fef2 {
+        fill: #711d1c;
+      }
+
+      .uuid-c9ab7044-566f-4329-bcc2-66253200d5e4 {
+        fill: #531130;
+      }
+
+      .uuid-eabcf48a-c09e-485f-a07c-5783ca18f094 {
+        fill: #2f061b;
+      }
+
+      .uuid-03f3fea0-c962-4efc-94e2-ff059b45be0d {
+        fill: #9d2c2a;
+      }
+
+      .uuid-a35d4392-8bac-4c7c-bcc2-594d9846d1b6 {
+        fill: #91235d;
+      }
+
+      .uuid-63e6d278-1f6d-47fb-8203-8088093c0963 {
+        fill: #821f52;
+      }
+
+      .uuid-ed3a5597-099a-4a41-9a4f-be3ec65a41f9 {
+        fill: #972a29;
+      }
+
+      .uuid-c0075fcd-bd5c-4473-b9f7-6d2f18e91c85 {
+        fill: #65153a;
+      }
+
+      .uuid-53265d22-3f4a-4a32-bada-5200d4f87d4c {
+        fill: #b13231;
+      }
+
+      .uuid-0c2c5442-99b9-4e9f-a406-7eb12aa7d6b2 {
+        fill: #631539;
+      }
+
+      .uuid-f48bd05a-2b24-4d20-9d01-f7906fd558e3 {
+        fill: #751d1c;
+      }
+
+      .uuid-a0f56723-af71-44ad-aed3-d6fcec5af7a8 {
+        fill: #0a0003;
+      }
+
+      .uuid-7d4a4317-a61b-4ec9-be3f-23a049e34fce {
+        fill: #731a44;
+      }
+
+      .uuid-7d48ce51-5902-4920-a53c-94c4932adbab {
+        fill: #070101;
+      }
+
+      .uuid-7603831b-00a1-4670-8ec4-575e960b32e1 {
+        fill: #b43332;
+      }
+
+      .uuid-7bb59d45-552e-4781-9ae7-6bb44daaef48 {
+        fill: #a4296a;
+      }
+
+      .uuid-d2563877-297f-4ef4-accb-aafcfb5e79cf {
+        fill: #be3736;
+      }
+
+      .uuid-7174d0f7-d368-4beb-bbfb-d57262045e12 {
+        fill: #380a09;
+      }
+
+      .uuid-055d1832-a0c0-48ca-8c6d-f8242c30dc1d {
+        fill: #f3deff;
+      }
+
+      .uuid-055d1832-a0c0-48ca-8c6d-f8242c30dc1d, .uuid-4feb0a21-e9cc-4b36-b40f-2d425922b8ee {
+        opacity: .2;
+      }
+
+      .uuid-470251e4-e7b5-4da3-9402-83fbdbbd5e79 {
+        fill: #721d1c;
+      }
+
+      .uuid-7aa20f8b-a35d-488a-b44b-19fef5f2a7cb {
+        fill: #b63533;
+      }
+
+      .uuid-27c60c36-fa7b-48a6-9d7f-41d2069989bd {
+        fill: #67163b;
+      }
+
+      .uuid-37fbb3f6-5dd3-4deb-9110-b49d504cd4ef {
+        fill: #220310;
+      }
+
+      .uuid-c2b0d5b1-0980-4af8-9dac-5f5f370bfd67 {
+        fill: #9e2767;
+      }
+
+      .uuid-3efa8ad8-661a-4a94-a0f0-3104ad947d48 {
+        fill: #651640;
+      }
+
+      .uuid-f17f39f8-d99a-4d2f-835c-2d5eca03010a {
+        fill: #4b100f;
+      }
+
+      .uuid-db6b6482-b781-4260-bbb8-7e2c1ab7f5b9 {
+        fill: #4e0e2c;
+      }
+
+      .uuid-ac41dc77-4ef7-4132-ae02-20bdffd5226d, .uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943, .uuid-990a01e0-08be-4207-b25e-043802770eaf {
+        fill: #fff;
+      }
+
+      .uuid-30393262-2c25-4f9e-bd62-8b2b7463a25f {
+        fill: #c73b38;
+      }
+
+      .uuid-8ff6415d-38d9-4ce4-abc7-ddf6f43ec51e {
+        fill: #832422;
+      }
+
+      .uuid-4d321327-7429-4f7a-b2e4-1517b11913c4 {
+        fill: #b22d74;
+      }
+
+      .uuid-679e33b1-774c-4cc7-8d97-6d630ac10562 {
+        fill: #bb317a;
+      }
+
+      .uuid-78d7f56e-d4bc-4d30-916d-a255f49d9c21 {
+        fill: #952927;
+      }
+
+      .uuid-d1707c13-73da-4452-85e9-e2eaf56f4400 {
+        fill: #7c1c49;
+      }
+
+      .uuid-7e406c17-73ac-4ca7-8d10-3a8e58c2e7cd {
+        fill: #17020a;
+      }
+
+      .uuid-e4e1bf40-6a4f-41f3-9530-f12d28c38b61 {
+        fill: #60143c;
+      }
+
+      .uuid-e7b08d31-f4d1-4583-8f5e-75f21083dd6a {
+        fill: #290417;
+      }
+
+      .uuid-32f21b62-3a2c-4f21-ac00-4b53cf18be68 {
+        fill: #2e0518;
+      }
+
+      .uuid-61445c79-3bcc-45bf-8e91-a61fef56ce2d {
+        fill: #b32e74;
+      }
+
+      .uuid-183fd3ff-f02d-4c23-ad49-d658cc037d2d {
+        fill: #0f0106;
+      }
+
+      .uuid-dc3ba8a1-bca7-4407-a468-cf6a1587fe6f {
+        clip-path: url(#uuid-84f3e380-c158-4eea-9b22-d6933e1caabf);
+      }
+
+      .uuid-ebfade14-1ce7-44b3-a9e5-d60456ed50d1 {
+        fill: #781f1e;
+      }
+
+      .uuid-4482fb46-e724-4d28-8e2a-fa336f5d666b {
+        fill: #c1337e;
+      }
+
+      .uuid-ec83fa55-2f5c-4dd2-a04a-3d8fccf6f93b {
+        fill: #821e4e;
+      }
+
+      .uuid-5e41defe-2f46-4ad6-a4c6-990e10e9152b {
+        fill: #200310;
+      }
+
+      .uuid-c099f79e-3b76-4c74-bb69-916c814c4167 {
+        fill: #8f235c;
+      }
+
+      .uuid-751d3084-7b37-45e0-b27b-dea936dcd6bb {
+        fill: #ca3583;
+      }
+
+      .uuid-f537162a-e8be-45d0-a8a8-104d4c890fd6 {
+        fill: #561313;
+      }
+
+      .uuid-2ca4e01d-6cec-4a39-bf57-3b4d00f21842 {
+        fill: #9a2b2a;
+      }
+
+      .uuid-062e9934-b78a-42ab-8b4e-4aaf1ffc2975 {
+        fill: #9c2c2a;
+      }
+
+      .uuid-327b0b6a-40fc-4036-933e-dd19e46eed0e {
+        fill: #611716;
+      }
+
+      .uuid-26d9a2e5-19bf-41f6-a045-78c81742cb5d {
+        fill: #63143e;
+      }
+
+      .uuid-fc3d722e-709e-4c01-9466-3b74d27645b4 {
+        fill: #b83533;
+      }
+
+      .uuid-986544fa-cc90-438e-b717-290eeac0de7c {
+        fill: #9b2764;
+      }
+
+      .uuid-63f4dfb2-d109-4815-8651-62d389dfb189 {
+        fill: #c73481;
+      }
+
+      .uuid-df4277ac-5c02-491b-bc8d-aa54e946af91 {
+        fill: #34071e;
+      }
+
+      .uuid-c50ebe49-b044-471e-99bd-a3b9615f65d7, .uuid-1d5e4ec7-2b59-4bf0-a912-d6962572a7ae, .uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943 {
+        opacity: .4;
+      }
+
+      .uuid-c50ebe49-b044-471e-99bd-a3b9615f65d7, .uuid-77829be8-7554-4424-a8e8-f11046ba0465, .uuid-bae5d0b6-4d3f-468a-8c5e-03e1e843f261 {
+        fill: #bec1ff;
+      }
+
+      .uuid-4e4654d2-3a84-4b2a-a2e4-6f1ab5436f5a {
+        clip-path: url(#uuid-aefad0e1-cccd-4baf-b5be-2778db0118ed);
+      }
+
+      .uuid-5fc544c2-ca49-498a-aeb9-e74db01acebc {
+        fill: #6f1c1b;
+      }
+
+      .uuid-60845f87-f283-48b7-891c-c0e18654076c {
+        clip-path: url(#uuid-3e14c048-f1a1-4826-ad43-c7a6ed5c9158);
+      }
+
+      .uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff {
+        fill: none;
+      }
+
+      .uuid-ec661023-ce41-4528-baa6-bfc7c5a2553e {
+        fill: #cd3684;
+      }
+
+      .uuid-8ec2ec6b-7c0c-4ce8-a318-ecbc047b683f {
+        fill: #110106;
+      }
+
+      .uuid-42744d9a-77a4-4a0c-af01-303ff9f6ead6 {
+        fill: #3b0822;
+      }
+
+      .uuid-5240be20-af0e-409b-9caa-9af1f976f503 {
+        fill: #a22d2d;
+      }
+
+      .uuid-09e8aabc-dbd5-47eb-bd4b-ea783c367ad7 {
+        fill: #d13788;
+      }
+
+      .uuid-415acc64-52e7-44f4-b394-49552bc2557d {
+        fill: #c93b39;
+      }
+
+      .uuid-c336f60b-6d82-4ba9-87f9-a53b67497519 {
+        fill: #1d020f;
+      }
+
+      .uuid-f5b6b06d-7270-4dc3-83e7-b65c603c87b7 {
+        fill: #ce3686;
+      }
+
+      .uuid-07a68f76-a80d-40f5-876e-9c9eeeda86a2 {
+        fill: #601437;
+      }
+
+      .uuid-b5350eb8-7cb2-4c6b-b16a-c1dba98b31e1 {
+        fill: #c93582;
+      }
+
+      .uuid-5616d510-81d2-429c-9857-ba6f444edeba {
+        fill: #882051;
+      }
+
+      .uuid-f7896237-c5d7-46b3-ba72-286f0ee7f0eb {
+        fill: #070003;
+      }
+
+      .uuid-3ef1f35d-47c7-4cd1-90db-1d71e5060711 {
+        fill: #7d211f;
+      }
+
+      .uuid-8183b417-3438-450a-b7a4-591644d0d5b2 {
+        fill: #510f2f;
+      }
+
+      .uuid-e2d06a8d-c0ab-454b-93df-19658e8c934d {
+        fill: #9a2663;
+      }
+
+      .uuid-2fc1a063-3fc6-46e5-a154-168345896949 {
+        fill: #d33889;
+      }
+
+      .uuid-963073c7-43f0-4767-b683-af3511adf244 {
+        fill: #c83582;
+      }
+
+      .uuid-6c167ce7-7d25-41b8-a048-5c37323bfb66 {
+        fill: #5e143b;
+      }
+
+      .uuid-db2529be-ea75-408f-9b1e-76631c13f017 {
+        fill: #6e1846;
+      }
+
+      .uuid-8fa169cf-b5e0-46bb-ad52-d9f0bf201ac9, .uuid-a80ded5a-c109-423c-9bee-895dea27c753 {
+        fill: #38333b;
+      }
+
+      .uuid-6486d2d0-7ee8-4ba0-823f-e27d5a69e530 {
+        fill: #90235c;
+      }
+
+      .uuid-ed082575-a4ee-444d-b6ba-fed37296e672 {
+        fill: #490d29;
+      }
+
+      .uuid-d988c1fc-e8c4-488c-acfd-e62059b0c8d8 {
+        fill: #5d143a;
+      }
+
+      .uuid-01cceaf9-7649-404f-812d-70338acecaeb, .uuid-4feb0a21-e9cc-4b36-b40f-2d425922b8ee, .uuid-21c8bcbc-178c-4a38-a2ca-4b727f219e8f {
+        fill: #999cd1;
+      }
+
+      .uuid-f877a747-1157-4497-9794-79d50e514f63 {
+        fill: #2b0518;
+      }
+
+      .uuid-977e662c-f4b9-4139-8541-005307e999d9 {
+        fill: #6d1c1b;
+      }
+
+      .uuid-f13b1546-cd0e-4242-8324-4a59ee8158ff {
+        fill: #5c1335;
+      }
+
+      .uuid-47feda23-e510-4ff1-a572-aad92f959bc0 {
+        fill: #2d0706;
+      }
+
+      .uuid-77aba38a-cf27-4499-bf40-02f6f6c9bfb7 {
+        fill: #c1327d;
+      }
+
+      .uuid-5497694a-8970-438b-b138-8c67ce9714fb {
+        fill: #440b29;
+      }
+
+      .uuid-ee2b283d-a7d7-4f5d-8402-7422a5582c0d {
+        fill: #8c2255;
+      }
+
+      .uuid-6dcbcd4c-37c5-4b06-90ee-fbfc15072872 {
+        fill: #6f1841;
+      }
+
+      .uuid-cf783947-7371-42d5-8374-c50d3ca45f6b {
+        fill: #a9302e;
+      }
+
+      .uuid-bcd2b1b6-6cd8-48d1-8ff0-6e4ba91424f2 {
+        fill: #3e0a25;
+      }
+
+      .uuid-629f84e9-d7a1-4263-a3d6-6a004d3e56ff {
+        fill: #6c183f;
+      }
+
+      .uuid-75919e5d-174f-4b17-bc57-965e943cc9a0 {
+        fill: #490d2c;
+      }
+
+      .uuid-6475378f-6d15-4e2d-9f9a-d46bbc2066dc {
+        clip-path: url(#uuid-5d5cc67f-de0a-45a1-a5c1-64baa9cf2937);
+      }
+
+      .uuid-c286858b-1da9-4ec0-bcc2-b9977ed3638f {
+        fill: #511212;
+      }
+
+      .uuid-60e4984b-ebb2-4a57-b7d7-a68d8c4e3152 {
+        fill: #ca3b39;
+      }
+
+      .uuid-89ade1e0-5a40-4aec-a38f-165849797710 {
+        fill: #8a2252;
+      }
+
+      .uuid-5af8caf0-3c61-4129-ae3c-ef57de9132c6 {
+        fill: #d6398b;
+      }
+
+      .uuid-efd1ee5f-c48a-4cdc-9802-87d678cba097 {
+        clip-path: url(#uuid-b6bf7ed9-3489-4988-8968-48c9f32dd6ba);
+      }
+
+      .uuid-dbddc8df-0035-4864-9c25-c843c4d5fb81 {
+        fill: #c33937;
+      }
+
+      .uuid-ee97cc50-853b-4ae9-8184-552e81c8707a {
+        fill: #c03837;
+      }
+
+      .uuid-17a428d8-d39e-480e-b70d-f25b42366982 {
+        fill: #c23837;
+      }
+
+      .uuid-a066556b-7f7e-4f32-a4bd-ee10e6f4e874 {
+        fill: #520f32;
+      }
+
+      .uuid-4e9a9c83-137e-44b4-9077-45f9111a6aa7 {
+        fill: #581132;
+      }
+
+      .uuid-c5c60afa-bda3-47d6-98d5-795c474dfb34 {
+        fill: #972561;
+      }
+
+      .uuid-aa8d058e-bfdd-4c3e-9509-00ec343caeeb {
+        fill: #9c2765;
+      }
+
+      .uuid-4e9d0ade-093f-49a2-ac1f-4ac785631a90 {
+        fill: #1c0303;
+      }
+
+      .uuid-9913c34d-6b41-4fd9-8de5-841a7b9c4cea {
+        fill: #85204f;
+      }
+
+      .uuid-5fa1a45a-2721-49f7-9457-532472f5f333 {
+        fill: #802221;
+      }
+
+      .uuid-fb2d6347-fa6a-44ce-953d-1953be3adec9 {
+        fill: #3b0820;
+      }
+
+      .uuid-45bc66f8-e71d-4b11-b432-f5b898784d21 {
+        fill: #992663;
+      }
+
+      .uuid-8c96c7c9-c4ae-4405-be99-42eb5e762b80 {
+        fill: #8a2253;
+      }
+
+      .uuid-de7570e3-605f-47e3-b915-5062805735fc {
+        fill: #460e0d;
+      }
+
+      .uuid-1d453532-a2c7-4aeb-9943-719973a6b5a4 {
+        isolation: isolate;
+      }
+
+      .uuid-4dc96621-f7e3-471e-9c17-b9ae566072b3 {
+        fill: #c43937;
+      }
+
+      .uuid-c571ddb3-5441-4392-b5ec-e14cc02330c4 {
+        fill: #8a2159;
+      }
+
+      .uuid-9f3cea60-d78f-406d-90b1-ba008371d5c3 {
+        fill: #4a0d2d;
+      }
+
+      .uuid-c775f3d8-d026-447a-a24d-96248bb7c27c {
+        fill: #801e4c;
+      }
+
+      .uuid-da425616-2f6f-4ac9-b93b-2d7e52f0735c {
+        clip-path: url(#uuid-565854b0-43f0-45b3-a600-a64508df31ce);
+      }
+
+      .uuid-305e1239-352b-4113-b99a-7ae61f65efe3 {
+        fill: #bd317b;
+      }
+
+      .uuid-36415e99-97b4-4b77-8045-50794d1f7a3d {
+        fill: #852422;
+      }
+
+      .uuid-2af287c2-1b5e-4b28-bf53-c0c47d51a2eb {
+        fill: #771a46;
+      }
+
+      .uuid-3c99d16e-64e6-4e7f-908d-a148b4645def {
+        fill: #d5388b;
+      }
+
+      .uuid-df9fc568-a2eb-4ce0-8fcc-9ec19274945f {
+        fill: #a32969;
+      }
+
+      .uuid-89ee6471-a808-45c3-967e-03bb2df60609 {
+        fill: #4e0f30;
+      }
+
+      .uuid-6978e114-8795-486b-871f-7fed6efc412e {
+        fill: #5c1239;
+      }
+
+      .uuid-d9137e74-5024-41cc-ae98-129237216de8 {
+        fill: #6a1a19;
+      }
+
+      .uuid-df442629-7081-4796-b9d7-5bcb108de22a {
+        fill: #160202;
+      }
+
+      .uuid-d7af7f04-04a1-4729-93e3-3f572b4972df {
+        fill: #761a45;
+      }
+
+      .uuid-bac53e4f-13dc-4f46-93aa-241134eae3b0 {
+        fill: #94255f;
+      }
+
+      .uuid-30b88877-bbaf-47ba-bb90-b49b047b0fc0 {
+        clip-path: url(#uuid-9cb14c59-dd8b-4982-b22a-f9203eabbfd1);
+      }
+
+      .uuid-115aa7e2-9e5b-41d3-b166-8bf9bb6885eb {
+        fill: #811e4d;
+      }
+
+      .uuid-5edeae07-e6ea-4b5d-9a55-8fd3bc8f99f6 {
+        fill: #521212;
+      }
+
+      .uuid-5c199a46-ed2a-458e-8c76-43d10d4988a3 {
+        fill: #0c0104;
+      }
+
+      .uuid-e0b5eef4-d31f-4b72-9b55-517d2556214a {
+        fill: #982a29;
+      }
+
+      .uuid-a517419c-d400-4cc5-8b19-5fc48a971a00 {
+        fill: #a12968;
+      }
+
+      .uuid-3dac5bf9-e8d1-4f79-9727-15e811a4beda {
+        fill: #84204f;
+      }
+
+      .uuid-0032ac36-1ca5-40b8-b243-27bce854fd49 {
+        fill: #7f2121;
+      }
+
+      .uuid-20b1dff4-32f6-42fb-84db-0b150cdbeacd {
+        fill: #34071b;
+      }
+
+      .uuid-41d16193-b664-4025-9fa9-06018b52a92d {
+        fill: #7c211f;
+      }
+
+      .uuid-68eeba5c-63c3-4d66-ac71-c6160f2199e3 {
+        fill: #9e2c2b;
+      }
+
+      .uuid-3c4c6771-5896-4aee-b19a-f7b567115122 {
+        fill: #68163c;
+      }
+
+      .uuid-f07de4fa-e419-4d4f-b060-1f769f5d4e84 {
+        fill: #020000;
+      }
+
+      .uuid-6be131e0-a9d6-4194-a7a9-aa80fad3d4f6 {
+        fill: #922927;
+      }
+
+      .uuid-76a701cc-8146-490a-9b34-7970c414ef9d {
+        fill: #a52f2d;
+      }
+
+      .uuid-5541caa8-5363-4df8-a2ba-f2b59160341d {
+        fill: #a02867;
+      }
+
+      .uuid-b2672dde-0d5d-408a-93ed-99bc1663ad75 {
+        fill: #ce3685;
+      }
+
+      .uuid-d6221cd5-3566-479d-8b63-0d5dd93f1a84 {
+        fill: #5e1336;
+      }
+
+      .uuid-95ee83cf-6056-4e34-a556-3bd039e12a84 {
+        fill: #d3388a;
+      }
+
+      .uuid-c24af5fc-4178-4bf5-8765-04e5cc8a79ba {
+        fill: #b02d72;
+      }
+
+      .uuid-53563300-5d41-4b28-9c58-7c34d0c45ef7 {
+        fill: #3d0b0b;
+      }
+
+      .uuid-984c32a9-8e02-4693-b0e9-ef16c06be5ce {
+        fill: #1d0303;
+      }
+
+      .uuid-4789afd7-f328-4742-85e7-3ca258e49f0f {
+        fill: #050001;
+      }
+
+      .uuid-ccc2cbc4-74b9-464c-91e9-5ffa2de67010 {
+        fill: #812221;
+      }
+
+      .uuid-1d5e4ec7-2b59-4bf0-a912-d6962572a7ae {
+        mix-blend-mode: color-dodge;
+      }
+
+      .uuid-dbdb4092-24ec-4f02-930b-c6f7df92c95c {
+        fill: #621439;
+      }
+
+      .uuid-31fc2fe8-897c-4ca9-b7aa-bb96ac609143 {
+        fill: #6e1c1b;
+      }
+
+      .uuid-b9a9d9e1-1d9b-4e56-a695-752994109acd {
+        fill: #1f020f;
+      }
+
+      .uuid-1a1c35bf-77d6-49fb-8d15-25e90652e3a8 {
+        fill: #501110;
+      }
+
+      .uuid-305eb0f7-1b14-4f74-8ed3-3487bdb3e300 {
+        fill: #120108;
+      }
+
+      .uuid-a803b037-8338-449c-b393-735e74c13498 {
+        fill: #781b4c;
+      }
+
+      .uuid-dd675b98-3c26-4705-ba22-5b8e73a5fc98 {
+        fill: #681641;
+      }
+
+      .uuid-7d5ee4a8-557b-4d58-b468-3fa1202b4325 {
+        fill: #1a020d;
+      }
+
+      .uuid-c7743248-82c0-4454-8125-0fac069527b0 {
+        fill: #c4337f;
+      }
+
+      .uuid-22bd5721-a150-4bca-ac6a-8d47552b759d {
+        fill: #8e2726;
+      }
+
+      .uuid-9dac0184-c80e-48f3-a99f-3a96c4498b4b {
+        fill: #92245e;
+      }
+
+      .uuid-658395e1-a7c0-41a7-a884-4fb6e1a3d4cd {
+        fill: #7d1d4f;
+      }
+
+      .uuid-0a54fee9-dc7a-4f53-8f52-0ed6f5f009be {
+        fill: #9f2c2b;
+      }
+
+      .uuid-b2ed0a94-f126-4d13-8009-73a71641cbaa {
+        fill: #4e1110;
+      }
+
+      .uuid-8fb22b08-869d-468f-ad91-15575fde2ea1 {
+        fill: #822222;
+      }
+
+      .uuid-e73ec7a1-2025-428f-b3e2-01bde294391a {
+        fill: #110101;
+      }
+
+      .uuid-99144d54-2adc-4b71-81b6-9ccc5d0f820a {
+        clip-path: url(#uuid-0cf32c18-1871-481f-9b4c-508c3edce3cc);
+      }
+
+      .uuid-0fea4202-72fe-4544-b66e-9e4dafb410d8 {
+        fill: #6e1840;
+      }
+
+      .uuid-00d5631d-8051-4d38-9efb-bd454ce4a306 {
+        fill: #400d0b;
+      }
+
+      .uuid-2abafd82-e737-460b-8c17-c66e0e2ca34f {
+        fill: #8c225a;
+      }
+
+      .uuid-e746fa5e-cd29-48eb-98f1-548cbe7380f4 {
+        fill: #761b4a;
+      }
+
+      .uuid-ed909f4b-d205-49b0-807b-5c2473381a63 {
+        fill: #861f56;
+      }
+
+      .uuid-482e61f0-148b-4fb7-8215-9735b29e7b4d {
+        fill: #33071b;
+      }
+
+      .uuid-f9bba83a-d6ef-4876-80a1-b38c0a694675 {
+        fill: #410a27;
+      }
+
+      .uuid-ec108cca-43cc-4a17-a28e-c567b1f004e8 {
+        fill: #5b1335;
+      }
+
+      .uuid-8474eafc-58a9-457c-ad7b-754caa133ed3 {
+        fill: #aa2b6f;
+      }
+
+      .uuid-e6528c5c-4b11-47f4-806d-9ce6bf88b91d {
+        fill: #7a1f1f;
+      }
+
+      .uuid-9e52b9e0-61df-49ad-b982-ccc622702556 {
+        fill: #b03231;
+      }
+
+      .uuid-b9305694-e52a-4683-924d-74c01d2ebd04 {
+        fill: #9a2a29;
+      }
+
+      .uuid-4de9474a-0b11-4d23-95fc-e47123b1c173 {
+        fill: #928599;
+      }
+
+      .uuid-65f47266-3952-4887-a0c9-fedb9673b0e1 {
+        fill: #b93534;
+      }
+
+      .uuid-77282377-ede1-4814-b371-7b256da8f7ae {
+        fill: #be317b;
+      }
+
+      .uuid-2f1bb974-da1e-4b25-9b3c-0fad2ae4fc28 {
+        fill: #1c020b;
+      }
+
+      .uuid-57138420-85f4-461e-85ed-94d1b70e4691 {
+        fill: #8d2726;
+      }
+
+      .uuid-bd5a89ba-8912-4424-b6cc-7854b4748058 {
+        fill: #6a173e;
+      }
+
+      .uuid-1fd6cec5-4bad-4103-8682-083a38a79fd7 {
+        fill: #581413;
+      }
+
+      .uuid-10c0e3e2-ef19-4eec-8381-53efd6b99be8 {
+        fill: #ae2d70;
+      }
+
+      .uuid-e2c8c8c8-48d6-41a8-93df-e4c46fde9ebe {
+        fill: #591237;
+      }
+
+      .uuid-98c958d2-bcd7-4404-aa83-3ab3c369f72f {
+        fill: #571131;
+      }
+
+      .uuid-35a56de4-a905-4686-bea8-4739c676dab9 {
+        fill: #290505;
+      }
+
+      .uuid-2fcc08ae-7f30-48ed-96d2-fe1599318352 {
+        fill: #39081e;
+      }
+
+      .uuid-89d255f4-e6a4-4213-b31b-c157e4e70ca7 {
+        fill: #190203;
+      }
+
+      .uuid-94d4fd6c-d243-4e47-9115-c243aa106998 {
+        fill: #651818;
+      }
+
+      .uuid-4f624a0f-6493-4c9f-b04f-583eb8353907 {
+        fill: #4d0e2b;
+      }
+
+      .uuid-f675e3c9-8802-408c-ae0f-16a2c430be17 {
+        fill: #902726;
+      }
+
+      .uuid-3df62953-f123-461b-82c5-67a6e5c9bf6e {
+        fill: #360908;
+      }
+
+      .uuid-e215b3af-5ed0-47d0-bf69-a0247d5c2e89 {
+        fill: #6d1845;
+      }
+
+      .uuid-5cb56473-8346-4b43-930e-f12f960b59c0 {
+        fill: #7b1c48;
+      }
+
+      .uuid-76faf214-5922-4b53-bbff-1e8dd201a188 {
+        fill: #c3337f;
+      }
+
+      .uuid-cf908787-7bd6-4ec6-8895-defed2b2f870 {
+        fill: #410d0b;
+      }
+
+      .uuid-911cfae1-98ac-4d85-98c6-ba15e0f7a4b9 {
+        fill: #420d0d;
+      }
+
+      .uuid-9beb2bc3-ab56-4da4-9533-c8ee3b45b6f1 {
+        fill: #010000;
+      }
+
+      .uuid-8a73db4d-898d-4c4d-b797-5618211104e7 {
+        fill: #701d1b;
+      }
+
+      .uuid-3bc17d7c-cab4-4272-ba03-32e169fe0501 {
+        fill: #791b4d;
+      }
+
+      .uuid-59204773-33bf-4a42-9df6-1d07207f2c61 {
+        fill: #b92f78;
+      }
+
+      .uuid-8ac15091-4325-48c1-b4e3-f0d43a1e1cde {
+        fill: #5a1239;
+      }
+
+      .uuid-e887c638-9984-46e8-a9b5-ba981e28c459 {
+        fill: #4a0f0f;
+      }
+
+      .uuid-e525fbee-0513-4fbe-8ce2-0b7c5536439f {
+        fill: #260504;
+      }
+
+      .uuid-47208ac8-cc24-46e5-93c8-057855413c60 {
+        fill: #2d051a;
+      }
+
+      .uuid-1ec0163d-d8fb-451d-a5ad-e4b909eed9e2 {
+        fill: #6f1947;
+      }
+
+      .uuid-dfba3ddd-20ca-4cc7-b229-6fd8eb9c8d75 {
+        fill: #7f1e4a;
+      }
+
+      .uuid-af2e155e-bea4-4384-a867-c93f99ff16dd {
+        fill: #7e1d50;
+      }
+
+      .uuid-c4da198b-21fd-4a6a-8e49-0faf71bec572 {
+        fill: #64163f;
+      }
+
+      .uuid-9391c72d-a178-4a8f-b730-7db6d29a9fd1 {
+        fill: #a82b6d;
+      }
+
+      .uuid-8b9c800d-7b85-4328-94ec-b3135997dea7 {
+        fill: #330808;
+      }
+
+      .uuid-e72d35a9-047f-4456-b786-e63c3553fbfa {
+        fill: #531034;
+      }
+
+      .uuid-84ba52c2-3866-49ae-b9fa-5b6dc3c8d55c {
+        fill: #a72a6c;
+      }
+
+      .uuid-1431f64c-3d57-4150-8274-ca2299234557 {
+        fill: #b62f76;
+      }
+
+      .uuid-ab1b9f8d-33f0-450c-ad71-aa4070910124 {
+        fill: #31061b;
+      }
+
+      .uuid-13eab2a6-3d65-4d8f-9956-94e5ef9069ff {
+        fill: #8f2726;
+      }
+
+      .uuid-fb30204a-eb09-48ad-96be-a488458ad36d {
+        fill: #af3231;
+      }
+
+      .uuid-521f24dc-5b9b-40d5-a34e-332c6c377098, .uuid-6628204e-cee7-401f-bece-db2422d641e8 {
+        fill: #adb0e8;
+      }
+
+      .uuid-109144ee-20c0-482f-94fd-952868c1bca3 {
+        fill: #c43380;
+      }
+
+      .uuid-c804e0ff-995b-4fe7-9966-edf488e4a075 {
+        fill: #0f0105;
+      }
+
+      .uuid-84cfc6f2-ad53-499e-b6a1-68299fe87656 {
+        fill: #551134;
+      }
+
+      .uuid-c0e13854-c2de-47fe-9aa2-97482183e1b1 {
+        fill: #a02d2b;
+      }
+
+      .uuid-f8017a52-c918-4709-bd82-b5f5f8e5d081 {
+        fill: #c13837;
+      }
+
+      .uuid-367942e9-f150-4bc3-b01f-1a5b957f5894 {
+        fill: #872051;
+      }
+
+      .uuid-701d9e57-8ecd-44d2-84bf-1524dd8c5ce1 {
+        fill: #7478c2;
+      }
+
+      .uuid-7e26a437-8272-40e3-a8aa-b325849c49dd {
+        fill: #b73533;
+      }
+
+      .uuid-55dad38a-f5d6-4a2e-844e-77680b3c8a6d {
+        fill: #64153a;
+      }
+
+      .uuid-fa53c128-a25f-4969-bac0-d4a848699b6c {
+        mix-blend-mode: screen;
+        opacity: .8;
+      }
+
+      .uuid-1a5cb4ff-fe0f-4299-9044-055d2bb5b61f {
+        fill: #0a0004;
+      }
+
+      .uuid-68a60be0-0bc5-4470-98e5-561db7e8da24 {
+        fill: #7e1d4a;
+      }
+
+      .uuid-5fdaf221-7596-4e5b-b27a-c2eef2299395 {
+        fill: #160108;
+      }
+
+      .uuid-f63dc510-bd67-4711-bbee-c7ccee9847c0 {
+        fill: #38081e;
+      }
+
+      .uuid-2f6818e7-e546-463c-b8e5-bb18b48210ce {
+        fill: #691742;
+      }
+
+      .uuid-77829be8-7554-4424-a8e8-f11046ba0465 {
+        opacity: .5;
+      }
+
+      .uuid-de1eb21f-d257-424a-89d4-66930bd30a7f {
+        mix-blend-mode: color-burn;
+      }
+
+      .uuid-ecf46470-79a9-4e34-841c-4e86af8e309c {
+        fill: #bc317a;
+      }
+
+      .uuid-c7ef6cf1-5d72-43cb-898c-656d8939e6ce {
+        fill: #500f31;
+      }
+
+      .uuid-aac095a0-fd70-4aa2-a28e-633f73cf9b88 {
+        fill: #b82f77;
+      }
+
+      .uuid-fa460c11-5b26-44dc-8765-60a902e35136 {
+        fill: #ab2b6f;
+      }
+
+      .uuid-38b59e99-8ced-40c1-93a3-37ba9ded107b {
+        fill: #641818;
+      }
+
+      .uuid-94327a21-4862-4021-9ec8-987e01d22bda {
+        fill: #c73938;
+      }
+
+      .uuid-159fa1d7-7346-4b8c-8792-08671903ebdd {
+        fill: #671a18;
+      }
+
+      .uuid-c08d51dc-1c61-4de3-90ba-bdfb107cb458 {
+        fill: #7b1d4e;
+      }
+
+      .uuid-812a36e7-9491-41ee-8a5d-b6dce21fb0bc {
+        fill: #220404;
+      }
+
+      .uuid-876326f4-f707-4681-afae-ceae26f9000c {
+        fill: #230404;
+      }
+
+      .uuid-087fc863-5848-4f71-9b2c-679fc217a913 {
+        fill: #4d1110;
+      }
+
+      .uuid-22c332db-2e24-4e11-a6fd-1fbf9640fe83 {
+        fill: #b72f77;
+      }
+
+      .uuid-62d5386e-173d-4fab-a5f3-740860930f7b {
+        fill: #32061d;
+      }
+
+      .uuid-c0c98ef3-243e-4159-be33-c55ca36be59e {
+        fill: #741a43;
+      }
+
+      .uuid-cdb74622-5dc9-4c91-b6e4-8e3974b62e67 {
+        fill: #ba3634;
+      }
+
+      .uuid-dd5ccdd0-334e-4e7c-b051-307e15f79f66 {
+        fill: #170202;
+      }
+
+      .uuid-abe1aa91-25b2-4253-9201-4465edb884b1 {
+        fill: #b33332;
+      }
+
+      .uuid-9bf0f05a-f827-4991-86b0-e6dcf4f00b0c {
+        fill: #aa302f;
+      }
+
+      .uuid-a89b862a-e618-4754-8e78-cd2a45283ce4 {
+        fill: #b93533;
+      }
+
+      .uuid-6ea44b17-c0e5-47ee-be2a-623c4a0bdc42 {
+        fill: #8a2625;
+      }
+
+      .uuid-8871f1ce-89dc-492a-889a-fb192a8a1ed9 {
+        fill: #2d0517;
+      }
+
+      .uuid-1d477495-5a95-467c-9fa9-e8f4fde074d3 {
+        fill: #470c28;
+      }
+
+      .uuid-19c0cb92-bc9c-4e86-950c-b6b7d71ae200 {
+        fill: #120106;
+      }
+
+      .uuid-ccced196-8937-41ee-a9c5-75d35f2241cf {
+        fill: #4f0f2c;
+      }
+
+      .uuid-701282b8-8882-4414-9a77-17e52b76f652 {
+        fill: #6d1840;
+      }
+
+      .uuid-570014d1-0083-4c74-a033-25d7642347eb {
+        fill: #470f0f;
+      }
+
+      .uuid-23304d22-db0e-43c7-a31f-e38895e66a58 {
+        fill: #0c0105;
+      }
+
+      .uuid-171980f6-13e8-4a19-94dc-cfd05702e477 {
+        fill: #751a45;
+      }
+
+      .uuid-9f3284ed-30b3-49ef-96df-0cb927ec3fa9 {
+        fill: #230414;
+      }
+
+      .uuid-be00d119-ec91-43c7-8a0c-3ffdf71dc857 {
+        fill: #531312;
+      }
+
+      .uuid-fe7d4696-b302-4d2f-8ad5-975a9d7e3f8c {
+        fill: #af2d71;
+      }
+
+      .uuid-14c1d127-e568-4c5d-979c-dae77f07bcd8 {
+        fill: #b12d73;
+      }
+
+      .uuid-652d6067-ce1a-4153-bfb8-883ce1271386 {
+        fill: #430c25;
+      }
+
+      .uuid-555a12ec-19f2-4c66-8513-addeb277ea60 {
+        fill: #b23332;
+      }
+
+      .uuid-ac7fcf66-6c46-4dfb-86a9-d4c1b5c6f8f2 {
+        fill: #791c47;
+      }
+
+      .uuid-69c0a1a7-0687-4f19-8d9d-d4a4811b8f9a {
+        fill: #5b1515;
+      }
+
+      .uuid-be8c699f-8a1a-47cd-b479-eef6b55fef66 {
+        fill: #c63938;
+      }
+
+      .uuid-eb6dd657-1075-4523-8bb5-ef0a94fec3ee {
+        fill: #430b28;
+      }
+
+      .uuid-701c133d-ec44-408e-99c8-2a6aeef4634a {
+        fill: #0a0101;
+      }
+
+      .uuid-193188ea-d42b-419e-8bd4-371d7a61ab0f {
+        fill: #2e0706;
+      }
+
+      .uuid-ac425a3b-8d6d-474b-a844-94e784f77629 {
+        fill: #3c0b09;
+      }
+
+      .uuid-efa7af46-1a0f-4c9c-b79d-fd7a0a1facac {
+        fill: #040000;
+      }
+
+      .uuid-d5369780-8e6c-49f6-84e2-e685db2ccece {
+        fill: #bf3836;
+      }
+
+      .uuid-7927d60c-fc15-491d-9875-b133898ff0c1 {
+        fill: #bd3636;
+      }
+
+      .uuid-18c4fab1-18e3-4824-a9c9-ad884cb94fce {
+        fill: #952561;
+      }
+
+      .uuid-1419b120-0ceb-42de-9326-db3d49d8f0a7 {
+        fill: #c53938;
+      }
+
+      .uuid-33872d27-e2c5-4656-af5b-91bef65f1763 {
+        fill: #882523;
+      }
+
+      .uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c {
+        fill: #8d2255;
+      }
+
+      .uuid-cabf4d24-e341-4585-9620-ce1675659aa5 {
+        fill: #d4388a;
+      }
+
+      .uuid-fb19ede1-ca6f-4779-bd40-7428368591a8 {
+        fill: #7f1d50;
+      }
+
+      .uuid-a24179fb-d0a0-4413-a529-ec3a59c4299e {
+        fill: #9d2766;
+      }
+
+      .uuid-5a527844-b290-4288-b71d-3fd769547910 {
+        fill: #851f55;
+      }
+
+      .uuid-7c942f0e-dc86-4045-8414-04cc5b9ffa39 {
+        fill: #460c27;
+      }
+
+      .uuid-acaa6e35-0783-4997-8cfc-05be6da74315 {
+        fill: #31061a;
+      }
+
+      .uuid-837924d3-bdec-4545-820f-d64995122c97 {
+        fill: #ad322f;
+      }
+
+      .uuid-a71fcb09-3ef5-46ff-91de-eb645af56e28 {
+        fill: #320708;
+      }
+
+      .uuid-5bc11f83-8efa-4f42-afa5-698b17b2f7c6 {
+        fill: #751a49;
+      }
+
+      .uuid-62b0a133-fbb1-4ba1-8640-420554febe66 {
+        fill: #872050;
+      }
+
+      .uuid-0a75e007-fce5-4fc4-a1c6-900d06ec84c7 {
+        fill: #862423;
+      }
+
+      .uuid-74c533a6-0b69-4493-8972-bf1cc84a4591 {
+        fill: #892525;
+      }
+
+      .uuid-78c55e75-4a81-445b-8e2c-adf4dcf40288 {
+        fill: #a92b6e;
+      }
+
+      .uuid-a644e860-d542-418c-8f6d-57b919f891c7 {
+        fill: #831e4e;
+      }
+
+      .uuid-b7cd86fc-a54c-408a-a883-2449d208ea0d {
+        fill: #270415;
+      }
+
+      .uuid-b36168d5-647a-4f39-80dc-3c3022c462e3 {
+        fill: #ae3231;
+      }
+
+      .uuid-7398cf86-b61a-40d2-b31d-35ab4841fc35 {
+        fill: #7d1c49;
+      }
+
+      .uuid-045e88ea-fb19-4ccc-8d17-e234448e8088 {
+        fill: #010001;
+      }
+
+      .uuid-ce908299-d078-458c-81a8-ec8e91fb9565 {
+        fill: #801d51;
+      }
+
+      .uuid-da4e323d-85bf-4963-9a87-940ccfa2b610 {
+        fill: #430d0d;
+      }
+
+      .uuid-d0eb206b-c693-4b81-b5d6-c6ca007c03cb {
+        fill: #270414;
+      }
+
+      .uuid-1ca9a350-bad6-45be-bcbc-0d010e1e8aaa {
+        fill: #c83b39;
+      }
+
+      .uuid-21829461-8051-4701-8210-08c67c3918cd {
+        fill: #912826;
+      }
+
+      .uuid-742aef8a-c2f0-4920-8c6f-47cfd73252bd {
+        fill: #d7398c;
+      }
+
+      .uuid-b1a41b5f-e25b-4eba-a568-b09c4fc2356c {
+        fill: #581236;
+      }
+
+      .uuid-8e32e5f6-c9fe-4743-a066-3321abff3cbf {
+        fill: #561131;
+      }
+
+      .uuid-6da8d0cb-67af-4949-8265-694448fa01c8 {
+        fill: #270505;
+      }
+
+      .uuid-26f2b566-6b2f-465a-8a98-4e68e1029392 {
+        fill: #7a1c4d;
+      }
+
+      .uuid-35c6a350-dc7c-48ca-add9-446be15eac3b {
+        fill: #e8e9ff;
+      }
+
+      .uuid-3a914cc9-24fe-4977-95e3-7a415f727ae7 {
+        fill: #290414;
+      }
+
+      .uuid-4e61bccd-f1b7-4faf-9a7a-65bbe23037d5 {
+        fill: #120102;
+      }
+
+      .uuid-f5b7e462-8614-4892-8fd1-2cba13e4d713 {
+        fill: #c0317c;
+      }
+
+      .uuid-3c980629-abc0-496e-95e7-67e13f22034e {
+        fill: #b12d72;
+      }
+
+      .uuid-06c5a2d8-a20a-41da-80fb-93ffc6cfa4c5 {
+        fill: #a12d2b;
+      }
+
+      .uuid-3fbf99a1-a8ff-42c5-bee2-aa3cac89696a {
+        fill: #5a1234;
+      }
+
+      .uuid-f814b676-223c-4312-9177-b85e1d4b3958 {
+        fill: #420a25;
+      }
+
+      .uuid-bfd6a22f-437f-45b1-a043-7ac915e9aefc {
+        fill: #a32e2d;
+      }
+
+      .uuid-ce960931-6b76-41c8-9e37-fe27389fa7ca {
+        fill: #480c28;
+      }
+
+      .uuid-a3f47ac9-4462-4e20-8cf2-72ab5c36e796 {
+        fill: #8d235b;
+      }
+
+      .uuid-7cc86c95-5961-4c9d-aa29-73569916c522 {
+        fill: #a82f2e;
+      }
+
+      .uuid-5e164788-43c2-456d-bf6c-81e8975d5c10 {
+        fill: #982562;
+      }
+
+      .uuid-5b466d6e-87a5-4eb4-9a00-bb04c4112cf9 {
+        fill: #500f2d;
+      }
+
+      .uuid-dc60b8bd-cbcd-4416-aee0-b79f4db51860 {
+        fill: #390821;
+      }
+
+      .uuid-35750af5-9b4f-4695-b605-18f7fb7260c2 {
+        fill: #892158;
+      }
+
+      .uuid-5f086704-3f8d-40c6-a697-c4933096af1e {
+        fill: #400a22;
+      }
+
+      .uuid-7f113364-4a6e-4ee5-a451-26db27b05fbd {
+        fill: #b42f75;
+      }
+
+      .uuid-d95d948e-cb6c-49d7-baed-cce625f19778 {
+        fill: #a62a6b;
+      }
+
+      .uuid-4fb0f7c3-b983-4b7d-aaec-43219796d1ef {
+        fill: #a62f2e;
+      }
+
+      .uuid-c27234bf-b313-4d18-9407-984d615055bb {
+        fill: #d23888;
+      }
+
+      .uuid-ac193bce-97bf-4efd-b870-847003977e35 {
+        fill: #841f4e;
+      }
+
+      .uuid-62a86f1e-2133-4c24-b8a3-ec9f74afa010 {
+        fill: #872423;
+      }
+
+      .uuid-c24d3bb3-3aaf-497b-99d8-c56a796926ac {
+        fill: #93245e;
+      }
+
+      .uuid-469786b1-cef6-475f-a907-3f08e7783087 {
+        fill: #370821;
+      }
+
+      .uuid-672e5b2a-b7bd-4272-8c80-966255d995ca {
+        fill: #36071d;
+      }
+
+      .uuid-b2897450-9d5a-4aab-a678-28b7f842ad6a {
+        fill: #cb3583;
+      }
+
+      .uuid-5064eb74-5485-4dd3-9331-72ba275b3000 {
+        fill: #c03836;
+      }
+
+      .uuid-e59f733d-26e1-41ad-86c8-378fddf98347 {
+        fill: #b13332;
+      }
+    </style>
+    <clipPath id="uuid-9cb14c59-dd8b-4982-b22a-f9203eabbfd1">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M364.54,1001.67c0,4.67-3.93,8.45-8.79,8.45h-199.5c-4.85,0-8.79-3.79-8.79-8.45v-361.19c0-4.67,3.94-8.45,8.79-8.45h199.5c4.86,0,8.79,3.78,8.79,8.45v361.19Z"/>
+    </clipPath>
+    <clipPath id="uuid-0cf32c18-1871-481f-9b4c-508c3edce3cc">
+      <rect class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" x="146.04" y="625.33" width="219.91" height="388.81"/>
+    </clipPath>
+    <clipPath id="uuid-84f3e380-c158-4eea-9b22-d6933e1caabf">
+      <rect class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" x="118.99" y="589.11" width="278.13" height="491.74"/>
+    </clipPath>
+    <clipPath id="uuid-aefad0e1-cccd-4baf-b5be-2778db0118ed">
+      <rect class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" x="138.66" y="625.38" width="233.64" height="405.25"/>
+    </clipPath>
+    <clipPath id="uuid-02d15e04-34bd-403e-a56c-7a0dd62a0adc">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M249.85,704.53c-98.15-26.67-155.64-129.55-128.4-229.8,27.24-100.24,128.88-159.89,227.04-133.22,98.15,26.67,155.64,129.55,128.41,229.8-27.24,100.25-128.89,159.9-227.04,133.23Z"/>
+    </clipPath>
+    <clipPath id="uuid-565854b0-43f0-45b3-a600-a64508df31ce">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M4.1,733.01c-91.62-24.89-145.28-120.93-119.86-214.51,25.42-93.57,120.31-149.25,211.92-124.36,91.62,24.89,145.28,120.93,119.86,214.5-25.42,93.58-120.31,149.26-211.93,124.37Z"/>
+    </clipPath>
+    <clipPath id="uuid-b6bf7ed9-3489-4988-8968-48c9f32dd6ba">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M403.81,797.46c-144.66-39.3-229.38-190.94-189.24-338.68,40.14-147.74,189.95-235.65,334.61-196.35,144.66,39.3,229.39,190.93,189.24,338.68-40.14,147.75-189.95,235.66-334.61,196.36Z"/>
+    </clipPath>
+    <clipPath id="uuid-3e14c048-f1a1-4826-ad43-c7a6ed5c9158">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M81.07,657.31c-144.66-39.3-229.38-190.94-189.24-338.68C-68.03,170.88,81.78,82.97,226.44,122.27c144.66,39.3,229.39,190.93,189.24,338.68-40.14,147.75-189.95,235.66-334.61,196.36Z"/>
+    </clipPath>
+    <clipPath id="uuid-68442f21-e8dd-468f-a330-13e9c4c66bbc">
+      <rect class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" x="716.88" y="633.01" width="221.26" height="390.19"/>
+    </clipPath>
+    <clipPath id="uuid-5d5cc67f-de0a-45a1-a5c1-64baa9cf2937">
+      <path class="uuid-8b796aae-0f75-4e0d-bbe0-6f285f4ea1ff" d="M1045.07,434.12s-326.58,389.28-607.83,328.12l35.07,58.85s138.01-13.12,212.15-14.94c44.76-1.1,367.34-15.86,417.07-297.01l-56.45-75.02Z"/>
+    </clipPath>
+  </defs>
+  <g class="uuid-1d453532-a2c7-4aeb-9943-719973a6b5a4">
+    <g id="uuid-9c617c7f-1c24-496e-bbbd-4a9a4dde6912" data-name="Ebene 1">
+      <g>
+        <path class="uuid-6628204e-cee7-401f-bece-db2422d641e8" d="M508.3,367.16c0-50.62-110.96-90.95-167.1-66.21-56.14,24.74-112.07,26.61-161.56,15.39-49.48-11.23-135.98,1.04-158.02,13.93C-.41,343.16,0,357.71,0,357.71v66.12s26.03-43.82,100.34-50.08c74.31-6.26,105.29,20.35,180.14.81,74.85-19.54,87.12-21.83,138.68-12.68,51.57,9.15,71.53,59.58,71.32,59.52-.21-.06,16.01.78,18.71-17.73,2.7-18.5-.9-36.5-.9-36.5Z"/>
+        <path class="uuid-a80ded5a-c109-423c-9bee-895dea27c753" d="M506.21,372.76c0-50.62-108.87-92.69-165.01-67.95-56.14,24.74-112.07,26.61-161.56,15.39-49.48-11.23-135.98,1.04-158.02,13.93C-.41,347.01,0,361.57,0,361.57v66.12s26.03-43.82,100.34-50.08c74.31-6.26,105.29,20.35,180.14.81,74.85-19.55,87.12-21.83,138.68-12.68,51.57,9.15,71.53,59.58,71.32,59.52-.21-.06,16.01.78,18.71-17.73,2.7-18.51-2.99-34.76-2.99-34.76Z"/>
+        <path class="uuid-8fa169cf-b5e0-46bb-ad52-d9f0bf201ac9" d="M429.97,305.33c18.55,23.28,18.79,48.01,13.18,68.46,33.84,17.12,47.51,51.51,47.34,51.46-.21-.06,16.01.77,18.71-17.73,2.7-18.51-2.99-34.76-2.99-34.76,0-28.86-35.4-54.92-76.24-67.43Z"/>
+        <path class="uuid-6628204e-cee7-401f-bece-db2422d641e8" d="M283.53,379.62c61.42-7.69,94.89,11.54,148.7,13.78,53.81,2.24,76.07-22.38,76.07-22.38,0,0,4.88,33.87,3.3,56.08-1.59,22.21-37.43,42.45-72.7,39.47-35.26-2.98-68.69-17.19-100.04-12.97-31.35,4.22-49.66,4.23-49.66,4.23l-5.67-78.21Z"/>
+        <path class="uuid-fdac6bf3-bea1-48e3-9bb3-b5df5da5a522" d="M283.53,384.52c61.42-7.69,94.89,11.54,148.7,13.78,53.81,2.24,77.36-21.71,77.36-21.71,0,0,3.59,33.19,2.01,55.4-1.59,22.21-37.43,42.45-72.7,39.47-35.26-2.98-68.69-17.19-100.04-12.97-31.35,4.22-49.66,4.23-49.66,4.23l-5.67-78.21Z"/>
+        <path class="uuid-6628204e-cee7-401f-bece-db2422d641e8" d="M0,356.37c0,1.6.22-.79.47.73,2.11,13.01,12.48,26.98,29.68,34.62,23.76,10.54,60.02,11.75,100.76,6.52,73.68-9.47,56.89,27.45,17.46,59.33-39.43,31.88-99.03,15.45-121.76-1.15C3.88,439.82,0,423.74,0,423.74v-67.37Z"/>
+        <path class="uuid-fdac6bf3-bea1-48e3-9bb3-b5df5da5a522" d="M0,360.32C0,394.42,57.23,411.65,130.91,402.18c73.68-9.47,56.89,27.45,17.46,59.33-39.43,31.88-99.03,15.45-121.76-1.15C3.88,443.76,0,427.69,0,427.69v-67.37Z"/>
+        <path class="uuid-8fa169cf-b5e0-46bb-ad52-d9f0bf201ac9" d="M338.39,379.42c-16.33-1.89-33.96-2.42-54.86.2l.35,4.86c-.12.02-.23.02-.35.03l5.67,78.21s18.31,0,49.66-4.23c5.55-.75,11.19-.77,16.87-.53,3.34-20.88,4.16-59.06-17.34-78.55Z"/>
+        <g>
+          <path class="uuid-fdac6bf3-bea1-48e3-9bb3-b5df5da5a522" d="M231.46,512l-55.29-17.3c-19.49,0-35.29-15.8-35.29-35.28l-55.82-46.39c0-19.49,71.62-34.73,91.1-34.73h117.34c19.49,0,35.28,15.8,35.28,35.29v45.83c0,19.49-77.84,52.58-97.33,52.58Z"/>
+          <path class="uuid-4de9474a-0b11-4d23-95fc-e47123b1c173" d="M293.51,378.3h-117.34c-14.97,0-60.58,9.01-80.98,22.01,22.47-10.83,60.48-18.03,73.87-18.03h117.34c19.49,0,35.29,15.8,35.29,35.29v45.83c0,7.41-11.27,16.78-26.29,25.55,18.44-9.84,33.4-20.99,33.4-29.53v-45.83c0-19.49-15.8-35.29-35.28-35.29Z"/>
+          <path class="uuid-055d1832-a0c0-48ca-8c6d-f8242c30dc1d" d="M231.46,506.95l-55.29-17.29c-19.49,0-35.29-15.8-35.29-35.29l-54.72-45.47c-.69,1.35-1.1,2.73-1.1,4.13l55.82,46.39c0,19.49,15.8,35.28,35.29,35.28l55.29,17.3c19.49,0,97.33-33.09,97.33-52.58v-5.05c0,19.49-77.84,52.58-97.33,52.58Z"/>
+          <path class="uuid-01cceaf9-7649-404f-812d-70338acecaeb" d="M282.13,470.95v-45.83c0-19.49-15.8-35.29-35.29-35.29h-117.34c-2.46,0-6.67.15-12.14.46-17.75,6.05-32.3,13.96-32.3,22.74l55.82,46.39c0,19.49,15.8,35.28,35.29,35.28l55.29,17.3c7.63,0,24.22-5.09,41.57-12.43,5.9-11.84,9.1-19.88,9.1-28.62Z"/>
+          <path class="uuid-97f70f1d-bb38-4a59-acfd-75a296864918" d="M246.84,389.83h-117.34c-2.46,0-6.67.15-12.14.46-13.69,4.67-25.44,10.44-30.11,16.86,5.7-5.27,15.9-10.02,27.51-13.98,5.47-.31,9.69-.46,12.14-.46h117.34c19.49,0,35.28,15.8,35.28,35.29v45.83c0,8.16-2.82,15.75-7.99,26.35.5-.21,1-.4,1.5-.62,5.9-11.84,9.1-19.88,9.1-28.62v-45.83c0-19.49-15.8-35.29-35.29-35.29Z"/>
+          <path class="uuid-4feb0a21-e9cc-4b36-b40f-2d425922b8ee" d="M192.36,499.77l39.1,12.23c19.49,0,97.33-33.09,97.33-52.58v-45.83c0-11.51-5.53-21.7-14.06-28.14-20.2,8.02-48.06,16.71-82.86,21.82l-39.51,92.5Z"/>
+          <rect class="uuid-6628204e-cee7-401f-bece-db2422d641e8" x="77.95" y="395.6" width="187.91" height="116.4" rx="2.02" ry="2.02"/>
+          <path class="uuid-77829be8-7554-4424-a8e8-f11046ba0465" d="M230.57,395.6h-117.34c-19.49,0-35.29,15.8-35.29,35.28v45.83c0,12.38,6.4,23.22,16.04,29.52,42.82-28.1,101.73-66.25,158.44-102.85-6.03-4.8-13.56-7.78-21.86-7.78Z"/>
+          <path class="uuid-521f24dc-5b9b-40d5-a34e-332c6c377098" d="M253.52,404.11c3.76,5.61,5.96,12.35,5.96,19.61v45.83c0,19.49-15.8,35.29-35.29,35.29h-117.34c-8.77,0-16.77-3.22-22.95-8.51,6.33,9.45,17.1,15.67,29.33,15.67h117.34c19.49,0,35.28-15.8,35.28-35.29v-45.83c0-10.72-4.79-20.3-12.34-26.77Z"/>
+          <path class="uuid-c50ebe49-b044-471e-99bd-a3b9615f65d7" d="M79.91,479.65v-45.83c0-19.49,15.8-35.29,35.29-35.29h117.34c11.62,0,21.91,5.65,28.33,14.32-6.16-10.32-17.4-17.25-30.29-17.25h-117.34c-19.49,0-35.29,15.8-35.29,35.28v45.83c0,7.86,2.6,15.1,6.95,20.97-3.15-5.28-5-11.44-5-18.03Z"/>
+          <ellipse class="uuid-04f605b8-3a6c-4cf4-9ac8-0e43769c0b82" cx="156.83" cy="457.37" rx="45.32" ry="44.34"/>
+          <ellipse class="uuid-01cceaf9-7649-404f-812d-70338acecaeb" cx="145.03" cy="453.8" rx="45.32" ry="44.34"/>
+          <ellipse class="uuid-21c8bcbc-178c-4a38-a2ca-4b727f219e8f" cx="145.03" cy="453.8" rx="45.32" ry="44.34"/>
+          <ellipse class="uuid-6628204e-cee7-401f-bece-db2422d641e8" cx="134.32" cy="453.8" rx="45.32" ry="44.34"/>
+          <path class="uuid-701d9e57-8ecd-44d2-84bf-1524dd8c5ce1" d="M173.89,432.21c2.81,5.77,4.43,12.21,4.43,19.03,0,24.49-20.29,44.34-45.32,44.34-17.01,0-31.82-9.19-39.57-22.75,7.29,14.95,22.83,25.31,40.89,25.31,25.03,0,45.32-19.85,45.32-44.34,0-7.84-2.1-15.19-5.75-21.59Z"/>
+          <path class="uuid-bae5d0b6-4d3f-468a-8c5e-03e1e843f261" d="M90.79,456.42c0-24.49,20.29-44.34,45.32-44.34,15.12,0,28.48,7.27,36.71,18.41-7.99-12.61-22.22-21.04-38.51-21.04-25.03,0-45.32,19.85-45.32,44.34,0,9.69,3.22,18.63,8.61,25.93-4.29-6.78-6.82-14.74-6.82-23.3Z"/>
+          <ellipse class="uuid-35c6a350-dc7c-48ca-add9-446be15eac3b" cx="134.32" cy="453.8" rx="38.59" ry="37.75"/>
+          <ellipse class="uuid-fdac6bf3-bea1-48e3-9bb3-b5df5da5a522" cx="134.32" cy="453.8" rx="35.64" ry="34.87"/>
+          <path class="uuid-f447fcae-0365-4316-a2ff-503dcc7e4962" d="M170.07,453.8c0,15.77-13.07,28.55-29.19,28.55s-29.19-12.78-29.19-28.55,13.07-28.55,29.19-28.55,29.19,12.78,29.19,28.55Z"/>
+          <ellipse class="uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943" cx="140.88" cy="453.8" rx="23.85" ry="23.34"/>
+          <path class="uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943" d="M158.56,453.8c0,9.55-7.91,17.3-17.68,17.3s-17.68-7.74-17.68-17.3,7.91-17.29,17.68-17.29,17.68,7.74,17.68,17.29Z"/>
+          <path class="uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943" d="M150.43,453.8c0,5.16-4.27,9.33-9.54,9.33s-9.54-4.18-9.54-9.33,4.27-9.33,9.54-9.33,9.54,4.18,9.54,9.33Z"/>
+          <ellipse class="uuid-0ac8b65e-93fe-4bf3-adb3-27c6ad902943" cx="140.88" cy="453.8" rx="4.77" ry="4.67"/>
+          <path class="uuid-97f70f1d-bb38-4a59-acfd-75a296864918" d="M136.11,430.93c15.74,0,29.08,10,33.8,23.85,0-.33.05-.65.05-.98,0-19.25-15.96-34.87-35.64-34.87s-35.64,15.61-35.64,34.87c0,3.85.66,7.55,1.84,11.01.53-18.8,16.24-33.89,35.59-33.89Z"/>
+          <path class="uuid-990a01e0-08be-4207-b25e-043802770eaf" d="M126.79,419.73l14.77,68.21c16.21-3.27,28.4-17.32,28.4-34.14,0-19.25-15.96-34.87-35.64-34.87-2.58,0-5.1.29-7.53.8Z"/>
+        </g>
+      </g>
+      <g class="uuid-30b88877-bbaf-47ba-bb90-b49b047b0fc0">
+        <g class="uuid-99144d54-2adc-4b71-81b6-9ccc5d0f820a">
+          <g class="uuid-dc3ba8a1-bca7-4407-a468-cf6a1587fe6f">
+            <g class="uuid-4e4654d2-3a84-4b2a-a2e4-6f1ab5436f5a">
+              <g class="uuid-fa53c128-a25f-4969-bac0-d4a848699b6c">
+                <g class="uuid-22aed2ae-3cf1-4867-81e3-fe1849ac8f0f">
+                  <rect x="94.21" y="314.83" width="409.91" height="416.37"/>
+                  <ellipse cx="299.17" cy="523.02" rx="188.09" ry="184.17" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse cx="299.17" cy="523.02" rx="187.11" ry="183.21" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-9beb2bc3-ab56-4da4-9533-c8ee3b45b6f1" cx="299.17" cy="523.02" rx="186.14" ry="182.26" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f07de4fa-e419-4d4f-b060-1f769f5d4e84" cx="299.17" cy="523.02" rx="185.16" ry="181.31" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-efa7af46-1a0f-4c9c-b79d-fd7a0a1facac" cx="299.17" cy="523.02" rx="184.19" ry="180.35" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4789afd7-f328-4742-85e7-3ca258e49f0f" cx="299.17" cy="523.02" rx="183.22" ry="179.4" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7d48ce51-5902-4920-a53c-94c4932adbab" cx="299.17" cy="523.02" rx="182.24" ry="178.44" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-701c133d-ec44-408e-99c8-2a6aeef4634a" cx="299.17" cy="523.02" rx="181.27" ry="177.49" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-53a23730-26f0-409c-bac4-bea759414119" cx="299.17" cy="523.02" rx="180.29" ry="176.53" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8cf9b423-e5c4-4ab4-aa10-293984a40f29" cx="299.17" cy="523.02" rx="179.32" ry="175.58" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e73ec7a1-2025-428f-b3e2-01bde294391a" cx="299.17" cy="523.02" rx="178.34" ry="174.63" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4e61bccd-f1b7-4faf-9a7a-65bbe23037d5" cx="299.17" cy="523.02" rx="177.37" ry="173.67" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-df442629-7081-4796-b9d7-5bcb108de22a" cx="299.17" cy="523.02" rx="176.39" ry="172.72" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-dd5ccdd0-334e-4e7c-b051-307e15f79f66" cx="299.17" cy="523.02" rx="175.42" ry="171.76" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-89d255f4-e6a4-4213-b31b-c157e4e70ca7" cx="299.17" cy="523.02" rx="174.44" ry="170.81" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4e9d0ade-093f-49a2-ac1f-4ac785631a90" cx="299.17" cy="523.02" rx="173.47" ry="169.86" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-984c32a9-8e02-4693-b0e9-ef16c06be5ce" cx="299.17" cy="523.02" rx="172.5" ry="168.9" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-822deae2-1d8b-4177-8483-b1b80e268ae3" cx="299.17" cy="523.02" rx="171.52" ry="167.95" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-812a36e7-9491-41ee-8a5d-b6dce21fb0bc" cx="299.17" cy="523.02" rx="170.55" ry="166.99" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-876326f4-f707-4681-afae-ceae26f9000c" cx="299.17" cy="523.02" rx="169.57" ry="166.04" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e525fbee-0513-4fbe-8ce2-0b7c5536439f" cx="299.17" cy="523.02" rx="168.6" ry="165.08" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-6da8d0cb-67af-4949-8265-694448fa01c8" cx="299.17" cy="523.02" rx="167.62" ry="164.13" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-35a56de4-a905-4686-bea8-4739c676dab9" cx="299.17" cy="523.02" rx="166.65" ry="163.18" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-84510783-ee6c-4cf5-a7aa-a15a92150065" cx="299.17" cy="523.02" rx="165.67" ry="162.22" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-47feda23-e510-4ff1-a572-aad92f959bc0" cx="299.17" cy="523.02" rx="164.7" ry="161.27" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-193188ea-d42b-419e-8bd4-371d7a61ab0f" cx="299.17" cy="523.02" rx="163.72" ry="160.31" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4b822944-8f9c-4826-9f05-8f4ea7060dff" cx="299.17" cy="523.02" rx="162.75" ry="159.36" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-a71fcb09-3ef5-46ff-91de-eb645af56e28" cx="299.17" cy="523.02" rx="161.78" ry="158.4" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8b9c800d-7b85-4328-94ec-b3135997dea7" cx="299.17" cy="523.02" rx="160.8" ry="157.45" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3df62953-f123-461b-82c5-67a6e5c9bf6e" cx="299.17" cy="523.02" rx="159.83" ry="156.5" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-d95746fb-3c2d-4012-9800-37d146b24e9f" cx="299.17" cy="523.02" rx="158.85" ry="155.54" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7174d0f7-d368-4beb-bbfb-d57262045e12" cx="299.17" cy="523.02" rx="157.88" ry="154.59" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-751ce65f-f826-48d0-8f68-557438d2af81" cx="299.17" cy="523.02" rx="156.9" ry="153.63" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac425a3b-8d6d-474b-a844-94e784f77629" cx="299.17" cy="523.02" rx="155.93" ry="152.68" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-53563300-5d41-4b28-9c58-7c34d0c45ef7" cx="299.17" cy="523.02" rx="154.95" ry="151.72" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-00d5631d-8051-4d38-9efb-bd454ce4a306" cx="299.17" cy="523.02" rx="153.98" ry="150.77" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-cf908787-7bd6-4ec6-8895-defed2b2f870" cx="299.17" cy="523.02" rx="153" ry="149.82" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-911cfae1-98ac-4d85-98c6-ba15e0f7a4b9" cx="299.17" cy="523.02" rx="152.03" ry="148.86" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-da4e323d-85bf-4963-9a87-940ccfa2b610" cx="299.17" cy="523.02" rx="151.06" ry="147.91" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-de7570e3-605f-47e3-b915-5062805735fc" cx="299.17" cy="523.02" rx="150.08" ry="146.95" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-570014d1-0083-4c74-a033-25d7642347eb" cx="299.17" cy="523.02" rx="149.11" ry="146" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-48b995c6-7cde-4500-abee-0b13f19786bd" cx="299.17" cy="523.02" rx="148.13" ry="145.04" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e887c638-9984-46e8-a9b5-ba981e28c459" cx="299.17" cy="523.02" rx="147.16" ry="144.09" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f17f39f8-d99a-4d2f-835c-2d5eca03010a" cx="299.17" cy="523.02" rx="146.18" ry="143.14" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-087fc863-5848-4f71-9b2c-679fc217a913" cx="299.17" cy="523.02" rx="145.21" ry="142.18" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b2ed0a94-f126-4d13-8009-73a71641cbaa" cx="299.17" cy="523.02" rx="144.23" ry="141.23" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1a1c35bf-77d6-49fb-8d15-25e90652e3a8" cx="299.17" cy="523.02" rx="143.26" ry="140.27" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-c286858b-1da9-4ec0-bcc2-b9977ed3638f" cx="299.17" cy="523.02" rx="142.28" ry="139.32" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5edeae07-e6ea-4b5d-9a55-8fd3bc8f99f6" cx="299.17" cy="523.02" rx="141.31" ry="138.37" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-be00d119-ec91-43c7-8a0c-3ffdf71dc857" cx="299.17" cy="523.02" rx="140.34" ry="137.41" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f537162a-e8be-45d0-a8a8-104d4c890fd6" cx="299.17" cy="523.02" rx="139.36" ry="136.46" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-dba1cdee-8387-49a0-92f6-d26e44dc4e53" cx="299.17" cy="523.02" rx="138.39" ry="135.5" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1fd6cec5-4bad-4103-8682-083a38a79fd7" cx="299.17" cy="523.02" rx="137.41" ry="134.55" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4a673d28-5625-4b49-a5fe-e2d80b8e0215" cx="299.17" cy="523.02" rx="136.44" ry="133.59" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-69c0a1a7-0687-4f19-8d9d-d4a4811b8f9a" cx="299.17" cy="523.02" rx="135.46" ry="132.64" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-37cecbe5-a604-480a-92b0-05ceae7596fd" cx="299.17" cy="523.02" rx="134.49" ry="131.69" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-64646c88-6d36-4fd0-9191-2226e6bdcc52" cx="299.17" cy="523.02" rx="133.51" ry="130.73" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8fcd8fcd-b6a0-484a-a24f-178b5ee13ef3" cx="299.17" cy="523.02" rx="132.54" ry="129.78" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-327b0b6a-40fc-4036-933e-dd19e46eed0e" cx="299.17" cy="523.02" rx="131.56" ry="128.82" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-aa9494a9-6516-4913-a1c7-f7dc95228481" cx="299.17" cy="523.02" rx="130.59" ry="127.87" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-a69d77e0-94ac-4094-8586-49bba46d4caf" cx="299.17" cy="523.02" rx="129.62" ry="126.91" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-38b59e99-8ced-40c1-93a3-37ba9ded107b" cx="299.17" cy="523.02" rx="128.64" ry="125.96" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-94d4fd6c-d243-4e47-9115-c243aa106998" cx="299.17" cy="523.02" rx="127.67" ry="125.01" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-159fa1d7-7346-4b8c-8792-08671903ebdd" cx="299.17" cy="523.02" rx="126.69" ry="124.05" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-598ec86b-fee1-435d-b48e-0a0062d4a6d2" cx="299.17" cy="523.02" rx="125.72" ry="123.1" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-58a6c4b6-9259-4270-ae3c-85cf7f1fb04c" cx="299.17" cy="523.02" rx="124.74" ry="122.14" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-d9137e74-5024-41cc-ae98-129237216de8" cx="299.17" cy="523.02" rx="123.77" ry="121.19" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-526748f0-1d0c-453e-9ac1-8bf0c47383d1" cx="299.17" cy="523.02" rx="122.79" ry="120.23" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-977e662c-f4b9-4139-8541-005307e999d9" cx="299.17" cy="523.02" rx="121.82" ry="119.28" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-31fc2fe8-897c-4ca9-b7aa-bb96ac609143" cx="299.17" cy="523.02" rx="120.84" ry="118.33" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5fc544c2-ca49-498a-aeb9-e74db01acebc" cx="299.17" cy="523.02" rx="119.87" ry="117.37" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8a73db4d-898d-4c4d-b797-5618211104e7" cx="299.17" cy="523.02" rx="118.9" ry="116.42" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b0c93bf4-01eb-43f4-86d4-0680a0a8fef2" cx="299.17" cy="523.02" rx="117.92" ry="115.46" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-470251e4-e7b5-4da3-9402-83fbdbbd5e79" cx="299.17" cy="523.02" rx="116.95" ry="114.51" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f48bd05a-2b24-4d20-9d01-f7906fd558e3" cx="299.17" cy="523.02" rx="115.97" ry="113.55" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-222b5360-868e-459a-9c21-10be3f626c69" cx="299.17" cy="523.02" rx="115" ry="112.6" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3b0adba0-a340-4d09-ada7-c22e5a9cfd20" cx="299.17" cy="523.02" rx="114.02" ry="111.65" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ebfade14-1ce7-44b3-a9e5-d60456ed50d1" cx="299.17" cy="523.02" rx="113.05" ry="110.69" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-71cbfdb8-9c76-4d0d-9c5d-a050a0c62111" cx="299.17" cy="523.02" rx="112.07" ry="109.74" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e6528c5c-4b11-47f4-806d-9ce6bf88b91d" cx="299.17" cy="523.02" rx="111.1" ry="108.78" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-41d16193-b664-4025-9fa9-06018b52a92d" cx="299.17" cy="523.02" rx="110.12" ry="107.83" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3ef1f35d-47c7-4cd1-90db-1d71e5060711" cx="299.17" cy="523.02" rx="109.15" ry="106.88" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4cba4d14-2e63-4d2e-a43e-19d0f6a6528b" cx="299.17" cy="523.02" rx="108.18" ry="105.92" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-0032ac36-1ca5-40b8-b243-27bce854fd49" cx="299.17" cy="523.02" rx="107.2" ry="104.97" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5fa1a45a-2721-49f7-9457-532472f5f333" cx="299.17" cy="523.02" rx="106.23" ry="104.01" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5fa1a45a-2721-49f7-9457-532472f5f333" cx="299.17" cy="523.02" rx="105.25" ry="103.06" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ccc2cbc4-74b9-464c-91e9-5ffa2de67010" cx="299.17" cy="523.02" rx="104.28" ry="102.1" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8fb22b08-869d-468f-ad91-15575fde2ea1" cx="299.17" cy="523.02" rx="103.3" ry="101.15" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-8ff6415d-38d9-4ce4-abc7-ddf6f43ec51e" cx="299.17" cy="523.02" rx="102.33" ry="100.2" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b798ef6a-c9be-4600-8551-7115d9950bfc" cx="299.17" cy="523.02" rx="101.35" ry="99.24" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-36415e99-97b4-4b77-8045-50794d1f7a3d" cx="299.17" cy="523.02" rx="100.38" ry="98.29" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-0a75e007-fce5-4fc4-a1c6-900d06ec84c7" cx="299.17" cy="523.02" rx="99.4" ry="97.33" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-62a86f1e-2133-4c24-b8a3-ec9f74afa010" cx="299.17" cy="523.02" rx="98.43" ry="96.38" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-33872d27-e2c5-4656-af5b-91bef65f1763" cx="299.17" cy="523.02" rx="97.46" ry="95.42" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-74c533a6-0b69-4493-8972-bf1cc84a4591" cx="299.17" cy="523.02" rx="96.48" ry="94.47" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-6ea44b17-c0e5-47ee-be2a-623c4a0bdc42" cx="299.17" cy="523.02" rx="95.51" ry="93.52" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5728a4ba-8e2e-459e-a006-eca9741f0f3e" cx="299.17" cy="523.02" rx="94.53" ry="92.56" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7e8591cd-895e-44f3-a0cb-b10cd7ea6ccc" cx="299.17" cy="523.02" rx="93.56" ry="91.61" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-57138420-85f4-461e-85ed-94d1b70e4691" cx="299.17" cy="523.02" rx="92.58" ry="90.65" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-22bd5721-a150-4bca-ac6a-8d47552b759d" cx="299.17" cy="523.02" rx="91.61" ry="89.7" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-13eab2a6-3d65-4d8f-9956-94e5ef9069ff" cx="299.17" cy="523.02" rx="90.63" ry="88.74" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f675e3c9-8802-408c-ae0f-16a2c430be17" cx="299.17" cy="523.02" rx="89.66" ry="87.79" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-21829461-8051-4701-8210-08c67c3918cd" cx="299.17" cy="523.02" rx="88.68" ry="86.84" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-6be131e0-a9d6-4194-a7a9-aa80fad3d4f6" cx="299.17" cy="523.02" rx="87.71" ry="85.88" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-dbff6d4e-e5a8-4880-a73e-b0ee5c915756" cx="299.17" cy="523.02" rx="86.74" ry="84.93" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-78d7f56e-d4bc-4d30-916d-a255f49d9c21" cx="299.17" cy="523.02" rx="85.76" ry="83.97" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5e170492-7b3a-4aef-8208-97e15824d176" cx="299.17" cy="523.02" rx="84.79" ry="83.02" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed3a5597-099a-4a41-9a4f-be3ec65a41f9" cx="299.17" cy="523.02" rx="83.81" ry="82.06" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e0b5eef4-d31f-4b72-9b55-517d2556214a" cx="299.17" cy="523.02" rx="82.84" ry="81.11" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-536731a0-d6d4-43ce-be05-cbaa7ac585be" cx="299.17" cy="523.02" rx="81.86" ry="80.16" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b9305694-e52a-4683-924d-74c01d2ebd04" cx="299.17" cy="523.02" rx="80.89" ry="79.2" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-2ca4e01d-6cec-4a39-bf57-3b4d00f21842" cx="299.17" cy="523.02" rx="79.91" ry="78.25" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b13a1f8f-3170-4f9b-b320-52698eadcdc2" cx="299.17" cy="523.02" rx="78.94" ry="77.29" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-062e9934-b78a-42ab-8b4e-4aaf1ffc2975" cx="299.17" cy="523.02" rx="77.96" ry="76.34" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-03f3fea0-c962-4efc-94e2-ff059b45be0d" cx="299.17" cy="523.02" rx="76.99" ry="75.39" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-68eeba5c-63c3-4d66-ac71-c6160f2199e3" cx="299.17" cy="523.02" rx="76.01" ry="74.43" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-0a54fee9-dc7a-4f53-8f52-0ed6f5f009be" cx="299.17" cy="523.02" rx="75.04" ry="73.48" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-fbd29e45-24ee-4982-9d83-1f6cbf296232" cx="299.17" cy="523.02" rx="74.07" ry="72.52" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-c0e13854-c2de-47fe-9aa2-97482183e1b1" cx="299.17" cy="523.02" rx="73.09" ry="71.57" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-06c5a2d8-a20a-41da-80fb-93ffc6cfa4c5" cx="299.17" cy="523.02" rx="72.12" ry="70.61" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5240be20-af0e-409b-9caa-9af1f976f503" cx="299.17" cy="523.02" rx="71.14" ry="69.66" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-bfd6a22f-437f-45b1-a043-7ac915e9aefc" cx="299.17" cy="523.02" rx="70.17" ry="68.71" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3ca034c2-542b-4048-b920-b466b1257c37" cx="299.17" cy="523.02" rx="69.19" ry="67.75" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-76a701cc-8146-490a-9b34-7970c414ef9d" cx="299.17" cy="523.02" rx="68.22" ry="66.8" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4fb0f7c3-b983-4b7d-aaec-43219796d1ef" cx="299.17" cy="523.02" rx="67.24" ry="65.84" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3e5cc489-3efd-48f3-a972-172e616dabb0" cx="299.17" cy="523.02" rx="66.27" ry="64.89" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-3e5cc489-3efd-48f3-a972-172e616dabb0" cx="299.17" cy="523.02" rx="65.29" ry="63.93" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7cc86c95-5961-4c9d-aa29-73569916c522" cx="299.17" cy="523.02" rx="64.32" ry="62.98" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-cf783947-7371-42d5-8374-c50d3ca45f6b" cx="299.17" cy="523.02" rx="63.35" ry="62.03" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-9bf0f05a-f827-4991-86b0-e6dcf4f00b0c" cx="299.17" cy="523.02" rx="62.37" ry="61.07" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ca9fa804-d784-45e5-8e0c-eea80c5d9828" cx="299.17" cy="523.02" rx="61.4" ry="60.12" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ca9fa804-d784-45e5-8e0c-eea80c5d9828" cx="299.17" cy="523.02" rx="60.42" ry="59.16" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ce26a994-4fad-4a09-a2c7-65a05102f860" cx="299.17" cy="523.02" rx="59.45" ry="58.21" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-837924d3-bdec-4545-820f-d64995122c97" cx="299.17" cy="523.02" rx="58.47" ry="57.25" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b36168d5-647a-4f39-80dc-3c3022c462e3" cx="299.17" cy="523.02" rx="57.5" ry="56.3" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-fb30204a-eb09-48ad-96be-a488458ad36d" cx="299.17" cy="523.02" rx="56.52" ry="55.35" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-9e52b9e0-61df-49ad-b982-ccc622702556" cx="299.17" cy="523.02" rx="55.55" ry="54.39" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-9e52b9e0-61df-49ad-b982-ccc622702556" cx="299.17" cy="523.02" rx="54.57" ry="53.44" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-53265d22-3f4a-4a32-bada-5200d4f87d4c" cx="299.17" cy="523.02" rx="53.6" ry="52.48" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-e59f733d-26e1-41ad-86c8-378fddf98347" cx="299.17" cy="523.02" rx="52.63" ry="51.53" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-555a12ec-19f2-4c66-8513-addeb277ea60" cx="299.17" cy="523.02" rx="51.65" ry="50.57" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-abe1aa91-25b2-4253-9201-4465edb884b1" cx="299.17" cy="523.02" rx="50.68" ry="49.62" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7603831b-00a1-4670-8ec4-575e960b32e1" cx="299.17" cy="523.02" rx="49.7" ry="48.67" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-0401a661-dc43-4ac1-94f1-c550d188e91c" cx="299.17" cy="523.02" rx="48.73" ry="47.71" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f8b76464-d216-42bb-8f6a-010745c913dd" cx="299.17" cy="523.02" rx="47.75" ry="46.76" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7aa20f8b-a35d-488a-b44b-19fef5f2a7cb" cx="299.17" cy="523.02" rx="46.78" ry="45.8" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7e26a437-8272-40e3-a8aa-b325849c49dd" cx="299.17" cy="523.02" rx="45.8" ry="44.85" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-fc3d722e-709e-4c01-9466-3b74d27645b4" cx="299.17" cy="523.02" rx="44.83" ry="43.9" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-a89b862a-e618-4754-8e78-cd2a45283ce4" cx="299.17" cy="523.02" rx="43.85" ry="42.94" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-65f47266-3952-4887-a0c9-fedb9673b0e1" cx="299.17" cy="523.02" rx="42.88" ry="41.99" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-65f47266-3952-4887-a0c9-fedb9673b0e1" cx="299.17" cy="523.02" rx="41.91" ry="41.03" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-cdb74622-5dc9-4c91-b6e4-8e3974b62e67" cx="299.17" cy="523.02" rx="40.93" ry="40.08" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b4e299aa-40a4-4746-812a-a593525dbc99" cx="299.17" cy="523.02" rx="39.96" ry="39.12" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-b4e299aa-40a4-4746-812a-a593525dbc99" cx="299.17" cy="523.02" rx="38.98" ry="38.17" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-fc207227-b45b-4849-a088-0cfea18356a3" cx="299.17" cy="523.02" rx="38.01" ry="37.22" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-7927d60c-fc15-491d-9875-b133898ff0c1" cx="299.17" cy="523.02" rx="37.03" ry="36.26" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-d2563877-297f-4ef4-accb-aafcfb5e79cf" cx="299.17" cy="523.02" rx="36.06" ry="35.31" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-d2563877-297f-4ef4-accb-aafcfb5e79cf" cx="299.17" cy="523.02" rx="35.08" ry="34.35" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-d5369780-8e6c-49f6-84e2-e685db2ccece" cx="299.17" cy="523.02" rx="34.11" ry="33.4" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5064eb74-5485-4dd3-9331-72ba275b3000" cx="299.17" cy="523.02" rx="33.13" ry="32.44" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-5064eb74-5485-4dd3-9331-72ba275b3000" cx="299.17" cy="523.02" rx="32.16" ry="31.49" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-ee97cc50-853b-4ae9-8184-552e81c8707a" cx="299.17" cy="523.02" rx="31.19" ry="30.54" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f8017a52-c918-4709-bd82-b5f5f8e5d081" cx="299.17" cy="523.02" rx="30.21" ry="29.58" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-f8017a52-c918-4709-bd82-b5f5f8e5d081" cx="299.17" cy="523.02" rx="29.24" ry="28.63" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-17a428d8-d39e-480e-b70d-f25b42366982" cx="299.17" cy="523.02" rx="28.26" ry="27.67" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-dbddc8df-0035-4864-9c25-c843c4d5fb81" cx="299.17" cy="523.02" rx="27.29" ry="26.72" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-dbddc8df-0035-4864-9c25-c843c4d5fb81" cx="299.17" cy="523.02" rx="26.31" ry="25.76" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-4dc96621-f7e3-471e-9c17-b9ae566072b3" cx="299.17" cy="523.02" rx="25.34" ry="24.81" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1419b120-0ceb-42de-9326-db3d49d8f0a7" cx="299.17" cy="523.02" rx="24.36" ry="23.86" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1419b120-0ceb-42de-9326-db3d49d8f0a7" cx="299.17" cy="523.02" rx="23.39" ry="22.9" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-be8c699f-8a1a-47cd-b479-eef6b55fef66" cx="299.17" cy="523.02" rx="22.41" ry="21.95" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-be8c699f-8a1a-47cd-b479-eef6b55fef66" cx="299.17" cy="523.02" rx="21.44" ry="20.99" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-94327a21-4862-4021-9ec8-987e01d22bda" cx="299.17" cy="523.02" rx="20.47" ry="20.04" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-c43e6cf9-4295-4bd4-9b79-3d90f79773a5" cx="299.17" cy="523.02" rx="19.49" ry="19.08" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-30393262-2c25-4f9e-bd62-8b2b7463a25f" cx="299.17" cy="523.02" rx="18.52" ry="18.13" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1ca9a350-bad6-45be-bcbc-0d010e1e8aaa" cx="299.17" cy="523.02" rx="17.54" ry="17.18" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-1ca9a350-bad6-45be-bcbc-0d010e1e8aaa" cx="299.17" cy="523.02" rx="16.57" ry="16.22" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-415acc64-52e7-44f4-b394-49552bc2557d" cx="299.17" cy="523.02" rx="15.59" ry="15.27" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-415acc64-52e7-44f4-b394-49552bc2557d" cx="299.17" cy="523.02" rx="14.62" ry="14.31" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-60e4984b-ebb2-4a57-b7d7-a68d8c4e3152" cx="299.17" cy="523.02" rx="13.64" ry="13.36" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-60e4984b-ebb2-4a57-b7d7-a68d8c4e3152" cx="299.17" cy="523.02" rx="12.67" ry="12.41" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                  <ellipse class="uuid-79f31065-4ec2-4d39-b453-c4917c4c5ce5" cx="299.17" cy="523.02" rx="11.69" ry="11.45" transform="translate(-284.09 674.21) rotate(-74.76)"/>
+                </g>
+              </g>
+              <g class="uuid-fa53c128-a25f-4969-bac0-d4a848699b6c">
+                <g class="uuid-da425616-2f6f-4ac9-b93b-2d7e52f0735c">
+                  <rect x="-141.18" y="369.25" width="382.63" height="388.65"/>
+                  <ellipse cx="50.13" cy="563.58" rx="175.57" ry="171.91" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse cx="50.13" cy="563.58" rx="174.87" ry="171.23" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-045e88ea-fb19-4ccc-8d17-e234448e8088" cx="50.13" cy="563.58" rx="174.17" ry="170.54" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a318e553-6b48-4498-9ff3-6fc51e6c96dd" cx="50.13" cy="563.58" rx="173.48" ry="169.86" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a595501d-d7e8-49fc-ad19-ee88a2c0c499" cx="50.13" cy="563.58" rx="172.78" ry="169.18" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-30f8c0ca-b7e1-4d23-9d3d-224b120f517d" cx="50.13" cy="563.58" rx="172.08" ry="168.49" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-f7896237-c5d7-46b3-ba72-286f0ee7f0eb" cx="50.13" cy="563.58" rx="171.38" ry="167.81" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-1a5cb4ff-fe0f-4299-9044-055d2bb5b61f" cx="50.13" cy="563.58" rx="170.68" ry="167.13" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-23304d22-db0e-43c7-a31f-e38895e66a58" cx="50.13" cy="563.58" rx="169.99" ry="166.44" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-183fd3ff-f02d-4c23-ad49-d658cc037d2d" cx="50.13" cy="563.58" rx="169.29" ry="165.76" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8ec2ec6b-7c0c-4ce8-a318-ecbc047b683f" cx="50.13" cy="563.58" rx="168.59" ry="165.08" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-305eb0f7-1b14-4f74-8ed3-3487bdb3e300" cx="50.13" cy="563.58" rx="167.89" ry="164.39" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7ea54141-0129-4b0a-b3e8-de725fc700e3" cx="50.13" cy="563.58" rx="167.19" ry="163.71" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-27f5fa74-5e97-4891-b968-59f21e4aaa99" cx="50.13" cy="563.58" rx="166.5" ry="163.03" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7d5ee4a8-557b-4d58-b468-3fa1202b4325" cx="50.13" cy="563.58" rx="165.8" ry="162.34" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a139f5aa-c964-4bdb-b7ec-e833a6ac0605" cx="50.13" cy="563.58" rx="165.1" ry="161.66" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c336f60b-6d82-4ba9-87f9-a53b67497519" cx="50.13" cy="563.58" rx="164.4" ry="160.98" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5e41defe-2f46-4ad6-a4c6-990e10e9152b" cx="50.13" cy="563.58" rx="163.7" ry="160.29" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8c4b030c-acb7-4c0a-9924-4602681f47ce" cx="50.13" cy="563.58" rx="163.01" ry="159.61" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9f3284ed-30b3-49ef-96df-0cb927ec3fa9" cx="50.13" cy="563.58" rx="162.31" ry="158.93" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7e6c01cd-0608-4e00-915d-20b5d85b60e0" cx="50.13" cy="563.58" rx="161.61" ry="158.24" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b7cd86fc-a54c-408a-a883-2449d208ea0d" cx="50.13" cy="563.58" rx="160.91" ry="157.56" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e7b08d31-f4d1-4583-8f5e-75f21083dd6a" cx="50.13" cy="563.58" rx="160.22" ry="156.88" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-f877a747-1157-4497-9794-79d50e514f63" cx="50.13" cy="563.58" rx="159.52" ry="156.19" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-47208ac8-cc24-46e5-93c8-057855413c60" cx="50.13" cy="563.58" rx="158.82" ry="155.51" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-eabcf48a-c09e-485f-a07c-5783ca18f094" cx="50.13" cy="563.58" rx="158.12" ry="154.83" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ab1b9f8d-33f0-450c-ad71-aa4070910124" cx="50.13" cy="563.58" rx="157.42" ry="154.14" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-62d5386e-173d-4fab-a5f3-740860930f7b" cx="50.13" cy="563.58" rx="156.73" ry="153.46" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-df4277ac-5c02-491b-bc8d-aa54e946af91" cx="50.13" cy="563.58" rx="156.03" ry="152.78" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-31a94684-7b48-4eca-97ed-437d07ec0030" cx="50.13" cy="563.58" rx="155.33" ry="152.09" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-469786b1-cef6-475f-a907-3f08e7783087" cx="50.13" cy="563.58" rx="154.63" ry="151.41" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-dc60b8bd-cbcd-4416-aee0-b79f4db51860" cx="50.13" cy="563.58" rx="153.93" ry="150.73" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-42744d9a-77a4-4a0c-af01-303ff9f6ead6" cx="50.13" cy="563.58" rx="153.24" ry="150.04" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-1f89696e-7142-4f1d-a106-611bcdbaf396" cx="50.13" cy="563.58" rx="152.54" ry="149.36" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-bcd2b1b6-6cd8-48d1-8ff0-6e4ba91424f2" cx="50.13" cy="563.58" rx="151.84" ry="148.68" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-6bd26454-4d7d-4550-9fc8-7eb6f4c44ea4" cx="50.13" cy="563.58" rx="151.14" ry="147.99" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-f9bba83a-d6ef-4876-80a1-b38c0a694675" cx="50.13" cy="563.58" rx="150.44" ry="147.31" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-eb6dd657-1075-4523-8bb5-ef0a94fec3ee" cx="50.13" cy="563.58" rx="149.75" ry="146.63" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5497694a-8970-438b-b138-8c67ce9714fb" cx="50.13" cy="563.58" rx="149.05" ry="145.94" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8e905485-14e0-4321-8de0-36ade994f3d0" cx="50.13" cy="563.58" rx="148.35" ry="145.26" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2ecc45a1-204d-4657-8feb-7945edf5cafa" cx="50.13" cy="563.58" rx="147.65" ry="144.58" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-75919e5d-174f-4b17-bc57-965e943cc9a0" cx="50.13" cy="563.58" rx="146.95" ry="143.89" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9f3cea60-d78f-406d-90b1-ba008371d5c3" cx="50.13" cy="563.58" rx="146.26" ry="143.21" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7349a61b-39b7-4bf9-9af4-e9ad85bd01a6" cx="50.13" cy="563.58" rx="145.56" ry="142.53" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-89ee6471-a808-45c3-967e-03bb2df60609" cx="50.13" cy="563.58" rx="144.86" ry="141.84" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2648a858-df0a-4f96-b415-fe19baa1e96b" cx="50.13" cy="563.58" rx="144.16" ry="141.16" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c7ef6cf1-5d72-43cb-898c-656d8939e6ce" cx="50.13" cy="563.58" rx="143.46" ry="140.48" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a066556b-7f7e-4f32-a4bd-ee10e6f4e874" cx="50.13" cy="563.58" rx="142.77" ry="139.79" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e72d35a9-047f-4456-b786-e63c3553fbfa" cx="50.13" cy="563.58" rx="142.07" ry="139.11" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-84cfc6f2-ad53-499e-b6a1-68299fe87656" cx="50.13" cy="563.58" rx="141.37" ry="138.42" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a3148850-3f9e-43d3-9f54-3ae4cbdf72dd" cx="50.13" cy="563.58" rx="140.67" ry="137.74" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b1a41b5f-e25b-4eba-a568-b09c4fc2356c" cx="50.13" cy="563.58" rx="139.97" ry="137.06" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e2c8c8c8-48d6-41a8-93df-e4c46fde9ebe" cx="50.13" cy="563.58" rx="139.28" ry="136.37" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8ac15091-4325-48c1-b4e3-f0d43a1e1cde" cx="50.13" cy="563.58" rx="138.58" ry="135.69" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-6978e114-8795-486b-871f-7fed6efc412e" cx="50.13" cy="563.58" rx="137.88" ry="135.01" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-d988c1fc-e8c4-488c-acfd-e62059b0c8d8" cx="50.13" cy="563.58" rx="137.18" ry="134.32" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-6c167ce7-7d25-41b8-a048-5c37323bfb66" cx="50.13" cy="563.58" rx="136.49" ry="133.64" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e4e1bf40-6a4f-41f3-9530-f12d28c38b61" cx="50.13" cy="563.58" rx="135.79" ry="132.96" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-903675c7-79b8-4fc6-a328-24a632b0bf62" cx="50.13" cy="563.58" rx="135.09" ry="132.27" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-26d9a2e5-19bf-41f6-a045-78c81742cb5d" cx="50.13" cy="563.58" rx="134.39" ry="131.59" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c4da198b-21fd-4a6a-8e49-0faf71bec572" cx="50.13" cy="563.58" rx="133.69" ry="130.91" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-3efa8ad8-661a-4a94-a0f0-3104ad947d48" cx="50.13" cy="563.58" rx="133" ry="130.22" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-739cf0f5-bc86-4366-9dd1-47542af44346" cx="50.13" cy="563.58" rx="132.3" ry="129.54" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-dd675b98-3c26-4705-ba22-5b8e73a5fc98" cx="50.13" cy="563.58" rx="131.6" ry="128.86" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2f6818e7-e546-463c-b8e5-bb18b48210ce" cx="50.13" cy="563.58" rx="130.9" ry="128.17" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-4a5adb21-471a-4523-8530-a289c293e068" cx="50.13" cy="563.58" rx="130.2" ry="127.49" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-6a55f3c5-3b7e-4adc-bd08-6e23163c5f73" cx="50.13" cy="563.58" rx="129.51" ry="126.81" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e215b3af-5ed0-47d0-bf69-a0247d5c2e89" cx="50.13" cy="563.58" rx="128.81" ry="126.12" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-db2529be-ea75-408f-9b1e-76631c13f017" cx="50.13" cy="563.58" rx="128.11" ry="125.44" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-1ec0163d-d8fb-451d-a5ad-e4b909eed9e2" cx="50.13" cy="563.58" rx="127.41" ry="124.76" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-259859fd-6721-4770-9f7d-8b5116de9407" cx="50.13" cy="563.58" rx="126.71" ry="124.07" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-aa021235-4187-49c7-abcf-0f7108ca6b4b" cx="50.13" cy="563.58" rx="126.02" ry="123.39" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8e410b84-4fb6-4d71-9f4f-85467bef7648" cx="50.13" cy="563.58" rx="125.32" ry="122.71" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5bc11f83-8efa-4f42-afa5-698b17b2f7c6" cx="50.13" cy="563.58" rx="124.62" ry="122.02" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e746fa5e-cd29-48eb-98f1-548cbe7380f4" cx="50.13" cy="563.58" rx="123.92" ry="121.34" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a803b037-8338-449c-b393-735e74c13498" cx="50.13" cy="563.58" rx="123.22" ry="120.66" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-3bc17d7c-cab4-4272-ba03-32e169fe0501" cx="50.13" cy="563.58" rx="122.53" ry="119.97" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-26f2b566-6b2f-465a-8a98-4e68e1029392" cx="50.13" cy="563.58" rx="121.83" ry="119.29" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c08d51dc-1c61-4de3-90ba-bdfb107cb458" cx="50.13" cy="563.58" rx="121.13" ry="118.61" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-658395e1-a7c0-41a7-a884-4fb6e1a3d4cd" cx="50.13" cy="563.58" rx="120.43" ry="117.92" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-af2e155e-bea4-4384-a867-c93f99ff16dd" cx="50.13" cy="563.58" rx="119.73" ry="117.24" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-fb19ede1-ca6f-4779-bd40-7428368591a8" cx="50.13" cy="563.58" rx="119.04" ry="116.56" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ce908299-d078-458c-81a8-ec8e91fb9565" cx="50.13" cy="563.58" rx="118.34" ry="115.87" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-d12394ad-4ce4-4f69-87b7-4cae6ba8ef69" cx="50.13" cy="563.58" rx="117.64" ry="115.19" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-63e6d278-1f6d-47fb-8203-8088093c0963" cx="50.13" cy="563.58" rx="116.94" ry="114.51" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-d7b19a6d-0060-4e92-b326-e02db8f096f1" cx="50.13" cy="563.58" rx="116.24" ry="113.82" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8d1a640f-3bcd-4140-a123-af33c9ec41f8" cx="50.13" cy="563.58" rx="115.55" ry="113.14" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5a527844-b290-4288-b71d-3fd769547910" cx="50.13" cy="563.58" rx="114.85" ry="112.46" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed909f4b-d205-49b0-807b-5c2473381a63" cx="50.13" cy="563.58" rx="114.15" ry="111.77" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-41498024-dea8-470e-aec3-f1c35d6598d2" cx="50.13" cy="563.58" rx="113.45" ry="111.09" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-52d33555-0952-4545-bf8f-1f1c56cfce16" cx="50.13" cy="563.58" rx="112.76" ry="110.41" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-35750af5-9b4f-4695-b605-18f7fb7260c2" cx="50.13" cy="563.58" rx="112.06" ry="109.72" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c571ddb3-5441-4392-b5ec-e14cc02330c4" cx="50.13" cy="563.58" rx="111.36" ry="109.04" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-4968c459-bc98-4665-99c6-6b4d45e4d5ef" cx="50.13" cy="563.58" rx="110.66" ry="108.36" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2abafd82-e737-460b-8c17-c66e0e2ca34f" cx="50.13" cy="563.58" rx="109.96" ry="107.67" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a3f47ac9-4462-4e20-8cf2-72ab5c36e796" cx="50.13" cy="563.58" rx="109.27" ry="106.99" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c099f79e-3b76-4c74-bb69-916c814c4167" cx="50.13" cy="563.58" rx="108.57" ry="106.31" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-6486d2d0-7ee8-4ba0-823f-e27d5a69e530" cx="50.13" cy="563.58" rx="107.87" ry="105.62" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a35d4392-8bac-4c7c-bcc2-594d9846d1b6" cx="50.13" cy="563.58" rx="107.17" ry="104.94" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9dac0184-c80e-48f3-a99f-3a96c4498b4b" cx="50.13" cy="563.58" rx="106.47" ry="104.26" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c24d3bb3-3aaf-497b-99d8-c56a796926ac" cx="50.13" cy="563.58" rx="105.78" ry="103.57" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-bac53e4f-13dc-4f46-93aa-241134eae3b0" cx="50.13" cy="563.58" rx="105.08" ry="102.89" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-18c4fab1-18e3-4824-a9c9-ad884cb94fce" cx="50.13" cy="563.58" rx="104.38" ry="102.2" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c5c60afa-bda3-47d6-98d5-795c474dfb34" cx="50.13" cy="563.58" rx="103.68" ry="101.52" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5e164788-43c2-456d-bf6c-81e8975d5c10" cx="50.13" cy="563.58" rx="102.98" ry="100.84" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-45bc66f8-e71d-4b11-b432-f5b898784d21" cx="50.13" cy="563.58" rx="102.29" ry="100.15" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-e2d06a8d-c0ab-454b-93df-19658e8c934d" cx="50.13" cy="563.58" rx="101.59" ry="99.47" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-986544fa-cc90-438e-b717-290eeac0de7c" cx="50.13" cy="563.58" rx="100.89" ry="98.79" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-aa8d058e-bfdd-4c3e-9509-00ec343caeeb" cx="50.13" cy="563.58" rx="100.19" ry="98.1" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-aa8d058e-bfdd-4c3e-9509-00ec343caeeb" cx="50.13" cy="563.58" rx="99.49" ry="97.42" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a24179fb-d0a0-4413-a529-ec3a59c4299e" cx="50.13" cy="563.58" rx="98.8" ry="96.74" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c2b0d5b1-0980-4af8-9dac-5f5f370bfd67" cx="50.13" cy="563.58" rx="98.1" ry="96.05" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5541caa8-5363-4df8-a2ba-f2b59160341d" cx="50.13" cy="563.58" rx="97.4" ry="95.37" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-a517419c-d400-4cc5-8b19-5fc48a971a00" cx="50.13" cy="563.58" rx="96.7" ry="94.69" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-cb6ab66e-eb76-4e2e-a053-09e8f47056ab" cx="50.13" cy="563.58" rx="96" ry="94" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-df9fc568-a2eb-4ce0-8fcc-9ec19274945f" cx="50.13" cy="563.58" rx="95.31" ry="93.32" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7bb59d45-552e-4781-9ae7-6bb44daaef48" cx="50.13" cy="563.58" rx="94.61" ry="92.64" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-1e5a1588-5880-489c-b70c-1e647c05c104" cx="50.13" cy="563.58" rx="93.91" ry="91.95" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-d95d948e-cb6c-49d7-baed-cce625f19778" cx="50.13" cy="563.58" rx="93.21" ry="91.27" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-84ba52c2-3866-49ae-b9fa-5b6dc3c8d55c" cx="50.13" cy="563.58" rx="92.52" ry="90.59" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9391c72d-a178-4a8f-b730-7db6d29a9fd1" cx="50.13" cy="563.58" rx="91.82" ry="89.9" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9391c72d-a178-4a8f-b730-7db6d29a9fd1" cx="50.13" cy="563.58" rx="91.12" ry="89.22" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-78c55e75-4a81-445b-8e2c-adf4dcf40288" cx="50.13" cy="563.58" rx="90.42" ry="88.54" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-8474eafc-58a9-457c-ad7b-754caa133ed3" cx="50.13" cy="563.58" rx="89.72" ry="87.85" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-fa460c11-5b26-44dc-8765-60a902e35136" cx="50.13" cy="563.58" rx="89.03" ry="87.17" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-21f9e946-e84a-4b75-987b-b9bd263a7b42" cx="50.13" cy="563.58" rx="88.33" ry="86.49" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-10c0e3e2-ef19-4eec-8381-53efd6b99be8" cx="50.13" cy="563.58" rx="87.63" ry="85.8" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-fe7d4696-b302-4d2f-8ad5-975a9d7e3f8c" cx="50.13" cy="563.58" rx="86.93" ry="85.12" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c24af5fc-4178-4bf5-8765-04e5cc8a79ba" cx="50.13" cy="563.58" rx="86.23" ry="84.44" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-3c980629-abc0-496e-95e7-67e13f22034e" cx="50.13" cy="563.58" rx="85.54" ry="83.75" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-14c1d127-e568-4c5d-979c-dae77f07bcd8" cx="50.13" cy="563.58" rx="84.84" ry="83.07" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-4d321327-7429-4f7a-b2e4-1517b11913c4" cx="50.13" cy="563.58" rx="84.14" ry="82.39" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-61445c79-3bcc-45bf-8e91-a61fef56ce2d" cx="50.13" cy="563.58" rx="83.44" ry="81.7" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-7f113364-4a6e-4ee5-a451-26db27b05fbd" cx="50.13" cy="563.58" rx="82.74" ry="81.02" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-92736c17-405f-4aef-b0f6-e6fe56749b34" cx="50.13" cy="563.58" rx="82.05" ry="80.34" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-1431f64c-3d57-4150-8274-ca2299234557" cx="50.13" cy="563.58" rx="81.35" ry="79.65" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-22c332db-2e24-4e11-a6fd-1fbf9640fe83" cx="50.13" cy="563.58" rx="80.65" ry="78.97" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-aac095a0-fd70-4aa2-a28e-633f73cf9b88" cx="50.13" cy="563.58" rx="79.95" ry="78.29" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-59204773-33bf-4a42-9df6-1d07207f2c61" cx="50.13" cy="563.58" rx="79.25" ry="77.6" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-59204773-33bf-4a42-9df6-1d07207f2c61" cx="50.13" cy="563.58" rx="78.56" ry="76.92" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2d674922-5984-48f4-a583-43d2ef5e510d" cx="50.13" cy="563.58" rx="77.86" ry="76.24" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-679e33b1-774c-4cc7-8d97-6d630ac10562" cx="50.13" cy="563.58" rx="77.16" ry="75.55" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ecf46470-79a9-4e34-841c-4e86af8e309c" cx="50.13" cy="563.58" rx="76.46" ry="74.87" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-305e1239-352b-4113-b99a-7ae61f65efe3" cx="50.13" cy="563.58" rx="75.76" ry="74.19" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-77282377-ede1-4814-b371-7b256da8f7ae" cx="50.13" cy="563.58" rx="75.07" ry="73.5" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-0f6739c4-9721-4e4b-bc5a-97341ec72ce3" cx="50.13" cy="563.58" rx="74.37" ry="72.82" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-f5b7e462-8614-4892-8fd1-2cba13e4d713" cx="50.13" cy="563.58" rx="73.67" ry="72.14" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-77aba38a-cf27-4499-bf40-02f6f6c9bfb7" cx="50.13" cy="563.58" rx="72.97" ry="71.45" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-4482fb46-e724-4d28-8e2a-fa336f5d666b" cx="50.13" cy="563.58" rx="72.27" ry="70.77" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2ec7580b-5bcf-4bbb-baf8-a52e9251822b" cx="50.13" cy="563.58" rx="71.58" ry="70.09" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-76faf214-5922-4b53-bbff-1e8dd201a188" cx="50.13" cy="563.58" rx="70.88" ry="69.4" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c7743248-82c0-4454-8125-0fac069527b0" cx="50.13" cy="563.58" rx="70.18" ry="68.72" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-109144ee-20c0-482f-94fd-952868c1bca3" cx="50.13" cy="563.58" rx="69.48" ry="68.04" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-9a1756b0-4481-4a7f-9031-4ccc9c1c44b5" cx="50.13" cy="563.58" rx="68.79" ry="67.35" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-233798a2-c42a-4d6f-b7e7-5935a081cf92" cx="50.13" cy="563.58" rx="68.09" ry="66.67" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-63f4dfb2-d109-4815-8651-62d389dfb189" cx="50.13" cy="563.58" rx="67.39" ry="65.98" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-63f4dfb2-d109-4815-8651-62d389dfb189" cx="50.13" cy="563.58" rx="66.69" ry="65.3" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-963073c7-43f0-4767-b683-af3511adf244" cx="50.13" cy="563.58" rx="65.99" ry="64.62" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b5350eb8-7cb2-4c6b-b16a-c1dba98b31e1" cx="50.13" cy="563.58" rx="65.3" ry="63.93" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-751d3084-7b37-45e0-b27b-dea936dcd6bb" cx="50.13" cy="563.58" rx="64.6" ry="63.25" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b2897450-9d5a-4aab-a678-28b7f842ad6a" cx="50.13" cy="563.58" rx="63.9" ry="62.57" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b0440c39-6d80-4857-bbff-3e5c578b748a" cx="50.13" cy="563.58" rx="63.2" ry="61.88" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ec661023-ce41-4528-baa6-bfc7c5a2553e" cx="50.13" cy="563.58" rx="62.5" ry="61.2" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b2672dde-0d5d-408a-93ed-99bc1663ad75" cx="50.13" cy="563.58" rx="61.81" ry="60.52" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-b2672dde-0d5d-408a-93ed-99bc1663ad75" cx="50.13" cy="563.58" rx="61.11" ry="59.83" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-f5b6b06d-7270-4dc3-83e7-b65c603c87b7" cx="50.13" cy="563.58" rx="60.41" ry="59.15" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-ee9d6899-a99c-494c-bd77-10f0a5efe128" cx="50.13" cy="563.58" rx="59.71" ry="58.47" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-33202891-2e99-4075-a079-e385f85c4648" cx="50.13" cy="563.58" rx="59.01" ry="57.78" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-09e8aabc-dbd5-47eb-bd4b-ea783c367ad7" cx="50.13" cy="563.58" rx="58.32" ry="57.1" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-c27234bf-b313-4d18-9407-984d615055bb" cx="50.13" cy="563.58" rx="57.62" ry="56.42" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2fc1a063-3fc6-46e5-a154-168345896949" cx="50.13" cy="563.58" rx="56.92" ry="55.73" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-2fc1a063-3fc6-46e5-a154-168345896949" cx="50.13" cy="563.58" rx="56.22" ry="55.05" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-95ee83cf-6056-4e34-a556-3bd039e12a84" cx="50.13" cy="563.58" rx="55.52" ry="54.37" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-cabf4d24-e341-4585-9620-ce1675659aa5" cx="50.13" cy="563.58" rx="54.83" ry="53.68" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-3c99d16e-64e6-4e7f-908d-a148b4645def" cx="50.13" cy="563.58" rx="54.13" ry="53" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-5af8caf0-3c61-4129-ae3c-ef57de9132c6" cx="50.13" cy="563.58" rx="53.43" ry="52.32" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-742aef8a-c2f0-4920-8c6f-47cfd73252bd" cx="50.13" cy="563.58" rx="52.73" ry="51.63" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                  <ellipse class="uuid-36839037-d7fc-4c2a-a632-2a65e67fb8d4" cx="50.13" cy="563.58" rx="52.03" ry="50.95" transform="translate(-506.81 463.82) rotate(-74.76)"/>
+                </g>
+              </g>
+              <g class="uuid-1d5e4ec7-2b59-4bf0-a912-d6962572a7ae">
+                <path class="uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c" d="M34.99,684.39s238.02,136.21,380.09,328.66l56-504.96-419.27,15.21-16.83,161.09Z"/>
+              </g>
+              <g class="uuid-1d5e4ec7-2b59-4bf0-a912-d6962572a7ae">
+                <path class="uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c" d="M50.13,570.88s238.02,136.21,380.09,328.66l56-504.96-419.27,15.21-16.83,161.09Z"/>
+              </g>
+              <g class="uuid-fa53c128-a25f-4969-bac0-d4a848699b6c">
+                <g class="uuid-efd1ee5f-c48a-4cdc-9802-87d678cba097">
+                  <rect x="174.43" y="223.12" width="604.13" height="613.64"/>
+                  <ellipse cx="476.5" cy="529.94" rx="277.21" ry="271.43" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse cx="476.5" cy="529.94" rx="274.93" ry="269.2" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-045e88ea-fb19-4ccc-8d17-e234448e8088" cx="476.5" cy="529.94" rx="272.66" ry="266.98" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-a318e553-6b48-4498-9ff3-6fc51e6c96dd" cx="476.5" cy="529.94" rx="270.39" ry="264.76" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-a595501d-d7e8-49fc-ad19-ee88a2c0c499" cx="476.5" cy="529.94" rx="268.12" ry="262.53" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-30f8c0ca-b7e1-4d23-9d3d-224b120f517d" cx="476.5" cy="529.94" rx="265.85" ry="260.31" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f7896237-c5d7-46b3-ba72-286f0ee7f0eb" cx="476.5" cy="529.94" rx="263.57" ry="258.08" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-a0f56723-af71-44ad-aed3-d6fcec5af7a8" cx="476.5" cy="529.94" rx="261.3" ry="255.86" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5c199a46-ed2a-458e-8c76-43d10d4988a3" cx="476.5" cy="529.94" rx="259.03" ry="253.63" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c804e0ff-995b-4fe7-9966-edf488e4a075" cx="476.5" cy="529.94" rx="256.76" ry="251.41" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-8ec2ec6b-7c0c-4ce8-a318-ecbc047b683f" cx="476.5" cy="529.94" rx="254.48" ry="249.18" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-19c0cb92-bc9c-4e86-950c-b6b7d71ae200" cx="476.5" cy="529.94" rx="252.21" ry="246.96" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5fdaf221-7596-4e5b-b27a-c2eef2299395" cx="476.5" cy="529.94" rx="249.94" ry="244.73" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-7e406c17-73ac-4ca7-8d10-3a8e58c2e7cd" cx="476.5" cy="529.94" rx="247.67" ry="242.51" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-b519ffe2-3f5d-492e-8328-bd3dafe322df" cx="476.5" cy="529.94" rx="245.4" ry="240.28" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-2f1bb974-da1e-4b25-9b3c-0fad2ae4fc28" cx="476.5" cy="529.94" rx="243.12" ry="238.06" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-94ca47b3-03dd-4e0c-83ec-d515e4ecfc56" cx="476.5" cy="529.94" rx="240.85" ry="235.83" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-b9a9d9e1-1d9b-4e56-a695-752994109acd" cx="476.5" cy="529.94" rx="238.58" ry="233.61" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-37fbb3f6-5dd3-4deb-9110-b49d504cd4ef" cx="476.5" cy="529.94" rx="236.31" ry="231.38" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f0c2c320-0fd5-4a40-91bc-9cbc807dcc27" cx="476.5" cy="529.94" rx="234.03" ry="229.16" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-01b71188-d61b-410d-a5df-ca362deeffc8" cx="476.5" cy="529.94" rx="231.76" ry="226.93" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-d0eb206b-c693-4b81-b5d6-c6ca007c03cb" cx="476.5" cy="529.94" rx="229.49" ry="224.71" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-3a914cc9-24fe-4977-95e3-7a415f727ae7" cx="476.5" cy="529.94" rx="227.22" ry="222.48" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed43e5da-a27b-4cbc-b253-7a80986d91d9" cx="476.5" cy="529.94" rx="224.95" ry="220.26" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-8871f1ce-89dc-492a-889a-fb192a8a1ed9" cx="476.5" cy="529.94" rx="222.67" ry="218.03" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-32f21b62-3a2c-4f21-ac00-4b53cf18be68" cx="476.5" cy="529.94" rx="220.4" ry="215.81" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-91bb4e07-b27f-4a2a-b581-9b83d944e02c" cx="476.5" cy="529.94" rx="218.13" ry="213.58" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-acaa6e35-0783-4997-8cfc-05be6da74315" cx="476.5" cy="529.94" rx="215.86" ry="211.36" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-482e61f0-148b-4fb7-8215-9735b29e7b4d" cx="476.5" cy="529.94" rx="213.59" ry="209.13" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-20b1dff4-32f6-42fb-84db-0b150cdbeacd" cx="476.5" cy="529.94" rx="211.31" ry="206.91" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-672e5b2a-b7bd-4272-8c80-966255d995ca" cx="476.5" cy="529.94" rx="209.04" ry="204.68" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f63dc510-bd67-4711-bbee-c7ccee9847c0" cx="476.5" cy="529.94" rx="206.77" ry="202.46" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-2fcc08ae-7f30-48ed-96d2-fe1599318352" cx="476.5" cy="529.94" rx="204.5" ry="200.23" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-fb2d6347-fa6a-44ce-953d-1953be3adec9" cx="476.5" cy="529.94" rx="202.22" ry="198.01" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-34a17010-5ddb-4f19-8134-e40a9c9a94fd" cx="476.5" cy="529.94" rx="199.95" ry="195.79" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-6f080701-acb2-43b3-88e6-bcf231bc8bf0" cx="476.5" cy="529.94" rx="197.68" ry="193.56" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5f086704-3f8d-40c6-a697-c4933096af1e" cx="476.5" cy="529.94" rx="195.41" ry="191.34" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-d8747edf-e1f8-4672-b744-07389452659e" cx="476.5" cy="529.94" rx="193.14" ry="189.11" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f814b676-223c-4312-9177-b85e1d4b3958" cx="476.5" cy="529.94" rx="190.86" ry="186.89" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-652d6067-ce1a-4153-bfb8-883ce1271386" cx="476.5" cy="529.94" rx="188.59" ry="184.66" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-7c942f0e-dc86-4045-8414-04cc5b9ffa39" cx="476.5" cy="529.94" rx="186.32" ry="182.44" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-1d477495-5a95-467c-9fa9-e8f4fde074d3" cx="476.5" cy="529.94" rx="184.05" ry="180.21" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ce960931-6b76-41c8-9e37-fe27389fa7ca" cx="476.5" cy="529.94" rx="181.77" ry="177.99" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed082575-a4ee-444d-b6ba-fed37296e672" cx="476.5" cy="529.94" rx="179.5" ry="175.76" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-0aba1cc2-cb72-42b2-a795-1992aedfd110" cx="476.5" cy="529.94" rx="177.23" ry="173.54" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-4f624a0f-6493-4c9f-b04f-583eb8353907" cx="476.5" cy="529.94" rx="174.96" ry="171.31" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-db6b6482-b781-4260-bbb8-7e2c1ab7f5b9" cx="476.5" cy="529.94" rx="172.69" ry="169.09" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ccced196-8937-41ee-a9c5-75d35f2241cf" cx="476.5" cy="529.94" rx="170.41" ry="166.86" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5b466d6e-87a5-4eb4-9a00-bb04c4112cf9" cx="476.5" cy="529.94" rx="168.14" ry="164.64" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-8183b417-3438-450a-b7a4-591644d0d5b2" cx="476.5" cy="529.94" rx="165.87" ry="162.41" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c6fcea00-2954-4534-9d04-ea424e5421cf" cx="476.5" cy="529.94" rx="163.6" ry="160.19" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c9ab7044-566f-4329-bcc2-66253200d5e4" cx="476.5" cy="529.94" rx="161.32" ry="157.96" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-8e32e5f6-c9fe-4743-a066-3321abff3cbf" cx="476.5" cy="529.94" rx="159.05" ry="155.74" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-98c958d2-bcd7-4404-aa83-3ab3c369f72f" cx="476.5" cy="529.94" rx="156.78" ry="153.51" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-4e9a9c83-137e-44b4-9077-45f9111a6aa7" cx="476.5" cy="529.94" rx="154.51" ry="151.29" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-842cb91e-b51d-4fc1-ac85-4a815138cb77" cx="476.5" cy="529.94" rx="152.24" ry="149.06" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-3fbf99a1-a8ff-42c5-bee2-aa3cac89696a" cx="476.5" cy="529.94" rx="149.96" ry="146.84" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ec108cca-43cc-4a17-a28e-c567b1f004e8" cx="476.5" cy="529.94" rx="147.69" ry="144.61" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f13b1546-cd0e-4242-8324-4a59ee8158ff" cx="476.5" cy="529.94" rx="145.42" ry="142.39" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac45d671-9727-4204-8234-3e7bb8c9806c" cx="476.5" cy="529.94" rx="143.15" ry="140.16" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-d6221cd5-3566-479d-8b63-0d5dd93f1a84" cx="476.5" cy="529.94" rx="140.88" ry="137.94" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-07a68f76-a80d-40f5-876e-9c9eeeda86a2" cx="476.5" cy="529.94" rx="138.6" ry="135.71" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-dbdb4092-24ec-4f02-930b-c6f7df92c95c" cx="476.5" cy="529.94" rx="136.33" ry="133.49" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-0c2c5442-99b9-4e9f-a406-7eb12aa7d6b2" cx="476.5" cy="529.94" rx="134.06" ry="131.27" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-55dad38a-f5d6-4a2e-844e-77680b3c8a6d" cx="476.5" cy="529.94" rx="131.79" ry="129.04" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c0075fcd-bd5c-4473-b9f7-6d2f18e91c85" cx="476.5" cy="529.94" rx="129.51" ry="126.82" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-0ab000b5-8f7e-46a5-8125-82fcc86e53a9" cx="476.5" cy="529.94" rx="127.24" ry="124.59" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-27c60c36-fa7b-48a6-9d7f-41d2069989bd" cx="476.5" cy="529.94" rx="124.97" ry="122.37" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-3c4c6771-5896-4aee-b19a-f7b567115122" cx="476.5" cy="529.94" rx="122.7" ry="120.14" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-27eda300-3771-466e-9f4c-1a672d7dd00b" cx="476.5" cy="529.94" rx="120.43" ry="117.92" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-bd5a89ba-8912-4424-b6cc-7854b4748058" cx="476.5" cy="529.94" rx="118.15" ry="115.69" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-f74b3b05-b078-4372-88bc-711a9c70deb9" cx="476.5" cy="529.94" rx="115.88" ry="113.47" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-629f84e9-d7a1-4263-a3d6-6a004d3e56ff" cx="476.5" cy="529.94" rx="113.61" ry="111.24" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-701282b8-8882-4414-9a77-17e52b76f652" cx="476.5" cy="529.94" rx="111.34" ry="109.02" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-0fea4202-72fe-4544-b66e-9e4dafb410d8" cx="476.5" cy="529.94" rx="109.06" ry="106.79" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-6dcbcd4c-37c5-4b06-90ee-fbfc15072872" cx="476.5" cy="529.94" rx="106.79" ry="104.57" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-457113be-6702-40ee-9475-d02b7be0402e" cx="476.5" cy="529.94" rx="104.52" ry="102.34" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-b7b0f321-3cac-4002-9bb8-322af42925ad" cx="476.5" cy="529.94" rx="102.25" ry="100.12" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-b7b0f321-3cac-4002-9bb8-322af42925ad" cx="476.5" cy="529.94" rx="99.98" ry="97.89" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-7d4a4317-a61b-4ec9-be3f-23a049e34fce" cx="476.5" cy="529.94" rx="97.7" ry="95.67" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c0c98ef3-243e-4159-be33-c55ca36be59e" cx="476.5" cy="529.94" rx="95.43" ry="93.44" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-171980f6-13e8-4a19-94dc-cfd05702e477" cx="476.5" cy="529.94" rx="93.16" ry="91.22" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-d7af7f04-04a1-4729-93e3-3f572b4972df" cx="476.5" cy="529.94" rx="90.89" ry="88.99" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-2af287c2-1b5e-4b28-bf53-c0c47d51a2eb" cx="476.5" cy="529.94" rx="88.62" ry="86.77" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ebda97bc-ecec-40d7-b0c3-4631f49d3375" cx="476.5" cy="529.94" rx="86.34" ry="84.54" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac7fcf66-6c46-4dfb-86a9-d4c1b5c6f8f2" cx="476.5" cy="529.94" rx="84.07" ry="82.32" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ccd28fe7-5871-4835-90c6-1b98c4b8f398" cx="476.5" cy="529.94" rx="81.8" ry="80.09" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5cb56473-8346-4b43-930e-f12f960b59c0" cx="476.5" cy="529.94" rx="79.53" ry="77.87" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5cb56473-8346-4b43-930e-f12f960b59c0" cx="476.5" cy="529.94" rx="77.25" ry="75.64" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-d1707c13-73da-4452-85e9-e2eaf56f4400" cx="476.5" cy="529.94" rx="74.98" ry="73.42" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-7398cf86-b61a-40d2-b31d-35ab4841fc35" cx="476.5" cy="529.94" rx="72.71" ry="71.19" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-68a60be0-0bc5-4470-98e5-561db7e8da24" cx="476.5" cy="529.94" rx="70.44" ry="68.97" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-dfba3ddd-20ca-4cc7-b229-6fd8eb9c8d75" cx="476.5" cy="529.94" rx="68.17" ry="66.74" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-dfba3ddd-20ca-4cc7-b229-6fd8eb9c8d75" cx="476.5" cy="529.94" rx="65.89" ry="64.52" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c775f3d8-d026-447a-a24d-96248bb7c27c" cx="476.5" cy="529.94" rx="63.62" ry="62.3" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-c775f3d8-d026-447a-a24d-96248bb7c27c" cx="476.5" cy="529.94" rx="61.35" ry="60.07" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-115aa7e2-9e5b-41d3-b166-8bf9bb6885eb" cx="476.5" cy="529.94" rx="59.08" ry="57.85" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-115aa7e2-9e5b-41d3-b166-8bf9bb6885eb" cx="476.5" cy="529.94" rx="56.8" ry="55.62" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ec83fa55-2f5c-4dd2-a04a-3d8fccf6f93b" cx="476.5" cy="529.94" rx="54.53" ry="53.4" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-a644e860-d542-418c-8f6d-57b919f891c7" cx="476.5" cy="529.94" rx="52.26" ry="51.17" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac193bce-97bf-4efd-b870-847003977e35" cx="476.5" cy="529.94" rx="49.99" ry="48.95" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-3dac5bf9-e8d1-4f79-9727-15e811a4beda" cx="476.5" cy="529.94" rx="47.72" ry="46.72" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-9913c34d-6b41-4fd9-8de5-841a7b9c4cea" cx="476.5" cy="529.94" rx="45.44" ry="44.5" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-aaed316f-590e-4d1d-b4bd-e06a20db06c3" cx="476.5" cy="529.94" rx="43.17" ry="42.27" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-80d269a9-2828-4493-bdf3-01cefe6af265" cx="476.5" cy="529.94" rx="40.9" ry="40.05" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-62b0a133-fbb1-4ba1-8640-420554febe66" cx="476.5" cy="529.94" rx="38.63" ry="37.82" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-62b0a133-fbb1-4ba1-8640-420554febe66" cx="476.5" cy="529.94" rx="36.35" ry="35.6" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-367942e9-f150-4bc3-b01f-1a5b957f5894" cx="476.5" cy="529.94" rx="34.08" ry="33.37" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5616d510-81d2-429c-9857-ba6f444edeba" cx="476.5" cy="529.94" rx="31.81" ry="31.15" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-5616d510-81d2-429c-9857-ba6f444edeba" cx="476.5" cy="529.94" rx="29.54" ry="28.92" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-6b442489-2739-46df-a2d6-3ff32456d3db" cx="476.5" cy="529.94" rx="27.27" ry="26.7" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-6b442489-2739-46df-a2d6-3ff32456d3db" cx="476.5" cy="529.94" rx="24.99" ry="24.47" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-89ade1e0-5a40-4aec-a38f-165849797710" cx="476.5" cy="529.94" rx="22.72" ry="22.25" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-8c96c7c9-c4ae-4405-be99-42eb5e762b80" cx="476.5" cy="529.94" rx="20.45" ry="20.02" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                  <ellipse class="uuid-003eefef-3f2a-4271-8810-1d14963ec202" cx="476.5" cy="529.94" rx="18.18" ry="17.8" transform="translate(-160.05 850.4) rotate(-74.76)"/>
+                </g>
+              </g>
+              <g class="uuid-fa53c128-a25f-4969-bac0-d4a848699b6c">
+                <g class="uuid-60845f87-f283-48b7-891c-c0e18654076c">
+                  <rect x="-148.31" y="82.97" width="604.13" height="613.64"/>
+                  <ellipse cx="153.75" cy="389.79" rx="277.21" ry="271.43" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse cx="153.75" cy="389.79" rx="274.93" ry="269.2" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-045e88ea-fb19-4ccc-8d17-e234448e8088" cx="153.75" cy="389.79" rx="272.66" ry="266.98" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-a318e553-6b48-4498-9ff3-6fc51e6c96dd" cx="153.75" cy="389.79" rx="270.39" ry="264.76" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-a595501d-d7e8-49fc-ad19-ee88a2c0c499" cx="153.75" cy="389.79" rx="268.12" ry="262.53" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-30f8c0ca-b7e1-4d23-9d3d-224b120f517d" cx="153.75" cy="389.79" rx="265.85" ry="260.31" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f7896237-c5d7-46b3-ba72-286f0ee7f0eb" cx="153.75" cy="389.79" rx="263.57" ry="258.08" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-a0f56723-af71-44ad-aed3-d6fcec5af7a8" cx="153.75" cy="389.79" rx="261.3" ry="255.86" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5c199a46-ed2a-458e-8c76-43d10d4988a3" cx="153.75" cy="389.79" rx="259.03" ry="253.63" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c804e0ff-995b-4fe7-9966-edf488e4a075" cx="153.75" cy="389.79" rx="256.76" ry="251.41" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-8ec2ec6b-7c0c-4ce8-a318-ecbc047b683f" cx="153.75" cy="389.79" rx="254.48" ry="249.18" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-19c0cb92-bc9c-4e86-950c-b6b7d71ae200" cx="153.75" cy="389.79" rx="252.21" ry="246.96" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5fdaf221-7596-4e5b-b27a-c2eef2299395" cx="153.75" cy="389.79" rx="249.94" ry="244.73" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-7e406c17-73ac-4ca7-8d10-3a8e58c2e7cd" cx="153.75" cy="389.79" rx="247.67" ry="242.51" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-b519ffe2-3f5d-492e-8328-bd3dafe322df" cx="153.75" cy="389.79" rx="245.4" ry="240.28" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-2f1bb974-da1e-4b25-9b3c-0fad2ae4fc28" cx="153.75" cy="389.79" rx="243.12" ry="238.06" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-94ca47b3-03dd-4e0c-83ec-d515e4ecfc56" cx="153.75" cy="389.79" rx="240.85" ry="235.83" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-b9a9d9e1-1d9b-4e56-a695-752994109acd" cx="153.75" cy="389.79" rx="238.58" ry="233.61" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-37fbb3f6-5dd3-4deb-9110-b49d504cd4ef" cx="153.75" cy="389.79" rx="236.31" ry="231.38" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f0c2c320-0fd5-4a40-91bc-9cbc807dcc27" cx="153.75" cy="389.79" rx="234.03" ry="229.16" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-01b71188-d61b-410d-a5df-ca362deeffc8" cx="153.75" cy="389.79" rx="231.76" ry="226.93" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-d0eb206b-c693-4b81-b5d6-c6ca007c03cb" cx="153.75" cy="389.79" rx="229.49" ry="224.71" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-3a914cc9-24fe-4977-95e3-7a415f727ae7" cx="153.75" cy="389.79" rx="227.22" ry="222.48" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed43e5da-a27b-4cbc-b253-7a80986d91d9" cx="153.75" cy="389.79" rx="224.95" ry="220.26" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-8871f1ce-89dc-492a-889a-fb192a8a1ed9" cx="153.75" cy="389.79" rx="222.67" ry="218.03" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-32f21b62-3a2c-4f21-ac00-4b53cf18be68" cx="153.75" cy="389.79" rx="220.4" ry="215.81" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-91bb4e07-b27f-4a2a-b581-9b83d944e02c" cx="153.75" cy="389.79" rx="218.13" ry="213.58" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-acaa6e35-0783-4997-8cfc-05be6da74315" cx="153.75" cy="389.79" rx="215.86" ry="211.36" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-482e61f0-148b-4fb7-8215-9735b29e7b4d" cx="153.75" cy="389.79" rx="213.59" ry="209.13" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-20b1dff4-32f6-42fb-84db-0b150cdbeacd" cx="153.75" cy="389.79" rx="211.31" ry="206.91" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-672e5b2a-b7bd-4272-8c80-966255d995ca" cx="153.75" cy="389.79" rx="209.04" ry="204.68" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f63dc510-bd67-4711-bbee-c7ccee9847c0" cx="153.75" cy="389.79" rx="206.77" ry="202.46" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-2fcc08ae-7f30-48ed-96d2-fe1599318352" cx="153.75" cy="389.79" rx="204.5" ry="200.23" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-fb2d6347-fa6a-44ce-953d-1953be3adec9" cx="153.75" cy="389.79" rx="202.22" ry="198.01" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-34a17010-5ddb-4f19-8134-e40a9c9a94fd" cx="153.75" cy="389.79" rx="199.95" ry="195.79" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-6f080701-acb2-43b3-88e6-bcf231bc8bf0" cx="153.75" cy="389.79" rx="197.68" ry="193.56" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5f086704-3f8d-40c6-a697-c4933096af1e" cx="153.75" cy="389.79" rx="195.41" ry="191.34" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-d8747edf-e1f8-4672-b744-07389452659e" cx="153.75" cy="389.79" rx="193.14" ry="189.11" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f814b676-223c-4312-9177-b85e1d4b3958" cx="153.75" cy="389.79" rx="190.86" ry="186.89" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-652d6067-ce1a-4153-bfb8-883ce1271386" cx="153.75" cy="389.79" rx="188.59" ry="184.66" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-7c942f0e-dc86-4045-8414-04cc5b9ffa39" cx="153.75" cy="389.79" rx="186.32" ry="182.44" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-1d477495-5a95-467c-9fa9-e8f4fde074d3" cx="153.75" cy="389.79" rx="184.05" ry="180.21" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ce960931-6b76-41c8-9e37-fe27389fa7ca" cx="153.75" cy="389.79" rx="181.77" ry="177.99" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ed082575-a4ee-444d-b6ba-fed37296e672" cx="153.75" cy="389.79" rx="179.5" ry="175.76" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0aba1cc2-cb72-42b2-a795-1992aedfd110" cx="153.75" cy="389.79" rx="177.23" ry="173.54" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-4f624a0f-6493-4c9f-b04f-583eb8353907" cx="153.75" cy="389.79" rx="174.96" ry="171.31" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-db6b6482-b781-4260-bbb8-7e2c1ab7f5b9" cx="153.75" cy="389.79" rx="172.69" ry="169.09" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ccced196-8937-41ee-a9c5-75d35f2241cf" cx="153.75" cy="389.79" rx="170.41" ry="166.86" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5b466d6e-87a5-4eb4-9a00-bb04c4112cf9" cx="153.75" cy="389.79" rx="168.14" ry="164.64" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-8183b417-3438-450a-b7a4-591644d0d5b2" cx="153.75" cy="389.79" rx="165.87" ry="162.41" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c6fcea00-2954-4534-9d04-ea424e5421cf" cx="153.75" cy="389.79" rx="163.6" ry="160.19" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c9ab7044-566f-4329-bcc2-66253200d5e4" cx="153.75" cy="389.79" rx="161.32" ry="157.96" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-8e32e5f6-c9fe-4743-a066-3321abff3cbf" cx="153.75" cy="389.79" rx="159.05" ry="155.74" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-98c958d2-bcd7-4404-aa83-3ab3c369f72f" cx="153.75" cy="389.79" rx="156.78" ry="153.51" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-4e9a9c83-137e-44b4-9077-45f9111a6aa7" cx="153.75" cy="389.79" rx="154.51" ry="151.29" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-842cb91e-b51d-4fc1-ac85-4a815138cb77" cx="153.75" cy="389.79" rx="152.24" ry="149.06" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-3fbf99a1-a8ff-42c5-bee2-aa3cac89696a" cx="153.75" cy="389.79" rx="149.96" ry="146.84" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ec108cca-43cc-4a17-a28e-c567b1f004e8" cx="153.75" cy="389.79" rx="147.69" ry="144.61" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f13b1546-cd0e-4242-8324-4a59ee8158ff" cx="153.75" cy="389.79" rx="145.42" ry="142.39" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac45d671-9727-4204-8234-3e7bb8c9806c" cx="153.75" cy="389.79" rx="143.15" ry="140.16" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-d6221cd5-3566-479d-8b63-0d5dd93f1a84" cx="153.75" cy="389.79" rx="140.88" ry="137.94" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-07a68f76-a80d-40f5-876e-9c9eeeda86a2" cx="153.75" cy="389.79" rx="138.6" ry="135.71" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-dbdb4092-24ec-4f02-930b-c6f7df92c95c" cx="153.75" cy="389.79" rx="136.33" ry="133.49" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0c2c5442-99b9-4e9f-a406-7eb12aa7d6b2" cx="153.75" cy="389.79" rx="134.06" ry="131.27" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-55dad38a-f5d6-4a2e-844e-77680b3c8a6d" cx="153.75" cy="389.79" rx="131.79" ry="129.04" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c0075fcd-bd5c-4473-b9f7-6d2f18e91c85" cx="153.75" cy="389.79" rx="129.51" ry="126.82" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0ab000b5-8f7e-46a5-8125-82fcc86e53a9" cx="153.75" cy="389.79" rx="127.24" ry="124.59" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-27c60c36-fa7b-48a6-9d7f-41d2069989bd" cx="153.75" cy="389.79" rx="124.97" ry="122.37" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-3c4c6771-5896-4aee-b19a-f7b567115122" cx="153.75" cy="389.79" rx="122.7" ry="120.14" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-27eda300-3771-466e-9f4c-1a672d7dd00b" cx="153.75" cy="389.79" rx="120.43" ry="117.92" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-bd5a89ba-8912-4424-b6cc-7854b4748058" cx="153.75" cy="389.79" rx="118.15" ry="115.69" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-f74b3b05-b078-4372-88bc-711a9c70deb9" cx="153.75" cy="389.79" rx="115.88" ry="113.47" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-629f84e9-d7a1-4263-a3d6-6a004d3e56ff" cx="153.75" cy="389.79" rx="113.61" ry="111.24" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-701282b8-8882-4414-9a77-17e52b76f652" cx="153.75" cy="389.79" rx="111.34" ry="109.02" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0fea4202-72fe-4544-b66e-9e4dafb410d8" cx="153.75" cy="389.79" rx="109.06" ry="106.79" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-6dcbcd4c-37c5-4b06-90ee-fbfc15072872" cx="153.75" cy="389.79" rx="106.79" ry="104.57" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-457113be-6702-40ee-9475-d02b7be0402e" cx="153.75" cy="389.79" rx="104.52" ry="102.34" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-b7b0f321-3cac-4002-9bb8-322af42925ad" cx="153.75" cy="389.79" rx="102.25" ry="100.12" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-b7b0f321-3cac-4002-9bb8-322af42925ad" cx="153.75" cy="389.79" rx="99.98" ry="97.89" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-7d4a4317-a61b-4ec9-be3f-23a049e34fce" cx="153.75" cy="389.79" rx="97.7" ry="95.67" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c0c98ef3-243e-4159-be33-c55ca36be59e" cx="153.75" cy="389.79" rx="95.43" ry="93.44" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-171980f6-13e8-4a19-94dc-cfd05702e477" cx="153.75" cy="389.79" rx="93.16" ry="91.22" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-d7af7f04-04a1-4729-93e3-3f572b4972df" cx="153.75" cy="389.79" rx="90.89" ry="88.99" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-2af287c2-1b5e-4b28-bf53-c0c47d51a2eb" cx="153.75" cy="389.79" rx="88.62" ry="86.77" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ebda97bc-ecec-40d7-b0c3-4631f49d3375" cx="153.75" cy="389.79" rx="86.34" ry="84.54" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac7fcf66-6c46-4dfb-86a9-d4c1b5c6f8f2" cx="153.75" cy="389.79" rx="84.07" ry="82.32" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ccd28fe7-5871-4835-90c6-1b98c4b8f398" cx="153.75" cy="389.79" rx="81.8" ry="80.09" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5cb56473-8346-4b43-930e-f12f960b59c0" cx="153.75" cy="389.79" rx="79.53" ry="77.87" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5cb56473-8346-4b43-930e-f12f960b59c0" cx="153.75" cy="389.79" rx="77.25" ry="75.64" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-d1707c13-73da-4452-85e9-e2eaf56f4400" cx="153.75" cy="389.79" rx="74.98" ry="73.42" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-7398cf86-b61a-40d2-b31d-35ab4841fc35" cx="153.75" cy="389.79" rx="72.71" ry="71.19" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-68a60be0-0bc5-4470-98e5-561db7e8da24" cx="153.75" cy="389.79" rx="70.44" ry="68.97" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-dfba3ddd-20ca-4cc7-b229-6fd8eb9c8d75" cx="153.75" cy="389.79" rx="68.17" ry="66.74" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-dfba3ddd-20ca-4cc7-b229-6fd8eb9c8d75" cx="153.75" cy="389.79" rx="65.89" ry="64.52" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c775f3d8-d026-447a-a24d-96248bb7c27c" cx="153.75" cy="389.79" rx="63.62" ry="62.3" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-c775f3d8-d026-447a-a24d-96248bb7c27c" cx="153.75" cy="389.79" rx="61.35" ry="60.07" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-115aa7e2-9e5b-41d3-b166-8bf9bb6885eb" cx="153.75" cy="389.79" rx="59.08" ry="57.85" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-115aa7e2-9e5b-41d3-b166-8bf9bb6885eb" cx="153.75" cy="389.79" rx="56.8" ry="55.62" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ec83fa55-2f5c-4dd2-a04a-3d8fccf6f93b" cx="153.75" cy="389.79" rx="54.53" ry="53.4" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-a644e860-d542-418c-8f6d-57b919f891c7" cx="153.75" cy="389.79" rx="52.26" ry="51.17" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ac193bce-97bf-4efd-b870-847003977e35" cx="153.75" cy="389.79" rx="49.99" ry="48.95" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-3dac5bf9-e8d1-4f79-9727-15e811a4beda" cx="153.75" cy="389.79" rx="47.72" ry="46.72" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-9913c34d-6b41-4fd9-8de5-841a7b9c4cea" cx="153.75" cy="389.79" rx="45.44" ry="44.5" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-aaed316f-590e-4d1d-b4bd-e06a20db06c3" cx="153.75" cy="389.79" rx="43.17" ry="42.27" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-80d269a9-2828-4493-bdf3-01cefe6af265" cx="153.75" cy="389.79" rx="40.9" ry="40.05" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-62b0a133-fbb1-4ba1-8640-420554febe66" cx="153.75" cy="389.79" rx="38.63" ry="37.82" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-62b0a133-fbb1-4ba1-8640-420554febe66" cx="153.75" cy="389.79" rx="36.35" ry="35.6" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-367942e9-f150-4bc3-b01f-1a5b957f5894" cx="153.75" cy="389.79" rx="34.08" ry="33.37" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5616d510-81d2-429c-9857-ba6f444edeba" cx="153.75" cy="389.79" rx="31.81" ry="31.15" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-5616d510-81d2-429c-9857-ba6f444edeba" cx="153.75" cy="389.79" rx="29.54" ry="28.92" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-6b442489-2739-46df-a2d6-3ff32456d3db" cx="153.75" cy="389.79" rx="27.27" ry="26.7" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-6b442489-2739-46df-a2d6-3ff32456d3db" cx="153.75" cy="389.79" rx="24.99" ry="24.47" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-89ade1e0-5a40-4aec-a38f-165849797710" cx="153.75" cy="389.79" rx="22.72" ry="22.25" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-8c96c7c9-c4ae-4405-be99-42eb5e762b80" cx="153.75" cy="389.79" rx="20.45" ry="20.02" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-003eefef-3f2a-4271-8810-1d14963ec202" cx="153.75" cy="389.79" rx="18.18" ry="17.8" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-003eefef-3f2a-4271-8810-1d14963ec202" cx="153.75" cy="389.79" rx="15.91" ry="15.57" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0fe3a8f6-c96a-4ad1-a46a-50615d2854a7" cx="153.75" cy="389.79" rx="13.63" ry="13.35" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-0fe3a8f6-c96a-4ad1-a46a-50615d2854a7" cx="153.75" cy="389.79" rx="11.36" ry="11.12" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-ee2b283d-a7d7-4f5d-8402-7422a5582c0d" cx="153.75" cy="389.79" rx="9.09" ry="8.9" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c" cx="153.75" cy="389.79" rx="6.82" ry="6.67" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c" cx="153.75" cy="389.79" rx="4.54" ry="4.45" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                  <ellipse class="uuid-76ae3821-3177-48de-848c-1f1e8ed8a42c" cx="153.75" cy="389.79" rx="2.27" ry="2.22" transform="translate(-262.74 435.69) rotate(-74.76)"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g class="uuid-d087fbbd-10f6-4ddf-99b2-a71d43f1a013">
+        <g class="uuid-203e9b58-6f41-4f7a-89f0-6f1218104f44">
+          <g class="uuid-de1eb21f-d257-424a-89d4-66930bd30a7f">
+            <g class="uuid-6475378f-6d15-4e2d-9f9a-d46bbc2066dc">
+              <polygon class="uuid-ac41dc77-4ef7-4132-ae02-20bdffd5226d" points="467.32 823.39 437.23 768.54 437.23 434.12 1063.83 434.12 1101.52 502.83 1101.52 546.41 596.52 823.39 467.32 823.39"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
