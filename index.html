@@ -215,6 +215,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 #spdctl{justify-content:center}
 #drawer details.moreacts{margin:6px 0}#drawer details.moreacts summary{cursor:pointer;color:var(--dim);font-size:.9em;padding:4px 0}
 .hk-hist{display:flex;gap:8px;align-items:center;margin:6px 0 2px}.hk-th{position:relative;flex:none;line-height:0}.hk-th canvas{width:84px;height:47px;border-radius:6px;border:1px solid #ffffff22}.hk-th i{position:absolute;left:0;right:0;bottom:0;background:#a82f22dd;color:#fff;font:700 9px/14px sans-serif;text-align:center;font-style:normal;border-radius:0 0 6px 6px}.hk-chips{display:flex;flex-wrap:wrap;gap:4px}.hk-chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#ffffff14;font-size:.76rem}.hk-chip.ok{background:#1f5a34;color:#c9f5d8}.hk-chip.ab{background:#8a2f24;color:#ffd9d2}
+.fr h4{margin:12px 0 6px}.fr-code{display:flex;gap:8px;align-items:center}.fr-code span{font:700 1.7rem/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;background:#ffffff12;padding:8px 14px;border-radius:10px}.fr-add{display:flex;gap:8px}.fr-add input{flex:1;text-transform:uppercase;letter-spacing:.12em;font-size:1rem}.fr-err{color:#ffb4a8}.fr-ok{color:#9be7b2}.fr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff14}.fr-av{width:42px;height:42px;flex:none;border-radius:50%;overflow:hidden;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:1.3rem}.fr-av img{width:100%;height:100%;object-fit:cover;display:block}.fr-av.big{width:64px;height:64px;margin-top:-34px;border:3px solid #1b2b22;background:#1b2b22}.fr-nm{flex:1;min-width:0}.fr-nm b,.fr-head b{display:block}.fr-nm small,.fr-head small{opacity:.75}.fr-ban{height:120px;border-radius:10px}.fr-head{display:flex;gap:12px;align-items:flex-start;padding:0 8px 8px}.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.fr-v{position:relative;font-size:.85rem}.fr-v canvas{width:100%;border-radius:8px;display:block}.fr-v b{display:block;margin-top:4px;line-height:1.2}.fr-v small{opacity:.75}.fr-v i{position:absolute;left:0;top:0;background:#a82f22dd;color:#fff;font:700 10px/16px sans-serif;padding:0 6px;border-radius:8px 0 8px 0;font-style:normal}
 </style>
 </head>
 <body>
@@ -4444,6 +4445,139 @@ function lookNow(){
   if(L.style===5&&ha>=90)o.style=1;
   return o;
 }
+/* ---------- Freunde (Firebase) ---------- */
+const FB_CFG={apiKey:"AIzaSyD8qVIPEDXt1IoqQAul7kBXZIryNck8lXc",authDomain:"wanderkanal-38f0a.firebaseapp.com",databaseURL:"https://wanderkanal-38f0a-default-rtdb.europe-west1.firebasedatabase.app",projectId:"wanderkanal-38f0a",storageBucket:"wanderkanal-38f0a.firebasestorage.app",messagingSenderId:"312343702348",appId:"1:312343702348:web:b8e54997246d162f59fde9"};
+let FB_P=null,FB_UID=null;
+function fbLoad(){
+  if(FB_P)return FB_P;
+  const ld=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('Firebase ist nicht erreichbar (Internet?).'));document.head.appendChild(s)});
+  const B='https://www.gstatic.com/firebasejs/10.12.2/';
+  FB_P=ld(B+'firebase-app-compat.js').then(()=>ld(B+'firebase-auth-compat.js')).then(()=>ld(B+'firebase-database-compat.js')).then(()=>{
+    if(!firebase.apps.length)firebase.initializeApp(FB_CFG);
+    return firebase.auth().signInAnonymously();
+  }).then(c=>{FB_UID=c.user.uid;return firebase.database()}).catch(e=>{FB_P=null;throw e});
+  return FB_P;
+}
+function fbRandCode(){const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=A[Math.floor(Math.random()*A.length)];return s}
+async function fbEnsureCode(db){
+  for(let i=0;i<8;i++){
+    const c=G.fcode||fbRandCode();
+    const snap=await db.ref('codes/'+c).get();
+    if(snap.exists()&&snap.val()===FB_UID){G.fcode=c;save();return c}
+    if(!snap.exists()){try{await db.ref('codes/'+c).set(FB_UID);G.fcode=c;save();return c}catch(e){}}
+    G.fcode=null;
+  }
+  throw new Error('Es konnte kein freier Code vergeben werden.');
+}
+function imgShrink(src,maxW,maxH,sq,q){
+  return new Promise(res=>{
+    if(!src)return res('');
+    const im=new Image();
+    im.onload=()=>{
+      let sx=0,sy=0,sw=im.width,sh=im.height,cw,ch;
+      if(sq){const m=Math.min(sw,sh);sx=(sw-m)/2;sy=(sh-m)/2;sw=sh=m;cw=ch=maxW}
+      else{const k=Math.min(1,maxW/sw,maxH/sh);cw=Math.max(1,Math.round(sw*k));ch=Math.max(1,Math.round(sh*k))}
+      const c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d');
+      x.fillStyle='#000';x.fillRect(0,0,cw,ch);x.drawImage(im,sx,sy,sw,sh,0,0,cw,ch);
+      res(c.toDataURL('image/jpeg',q));
+    };
+    im.onerror=()=>res('');im.src=src;
+  });
+}
+const safeImg=s=>(typeof s==='string'&&/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(s))?s:'';
+async function fbPublish(){
+  const db=await fbLoad(),code=await fbEnsureCode(db);
+  let banner=G.banner?await imgShrink(G.banner,720,420,false,0.6):'';
+  if(banner.length>85000)banner=await imgShrink(G.banner,480,280,false,0.5);
+  if(banner.length>85000)banner='';
+  const avatar=G.avatar?await imgShrink(G.avatar,96,96,true,0.7):'';
+  const vids=(G.videos||[]).slice(-12).reverse().map(v=>({id:v.id||0,t:String(v.title||'').slice(0,80),v:Math.round(v.views||0),l:Math.round(v.likes||0),d:Math.round(v.dislikes||0),day:v.day||0,tour:String(v.tour||'').slice(0,60),ab:(v.reason&&v.reason!=='goal')?1:0,
+    th:v.thumb?{id:String(v.thumb.id||'pano'),biome:String(v.thumb.biome||'wald'),e:String(v.thumb.e||'🥾').slice(0,8),seed:Math.round(v.thumb.seed||1),hikeId:String(v.thumb.hikeId||'')}:null}));
+  const look={};for(const k in (G.look||{}))look[k]=+G.look[k]||0;
+  await db.ref('channels/'+FB_UID).set({code,name:String(G.name||'Wanderer').slice(0,60),chan:String(G.chan||'Wanderkanal').slice(0,80),subs:Math.round(G.subs||0),avatar,banner,bannerFit:G.bannerFit==='contain'?'contain':'cover',bannerPos:Math.round(G.bannerPos==null?50:G.bannerPos),hikes:G.hikesDone||0,km:Math.round(G.km||0),look,videos:vids,upd:Date.now()});
+  G.fbLast=Date.now();save();return code;
+}
+async function fbUnpublish(){const db=await fbLoad();await db.ref('channels/'+FB_UID).remove();G.fbLast=0;save()}
+function fbAuto(force){
+  if(!G||!G.pubOn||!navigator.onLine)return;
+  if(!force&&Date.now()-(G.fbLast||0)<600000)return;
+  G.fbLast=Date.now();
+  fbPublish().catch(e=>{G.fbLast=0;console.warn('Kanal-Sync',e&&e.message)});
+}
+async function fbAddFriend(code){
+  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<4)throw new Error('Bitte einen gültigen Code eingeben.');
+  const db=await fbLoad(),s=await db.ref('codes/'+code).get();
+  if(!s.exists())throw new Error('Diesen Code gibt es nicht.');
+  const uid=s.val();if(uid===FB_UID)throw new Error('Das ist dein eigener Code.');
+  await db.ref('friends/'+FB_UID+'/'+uid).set(true);return uid;
+}
+async function fbFriendList(){
+  const db=await fbLoad(),f=(await db.ref('friends/'+FB_UID).get()).val()||{},out=[];
+  await Promise.all(Object.keys(f).map(async uid=>{let c=null;try{c=(await db.ref('channels/'+uid).get()).val()}catch(e){}out.push({uid,c})}));
+  out.sort((a,b)=>((b.c&&b.c.upd)||0)-((a.c&&a.c.upd)||0));
+  return out;
+}
+let FR_ST={};
+function showFriends(){
+  FR_ST={msg:'',err:'',friends:null,code:G.fcode||null,busy:true};
+  frRender();
+  fbLoad().then(db=>fbEnsureCode(db)).then(c=>{FR_ST.code=c;return fbFriendList()})
+    .then(l=>{FR_ST.friends=l;FR_ST.busy=false;frRender()})
+    .catch(e=>{FR_ST.busy=false;FR_ST.err=(e&&e.message)||String(e);frRender()});
+}
+function frRender(){
+  const S=FR_ST,on=!!G.pubOn;
+  const list=S.friends?(S.friends.length?S.friends.map(f=>{const c=f.c;
+    if(!c)return '<div class="fr-row"><div class="fr-av">❔</div><div class="fr-nm"><b>Freund</b><small>Hat noch keinen Kanal veröffentlicht</small></div><button data-frx="'+esc(f.uid)+'" title="Entfernen">✕</button></div>';
+    const av=safeImg(c.avatar);
+    return '<div class="fr-row"><div class="fr-av">'+(av?'<img src="'+av+'" alt="">':'🥾')+'</div><div class="fr-nm"><b>'+esc(c.chan||c.name||'Kanal')+'</b><small>'+esc(c.name||'')+' · '+fmtInt(c.subs||0)+' Abos · '+(c.hikes||0)+' Touren · '+fmtInt(c.km||0)+' km</small></div><button class="primary" data-frv="'+esc(f.uid)+'">Kanal</button><button data-frx="'+esc(f.uid)+'" title="Entfernen">✕</button></div>';
+  }).join(''):'<p class="hint">Noch keine Freunde hinzugefügt. Tausche Codes aus, dann seht ihr gegenseitig eure Kanäle.</p>'):'<p class="hint">'+(S.busy?'Verbinde …':'')+'</p>';
+  showModal({replace:true,wide:true,title:'👥 Freunde',
+    html:'<div class="fr">'+
+      '<h4>Dein Freundescode</h4><div class="fr-code"><span>'+esc(S.code||'······')+'</span><button id="fr-copy"'+(S.code?'':' disabled')+'>Kopieren</button></div>'+
+      '<label class="chk"><input type="checkbox" id="fr-pub"'+(on?' checked':'')+'> Meinen Kanal für Freunde sichtbar machen</label>'+
+      '<p class="hint">Freunde mit deinem Code sehen dann Kanalname, Profilbild, Banner und deine letzten Videos mit Zahlen. Dein Spielstand bleibt auf diesem Gerät.</p>'+
+      '<h4>Freund hinzufügen</h4><div class="fr-add"><input id="fr-in" placeholder="Code des Freundes" maxlength="12" autocomplete="off"><button id="fr-add" class="primary">Hinzufügen</button></div>'+
+      (S.err?'<p class="fr-err">'+esc(S.err)+'</p>':'')+(S.msg?'<p class="fr-ok">'+esc(S.msg)+'</p>':'')+
+      '<h4>Deine Freunde</h4>'+list+'</div>',
+    buttons:[{label:'Schließen'}],
+    onOpen:m=>{
+      const q=s=>m.querySelector(s);
+      q('#fr-copy').onclick=()=>{try{navigator.clipboard.writeText(S.code)}catch(e){}toast('Code kopiert: '+S.code,'good')};
+      q('#fr-pub').onchange=e=>{
+        G.pubOn=e.target.checked;save();S.err='';
+        if(G.pubOn){S.msg='Kanal wird veröffentlicht …';frRender();fbPublish().then(()=>{S.msg='✅ Dein Kanal ist für Freunde sichtbar.';frRender()}).catch(er=>{S.err=er.message;S.msg='';frRender()})}
+        else{fbUnpublish().then(()=>{S.msg='Dein Kanal ist nicht mehr sichtbar.';frRender()}).catch(er=>{S.err=er.message;frRender()})}
+      };
+      q('#fr-add').onclick=()=>{
+        const v=q('#fr-in').value;S.err='';S.msg='';
+        fbAddFriend(v).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='✅ Freund hinzugefügt.';frRender()}).catch(er=>{S.err=er.message||String(er);frRender()});
+      };
+      m.querySelectorAll('[data-frx]').forEach(b=>b.onclick=()=>{
+        fbLoad().then(db=>db.ref('friends/'+FB_UID+'/'+b.dataset.frx).remove()).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='Freund entfernt.';frRender()}).catch(er=>{S.err=er.message;frRender()});
+      });
+      m.querySelectorAll('[data-frv]').forEach(b=>b.onclick=()=>{const f=(S.friends||[]).find(x=>x.uid===b.dataset.frv);if(f&&f.c)friendChannel(f)});
+    }});
+}
+function friendChannel(f){
+  const c=f.c,ban=safeImg(c.banner),av=safeImg(c.avatar);
+  const vids=(Array.isArray(c.videos)?c.videos:Object.values(c.videos||{})).filter(Boolean);
+  const pos=clamp(+c.bannerPos||50,0,100),fit=c.bannerFit==='contain'?'contain':'cover';
+  const tiles=vids.map((v,i)=>'<div class="fr-v"><canvas data-fv="'+i+'" width="176" height="99"></canvas>'+(v.ab?'<i>abgebrochen</i>':'')+'<b>'+esc(v.t||'Video')+'</b><small>👁 '+fmtInt(v.v||0)+' · 👍 '+fmtInt(v.l||0)+' · 👎 '+fmtInt(v.d||0)+'</small></div>').join('');
+  showModal({replace:true,wide:true,title:'📺 '+esc(c.chan||c.name||'Kanal'),
+    html:'<div class="fr-ban" style="background:#12281d '+(ban?'url('+ban+') 50% '+pos+'%/'+fit+' no-repeat':'')+'"></div>'+
+      '<div class="fr-head"><div class="fr-av big">'+(av?'<img src="'+av+'" alt="">':'🥾')+'</div><div><b>'+esc(c.chan||'')+'</b><small>'+esc(c.name||'')+' · '+fmtInt(c.subs||0)+' Abonnenten<br>'+(c.hikes||0)+' Touren · '+fmtInt(c.km||0)+' km gewandert</small></div></div>'+
+      (tiles?'<div class="fr-grid">'+tiles+'</div>':'<p class="hint">Noch keine Videos veröffentlicht.</p>'),
+    buttons:[{label:'◀ Zurück',fn:()=>frRender()}],
+    onOpen:m=>{
+      const old=G.look;
+      m.querySelectorAll('canvas[data-fv]').forEach(cv=>{
+        const v=vids[+cv.dataset.fv];if(!v||!v.th)return;
+        try{if(c.look)G.look=Object.assign({},old,c.look);drawThumb(cv,{thumb:{id:String(v.th.id||'pano'),biome:String(v.th.biome||'wald'),e:String(v.th.e||'🥾'),seed:+v.th.seed||1,hikeId:v.th.hikeId}})}catch(e){}finally{G.look=old}
+      });
+    }});
+}
 function renderHub(){
   H=null;
   const d=dateOf(G.day),s=seasonOfM(d.m),pend=G.pending;
@@ -4462,7 +4596,7 @@ function renderHub(){
     <div class="card c-blue"><h3>🛒 Ausrüstung & Proviant</h3><p class="hint">Rucksack packen, Proviant kaufen, Hund ausstatten.</p><button class="primary bigact" id="h-shop">🛒 Zum Shop</button> <button id="h-dog">🐕 Hund</button></div>
    </div>
    <div class="grid">
-    <div class="card c-red"><h3>📺 Kanal & Studio</h3><p class="hint">Videos, Statistik, Kommentare, Livestreams, Auszahlungen.</p><button class="primary" id="h-studio">▶ Kanal öffnen</button></div>
+    <div class="card c-red"><h3>📺 Kanal & Studio</h3><p class="hint">Videos, Statistik, Kommentare, Livestreams, Auszahlungen.</p><button class="primary" id="h-studio">▶ Kanal öffnen</button> <button id="h-friends">👥 Freunde</button></div>
     <div class="card"><h3>🔧 Werkstatt</h3>${workshopHTML()}</div>
     ${G.growth?`<div class="card"><h3>💈 Friseur</h3><p class="hint">Haare und Bart wachsen. Bart: ${['sauber','Stoppeln','Vollbart'][lookNow().beard]} · Frisur: ${LOOKS.styles[lookNow().style]}</p><button id="h-shave">🪒 Rasieren (gratis)</button> <button id="h-cut">✂️ Haare schneiden (18 €)</button></div>`:''}
     <div class="card"><h3>💪 Fähigkeiten</h3><p class="hint">Wachsen von selbst mit deiner Erfahrung: Je weiter und anspruchsvoller die Touren, desto schneller. Wer eine Strecke oder ähnliche Gegenden öfter geht, orientiert sich besser. Schwere Routen kannst du nur mit genug Fähigkeiten meistern – gute Ausrüstung allein reicht nicht.</p>${xpRow}</div>
@@ -4473,7 +4607,7 @@ function renderHub(){
   $('#h-shop').onclick=()=>{SHOPTAB='Rucksack';renderShop();show('shop')};
   $('#h-dog').onclick=()=>{SHOPTAB='Hund';renderShop();show('shop')};
   $('#h-studio').onclick=()=>{STUDIOTAB='Übersicht';renderStudio();show('studio')};
-  $('#h-menu').onclick=hubMenu;
+  $('#h-menu').onclick=hubMenu;$('#h-friends').onclick=()=>showFriends();try{fbAuto()}catch(e){}
   if(pend)$('#h-pub').onclick=()=>openPublish();
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hub';waitDays(+b.dataset.w)});
   $$('[data-fix]').forEach(b=>b.onclick=()=>workshop(b.dataset.fix,b.dataset.how));
@@ -5626,7 +5760,7 @@ function publishVideos(){
   }
   G.pending=null;G.flags.first=1;
   G.hikesDone=(G.hikesDone||0)+1;
-  save();
+  save();try{fbAuto(true)}catch(e){}
   sfx('success');
   showModal({title:'🚀 Hochgeladen!',html:`<p>${n>1?n+' Videos sind geplant.':'Dein Video geht online.'} Wie es ankommt, siehst du in den nächsten Tagen im Kanal. Die Einnahmen werden erst am <b>21. des Folgemonats</b> ausgezahlt.</p><p class="hint">Tipp: Lass Zeit vergehen (Zentrale ⏳) oder starte die nächste Tour – aber beachte die Jahreszeit.</p>`,buttons:[{label:'📺 Zum Kanal',fn:()=>{STUDIOTAB='Videos';renderStudio();show('studio')}},{label:'Zur Zentrale',fn:()=>{renderHub();show('hub')}}]});
 }
