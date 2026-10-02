@@ -75,7 +75,7 @@ input[type=range]{accent-color:var(--acc)}
 #stage{position:absolute;inset:0;user-select:none;-webkit-user-select:none;touch-action:none}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
-.pill{background:rgba(8,16,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
+.pill{background:rgba(8,16,12,.76);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
 #h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:6px 8px}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 .dl{font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25;margin-bottom:1px}.se{font-size:14px;font-weight:700;margin-left:4px;white-space:nowrap}
@@ -216,7 +216,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 #drawer details.moreacts{margin:6px 0}#drawer details.moreacts summary{cursor:pointer;color:var(--dim);font-size:.9em;padding:4px 0}
 .hk-hist{display:flex;gap:8px;align-items:center;margin:6px 0 2px}.hk-th{position:relative;flex:none;line-height:0}.hk-th canvas{width:84px;height:47px;border-radius:6px;border:1px solid #ffffff22}.hk-th i{position:absolute;left:0;right:0;bottom:0;background:#a82f22dd;color:#fff;font:700 9px/14px sans-serif;text-align:center;font-style:normal;border-radius:0 0 6px 6px}.hk-chips{display:flex;flex-wrap:wrap;gap:4px}.hk-chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#ffffff14;font-size:.76rem}.hk-chip.ok{background:#1f5a34;color:#c9f5d8}.hk-chip.ab{background:#8a2f24;color:#ffd9d2}
 .fr h4{margin:12px 0 6px}.fr-code{display:flex;gap:8px;align-items:center}.fr-code span{font:700 1.7rem/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;background:#ffffff12;padding:8px 14px;border-radius:10px}.fr-add{display:flex;gap:8px}.fr-add input{flex:1;text-transform:uppercase;letter-spacing:.12em;font-size:1rem}.fr-err{color:#ffb4a8}.fr-ok{color:#9be7b2}.fr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff14}.fr-av{width:42px;height:42px;flex:none;border-radius:50%;overflow:hidden;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:1.3rem}.fr-av img{width:100%;height:100%;object-fit:cover;display:block}.fr-av.big{width:64px;height:64px;margin-top:-34px;border:3px solid #1b2b22;background:#1b2b22}.fr-nm{flex:1;min-width:0}.fr-nm b,.fr-head b{display:block}.fr-nm small,.fr-head small{opacity:.75}.fr-ban{height:120px;border-radius:10px}.fr-head{display:flex;gap:12px;align-items:flex-start;padding:0 8px 8px}.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.fr-v{position:relative;font-size:.85rem}.fr-v canvas{width:100%;border-radius:8px;display:block}.fr-v b{display:block;margin-top:4px;line-height:1.2}.fr-v small{opacity:.75}.fr-v i{position:absolute;left:0;top:0;background:#a82f22dd;color:#fff;font:700 10px/16px sans-serif;padding:0 6px;border-radius:8px 0 8px 0;font-style:normal}
-#coop{position:absolute;left:10px;top:104px;z-index:20;max-width:230px;background:rgba(10,24,16,.78);border:1px solid #ffffff22;border-radius:12px;padding:8px 10px;font-size:.78rem;line-height:1.35;color:#fff;backdrop-filter:blur(4px)}#coop .coop-h{opacity:.8;margin-bottom:2px}#coop button{margin-top:6px;width:100%;font-size:.78rem;padding:6px 8px;min-height:32px}#coop button.on{background:#1f5a34;border-color:#2f8a52}
+#coop{position:absolute;left:10px;top:104px;z-index:20;max-width:230px;background:rgba(10,24,16,.78);border:1px solid #ffffff22;border-radius:12px;padding:8px 10px;font-size:.78rem;line-height:1.35;color:#fff;}#coop .coop-h{opacity:.8;margin-bottom:2px}#coop button{margin-top:6px;width:100%;font-size:.78rem;padding:6px 8px;min-height:32px}#coop button.on{background:#1f5a34;border-color:#2f8a52}
 #dock{align-items:flex-end}#spdctl{height:54px;box-sizing:border-box;padding:0 3px}#spdctl button{height:100%}
 #sosb{position:absolute;right:calc(8px + var(--sr,0px));top:58px;z-index:6;width:34px;height:34px;border-radius:50%;border:1px solid #ffffff66;background:rgba(160,24,24,.85);color:#fff;font-size:17px;padding:0;pointer-events:auto}#coop .coop-ex{margin-top:6px}#coop .coop-ex button{width:100%}
 </style>
@@ -631,7 +631,7 @@ const GEAR=[
   {id:'tentFl',cat:'shelter',wres:10,img:'Zelte_Flohmarkt Zelt',name:'Flohmarkt-Zelt',e:'⛺',price:40,kg:5.2,rain:0.85,warm:3.5,wind:0.45,setup:28,down:16,desc:'Uraltes Familienzelt aus schwerem Stoff: dämmt besser als Freizeitzelt und Tarp, wiegt aber ein Vielfaches, ist nicht ganz dicht (85 % Regenschutz) und braucht ewig beim Auf- und Abbau.'},
   {id:'tentF',cat:'shelter',wres:9.5,img:'Zelte_Freizeitzelt',name:'Freizeitzelt',e:'⛺',price:60,kg:2.6,rain:0.92,warm:2.5,wind:0.4,setup:15,down:8,desc:'Günstiges Zelt für den Sommer: schnell aufgebaut, weitgehend regendicht (92 %), aber wenig Isolierung und Windschutz.'},
   {id:'tent1',cat:'shelter',wres:15,img:'Zelte_Outdoorzelt',name:'Outdoorzelt',e:'⛺',price:120,kg:2.1,rain:1,warm:4,wind:0.6,setup:25,down:14,desc:'Der solide Einstieg: regendicht, +4 °C Wärme, guter Windschutz.'},
-  {id:'tentM',cat:'shelter',wres:19,img:'Zelte_Militärzelt',name:'Militärzelt',e:'⛺',price:200,kg:3.0,rain:1,warm:6,wind:0.8,setup:22,down:12,desc:'Robuster Allrounder: regendicht, +6 °C Wärme, sehr guter Windschutz. Schwerer als Outdoor- und Ultraleichtzelt.'},
+  {id:'tentM',cat:'shelter',wres:34,img:'Zelte_Militärzelt',name:'Militärzelt',e:'⛺',price:200,kg:3.0,rain:1,warm:6,wind:0.8,setup:22,down:12,desc:'Robuster Allrounder: regendicht, +6 °C Wärme, sehr guter Windschutz. Schwerer als Outdoor- und Ultraleichtzelt.'},
   {id:'tentUL',cat:'shelter',wres:14,img:'Zelte_Ultraleichtzelt',name:'Ultraleicht-Zelt',e:'⛺',price:320,kg:1.1,rain:1,warm:3.5,wind:0.55,setup:10,down:5,desc:'Wiegt fast nichts und steht in Minuten. Dafür dämmt es schlechter als Outdoor- und Militärzelt (+3,5 °C) und hält weniger Wind ab.'},
   {id:'tentW',cat:'shelter',wres:25,img:'Zelte_Winterzelt',name:'Winterzelt',e:'⛺',price:380,kg:3.4,rain:1,warm:8,wind:0.9,setup:30,down:18,desc:'Beste Isolierung (+8 °C), trotzt Sturm. Schwerer als das Militärzelt und langsamer aufgebaut.'},
   {id:'bag_s',cat:'bag',name:'Sommerschlafsack (+8 °C)',e:'🛌',price:40,kg:0.9,rating:8,desc:'Komfort bis +8 °C.'},
@@ -1329,6 +1329,7 @@ function setWeather(type){
   if((type==='gewitter'||type==='sturm')&&H.started)spawnIcon({kind:'storm',x:H.x+320,e:type==='gewitter'?'⛈️':'🌪️',label:type==='gewitter'?'Gewitter':'Sturm',base:30,life:12});
 }
 function updateWeather(){
+  if(H.lodge&&H.lodge.until&&H.t>=H.lodge.until&&!(H.sleep.active&&H.indoor==='lodge')){H.lodge=null;toast('🏨 Check-out: Dein Zimmer ist nicht mehr gebucht.')}
   if(H.t>=H.weather.until){setWeather(H.nextW||nextWeather(H.weather.type));return}
   if(!H.wxWarned&&H.weather.until-H.t<110&&(H.nextW==='gewitter'||H.nextW==='sturm')){
     H.wxWarned=true;toast(H.nextW==='sturm'?'⚠️ Der Wind frischt auf – ein Sturm zieht in etwa 1½ Stunden auf!':'⚠️ Dunkle Wolken bauen sich auf – ein Gewitter naht.','warn');sfx('warn');
@@ -1460,7 +1461,7 @@ const nearFire=()=>H.fire.lit&&Math.abs(H.x-H.fire.x)<110;
 const woodAvail=()=>H.wood+(H.carry||0);
 function useWood(){if(H.wood>0)H.wood--;else if(H.carry>0)H.carry--}
 const fireCovered=x=>!!H.fireTarp&&Math.abs(H.fireTarp.x-x)<40;
-function nearWater(){return featNear('quelle',H.x,90)||featNear('fluss',H.x,90)}
+function nearWater(){const q=featNear('quelle',H.x,90)||featNear('fluss',H.x,90);if(q)return q;if(!H.side)for(const l of (H.route.lakes||[]))if(H.x>l.xl-140&&H.x<l.xr+140)return {type:'fluss',lake:true,x:H.x,id:-7};return null}
 function nearSight(){for(const f of featsIn(H.x-250,H.x+250))if(f.type==='sight'&&/see|fjord|loch|lac|lago|älv|elv/i.test(f.s.n))return f;return null}
 function isInjured(){return H.inj.blister>H.t||H.inj.sprain>H.t||H.sick>H.t}
 function fillContainers(){ // Verteilt Wasser auf Flaschen (sauber zuerst, dann unbehandelt)
@@ -1616,20 +1617,21 @@ function updateIcons(dt){
 const WALK_NAMES=['Jonas','Lena','Mats','Ingrid','Felix','Sofie','Erik','Hanna','Tobi','Marit','Lars','Anke','Paul','Nora','Sven','Clara'];
 function spawnWalker(){
   const look={skin:Math.floor(rnd(0,5)),hair:Math.floor(rnd(0,7)),style:Math.floor(rnd(0,6)),beard:Math.random()<0.3?Math.floor(rnd(1,3)):0,glasses:Math.random()<0.2?Math.floor(rnd(1,3)):0,build:Math.floor(rnd(0,3)),jacket:Math.floor(rnd(0,8)),pants:Math.floor(rnd(0,5))};
-  H.walkers.push({x:H.x+rnd(780,900),v:rnd(3.2,5),look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
+  const fw=Math.random()<0.4;
+  H.walkers.push({x:fw?H.x-rnd(520,700):H.x+rnd(780,900),v:fw?rnd(3.0,4.3):rnd(1.7,2.9),dir:fw?1:-1,look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
 }
 function updateWalkers(h){
   coopStep(h);
   const w=H.walkers;if(!w.length)return;
   for(const W of w){
-    if(!W.wait)W.x-=W.v*PPK*h/60;
-    W.ph+=(W.wait?0:0.25)*h*2;
+    if(!W.wait)W.x+=(W.dir||-1)*W.v*PPK*h/60;
+    W.ph+=(W.wait?0:0.25*((W.v||4)/4.2))*h*2;
     if(!W.met&&Math.abs(W.x-H.x)<70){
       W.met=true;
       if(H.walking&&!H.action&&!H.sleep.active){W.wait=true;hikerEvent(W)}
     }
   }
-  H.walkers=w.filter(W=>W.x>H.x-900);
+  H.walkers=w.filter(W=>W.dir>0?(W.x<H.x+1000&&W.x>H.x-1400):W.x>H.x-900);
 }
 function hasIcon(kind,fid){return H.icons.some(i=>i.kind===kind&&i.fid===fid&&!i.dead)}
 function trackFeatures(){
@@ -1711,6 +1713,7 @@ function actionClip(kind){
   addClip({key,type:'video',name:a[1],e:a[0],q,value:a[2]*q*hiding*(env.dark>0.6&&kind==='fire'?1.25:1),rar:-1});
 }
 function beginAction(kind,label,dur,done,opts={}){
+  if(SHOP_RE){const f0=SHOP_RE;SHOP_RE=null;const d1=done;done=()=>{try{if(d1)d1()}catch(e){console.error(e)}if(H&&!H.ended)setTimeout(()=>openVillageShop(f0),60)}}
   if(ACTION_CLIPS[kind]){const d0=done;done=()=>{try{actionClip(kind)}catch(e){}if(d0)d0()}}
   H.action={kind,label,dur,left:dur,done,tick:opts.tick,resume:opts.force?true:(!!opts.resume&&H.walking)};
   H.walking=false;
@@ -2105,6 +2108,7 @@ function sleepNeedH(){
 function startSleep(rest){
   if(H.sleep.active)return;
   const need=rest===true?1.5:sleepNeedH();
+  if(!H.camp.pitched)H.camp.x=H.x;
   H.sleep={active:true,need,q:sleepQuality(),startE:H.body.energy,p:0,elapsed:0,qsum:0,begun:H.t,rest:rest===true};
   H.walking=false;H.charging=H.charging;
   toast(rest===true?'🛌 Du ruhst dich im Schutz deines Lagers aus … (ca. 1,5 h)':'😴 Du schläfst ein … (Bedarf ca. '+fmtN(need)+' h bei Qualität '+Math.round(H.sleep.q*100)+' %)');
@@ -2122,11 +2126,11 @@ function wakeUp(early){
   const wasIn=H.indoor;H.indoor=false;
   if(wasIn==='lodge'){const T=H.lodge?H.lodge.tier:1;H.body.wet=Math.min(H.body.wet,8);
     if(T>=2)for(const id in H.dev)if(!H.dev[id].broken)H.dev[id].batt=100;
-    if(T>=3)H.body.sat=Math.min(100,H.body.sat+30);
+    if(T>=3&&!(H.lodge&&H.lodge.got))H.body.sat=Math.min(100,H.body.sat+30);
     if(T>=2)toast('🔌 Über Nacht sind alle Geräte aufgeladen.'+(T>=3?' Frühstück inklusive (+30 Nahrung).':''),'good');
-    H.lodge=null}
+    if(!H.lodge||!H.lodge.until||H.t>=H.lodge.until)H.lodge=null;else H.lodge.got=true}
   H.sleep={active:false};H.awakeSince=H.t;H.stats.sleepH+=hrs;if(!S.rest)H.sleptTonight=true;
-  if(wasIn==='shelter')toast('🛖 Du hast im Windschutz geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %).','good');else if(wasIn)toast('🏨 Du hast in der Herberge geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %). Ausgecheckt.','good');else toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
+  if(wasIn==='shelter')toast('🛖 Du hast im Windschutz geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %).','good');else if(wasIn)toast('🏨 Du hast in der Herberge geschlafen ('+fmtN(hrs)+' h, Qualität Ø '+Math.round(avg*100)+' %).'+(H.lodge?' Das Zimmer bleibt dir bis zum Check-out offen.':' Ausgecheckt.'),'good');else toast(S.rest?'🛌 Ausgeruht nach '+fmtN(hrs)+' h. Lager abbauen nicht vergessen.':(early?'⏰ Schlaf abgebrochen nach ':'☀️ Aufgewacht nach ')+fmtN(hrs)+' h (Qualität Ø '+Math.round(avg*100)+' %).'+(early&&S.p<0.9?' Du bist noch müde.':'')+(H.autoNight?'':' Lager abbauen nicht vergessen.'),'good');sfx('notify');
   if(S.p<1)H.body.energy=Math.min(100-H.fatigue,lerp(S.startE,S.rest?lerp(S.startE,100-H.fatigue,0.4):100-H.fatigue,clamp(S.p,0,1)));
   if(H.autoNight&&!S.rest){H.autoWake=true}
 }
@@ -2467,7 +2471,8 @@ function openPhone(){
     {label:'📝 Beitrag im Kanal posten',fn:()=>teaserDialog()},
     {label:'Schließen'}]});
 }
-const CLASS_NAMES=['','Klasse 1 · Mehrbett/Lager','Klasse 2 · Zweibettzimmer','Klasse 3 · Einzelzimmer, Frühstück'];
+const CLASS_NAMES=['','Klasse 3 · Mehrbettzimmer/Lager','Klasse 2 · Zweibettzimmer','Klasse 1 · Einzelzimmer, Frühstück'];
+function lodgeUntil(){const d0=Math.floor(H.t/1440),h=(H.t/60)%24;return (d0+(h<11?0:1))*1440+660}
 function lodgePrice(f,t){const base=f.type==='lodge'?(f.kind==='stuga'?[0,35,70]:[0,32,62,110]):[0,30,58,95];return base[t]||0}
 function lodgeTiers(f){return f.type==='lodge'?(f.kind==='stuga'?[1,2]:[1,2,3]):[1,2,3]}
 function lodgeBookable(f){return f.type==='village'?!!f.town:(f.type==='lodge'&&(f.kind==='stuga'||f.kind==='huette'))}
@@ -2499,14 +2504,14 @@ function bookLodgeDialog(){
 }
 function bookClassDialog(f){
   const day=lodgeDay(f);
-  const btns=lodgeTiers(f).map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
+  const btns=lodgeTiers(f).slice().reverse().map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
     const price=lodgePrice(f,t);
     if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
     if(lodgeFull(f,t,day,false)){toast('🏨 '+lodgeLabel(f)+': '+CLASS_NAMES[t].split(' · ')[0]+' ist ausgebucht. Probiere eine andere Klasse oder Unterkunft.','bad');return}
-    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price};
+    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price,until:lodgeUntil()};
     toast('🏨 Gebucht: '+CLASS_NAMES[t].split(' · ')[0]+' in '+lodgeLabel(f)+' ('+price+' €). Dort zeigt dir das Symbol „Unterkunft“ den Check-in.','good');sfx('success');save()}}));
   btns.push({label:'Zurück',fn:()=>bookLodgeDialog()});
-  showModal({title:'🏨 '+esc(lodgeLabel(f)),html:'<p>Wähle die Komfortklasse. Klasse 2 lädt nachts deine Geräte auf, Klasse 3 bringt zusätzlich Frühstück.</p>',buttons:btns,wide:true});
+  showModal({title:'🏨 '+esc(lodgeLabel(f)),html:'<p>Wähle die Komfortklasse. Klasse 2 lädt nachts deine Geräte auf, Klasse 1 (Einzelzimmer) bringt zusätzlich Frühstück. Das Zimmer steht dir bis 11 Uhr am nächsten Tag offen.</p>',buttons:btns,wide:true});
 }
 function lodgeStay(f){
   const L=H.lodge;if(!L)return;
@@ -2545,11 +2550,11 @@ function lodgeHere(f){
   }
   // Spontan: nur mit Empfang
   if(!env.net){showModal({title:'📵 '+esc(lodgeLabel(f)),text:'Es ist niemand zu erreichen und du hast kein Netz. Eine spontane Buchung ist nur mit Handyempfang möglich.',buttons:[{label:'OK'}]});return}
-  const btns=lodgeTiers(f).map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
+  const btns=lodgeTiers(f).slice().reverse().map(t=>({label:`${CLASS_NAMES[t]} · ${lodgePrice(f,t)} €`,fn:()=>{
     const price=lodgePrice(f,t);
     if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
     if(lodgeFull(f,t,day,true)){toast('🏨 '+CLASS_NAMES[t].split(' · ')[0]+' ist leider belegt.','bad');return}
-    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price};sfx('coin');lodgeStay(f)}}));
+    G.money-=price;H.lodge={fid:f.id,name:lodgeLabel(f),label:CLASS_NAMES[t],tier:t,price,until:lodgeUntil()};sfx('coin');lodgeStay(f)}}));
   btns.push({label:'Weiter'});
   showModal({title:'🏨 '+esc(lodgeLabel(f)),html:'<p>Spontan buchen per Handy – ohne Vorreservierung ist es schneller voll. Wähle eine Klasse:</p>',buttons:btns,wide:true});
 }
@@ -3835,7 +3840,7 @@ function drawWalkers(g,tm){
   if(H.crossing&&H.crossing.kind==='swim'){const sx=CHAR_SX(),gy=heroY(H.x);g.fillStyle='rgba(255,255,255,0.5)';for(let k=0;k<4;k++){g.beginPath();g.arc(sx-16+k*11+Math.sin(tm*6+k)*3,gy+10+Math.sin(tm*5+k*2)*2,3,0,7);g.fill()}}
   for(const W of H.walkers){
     const sx=W.x-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(W.x);
-    g.save();g.translate(sx,0);g.scale(-1,1);
+    g.save();g.translate(sx,0);g.scale(W.dir>0?1:-1,1);
     drawHiker(g,0,gy,1.15,{look:W.look,phase:W.ph,mode:W.wait?'idle':'walk',packColor:W.pack,tm,poles:false});
     g.restore();
   }
@@ -4228,6 +4233,7 @@ drawForksTop(g,tm);drawStartFlag(g,tm);
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
   try{coopBench(g)}catch(e){}
+  try{if(H.sleep.active&&H.indoor==='lodge')emoji(g,'💤',H.x-camX+10,groundY(H.x)-118+Math.sin(tm*2)*4,34)}catch(e){}
   drawPackDown(g,tm);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
@@ -4255,7 +4261,7 @@ g.restore();
     if(a<1.5)drawHiker(g,WK.x-camX,groundY(WK.x)+2,1.2,{look:lk,phase:0,mode:'sleep',tm});
     else{const u=clamp((a-1.5)/1.4,0,1),wx=lerp(WK.x,H.x,u);drawHiker(g,wx-camX,groundY(wx)+2,1.2,{look:lk,phase:a*7,mode:u<1?'walk':'idle',packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),tm})}
   }
-  if(!inTent&&!WK){
+  if(!inTent&&!WK&&!(H.sleep.active&&H.indoor==='lodge')){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
@@ -4617,7 +4623,7 @@ function friendChannel(f){
     }});
 }
 /* ---------- Gemeinsame Tour (Firebase) ---------- */
-let COOP=null;let HIKE_SNAP=null;
+let COOP=null;let HIKE_SNAP=null;let SHOP_RE=null,SHOP_SC=null;
 async function coopHost(hikeId){
   const db=await fbLoad();let code='',ok=false;
   for(let i=0;i<6&&!ok;i++){
@@ -4746,7 +4752,7 @@ function coopRecv(all){
       if(m.to!==FB_UID||m.s<=(COOP.seen[u]||0))continue;COOP.seen[u]=m.s;
       const nm=esc(m.nm||'Freund');
       if(m.k==='food'){const f=FOODS.find(x=>x.id===m.i);if(f){H.food[m.i]=(H.food[m.i]||0)+(m.n||1);toast('🤝 '+nm+' gibt dir '+(m.n||1)+'× '+f.e+' '+f.name+'.','good')}}
-      else if(m.k==='water'){const room=Math.max(0,(H.g.waterCap||2)-waterTotal()),add=Math.min(m.n||0.5,room);H.water.clean+=add;toast('🤝 '+nm+' gibt dir '+fmtN(add,1)+' L Wasser.','good')}
+      else if(m.k==='water'){const room=Math.max(0,(H.g.waterCap||2)-waterTotal()),add=Math.min(m.n||0.5,room);H.water.clean+=add;toast('🤝 '+nm+' gibt dir '+(add<0.2?'100 ml':fmtN(add,1)+' L')+' Wasser.','good')}
       else if(m.k==='tool'){
         const gd=GEAR.find(x=>x.tool===m.i);if(!gd)continue;
         if(H.g.tools[m.i]){coopSend({k:'ret',i:m.i,b:m.b,to:u});continue}
@@ -4771,13 +4777,13 @@ function coopShare(){
   const row=(a,b)=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0"><span>'+a+'</span>'+b+'</div>';
   const html=(peers.length>1?'<select id="cs-to" style="width:100%">'+peers.map(([u,p])=>'<option value="'+u+'"'+(u===to?' selected':'')+'>'+esc(p.n||'Freund')+'</option>').join('')+'</select>':'<p>Mit <b>'+esc(pp.n||'Freund')+'</b></p>')
    +'<h4>🍽️ Proviant abgeben</h4>'+(foods.length?foods.map(f=>row(f.e+' '+esc(f.name)+' <small>('+H.food[f.id]+')</small>','<button data-f="'+f.id+'">1 geben</button>')).join(''):'<p class="hint">Du hast keinen Proviant übrig.</p>')
-   +'<h4>💧 Wasser</h4>'+(H.water.clean>=0.5?row('💧 Sauberes Wasser <small>('+fmtN(H.water.clean,1)+' L)</small>','<button data-w="1">0,5 L geben</button>'):'<p class="hint">Zu wenig sauberes Wasser zum Teilen.</p>')+'<h4>🎒 Ausrüstung leihen (nur für diese Tour)</h4>'+(tools.length?tools.map(k=>{const gd=GEAR.find(x=>x.tool===k);return row(gd.e+' '+esc(gd.name),'<button data-t="'+k+'">leihen</button>')}).join(''):'<p class="hint">Nichts zu verleihen.</p>')
+   +'<h4>💧 Wasser</h4>'+(H.water.clean>=0.1?row('💧 Sauberes Wasser <small>('+fmtN(H.water.clean,2)+' L)</small>','<span><button data-w="0.1">100 ml</button> <button data-w="0.5"'+(H.water.clean<0.5?' disabled':'')+'>0,5 L</button></span>'):'<p class="hint">Zu wenig sauberes Wasser zum Teilen.</p>')+'<h4>🎒 Ausrüstung leihen (nur für diese Tour)</h4>'+(tools.length?tools.map(k=>{const gd=GEAR.find(x=>x.tool===k);return row(gd.e+' '+esc(gd.name),'<button data-t="'+k+'">leihen</button>')}).join(''):'<p class="hint">Nichts zu verleihen.</p>')
    +(bor.length?'<h4>↩️ Geliehenes zurückgeben</h4>'+bor.map(k=>{const gd=GEAR.find(x=>x.tool===k);return row(gd.e+' '+esc(gd.name),'<button data-r="'+k+'">zurückgeben</button>')}).join(''):'');
   showModal({replace:true,title:'🤝 Teilen &amp; Leihen',html,buttons:[{label:'Schließen'}],onOpen:m=>{
     const again=()=>setTimeout(coopShare,30);
     const sel=m.querySelector('#cs-to');if(sel)sel.onchange=()=>{COOP.shareTo=sel.value;again()};
     m.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const id=b.dataset.f;if(!(H.food[id]>0))return;H.food[id]--;coopSend({k:'food',i:id,n:1,to});toast('🤝 Abgegeben.');again()});
-    m.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{if(H.water.clean<0.5)return;H.water.clean-=0.5;coopSend({k:'water',n:0.5,to});toast('🤝 0,5 L Wasser abgegeben.');again()});
+    m.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{const a=+b.dataset.w||0.1;if(H.water.clean<a)return;H.water.clean-=a;coopSend({k:'water',n:a,to});toast('🤝 '+(a<0.2?'100 ml':'0,5 L')+' Wasser abgegeben.');again()});
     m.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const k=b.dataset.t;if(!H.g.tools[k])return;H.lent=H.lent||{};const d=H.dev[k]||null;H.lent[k]={dev:d};H.g.tools[k]=false;delete H.dev[k];coopSend({k:'tool',i:k,b:d?Math.round(d.batt):null,to});toast('🤝 Verliehen.');again()});
     m.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const k=b.dataset.r,lender=COOP.borrowed[k];const d=H.dev[k];H.g.tools[k]=false;delete H.dev[k];delete COOP.borrowed[k];coopSend({k:'ret',i:k,b:d?Math.round(d.batt):null,to:lender});toast('🤝 Zurückgegeben.');again()});
   }});
@@ -5439,7 +5445,7 @@ window.addEventListener('resize',()=>{if(screen==='hike')resizeStage()});
 function battHTML(id,d){
   const dead=d.broken||d.batt<=0,low=d.batt<20,ch=H.charging===id;
   const vm=id==='vest'?`<span class="dev vm" data-vest title="Antippen: Heizstufe wechseln">${VEST_NAME[H.vestMode]}</span>`:'';
-  return `<span class="dev ${dead?'dead':low?'low':''}" data-dev="${id}" style="cursor:pointer" title="Antippen: von Powerbank laden">${d.def.e}<span class="bt"><i style="width:${d.broken?0:d.batt}%"></i></span>${d.broken?'✖':Math.round(d.batt)+'%'}${ch?'⚡':''}</span>${vm}`;
+  return `<span class="dev ${dead?'dead':low?'low':''}" data-dev="${id}" style="cursor:pointer" title="Antippen: von Powerbank laden">${d.def.e}<span class="bt"><i style="width:${d.broken?0:d.batt}%"></i></span>${d.broken?'✖':Math.round(d.batt)+'%'}${ch?'⚡':''}${d.def.kind==='phone'?(env.net?' 📶':' 📵'):''}</span>${vm}`;
 }
 function updateHUD(force){
   if(!H||screen!=='hike')return;
@@ -5451,7 +5457,7 @@ function updateHUD(force){
   if(H.t<H.stim.boostEnd)inj.push('⚡Koffein');else if(H.t>=H.stim.crashStart&&H.t<H.stim.crashEnd&&H.stim.crash>1)inj.push('📉Tief');
   if(H.stalker)inj.push('👤Verfolger');
   const dd=dateOf(G.day),se=seasonOfM(dd.m);
-  $('#tc').innerHTML=`<div class="dl">${dateStr(G.day)} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${env.net?' · 📶':' · 📵'}${H.snowDepth>=2?' · ❄️ '+Math.round(H.snowDepth)+' cm':''}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
+  $('#tc').innerHTML=`<div class="dl">${dateStr(G.day)} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${H.snowDepth>=2?' · ❄️ '+Math.round(H.snowDepth)+' cm':''}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
   const allIds=Object.keys(H.dev);
   const phIds=allIds.filter(id=>H.dev[id].def.kind==='phone').sort((a,b)=>(H.dev[b].def.price||0)-(H.dev[a].def.price||0));
   const showPh=phIds.find(id=>H.dev[id].batt>0&&!H.dev[id].broken)||phIds[0];
@@ -5463,7 +5469,7 @@ function updateHUD(force){
   const pb=H.pbs.length?`<div><span class="dev ${pbTotal()/pbCapTotal()<0.15?'low':''}" data-pb style="cursor:pointer">🔋 Powerbank<span class="bt" style="width:34px"><i style="width:${pbCapTotal()?pbTotal()/pbCapTotal()*100:0}%"></i></span>${Math.round(pbCapTotal()?pbTotal()/pbCapTotal()*100:0)}%</span></div>`:'';
   $('#tr').innerHTML=`<div>${fmtN(H.km)} / ${H.route.totalKm} km</div><div style="margin-top:2px;max-width:100%;line-height:1.55">${devs}</div>${pb}`;
   {const dtg=$('[data-devtoggle]',$('#tr'));if(dtg)dtg.onclick=()=>{H.devOpen=!H.devOpen;updateHUD(true)}}
-  try{const stg=$('#s-hike'),trr=$('#tr').getBoundingClientRect(),sr=stg.getBoundingClientRect(),top=Math.round(trr.bottom-sr.top+4);const sb=$('#sosb');if(sb)sb.style.top=top+'px';const ts=$('#toasts');if(ts)ts.style.top=(top+40)+'px'}catch(e){}
+  try{if(!force&&H.__rt&&performance.now()-H.__rt<500)throw 0;H.__rt=performance.now();const stg=$('#s-hike'),trr=$('#tr').getBoundingClientRect(),sr=stg.getBoundingClientRect(),top=Math.round(trr.bottom-sr.top+4);const sb=$('#sosb');if(sb)sb.style.top=top+'px';const ts=$('#toasts');if(ts)ts.style.top=(top+40)+'px'}catch(e){}
   $$('[data-dev]',$('#tr')).forEach(el=>el.onclick=()=>chooseCharge(el.dataset.dev));
   $$('[data-vest]',$('#tr')).forEach(el=>el.onclick=()=>{H.vestMode=(H.vestMode+1)%4;const m=H.vestMode;toast('🦺 Weste: '+VEST_NAME[m]+(m?' (+'+VEST_HEAT[m]+' °C, hält ca. '+[0,24,16,10][m]+' h)':''),m?'good':'');sfx('click');updateHUD(true)});
   const pe=$('[data-pb]',$('#tr'));if(pe)pe.onclick=()=>openPack();
@@ -5734,12 +5740,19 @@ function openVillageShop(f){
    <div class="card"><h3>Service</h3>
     <button data-water style="width:100%;margin-bottom:6px" ${waterTotal()>=H.g.waterCap-0.05?'disabled':''}>🚰 Wasser kostenlos auffüllen</button>
     ${devs.length?devs.map(id=>`<button data-vc="${id}" style="width:100%;margin-bottom:6px">🔌 ${H.dev[id].def.name} laden (30 Min., ${Math.round(H.dev[id].batt)} %)</button>`).join(''):'<p class="hint">Alle Geräte sind voll.</p>'}
+    <button data-warm style="width:100%;margin-bottom:6px">🔥 Drinnen aufwärmen (25 Min., kostenlos)</button><button data-coffee style="width:100%;margin-bottom:6px" ${G.money<2.5?'disabled':''}>☕ Kaffee trinken (12 Min., 2,50 €)</button><button data-ice style="width:100%;margin-bottom:6px" ${G.money<2?'disabled':''}>🍦 Eis essen (8 Min., 2,00 €)</button>
     <p class="hint">Am Ladentisch darfst du kostenlos eine Steckdose nutzen.</p></div></div>`,
    buttons:[{label:'Weiterwandern',primary:1,fn:()=>{if(!H.camp.pitched&&!H.sleep.active)H.walking=true}}],
    onOpen:m=>{
-     $$('[data-vb]',m).forEach(b=>b.onclick=()=>{if(buyVillage(b.dataset.vb,1))openVillageShop(f)});
-     $$('[data-vc]',m).forEach(b=>b.onclick=()=>{closeModal();cafeCharge(b.dataset.vc)});
-     const w=$('[data-water]',m);if(w)w.onclick=()=>{H.water.clean+=Math.max(0,H.g.waterCap-waterTotal());sfx('drink');toast('💧 Wasser aufgefüllt.','good');openVillageShop(f)};
+     const sc0=SHOP_SC;SHOP_SC=null;if(sc0)setTimeout(()=>{const bx=$('.box',m),ls=$('.card[style*="max-height"]',m);if(bx)bx.scrollTop=sc0.b;if(ls)ls.scrollTop=sc0.l},20);
+     const keepSc=()=>{SHOP_SC={b:($('.box',m)||{}).scrollTop||0,l:($('.card[style*="max-height"]',m)||{}).scrollTop||0}};
+     $$('[data-vb]',m).forEach(b=>b.onclick=()=>{if(buyVillage(b.dataset.vb,1)){keepSc();openVillageShop(f)}});
+     const svc=(kind,label,mins,price,fn)=>{if(price&&G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}if(price){G.money-=price;try{save()}catch(e){}}SHOP_RE=f;closeModal();beginAction(kind,label,mins,fn,{})};
+     {const e1=$('[data-warm]',m);if(e1)e1.onclick=()=>svc('warm','Wärmt sich im Laden auf …',25,0,()=>{H.body.warm=clamp(H.body.warm+38,0,100);H.body.wet=Math.max(0,H.body.wet-14);toast('🔥 Du hast dich schön aufgewärmt.','good')});
+      const e2=$('[data-coffee]',m);if(e2)e2.onclick=()=>svc('drink','Trinkt einen Kaffee …',12,2.5,()=>{H.body.warm=clamp(H.body.warm+14,0,100);H.body.hyd=clamp(H.body.hyd+6,0,100);H.body.energy=Math.min(100-H.fatigue,H.body.energy+6);sfx('drink');toast('☕ Heißer Kaffee – das tut gut.','good')});
+      const e3=$('[data-ice]',m);if(e3)e3.onclick=()=>svc('eat','Isst ein Eis …',8,2,()=>{H.body.sat=clamp(H.body.sat+6,0,100);H.body.hyd=clamp(H.body.hyd+4,0,100);H.body.warm=clamp(H.body.warm-5,0,100);sfx('drink');toast('🍦 Lecker – ein Eis zwischendurch.','good')})}
+     $$('[data-vc]',m).forEach(b=>b.onclick=()=>{SHOP_RE=f;closeModal();cafeCharge(b.dataset.vc)});
+     const w=$('[data-water]',m);if(w)w.onclick=()=>{H.water.clean+=Math.max(0,H.g.waterCap-waterTotal());sfx('drink');toast('💧 Wasser aufgefüllt.','good');keepSc();openVillageShop(f)};
    }});
 }
 
