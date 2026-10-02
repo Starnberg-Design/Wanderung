@@ -5279,8 +5279,9 @@ function playIntro(hk,done){
   const cv=document.createElement('canvas');cv.style.cssText='width:100%;height:100%;display:block';ov.appendChild(cv);
   const sk=document.createElement('button');sk.textContent='Überspringen ▸';sk.style.cssText='position:absolute;top:12px;right:12px;padding:8px 14px;border-radius:8px;border:1px solid #fff5;background:#0008;color:#fff;font-size:14px';ov.appendChild(sk);
   document.body.appendChild(ov);
-  const W=cv.width=Math.max(320,innerWidth),Hh=cv.height=Math.max(240,innerHeight),g=cv.getContext('2d');
-  const gy=Hh*0.8,K=Math.min(1.7,W/760);let fin=false,t0=performance.now(),total=steps.reduce((a,s)=>a+s.d,0);
+  let W=cv.width=Math.max(320,ov.clientWidth||innerWidth),Hh=cv.height=Math.max(240,ov.clientHeight||innerHeight);const g=cv.getContext('2d');
+  let gy=Hh*0.8,K=Math.min(1.7,W/760,Hh/400);
+  const fit=()=>{const nw=Math.max(320,ov.clientWidth||innerWidth),nh=Math.max(240,ov.clientHeight||innerHeight);if(cv.width!==nw||cv.height!==nh){cv.width=nw;cv.height=nh}W=nw;Hh=nh;gy=Hh*0.8;K=Math.min(1.7,W/760,Hh/400)};let fin=false,t0=performance.now(),total=steps.reduce((a,s)=>a+s.d,0);
   const end=()=>{if(fin)return;fin=true;ov.remove();done()};
   sk.onclick=end;
   const ease=p=>1-Math.pow(1-p,2.4);
@@ -5297,7 +5298,7 @@ function playIntro(hk,done){
     g.fillStyle='#e8b896';g.beginPath();g.arc(3,-72,8,0,7);g.fill();g.fillStyle='#6b4a2b';g.beginPath();g.arc(3,-75,8,Math.PI,0);g.fill();
     g.restore()};
   function frame(now){
-    if(fin)return;const el=(now-t0)/1000;if(el>=total){end();return}
+    if(fin)return;fit();const el=(now-t0)/1000;if(el>=total){end();return}
     let acc=0,st=steps[0],lt=0;for(const s of steps){if(el<acc+s.d){st=s;lt=el-acc;break}acc+=s.d}
     const p=lt/st.d;g.clearRect(0,0,W,Hh);
     const D=W*3,sc=D*ease(p);
