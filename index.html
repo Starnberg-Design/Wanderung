@@ -900,7 +900,7 @@ function forkOf(f){
     else kind=r()<0.28+0.04*d?'dead':'detour';
     const o={kind};
     if(kind==='climb'){o.len=Math.round((0.5+r()*0.9)*10)/10;const w=r();o.out=w<0.58?'short':w<0.84?'summit':'dead';o.gainF=1.7+r()*0.9}
-    else{const len=(kind==='town'?1.6+r()*3.2:kind==='dead'?0.6+r()*2.2:1.4+r()*2.8)*dm;o.len=Math.round(len*10)/10;o.gain=kind==='detour'?Math.round(len*(0.2+0.35*r())*10)/10:0}
+    else{const len=Math.min(5.2,(kind==='town'?1.8+r()*3.4:kind==='dead'?0.8+r()*3.6:1.6+r()*3.6)*dm);o.len=Math.round(len*10)/10;o.gain=kind==='detour'?Math.round(len*(0.2+0.35*r())*10)/10:0}
     if(kind==='town'){const T=TOWNS[hk.id];o.name=T?T[Math.floor(r()*T.length)][0]:'ein kleiner Ort'}
     o.col=(kind==='detour'||kind==='town')&&r()<0.75?others[Math.floor(r()*others.length)][0]:null;
     br[k]=o;
@@ -921,15 +921,34 @@ function chooseBranch(f,k){
   const F=forkOf(f);H.fork=null;f.decided=true;H.stopReason=null;
   if(k===F.main){H.dir=1;H.walking=true;xpAdd('nav',4);toast('🥾 Du gehst '+DIRN[k]+' weiter.');return}
   const b=F.br[k],x0=H.x;let len=b.len*PPK,kind=b.kind,out=b.out;
-  const lk=(H.route.lakes||[]).find(L=>L.xr>x0&&L.xl<x0+len+160);
-  if(lk){len=Math.max(0.35*PPK,lk.xl-x0-180);if(kind!=='dead'){kind='dead';out=null}}
-  if(x0+len>H.route.totalPx-300){len=Math.max(0.3*PPK,H.route.totalPx-300-x0);if(kind!=='dead'){kind='dead';out=null}}
   const nav=navInfo();
-  let ra=nav.live?(0.2+rnd(0,0.3))*PPK:nav.src==='map'?(0.5+(1-nav.q)*1.2+rnd(0,0.5))*PPK:(1.0+rnd(0,1.4))*PPK*clamp(1.1-0.04*ES('nav'),0.7,1.1);
-  ra=clamp(ra,0.15*PPK,len*0.9);
+  let ra=nav.live?(0.2+rnd(0,0.3))*PPK:nav.src==='map'?(0.35+(1-nav.q)*0.7+rnd(0,0.3))*PPK:(0.5+rnd(0,0.7))*PPK*clamp(1.1-0.04*ES('nav'),0.7,1.1);
+  ra=clamp(ra,0.15*PPK,len*0.6);
   H.side={f,d:k,ct:tm,kind,out,len,x0,pos:0,gain:b.gain||0,gainF:b.gainF||1,realized:kind==='climb',realizeAt:ra,col:b.col,town:b.name,crux:false,liftM:kind==='climb'?Math.round(len*0.6):0};
+  try{buildBranchRoute(H.side,f,k,b)}catch(e){console.warn('branch',e);H.side.R=null;H.side.feats=[]}
   H.dir=1;H.walking=true;
   if(kind==='climb')toast('🧗 Der Pfad wird steil – du musst dich teils mit den Armen hochziehen. Das kostet viel Kraft.');
+}
+function buildBranchRoute(S,f,k,b){
+  const hk=H.hk,x0=S.x0,len=S.len,m0=mainElevAt(x0),bm=stageAt(x0).b;
+  const r=mulberry32(((f.id+3)*104729+k.charCodeAt(0)*131+(H.route.totalPx|0))>>>0);
+  const b2=bm;
+  const km=len/PPK,tk=km+2.2;
+  let endAlt;
+  if(S.kind==='detour')endAlt=mainElevAt(Math.min(H.route.totalPx-200,f.x+S.gain*PPK));
+  else if(S.kind==='town')endAlt=m0-(25+r()*90);
+  else endAlt=m0+(r()-0.4)*70;
+  const hb=Object.assign({},hk,{id:'branch',stages:[{b:bm,km:tk*0.45,alt:(m0+endAlt)/2},{b:b2,km:tk*0.55,alt:endAlt}],startAlt:m0,km:tk,sights:[],villageEvery:0,lodgeKind:'none'});
+  const B=buildRoute(hb,(((f.id+5)*7727+(k==='L'?1:k==='R'?2:3)*911+(H.route.totalPx|0))&0xfffffff)+13);
+  const i=Math.min(B.elev.length-2,Math.floor(len/10));
+  S.R=B;S.off=m0-B.elev[0];S.corr=endAlt-(B.elev[i]+S.off);
+  const fs=[];
+  for(const q of B.feats){
+    if(q.type==='junction'||q.type==='see'||q.type==='lodge'||q.type==='special'||q.x>len-120||q.x<150)continue;
+    if(q.type==='sight'&&(q.summit||r()<0.5))continue;
+    fs.push(Object.assign({},q,{x:q.x+x0,id:100000+(f.id+1)*1000+q.id,bridge:q.type==='fluss'?true:q.bridge,side:1}));
+  }
+  fs.sort((a,b)=>a.x-b.x);S.feats=fs;
 }
 function atSummit(){
   if(!H||H.side||H.fork)return false;
@@ -1000,9 +1019,10 @@ function walkStep(dpx){
 }
 function sideStep(dpx){
   const S=H.side,dir=H.dir||1,km=dpx/PPK;
-  S.pos+=dir*dpx;
+  const px0=H.x;S.pos+=dir*dpx;
   if(dir>0&&S.pos>S.len)S.pos=S.len;
   H.x=S.x0+S.pos;
+  if(S.R&&S.pos>0){if(dir>0)checkFeatures(px0,H.x);else checkFeatures(H.x,px0)}
   if(S.kind==='climb'){const u=(S.pos/S.len),steep=u>0.12&&u<0.9;if(steep){const lf=clamp(loadKg()/capacityKg()-0.4,0,1);H.body.energy=Math.max(0,H.body.energy-km*(dir>0?1:0.45)*(16-0.7*ES('aus')+8*lf)*((H.body.wet>40||env.precip)?1.2:1));xpAdd('aus',km*5);xpAdd('trag',km*2.5)}}
   if(S.pos<=0){
     killSideIcons();H.side=null;H.x=S.x0;H.km=H.x/PPK;H.dir=1;
@@ -1069,7 +1089,7 @@ function drawFork(g,tm,f,sx,y){
   const F=forkOf(f);
   const rib=(dx,dy,w0,col)=>{g.fillStyle=tc(col);g.beginPath();g.moveTo(sx-w0,y+2);g.quadraticCurveTo(sx+dx*0.3,y-dy*0.2,sx+dx,y-dy);g.lineTo(sx+dx+3,y-dy);g.quadraticCurveTo(sx+dx*0.3+w0*1.2,y-dy*0.2+3,sx+w0,y+2);g.closePath();g.fill()};
   if(F.sign!=='missing'){
-    const stake=(px,col,al)=>{g.globalAlpha=al;g.fillStyle=tc('#6d4726');g.fillRect(px-1.5,y-20,3,20);g.fillStyle=tc(col);g.fillRect(px-1.5,y-20,3,8);g.globalAlpha=1};
+    const stake=(px,col,al)=>{g.globalAlpha=al;g.fillStyle=tc('#6d4726');g.fillRect(px-2.5,y-34,5,34);g.fillStyle=tc('#f4f1e8');g.fillRect(px-5,y-36,10,16);g.fillStyle=tc(col);g.fillRect(px-4,y-35,8,14);g.globalAlpha=1};
     const pos={L:-60,S:70,R:60};
     F.dirs.forEach(k=>{const b=F.br[k];if(k===F.main)stake(sx+pos[k],H.markCol[0],F.sign==='bent'?0.4:1);else if(b.col)stake(sx+pos[k],b.col,0.9)});
   }
@@ -1080,18 +1100,18 @@ function drawFork(g,tm,f,sx,y){
   }else{
     const bent=F.sign==='bent';
     g.rotate(bent?F.lean:0);
-    g.fillStyle=tc('#6d4726');g.fillRect(-2,-52,4,52);
+    g.fillStyle=tc('#6d4726');g.fillRect(-3,-66,6,66);
     F.dirs.forEach((k,j)=>{
-      const isM=bent?(k===F.signDir):(k===F.main),col=isM?H.markCol[0]:(F.br[k].col||'#9aa0a6'),w=34,h=10;
-      g.save();g.translate(0,-48+j*14);if(bent)g.rotate(F.bent[j]);
+      const isM=bent?(k===F.signDir):(k===F.main),col=isM?H.markCol[0]:(F.br[k].col||'#9aa0a6'),w=48,h=15;
+      g.save();g.translate(0,-63+j*19);if(bent)g.rotate(F.bent[j]);
       g.fillStyle=tc('#d9b26f');g.beginPath();
       if(k==='L'){g.moveTo(0,0);g.lineTo(-w+6,0);g.lineTo(-w,h/2);g.lineTo(-w+6,h);g.lineTo(0,h)}
       else if(k==='R'){g.moveTo(0,0);g.lineTo(w-6,0);g.lineTo(w,h/2);g.lineTo(w-6,h);g.lineTo(0,h)}
       else{g.moveTo(-16,h);g.lineTo(-16,3);g.lineTo(0,-3);g.lineTo(16,3);g.lineTo(16,h)}
       g.closePath();g.fill();
-      const cx=k==='L'?-w+9:k==='R'?4:-4;
-      g.globalAlpha=bent&&isM?0.55:1;g.fillStyle=tc(col);g.fillRect(cx,2,12,h-4);g.globalAlpha=1;
-      if(F.br[k].kind==='climb'){const bx=k==='L'?-w+23:k==='R'?19:8;g.fillStyle='#c0392b';g.beginPath();g.moveTo(bx,h-2);g.lineTo(bx+3,2);g.lineTo(bx+6,h-2);g.closePath();g.fill()}
+      const cx=k==='L'?-w+11:k==='R'?6:-7;
+      g.globalAlpha=bent&&isM?0.55:1;g.fillStyle=tc('#f4f1e8');g.fillRect(cx-1.5,1,19,h-2);g.fillStyle=tc(col);g.fillRect(cx,2.5,16,h-5);g.globalAlpha=1;
+      if(F.br[k].kind==='climb'){const bx=k==='L'?-w+31:k==='R'?25:10;g.fillStyle='#c0392b';g.beginPath();g.moveTo(bx,h-2);g.lineTo(bx+3,2);g.lineTo(bx+6,h-2);g.closePath();g.fill()}
       g.restore();
     });
   }
@@ -1177,16 +1197,20 @@ function drawForksTop(g,tm){
   for(const f of featsIn(camX-2600,camX+CW+300))if(f.type==='junction'){drawForkPaths(g,tm,f);const fx=f.x-camX;if(fx>-300&&fx<CW+300)drawFork(g,tm,f,fx,groundY(f.x))}
 }
 function featsIn(a,b){ // sortiert nach x; Features im Bereich (a,b]
-  if(H.side)return [];
+  if(H.side){const SF=H.side.feats;return SF?SF.filter(f=>f.x>a&&f.x<=b):[]}
   const F=H.route.feats;let lo=0,hi=F.length;
   while(lo<hi){const m=(lo+hi)>>1;if(F[m].x<=a)lo=m+1;else hi=m}
   const out=[];for(let i=lo;i<F.length&&F[i].x<=b;i++)out.push(F[i]);return out;
 }
-function inLake(x){const L=H.route.lakes;if(!L)return false;for(const l of L)if(x>l.xl-30&&x<l.xr+30)return true;return false}
+function inLake(x){const L=H.side?null:H.route.lakes;if(!L)return false;for(const l of L)if(x>l.xl-30&&x<l.xr+30)return true;return false}
 function featNear(type,x,r){for(const f of featsIn(x-r,x+r)){if(f.type===type)return f}return null}
-function elevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)+climbLift(x)}
+function mainElevAt(x){const r=H.route.elev;const f=clamp(x,0,(r.length-2)*10)/10;const i=Math.floor(f);return lerp(r[i],r[i+1],f-i)}
+function elevAt(x){
+  const S=H.side;
+  if(S&&S.R&&x>S.x0){const lx=x-S.x0,r=S.R.elev,f=clamp(lx,0,(r.length-2)*10)/10,i=Math.floor(f),u=clamp(lx/S.len,0,1);return lerp(r[i],r[i+1],f-i)+S.off+S.corr*u*u*(3-2*u)+climbLift(x)}
+  return mainElevAt(x)+climbLift(x)}
 function gradeAt(x){return (elevAt(x+10)-elevAt(x-10))/(20*1000/PPK)}
-function stageAt(x){const S=H.route.stages;return S[stageIndexAt(S,x)]}
+function stageAt(x){const SD=H.side;if(SD&&SD.R&&x>SD.x0){const S=SD.R.stages;return S[stageIndexAt(S,x-SD.x0)]}const S=H.route.stages;return S[stageIndexAt(S,x)]}
 function netAt(x){
   if(featNear('village',x,900))return true;
   return hash(Math.floor(x/300)+77)<BIOMES[stageAt(x).b].net;
@@ -1745,7 +1769,7 @@ case 'live':startLiveDialog();break;
       const f=featNear('village',H.x,330);if(!f){toast('Hier ist kein Laden in der Nähe.');return}
       openVillageShop(f);break}
     case 'forage':{
-      const f=H.route.feats.find(f=>f.type==='forage'&&!f.done&&Math.abs(f.x-H.x)<190*forageMul()&&FORAGE[f.f].months.includes(env.month));
+      const f=(H.side?(H.side.feats||[]):H.route.feats).find(f=>f.type==='forage'&&!f.done&&Math.abs(f.x-H.x)<190*forageMul()&&FORAGE[f.f].months.includes(env.month));
       if(!f){toast('Hier gibt es gerade nichts zu sammeln.');return}
       doForage(f);break}
     case 'fish':startFishDialog();break;
@@ -3341,7 +3365,7 @@ function pick2(r,a){return a[Math.floor(r()*a.length)]}
 function drawFeatures(g,tm){
   drawLakes(g,tm);
   drawTrailMarks(g,tm);if(H.side)drawSideStuff(g,tm);
-const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finish',x:H.route.totalPx}]);
+const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finish',x:H.side?1e9:H.route.totalPx}]);
   for(const f of gs){
     const sx=f.x-camX;if(sx<-340||sx>CW+340)continue;const y=groundY(f.x);
     if(f.type==='quelle'){
@@ -3568,7 +3592,7 @@ function heroY(x){
   return Math.min(groundY(x),ys)+(c.kind==='boat'?10:c.kind==='swim'?14:2);
 }
 function drawLakes(g,tm){
-  const R=H.route.lakes;if(!R)return;
+  const R=H.side?null:H.route.lakes;if(!R)return;
   for(const L of R){
     if(L.xr<camX-40||L.xl>camX+CW+40)continue;
     const x0=Math.max(L.xl,Math.floor(camX/10)*10-10),x1=Math.min(L.xr,camX+CW+20);
@@ -3887,6 +3911,7 @@ drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSourc
 g.restore();
   }
 
+  if(!inTent&&!H.sleep.active&&!(H.action&&H.action.kind!=='live'))drawThought(g,sx,heroY(H.x)+sideOff(H.x)-74);
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
   if((H.action&&H.action.kind!=='live')||H.sleep.active){
     const A=H.action,em={climb:'🧗',tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',wood:'🪵',feed:'🪵',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
@@ -3918,7 +3943,7 @@ function drawProfile(cv){
   if(cv.width!==w*2||cv.height!==h*2){cv.width=w*2;cv.height=h*2}
   const g=cv.getContext('2d');g.setTransform(2,0,0,2,0,0);g.clearRect(0,0,w,h);
   const R=H.route,N=Math.min(160,Math.floor(w/2));let lo=1e9,hi=-1e9;const ys=[];
-  for(let i=0;i<=N;i++){const e=elevAt(R.totalPx*i/N);ys.push(e);lo=Math.min(lo,e);hi=Math.max(hi,e)}
+  for(let i=0;i<=N;i++){const e=mainElevAt(R.totalPx*i/N);ys.push(e);lo=Math.min(lo,e);hi=Math.max(hi,e)}
   const span=Math.max(60,hi-lo);
   g.beginPath();g.moveTo(0,h);ys.forEach((e,i)=>g.lineTo(i/N*w,h-3-(e-lo)/span*(h-8)));g.lineTo(w,h);g.closePath();g.fillStyle='rgba(76,195,138,0.35)';g.fill();
   g.strokeStyle='#4cc38a';g.lineWidth=1.2;g.beginPath();ys.forEach((e,i)=>i?g.lineTo(i/N*w,h-3-(e-lo)/span*(h-8)):g.moveTo(0,h-3-(e-lo)/span*(h-8)));g.stroke();
@@ -4673,6 +4698,79 @@ function updateLivePanel(){
 }
 
 /* ---------- Hauptschleife ---------- */
+/* ===== Gedankenblasen über dem Charakter ===== */
+const TH={cur:null,next:0,chk:0,k:{}};
+function thoughtList(){
+  const B=H.body,L=[],P=(key,pri,txts,say,when)=>{if(when)L.push({key,pri,txts,say})};
+  const ahead=(t,r)=>featsIn(H.x,H.x+r).find(f=>f.type===t);
+  const S=H.side;
+  P('hunger2',3,['Oh Mann, ich kipp gleich um vor Hunger.','Ich brauch SOFORT was zu essen!','Mir wird schwarz vor Augen … Essen!'],1,B.sat<10);
+  P('hunger',2,['Mein Magen knurrt lauter als der Wald.','Zeit für einen Snack.','Ich könnt einen Bären verdrücken.'],0,B.sat<24&&B.sat>=10);
+  P('durst2',3,['Ich verdurste hier noch, so ein Rotz!','Wasser … irgendwo muss doch welches sein!'],1,B.hyd<10);
+  P('durst',2,['Meine Zunge klebt am Gaumen.','Ich sollte bald Wasser auffüllen.','Hmm, die Flasche wird leer.'],0,B.hyd<24&&B.hyd>=10);
+  P('quelle',1,['Eine Quelle müsste bald kommen – gleich auffüllen.'],0,B.hyd<45&&!!ahead('quelle',PPK*2.5));
+  P('energie2',3,['Ich kann nicht mehr … wär ich doch zuhaus geblieben.','Meine Beine sind Pudding. Pause. Jetzt.'],1,B.energy<9);
+  P('energie',2,['Puh, die Beine werden schwer.','Ich bräuchte mal eine Rast.','Mein Rucksack wiegt mindestens 40 Kilo.'],0,B.energy<22&&B.energy>=9);
+  P('kalt2',3,['Oh shit, mir ist richtig kalt – Feuer, schnell!','Ich spür meine Finger nicht mehr.'],1,B.warm<15);
+  P('kalt',2,['Brrr, ist das kalt.','Ich sollte mir was Wärmeres anziehen.'],0,B.warm<32&&B.warm>=15);
+  P('nass',2,['Nass bis auf die Knochen. So ein Mist.','Dauerregen … na super.','Ich quietsche bei jedem Schritt.'],1,B.wet>70&&env.precip>0);
+  P('heiss',1,['Die Sonne brät mich.','Wasser, Schatten, irgendwas!'],0,env.temp>29);
+  P('blase',2,['Aua, meine Ferse brennt – Blase?','Ein Pflaster wäre jetzt gut.'],0,H.inj.blister>0);
+  P('knoechel',2,['Mein Knöchel macht Ärger.','Auweia, das zwickt gewaltig.'],0,H.inj.sprain>H.t);
+  P('krank',2,['Mir ist hundeelend.','Ich glaub, ich hab mir was eingefangen.'],0,H.sick>H.t||H.sick===true);
+  P('hp',3,['Oh shit, das sieht gar nicht gut aus.','Ich sollte das hier nicht unterschätzen …'],1,B.hp<30);
+  P('verirrt',3,['Hier bin ich wohl falsch.','Wo zum Teufel bin ich eigentlich?','Karte raus – und zwar schnell.'],1,H.lost.on);
+  P('seite1',1,['Hm, ich hab lange keine Markierung mehr gesehen …','War da nicht eben noch ein Wegzeichen?'],0,!!S&&!S.realized&&S.pos>PPK*0.45);
+  P('seite2',2,['So ein Rotz auch – falsch abgebogen!','Das war wohl der falsche Weg.'],1,!!S&&S.realized&&S.kind!=='town');
+  P('wegweiser',2,['Kein Wegweiser … na toll.','Und welchen Weg jetzt? Karte oder Bauchgefühl?'],1,!!H.fork&&H.fork.fork&&H.fork.fork.sign==='missing');
+  P('schief',1,['Der Wegweiser ist ja total schief. Kann man dem trauen?'],0,!!H.fork&&H.fork.fork&&H.fork.fork.sign==='bent');
+  P('unmark',1,['Keine Markierung mehr – besser mal auf die Karte schauen.'],0,H.inUnm&&!S);
+  P('nacht',1,['Es wird verdammt dunkel. Stirnlampe an?','Im Dunkeln laufen ist nicht mein Ding.'],0,env.dark>0.65&&!H.camp.pitched);
+  P('nebel',1,['Nebel … ich seh kaum die eigene Hand.'],0,env.fog>0.4);
+  P('steil',1,['Puh, wann hört dieser Anstieg endlich auf?','Wer hat sich diesen Berg ausgedacht?'],0,env.grade>0.12);
+  P('bergab',1,['Bergab geht’s leicht, aber meine Knie schreien.'],0,env.grade<-0.13);
+  P('dorf',1,['Da vorne ist ein Ort – Vorräte auffüllen?','Ein Dorf! Vielleicht gibt’s dort Kaffee.'],0,!S&&!!ahead('village',700));
+  P('huette',1,['Eine Hütte! Vielleicht gibt’s was Warmes.'],0,!S&&!!ahead('lodge',700));
+  P('see',1,['Ein See. Mal sehen, wie ich da rüberkomme.'],0,!S&&!!ahead('see',900));
+  P('sight',1,['Da vorne gibt’s was zu sehen – Kamera bereit?'],0,!!ahead('sight',600));
+  P('tier',1,['Pst … da raschelt was im Gebüsch.','Ob das ein Tier ist? Kamera!'],0,!!ahead('animal',500));
+  P('wanderer',0.5,['Da kommt jemand entgegen.'],0,!!ahead('hiker',450));
+  P('hund',0.5,['Brav, mein Guter.','Ohne meinen Hund wäre ich hier aufgeschmissen.'],0,!!(G.dog&&H.dog&&!H.dog.away));
+  const fit=B.energy>70&&B.sat>55&&B.hyd>55&&B.warm>55&&B.hp>80;
+  P('gut',0.5,['Läuft bei mir!','Herrlich, so lässt sich’s wandern.','Heute ist ein guter Tag.','Das Leben ist schön, verdammt nochmal.','Geil, ich fühl mich wie neugeboren.'],0,fit&&!env.precip);
+  P('regenok',0.5,['Regen … hat auch was Stimmungsvolles.'],0,fit&&env.precip>0);
+  return L;
+}
+function thoughtTick(dt){
+  if(!H||H.ended||MODAL||H.sleep.active||(H.action&&H.action.kind!=='live')||H.speed>2)return;
+  if(TH.cur){if(tm-TH.cur.t0>TH.cur.dur){TH.cur=null;TH.next=tm+14+Math.random()*26}return}
+  TH.chk-=dt;if(TH.chk>0)return;TH.chk=1.5;
+  if(tm<TH.next)return;
+  const L=thoughtList().filter(c=>!(TH.k[c.key]>tm));
+  if(!L.length)return;
+  const top=Math.max(...L.map(c=>c.pri)),pool=L.filter(c=>c.pri===top);
+  if(top<3&&Math.random()>(top>=2?0.5:0.3))return;
+  const c=pool[Math.floor(Math.random()*pool.length)],txt=c.txts[Math.floor(Math.random()*c.txts.length)];
+  TH.cur={txt,say:c.say,t0:tm,dur:3.8+txt.length*0.045};
+  TH.k[c.key]=tm+(c.pri>=3?70:c.pri>=2?110:170);
+}
+function drawThought(g,sx,y){
+  const T=TH.cur;if(!T)return;
+  const a=tm-T.t0;if(a>T.dur){return}
+  const al=Math.min(1,a/0.25,(T.dur-a)/0.5),pop=0.88+0.12*Math.min(1,a/0.25);
+  g.save();g.globalAlpha=al;g.font='600 13px system-ui,"Segoe UI",sans-serif';g.textAlign='left';g.textBaseline='middle';
+  const words=T.txt.split(' '),lines=[];let cur='';
+  for(const w of words){const t=cur?cur+' '+w:w;if(g.measureText(t).width>158&&cur){lines.push(cur);cur=w}else cur=t}lines.push(cur);
+  const wd=Math.max(...lines.map(l=>g.measureText(l).width))+20,hh=lines.length*16+12,r=10;
+  const rt=sx+wd+34<CW,bx=rt?sx+30:sx-30-wd,by=y-hh/2-12,dr=rt?1:-1,ex=bx+(rt?0:wd);
+  g.translate(sx,y);g.scale(pop,pop);g.translate(-sx,-y);
+  g.fillStyle='rgba(255,255,255,0.96)';g.strokeStyle='rgba(30,40,35,0.35)';g.lineWidth=1.5;
+  g.beginPath();g.moveTo(bx+r,by);g.arcTo(bx+wd,by,bx+wd,by+hh,r);g.arcTo(bx+wd,by+hh,bx,by+hh,r);g.arcTo(bx,by+hh,bx,by,r);g.arcTo(bx,by,bx+wd,by,r);g.closePath();g.fill();g.stroke();
+  if(T.say){g.beginPath();g.moveTo(ex,by+hh-14);g.lineTo(sx+dr*11,y+2);g.lineTo(ex,by+hh-4);g.closePath();g.fill();g.stroke();g.fillRect(ex-dr*2-(rt?0:2),by+hh-13,4,9)}
+  else{g.beginPath();g.arc(ex-dr*4,by+hh+3,3.8,0,7);g.fill();g.stroke();g.beginPath();g.arc(sx+dr*15,y+4,2.4,0,7);g.fill();g.stroke();g.beginPath();g.arc((ex+sx+dr*15)/2-dr*2,by+hh+9,3,0,7);g.fill();g.stroke()}
+  g.fillStyle='#1c2a22';lines.forEach((l,i)=>g.fillText(l,bx+10,by+12+i*16));
+  g.restore();
+}
 function frame(ts){
   requestAnimationFrame(frame);
   const dt=Math.min(0.1,(ts-lastTs)/1000||0.016);lastTs=ts;
@@ -4689,6 +4787,7 @@ function frame(ts){
     if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n;if(Math.abs(H.vdx)>40)H.vdx=0}
     if(accum>2)accum=0;
     updateIcons(dt*Math.min(SPEEDS[H.speed],4));
+    thoughtTick(dt);
     if(H.speed>0&&!H.sleep.active)ambientUpdate(dt);
   }
   if(!H)return;
