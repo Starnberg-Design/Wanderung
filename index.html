@@ -218,6 +218,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 .fr h4{margin:12px 0 6px}.fr-code{display:flex;gap:8px;align-items:center}.fr-code span{font:700 1.7rem/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;background:#ffffff12;padding:8px 14px;border-radius:10px}.fr-add{display:flex;gap:8px}.fr-add input{flex:1;text-transform:uppercase;letter-spacing:.12em;font-size:1rem}.fr-err{color:#ffb4a8}.fr-ok{color:#9be7b2}.fr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff14}.fr-av{width:42px;height:42px;flex:none;border-radius:50%;overflow:hidden;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:1.3rem}.fr-av img{width:100%;height:100%;object-fit:cover;display:block}.fr-av.big{width:64px;height:64px;margin-top:-34px;border:3px solid #1b2b22;background:#1b2b22}.fr-nm{flex:1;min-width:0}.fr-nm b,.fr-head b{display:block}.fr-nm small,.fr-head small{opacity:.75}.fr-ban{height:120px;border-radius:10px}.fr-head{display:flex;gap:12px;align-items:flex-start;padding:0 8px 8px}.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.fr-v{position:relative;font-size:.85rem}.fr-v canvas{width:100%;border-radius:8px;display:block}.fr-v b{display:block;margin-top:4px;line-height:1.2}.fr-v small{opacity:.75}.fr-v i{position:absolute;left:0;top:0;background:#a82f22dd;color:#fff;font:700 10px/16px sans-serif;padding:0 6px;border-radius:8px 0 8px 0;font-style:normal}
 #coop{position:absolute;left:10px;top:104px;z-index:20;max-width:230px;background:rgba(10,24,16,.78);border:1px solid #ffffff22;border-radius:12px;padding:8px 10px;font-size:.78rem;line-height:1.35;color:#fff;backdrop-filter:blur(4px)}#coop .coop-h{opacity:.8;margin-bottom:2px}#coop button{margin-top:6px;width:100%;font-size:.78rem;padding:6px 8px;min-height:32px}#coop button.on{background:#1f5a34;border-color:#2f8a52}
 #dock{align-items:flex-end}#spdctl{height:54px;box-sizing:border-box;padding:0 3px}#spdctl button{height:100%}
+#sosb{position:absolute;right:10px;top:58px;z-index:6;width:40px;height:40px;border-radius:50%;border:1px solid #ffffff66;background:rgba(160,24,24,.85);color:#fff;font-size:17px;padding:0;pointer-events:auto}#coop .coop-ex{margin-top:6px}#coop .coop-ex button{width:100%}
 </style>
 </head>
 <body>
@@ -4099,6 +4100,7 @@ row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),tru
 }
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
+  if(typeof COOP!=='undefined'&&COOP&&COOP.wait)return 'sit';
   if(H.sleep.active)return 'sleep';
   if(H.crossing&&H.crossing.kind==='swim')return 'swim';
 if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'))return 'walk';
@@ -4217,6 +4219,7 @@ function drawScene(g,tm,dt){
 drawForksTop(g,tm);drawStartFlag(g,tm);
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
+  try{coopBench(g)}catch(e){}
   drawPackDown(g,tm);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
@@ -4606,7 +4609,7 @@ function friendChannel(f){
     }});
 }
 /* ---------- Gemeinsame Tour (Firebase) ---------- */
-let COOP=null;
+let COOP=null;let HIKE_SNAP=null;
 async function coopHost(hikeId){
   const db=await fbLoad();let code='',ok=false;
   for(let i=0;i<6&&!ok;i++){
@@ -4648,13 +4651,14 @@ async function coopJoinFlow(code){
 function coopBegin(){
   if(!COOP||!H||!H.hk)return;
   if(COOP.hike!==H.hk.id){COOP=null;return}
-  COOP.live=true;COOP.ok=false;COOP.unlocked=false;COOP.peers={};COOP.vis={};COOP.t0=0;
+  COOP.live=true;COOP.ok=false;COOP.unlocked=false;COOP.peers={};COOP.vis={};COOP.t0=0;COOP.wait=true;COOP.rd=false;COOP.seen={};COOP.q=[];COOP.sq=0;COOP.borrowed={};H.walking=false;
   fbLoad().then(db=>{
     if(!COOP||!COOP.live)return;
     const me=db.ref('rooms/'+COOP.room+'/players/'+FB_UID);
     COOP.me=me;me.onDisconnect().remove();
     COOP.pref=db.ref('rooms/'+COOP.room+'/players');
     COOP.pcb=COOP.pref.on('value',s=>{const v=s.val()||{};delete v[FB_UID];COOP.peers=v;coopCheck()});
+    COOP.gref=db.ref('rooms/'+COOP.room+'/go');COOP.gme=db.ref('rooms/'+COOP.room+'/go/'+FB_UID);COOP.gme.onDisconnect().remove();COOP.gcb=COOP.gref.on('value',s=>{try{coopRecv(s.val()||{})}catch(e){console.error(e)}});
     coopPush();COOP.timer=setInterval(()=>{if(!H||H.ended||!COOP||!COOP.live){coopStop();return}coopPush()},1500);
   }).catch(e=>{toast('👥 Verbindung zum Freund nicht möglich: '+((e&&e.message)||e),'bad')});
   coopChip();
@@ -4663,13 +4667,14 @@ function coopPush(){
   if(!COOP||!COOP.me||!H)return;
   const look={};for(const k in G.look)look[k]=+G.look[k]||0;
   let pk='#c0392b';try{pk=packCol(H.g.pack)||pk}catch(e){}
-  COOP.me.set({n:String(G.name||'Wanderer').slice(0,30),x:Math.round(H.x),km:+(H.km||0).toFixed(2),mv:(H.walking&&!H.action&&!H.sleep.active)?1:0,look,pk:String(pk).slice(0,16),t:firebase.database.ServerValue.TIMESTAMP,sk:COOP.ok?1:0}).catch(()=>{});
+  COOP.me.set({n:String(G.name||'Wanderer').slice(0,30),x:Math.round(H.x),km:+(H.km||0).toFixed(2),mv:(H.walking&&!H.action&&!H.sleep.active)?1:0,look,pk:String(pk).slice(0,16),t:firebase.database.ServerValue.TIMESTAMP,sk:COOP.ok?1:0,rd:COOP.rd?1:0,w:COOP.wait?1:0,act:coopAct(),tent:H.camp.pitched?1:0,tx:Math.round(H.camp.x||0),fire:(H.fire&&H.fire.lit)?1:0,tl:coopTools()}).catch(()=>{});
   coopChip();
 }
 function coopCheck(){
   if(!COOP)return;
   const now=Date.now(),live=Object.values(COOP.peers).filter(p=>p&&now-(p.t||0)<60000);
   const all=live.length>0&&COOP.ok&&live.every(p=>p.sk);
+  if(COOP.wait&&live.length>0&&COOP.rd&&live.every(p=>p.rd)){COOP.wait=false;H.walking=false;toast('🥾 Alle sind da – es geht los!','good')}
   if(all&&!COOP.unlocked){COOP.unlocked=true;toast('⏩ Zeitraffer freigegeben – alle sind einverstanden.','good')}
   if(!all&&COOP.unlocked){COOP.unlocked=false;if(H&&H.speed>1)H.speed=1;toast('⏸ Zeitraffer wieder gesperrt.')}
   coopChip();
@@ -4678,7 +4683,7 @@ function coopStep(h){
   if(!COOP||!COOP.live)return;
   if(!COOP.unlocked&&H.speed>1){H.speed=1;const t=Date.now();if(t-(COOP.tw||0)>6000){COOP.tw=t;toast('👥 Zeitraffer nur, wenn alle Mitwanderer zustimmen (Knopf oben links).')}}
 }
-function coopChip(){
+function coopChip0(){
   const st=document.getElementById('s-hike');if(!st)return;
   let el=document.getElementById('coop');
   if(!COOP||!COOP.live){if(el)el.remove();return}
@@ -4693,7 +4698,86 @@ function coopStop(){
   try{if(COOP.timer)clearInterval(COOP.timer)}catch(e){}
   try{if(COOP.pref&&COOP.pcb)COOP.pref.off('value',COOP.pcb)}catch(e){}
   try{if(COOP.me){COOP.me.remove();COOP.me.onDisconnect().cancel()}}catch(e){}
+  try{if(COOP.gref&&COOP.gcb)COOP.gref.off('value',COOP.gcb)}catch(e){}
+  try{if(COOP.gme){COOP.gme.remove();COOP.gme.onDisconnect().cancel()}}catch(e){}
   COOP=null;const el=document.getElementById('coop');if(el)el.remove();
+}
+
+function coopAct(){try{if(H.sleep&&H.sleep.active)return 'sleep';if(H.action&&H.action.label)return String(H.action.label).replace(/[^\p{L}\p{N} .…!+-]/gu,'').slice(0,24)}catch(e){}return ''}
+function coopTools(){try{return Object.keys(H.g.tools).filter(k=>H.g.tools[k]).join(',').slice(0,200)}catch(e){return ''}}
+function coopBench(g){
+  if(!COOP||!COOP.live||!COOP.wait)return;
+  const n=Object.values(COOP.peers).filter(p=>p&&p.w).length,x0=H.x-camX-32,w=64*(n+1)+22,gy=groundY(H.x);
+  g.save();g.fillStyle='#6b4423';g.fillRect(x0,gy-22,w,7);g.fillRect(x0,gy-46,w,5);g.fillRect(x0+4,gy-46,5,26);g.fillRect(x0+w-9,gy-46,5,26);
+  g.fillStyle='#4e3119';g.fillRect(x0+8,gy-15,5,15);g.fillRect(x0+w-13,gy-15,5,15);g.restore();
+}
+function quitHike(){
+  if(!H||H.ended)return;
+  showModal({title:'Tour abbrechen?',text:'Die Tour wird sofort beendet – ohne Kosten, ohne Wertung, ohne Video. Dein Spielstand wird auf den Stand vor der Tour zurückgesetzt.',buttons:[
+    {label:'🚪 Tour abbrechen',primary:true,fn:()=>{
+      try{coopStop()}catch(e){}
+      H.ended=true;H.live=null;
+      try{if(HIKE_SNAP){G=JSON.parse(HIKE_SNAP);HIKE_SNAP=null}}catch(e){}
+      try{save()}catch(e){}
+      MODAL=null;MODALQ=[];try{$('#modal').classList.remove('open')}catch(e){}
+      try{const dr=$('#drawer');if(dr)dr.classList.remove('open')}catch(e){}
+      renderHub();show('hub');toast('Tour abgebrochen – nichts wurde gewertet.');
+    }},{label:'Weiterwandern'}]});
+}
+function coopSend(m){
+  if(!COOP||!COOP.gme)return;
+  m.s=++COOP.sq;m.nm=String(G.name||'Wanderer').slice(0,30);COOP.q.push(m);COOP.q=COOP.q.slice(-25);
+  COOP.gme.set({q:COOP.q}).catch(()=>{});
+}
+function coopRecv(all){
+  if(!COOP||!H)return;
+  for(const u in all){
+    if(u===FB_UID)continue;const q=all[u]&&all[u].q;if(!q)continue;
+    const arr=(Array.isArray(q)?q:Object.values(q)).filter(Boolean).sort((a,b)=>a.s-b.s);
+    for(const m of arr){
+      if(m.to!==FB_UID||m.s<=(COOP.seen[u]||0))continue;COOP.seen[u]=m.s;
+      const nm=esc(m.nm||'Freund');
+      if(m.k==='food'){const f=FOODS.find(x=>x.id===m.i);if(f){H.food[m.i]=(H.food[m.i]||0)+(m.n||1);toast('🤝 '+nm+' gibt dir '+(m.n||1)+'× '+f.e+' '+f.name+'.','good')}}
+      else if(m.k==='tool'){
+        const gd=GEAR.find(x=>x.tool===m.i);if(!gd)continue;
+        if(H.g.tools[m.i]){coopSend({k:'ret',i:m.i,b:m.b,to:u});continue}
+        H.g.tools[m.i]=true;if(m.b!=null)H.dev[m.i]={batt:m.b,broken:false,def:gd};
+        COOP.borrowed[m.i]=u;toast('🤝 '+nm+' leiht dir: '+gd.e+' '+gd.name+' (nur für diese Tour).','good');
+      }else if(m.k==='ret'){
+        if(H.lent&&H.lent[m.i]){H.g.tools[m.i]=true;const d=H.lent[m.i].dev;if(d){if(m.b!=null)d.batt=m.b;H.dev[m.i]=d}delete H.lent[m.i];toast('🤝 '+nm+' gibt dir die Ausrüstung zurück.','good')}
+      }
+    }
+  }
+  try{updateHUD(true)}catch(e){}
+}
+function coopShare(){
+  if(!COOP||!COOP.live||!H)return;
+  const now=Date.now(),peers=Object.entries(COOP.peers).filter(([u,p])=>p&&now-(p.t||0)<60000);
+  if(!peers.length){toast('Kein Mitwanderer verbunden.');return}
+  if(!COOP.shareTo||!peers.find(([u])=>u===COOP.shareTo))COOP.shareTo=peers[0][0];
+  const to=COOP.shareTo,pp=COOP.peers[to],ptl=String(pp.tl||'').split(',');
+  const foods=FOODS.filter(f=>(H.food[f.id]||0)>0);
+  const tools=Object.keys(H.g.tools).filter(k=>H.g.tools[k]&&!ptl.includes(k)&&!(COOP.borrowed&&COOP.borrowed[k])&&GEAR.find(x=>x.tool===k));
+  const bor=Object.keys(COOP.borrowed||{}).filter(k=>H.g.tools[k]);
+  const row=(a,b)=>'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0"><span>'+a+'</span>'+b+'</div>';
+  const html=(peers.length>1?'<select id="cs-to" style="width:100%">'+peers.map(([u,p])=>'<option value="'+u+'"'+(u===to?' selected':'')+'>'+esc(p.n||'Freund')+'</option>').join('')+'</select>':'<p>Mit <b>'+esc(pp.n||'Freund')+'</b></p>')
+   +'<h4>🍽️ Proviant abgeben</h4>'+(foods.length?foods.map(f=>row(f.e+' '+esc(f.name)+' <small>('+H.food[f.id]+')</small>','<button data-f="'+f.id+'">1 geben</button>')).join(''):'<p class="hint">Du hast keinen Proviant übrig.</p>')
+   +'<h4>🎒 Ausrüstung leihen (nur für diese Tour)</h4>'+(tools.length?tools.map(k=>{const gd=GEAR.find(x=>x.tool===k);return row(gd.e+' '+esc(gd.name),'<button data-t="'+k+'">leihen</button>')}).join(''):'<p class="hint">Nichts zu verleihen.</p>')
+   +(bor.length?'<h4>↩️ Geliehenes zurückgeben</h4>'+bor.map(k=>{const gd=GEAR.find(x=>x.tool===k);return row(gd.e+' '+esc(gd.name),'<button data-r="'+k+'">zurückgeben</button>')}).join(''):'');
+  showModal({replace:true,title:'🤝 Teilen &amp; Leihen',html,buttons:[{label:'Schließen'}],onOpen:m=>{
+    const again=()=>setTimeout(coopShare,30);
+    const sel=m.querySelector('#cs-to');if(sel)sel.onchange=()=>{COOP.shareTo=sel.value;again()};
+    m.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const id=b.dataset.f;if(!(H.food[id]>0))return;H.food[id]--;coopSend({k:'food',i:id,n:1,to});toast('🤝 Abgegeben.');again()});
+    m.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const k=b.dataset.t;if(!H.g.tools[k])return;H.lent=H.lent||{};const d=H.dev[k]||null;H.lent[k]={dev:d};H.g.tools[k]=false;delete H.dev[k];coopSend({k:'tool',i:k,b:d?Math.round(d.batt):null,to});toast('🤝 Verliehen.');again()});
+    m.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const k=b.dataset.r,lender=COOP.borrowed[k];const d=H.dev[k];H.g.tools[k]=false;delete H.dev[k];delete COOP.borrowed[k];coopSend({k:'ret',i:k,b:d?Math.round(d.batt):null,to:lender});toast('🤝 Zurückgegeben.');again()});
+  }});
+}
+function coopChip(){
+  coopChip0();
+  const el=document.getElementById('coop');if(!el||!COOP||!COOP.live)return;
+  if(!el.__x){el.__x=1;el.addEventListener('click',e=>{const id=e.target&&e.target.id;if(!COOP)return;if(id==='coop-rd'){COOP.rd=!COOP.rd;coopPush();coopCheck()}else if(id==='coop-sh'){coopShare()}})}
+  const live=Object.values(COOP.peers).filter(p=>p&&Date.now()-(p.t||0)<60000).length;
+  el.insertAdjacentHTML('beforeend',COOP.wait?'<div class="coop-ex">🪑 Ihr sitzt auf der Bank und wartet ('+live+' da)<br><button id="coop-rd">'+(COOP.rd?'✔ Bereit – warte auf die anderen':'👍 Ich bin bereit')+'</button></div>':'<div class="coop-ex"><button id="coop-sh">🤝 Teilen / Leihen</button></div>');
 }
 function coopDraw(g,tm){
   if(!COOP||!COOP.live)return;
@@ -4704,9 +4788,12 @@ function coopDraw(g,tm){
     const dx=p.x-v.x;v.x+=dx*Math.min(1,dt*2.5);
     v.mode=Math.abs(dx)>1.5||p.mv&&Math.abs(dx)>0.3?'walk':'idle';
     v.ph+=(v.mode==='walk'?0.25:0)*dt*60*0.35;
-    const sx=v.x-camX;if(sx<-90||sx>CW+90)continue;
+    if(COOP.wait&&p.w){const ids=Object.keys(COOP.peers).sort();v.x=H.x+64*(ids.indexOf(u)+1);v.mode='sit'}else if(p.act==='sleep')v.mode='sleep';
+    const sx=v.x-camX;if(p.tent){const tsx=p.tx-camX;if(tsx>-90&&tsx<CW+90){emoji(g,'⛺',tsx,groundY(p.tx)+6,70);if(p.fire)emoji(g,'🔥',tsx+52,groundY(p.tx)+4,26)}}
+    if(sx<-90||sx>CW+90)continue;
     const gy=groundY(v.x);
     drawHiker(g,sx,gy,1.15,{look:p.look||G.look,phase:v.ph,mode:v.mode,packColor:p.pk||'#2e86c1',tm,poles:false});
+    if(p.act&&p.act!=='sleep'){g.save();g.font='12px system-ui,sans-serif';g.textAlign='center';g.fillStyle='rgba(10,20,15,0.65)';const aw=g.measureText(p.act).width+12;g.fillRect(sx-aw/2,gy-136,aw,18);g.fillStyle='#ffe9a8';g.fillText(String(p.act),sx,gy-123);g.restore()}else if(p.act==='sleep'){emoji(g,'💤',sx+16,gy-60,22)}
     g.save();g.font='600 13px system-ui,sans-serif';g.textAlign='center';
     const nm=String(p.n||'Freund'),w=g.measureText(nm).width+14;
     g.fillStyle='rgba(10,20,15,0.65)';g.fillRect(sx-w/2,gy-112,w,20);
@@ -5249,6 +5336,7 @@ function startOptsDialog(){
     }}]});
 }
 function startHikeUI2(id){
+  try{HIKE_SNAP=JSON.stringify(G)}catch(e){HIKE_SNAP=null}
   startHike(id);
   try{const se=env.season||'Sommer';LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,se),'svg'));LEAF_PRE[se]=1}catch(e){}
   try{lsPre(lsSeason(snowAmt()))}catch(e){}
@@ -5265,7 +5353,7 @@ function buildHikeDOM(){
    <div class="hud" id="h-tc"><div class="pill" id="tc"></div></div>
    <div class="hud" id="h-tr"><div class="pill" id="tr" style="pointer-events:auto"></div></div>
    <div class="hud" id="h-mid"><div class="pill" id="mid" style="display:none"></div></div>
-   <div id="toasts"></div>
+   <div id="toasts"></div><button id="sosb" title="Notruf / Abholung">🆘</button>
    <div class="hud" id="h-bot"><div class="prow"><canvas id="prof"></canvas><span id="ptxt"></span></div>
     <div id="dock">
      
@@ -5296,6 +5384,7 @@ function buildHikeDOM(){
   $('#rlab').addEventListener('pointerdown',e=>{const l=e.target.dataset&&e.target.dataset.l;if(l!==undefined&&l!==''){setRec(+l);sfx('click');updateHUD(true)}});
   $('#b-pack').onclick=()=>{sfx('click');openPack()};
   $('#b-map').onclick=()=>{sfx('click');openMap()};
+  {const sb=$('#sosb');if(sb)sb.onclick=()=>{sfx('click');actClick('rescue')}}
   $('#b-menu').onclick=()=>{buildDrawer();$('#drawer').classList.toggle('open');sfx('click')};
   buildDrawer();
 }
@@ -5319,13 +5408,14 @@ function buildDrawer(){
    <label class="chk"><input type="checkbox" id="o-mute" ${G.mute?'checked':''}> Ton aus</label>
    <div class="chk">Lautstärke <input type="range" id="o-vol" min="0" max="1" step="0.05" value="${G.vol}" style="flex:1"></div>
    <button id="o-fs" style="width:100%;margin-top:4px">📱 Vollbild / Querformat</button>
+   <button id="o-quit" style="width:100%;margin-top:6px;border-color:#c0392b">🚪 Tour abbrechen (ohne Wertung)</button>
    <button id="o-close" style="width:100%;margin-top:6px">Schließen</button>`;
   $$('[data-a]',d).forEach(b=>b.onclick=()=>{const k=b.dataset.a;if(k!=='rescue')d.classList.remove('open');actClick(k)});
   $('#o-auto').onchange=e=>H.auto=e.target.checked;$('#o-stop').onchange=e=>H.autoStop=e.target.checked;$('#o-night').onchange=e=>H.autoNight=e.target.checked;
   const od=$('#o-drone');if(od)od.onchange=e=>H.droneOn=e.target.checked;
   $('#o-dev').onchange=e=>{H.activeDev=e.target.value};
   $('#o-mute').onchange=e=>{G.mute=e.target.checked;auVol();save()};$('#o-vol').oninput=e=>{G.vol=+e.target.value;auVol()};
-  $('#o-fs').onclick=goFullscreen;$('#o-close').onclick=()=>d.classList.remove('open');
+  $('#o-fs').onclick=goFullscreen;$('#o-quit').onclick=()=>{d.classList.remove('open');quitHike()};$('#o-close').onclick=()=>d.classList.remove('open');
 }
 function resizeStage(){
   const cv=$('#cv');if(!cv)return;
@@ -5371,7 +5461,7 @@ function updateHUD(force){
   {const sv=$('#sp-v');if(sv)sv.innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`}
   if(H.dog){const D=H.dog;const sd=(k,v,low)=>{const el=$('#st-'+k);if(!el)return;$('.fl',el).style.width=clamp(v,0,100)+'%';el.classList.toggle('low',low);el.title=DOG_BARS.find(b=>b[0]===k)[2]+' ('+G.dog.name+'): '+Math.round(v)+' %'};sd('dh',D.hunger,D.hunger<25);sd('dt',D.thirst,D.thirst<25);sd('de',100-D.fat,D.fat>85)}
   {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
-  $('#b-sleep').classList.toggle('act',H.sleep.active);{const sb=$('#b-sleep');sb.innerHTML=H.sleep.active?'<span>⏰</span><small>Aufwachen</small>':'<span>😴</span><small>Schlaf</small>'}
+  
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
   drawProfile($('#prof'));
@@ -5488,7 +5578,7 @@ function frame(ts){
   if(screen!=='hike'||!H)return;
   const cv=$('#cv');if(!cv)return;
   if(H.speed>4)H.speed=4;
-  if(!H.ended&&!MODAL){
+  if(!H.ended&&!MODAL&&!(COOP&&COOP.wait)){
     let mult=SPEEDS[H.speed]*3;
     if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork&&!H.sleep.active)mult/=STRETCH; // beim Gehen läuft die Uhr langsamer, damit der längere Weg gleich schnell vorbeizieht
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
