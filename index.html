@@ -751,7 +751,7 @@ function seasonalT(R,doy0,alt){return R.meanT-R.sAmp*Math.cos(2*Math.PI*(doy0-25
 function wxWeights(R,m,ext){
   const s=seasonOfM(m),md=R.mod||{};
   const base={Winter:{klar:1.2,wolkig:2.5,nebel:1.5,regen:1.3,sturm:1.4,gewitter:0.02},Frühling:{klar:2,wolkig:3,nebel:1,regen:2,sturm:0.6,gewitter:0.35},Sommer:{klar:3,wolkig:3,nebel:0.5,regen:1.5,sturm:0.35,gewitter:1},Herbst:{klar:1.5,wolkig:3,nebel:1.6,regen:3,sturm:1.1,gewitter:0.2}}[s];
-  const o={};for(const k in base){o[k]=base[k]*(md[k]||1);if(k==='sturm'||k==='gewitter'||k==='regen')o[k]*=ext}
+  const o={};for(const k in base){o[k]=base[k]*(md[k]||1);if(k==='sturm'||k==='gewitter'||k==='regen')o[k]*=ext;if(k==='sturm'||k==='gewitter')o[k]*=0.55;else if(k==='regen')o[k]*=0.65;else if(k==='nebel')o[k]*=0.8;else if(k==='klar')o[k]*=1.3}
   return o;
 }
 
@@ -1318,13 +1318,13 @@ function netAt(x){
 function wxRand(){if(typeof COOP!=='undefined'&&COOP&&COOP.seed&&H){H.wxN=(H.wxN||0)+1;return hash(COOP.seed*0.0137+H.wxN*7.331+0.5)}return Math.random()}
 function nextWeather(prev){
   const d=dateOf(G.day),w=wxWeights(H.hk.regD,d.m,H.hk.ext);let tot=0;
-  const ent=Object.entries(w).map(([k,v])=>{v=k===prev?v*0.4:v;tot+=v;return [k,v]});
+  const ent=Object.entries(w).map(([k,v])=>{v=k===prev?v*2.4:v;tot+=v;return [k,v]});
   let r=wxRand()*tot;for(const [k,v] of ent){r-=v;if(r<=0)return k}return 'wolkig';
 }
 function setWeather(type){
   const rnd=(a,b)=>a+wxRand()*(b-a);
   const hk=H.hk,W=WEATHER[type];
-  H.weather={type,until:H.t+rnd(150,480),wind:W.wind*rnd(0.75,1.3)*hk.regD.wind*(0.85+0.15*hk.ext),rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.ext*0.4):0};
+  H.weather={type,until:H.t+rnd(260,760),wind:W.wind*rnd(0.75,1.3)*hk.regD.wind*(0.85+0.15*hk.ext),rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.ext*0.4):0};
   H.nextW=nextWeather(type);H.wxWarned=false;
   if((type==='gewitter'||type==='sturm')&&H.started)spawnIcon({kind:'storm',x:H.x+320,e:type==='gewitter'?'⛈️':'🌪️',label:type==='gewitter'?'Gewitter':'Sturm',base:30,life:12});
 }
@@ -1579,7 +1579,7 @@ function askWalker(ic){
       resume()}},
     {label:'Nichts, danke',fn:resume}]});
 }
-function spawnIcon(o){o.max=o.life;o.born=tm;H.icons.push(o);return o}
+function spawnIcon(o){if(o&&o.kind==='animal'&&Math.random()<0.7)setTimeout(()=>{try{dogBark()}catch(e){}},rnd(300,900));o.max=o.life;o.born=tm;H.icons.push(o);return o}
 const TAP_KINDS=['shop','forage','fish','special','summit','ask'];
 function captureIcon(ic){
   if(ic.taken)return;
@@ -2283,9 +2283,11 @@ function deviceTick(hr,mode){
 }
 const hasWaterProof=()=>false;
 /* ---------- Hund ---------- */
+function dogBark(force){const D=H&&H.dog;if(!D||!G.dog||D.away||H.sleep.active)return;if(!force&&H.t-(H.dogBarkT||-999)<25)return;H.dogBarkT=H.t;H.dogBarkUntil=tm+1.8;H.barkTxt=pick(['Wuff!','Wuff wuff!','Wau!']);sfx('bark')}
 function dogTick(mode,hr,dkm){
   const D=H.dog;if(!D)return;const def=D.def;
   if(D.away)return;
+  if(mode==='walk'&&Math.random()<0.35*hr)dogBark();
   D.trust=Math.min(100,(D.trust||0)+(D.leash?0.5:0.3)*hr);
   if(mode==='walk'&&!D.leash&&!H.action&&D.trust<90&&Math.random()<(0.03+0.45*(90-D.trust)/90)*hr){
     D.away=true;const mins=Math.round(20+(90-D.trust)*1.1+rnd(0,30));
@@ -2921,7 +2923,7 @@ function sfx(name,arg){
     case 'notify':tone(880,0.14,'sine',0.14);tone(1175,0.16,'sine',0.1,0.08);break;
     case 'discover':tone(660,0.25,'sine',0.16);tone(990,0.4,'sine',0.14,0.12);break;
     case 'warn':tone(440,0.14,'square',0.08);tone(330,0.2,'square',0.08,0.16);break;
-    case 'bad':tone(300,0.3,'sawtooth',0.1,0,-150);break;
+    case 'bad':tone(300,0.3,'sawtooth',0.1,0,-150);break;case 'batt':[880,660,440].forEach((f,i)=>tone(f,0.13,'square',0.11,i*0.16));break;case 'bark':tone(420,0.08,'sawtooth',0.13,0,-160);burst(0.06,'bandpass',1100,0.12);tone(360,0.1,'sawtooth',0.12,0.15,-140);break;
     case 'coin':tone(1250,0.06,'square',0.07);tone(1680,0.18,'square',0.07,0.06);break;
     case 'tent':burst(0.35,'bandpass',2800,0.18,0,0.8);break;
     case 'fire':burst(0.5,'lowpass',300,0.35,0,0.7,1200);break;
@@ -4269,12 +4271,17 @@ drawForksTop(g,tm);drawStartFlag(g,tm);
   if(H.dog&&G.dog&&!H.dog.away){
     const dm=H.sleep.active?'sleep':(H.moving?'walk':'sit');
     const lash=H.dog.leash;
-    const off=H.moving?(lash?66+Math.sin(tm*0.9)*4:100+Math.sin(tm*0.9)*14):(H.fire.lit&&nearFire()?-46:-70);
+    const R=H.dogR||(H.dogR={mode:'near',sx:H.x,len:PPK*rnd(0.4,1.2),tgt:100,d:100});
+    if(H.moving&&!lash&&Math.abs(H.x-R.sx)>=R.len){R.sx=H.x;if(R.mode==='near'){R.mode=Math.random()<0.5?'ahead':'behind';R.len=PPK*rnd(0.3,2);R.tgt=R.mode==='ahead'?-rnd(140,250):rnd(170,280)}else{R.mode='near';R.len=PPK*rnd(1.2,4);R.tgt=100}}
+    if(lash&&R.mode!=='near'){R.mode='near';R.sx=H.x;R.len=PPK*0.5}
+    const goal=H.moving?(lash?66+Math.sin(tm*0.9)*4:(R.mode==='near'?100+Math.sin(tm*0.9)*14:R.tgt+Math.sin(tm*0.9)*10)):(H.fire.lit&&nearFire()?-46:-70);
+    R.d+=(goal-R.d)*0.05;const off=R.d;
     const dr=(H.dir||1)<0?-1:1,dx=sx-off*dr,px=H.x-off*dr;
     const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px)+sideOff(px))+2;
     g.save();if(dr<0){g.translate(dgx,0);g.scale(-1,1);g.translate(-dgx,0)}
 drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
 g.restore();
+    if(H.dogBarkUntil&&tm<H.dogBarkUntil){g.save();g.font='bold 13px sans-serif';g.textAlign='center';const bw=g.measureText(H.barkTxt||'Wuff!').width+14;g.fillStyle='rgba(255,255,255,0.93)';rr(g,dgx-bw/2,dgy-70,bw,20,8);g.fill();g.fillStyle='#222';g.fillText(H.barkTxt||'Wuff!',dgx,dgy-56);g.restore()}
     if(lash&&!H.sleep.active&&(H.moving||dm==='sit')&&!H.action){ // Leine
       const hx0=sx+(H.moving?10:8),hy0=gy-(H.moving?27:18),cx=dgx+(H.moving?12:10),cy=dgy-(H.moving?16:12);
       g.strokeStyle='#c0392b';g.lineWidth=1.8;g.beginPath();g.moveTo(hx0,hy0);g.quadraticCurveTo((hx0+cx)/2,Math.max(hy0,cy)+9,cx,cy);g.stroke();
@@ -5655,7 +5662,7 @@ function frame(ts){
     let mult=SPEEDS[H.speed]*3;
     if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork&&!H.sleep.active)mult/=STRETCH; // beim Gehen läuft die Uhr langsamer, damit der längere Weg gleich schnell vorbeizieht
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
-    accum+=dt*TIME_SCALE*mult;
+    accum+=dt*TIME_SCALE*mult/1.15;
     let n=0;const x0=H.x,ph0=H.phase;
     while(accum>=1/6&&n<70&&!MODAL&&!H.ended){stepSim(1/6);accum-=1/6;n++}
     if(n>0){H.vdx=(H.x-x0)/n;H.vdph=(H.phase-ph0)/n;if(Math.abs(H.vdx)>40)H.vdx=0}
