@@ -37,7 +37,8 @@ input[type=range]{accent-color:var(--acc)}
 @media(max-width:1000px) and (min-width:700px) and (max-height:600px){.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:4px 12px;white-space:nowrap}
+.card.dis>*:not(.badtxt){opacity:.42;filter:grayscale(1)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:4px 12px;white-space:nowrap}
 .row{display:flex;align-items:center;gap:8px;margin:8px 0}.row.gap{gap:8px;flex-wrap:wrap}
 .lbl{min-width:104px;color:var(--dim)}.val{min-width:70px;text-align:center}
 .sw{display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid #fff3;vertical-align:middle}
@@ -75,15 +76,15 @@ input[type=range]{accent-color:var(--acc)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
 .pill{background:rgba(8,16,12,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
-#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:4px 6px}
+#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:6px 8px}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 .dl{font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25;margin-bottom:1px}.se{font-size:14px;font-weight:700;margin-left:4px;white-space:nowrap}
 .se-Frühling{color:#8fe388}.se-Sommer{color:#ffd54a}.se-Herbst{color:#ff9a4a}.se-Winter{color:#9fd4ff}
 #h-tr{right:calc(6px + var(--sr));top:calc(6px + var(--st));text-align:right;max-width:34vw}
 .sb{display:grid;grid-template-columns:repeat(2,auto);gap:2px 6px}
-.st{display:flex;align-items:center;gap:3px;width:62px;font-size:11px}
-.st .ic{width:14px;text-align:center;font-size:12px}
-.st .tr{flex:1;height:7px;background:#0008;border-radius:5px;overflow:hidden}
+.st{display:flex;align-items:center;gap:4px;width:88px;font-size:13px}
+.st .ic{width:20px;text-align:center;font-size:17px}
+.st .tr{flex:1;height:11px;background:#0008;border-radius:5px;overflow:hidden}
 .st .fl{display:block;height:100%;border-radius:5px;transition:width .3s}
 .st.low .ic{animation:blink .9s infinite}.st.low .fl{animation:blink .9s infinite}
 @keyframes blink{50%{opacity:.35}}
@@ -168,7 +169,7 @@ canvas.chart{width:100%;height:140px;display:block}
  #modal .box{padding:12px}
  h2{font-size:1.15em}
 }
-@media(max-height:430px){.st{width:56px;font-size:10px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(82px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
+@media(max-height:430px){.st{width:72px;font-size:12px}.st .ic{font-size:15px;width:17px}.st .tr{height:9px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(82px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
 
 html[data-scr="menu"],html[data-scr="hub"]{--bg:#26292d;--panel:#31353b;--panel2:#3b4048;--line:#4b525b;--dim:#aab2ba;--acc:#cfd5db;--acc2:#6a7681}
 html[data-scr="hikes"]{--bg:#0e1b15;--panel:#16281f;--panel2:#1d3529;--line:#2c4a3a;--acc:#4cc38a;--acc2:#2f9e6b}
@@ -765,8 +766,8 @@ function buildRoute(hk,seed){
     const nW=stageSprings(hk,st);
     for(let k=0;k<nW;k++)add({type:'quelle',x:st.x0+L*((k+0.25+rng()*0.5)/nW)});
     if(st.b!=='berg'){
-      const nR=st.b==='tal'?1+(rng()<0.5?1:0):(rng()<0.5?1:0);
-      for(let k=0;k<nR;k++)add({type:'fluss',x:st.x0+L*(0.12+rng()*0.76),bridge:rng()<0.55});
+      const nR=st.b==='tal'?2+(rng()<0.5?1:0):1+(rng()<0.55?1:0);
+      for(let k=0;k<nR;k++)add({type:'fluss',x:st.x0+L*(0.1+rng()*0.8),bridge:rng()<0.88});
     }
     let jx=st.x0+(2+rng()*2)*PPK;const jsp=4.5+hk.diff*0.6;
     while(jx<st.x1-PPK){add({type:'junction',x:jx});jx+=(jsp+rng()*3)*PPK}
@@ -3068,8 +3069,8 @@ function drawTerrain(g,tm){
   if(!H.side){for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
   g.stroke()}else{const ba=g.strokeStyle;for(let x=x0;x<camX+CW+12;x+=12){const al=(mainTrailA(x)+mainTrailA(x+12))/2;if(al<=0.01)continue;g.globalAlpha=al;g.strokeStyle=ba;g.beginPath();g.moveTo(x-camX,groundY(x)+2);g.lineTo(x+12-camX,groundY(x+12)+2);g.stroke()}g.globalAlpha=1}
   // Grashalme, die im Wind wehen
-  if(sn<0.5){
-    g.strokeStyle=tc('#3a7a35');g.lineWidth=1.4;
+  if(sn<0.3&&env.season!=='Winter'){
+    g.strokeStyle=tc(env.season==='Herbst'?'#8a7d3a':'#3a7a35');g.lineWidth=1.4;
     for(let ci=Math.floor(camX/17)-1;ci<=Math.floor((camX+CW)/17)+1;ci++){
       const r=hash(ci*3+9);if(r>0.6)continue;
       const wx=ci*17+r*10,sx=wx-camX,y=groundY(wx)+3,sw=Math.sin(tm*2+wx*0.07)*(1+env.wind*0.25);
@@ -3230,19 +3231,24 @@ const LS_V={ /* Dateien je Jahreszeit F/S/H/W; fehlt eine Jahreszeit, gilt die G
   mgras:['mittelhohes Gras','mittelhohes Gras','mittelhohes Gras','mittelhohes Gras Winter'],
   stump:LS_one('Baumstumpf'),bk:LS_one('Bieberbaumstumpf kurz'),bl:LS_one('Bieberbaumstumpf lang'),
   schilf:LS_one('Schilf'),rkb:LS_one('Rohrkolbenstaude breit'),rks:LS_one('Rohrkolbenstaude schmal'),
+  s1:['Stein 1','Stein 1','Stein 1','Stein 1 Winter'],s2:['Stein 2','Stein 2','Stein 2','Stein 2 Winter'],s3:['Stein 3','Stein 3','Stein 3','Stein 3 Winter'],s4:['Stein 4','Stein 4','Stein 4','Stein 4 Winter'],s5:['Stein 5','Stein 5','Stein 5','Stein 5 Winter'],s6:['Stein 6','Stein 6','Stein 6','Stein 6 Winter'],
+  hg:['Steinhaufen groß','Steinhaufen groß','Steinhaufen groß','Steinhaufen Groß Winter'],hk:['Steinhaufen klein','Steinhaufen klein','Steinhaufen klein','Steinhaufen Klein Winter'],
   anz:LS_one('Anzündholz'),ast1:LS_one('Ast 1'),ast2:LS_one('Ast 2'),zw1:LS_one('Zweig 1'),zw2:LS_one('Zweig 2'),zst:LS_one('Zweige Stapel')};
+const LS_DIM={'Stein 1':[139.92,77.49],'Stein 1 Winter':[125.88,70.33],'Stein 2':[160.17,83.71],'Stein 2 Winter':[151.72,78.79],'Stein 3':[147.76,77.1],'Stein 3 Winter':[138.94,72.74],'Stein 4':[149.64,80.7],'Stein 4 Winter':[137.49,74.54],'Stein 5':[89.5,61.45],'Stein 5 Winter':[89.66,61.68],'Stein 6':[162.08,92.12],'Stein 6 Winter':[142.96,81.02],'Steinhaufen groß':[488.64,156.82],'Steinhaufen Groß Winter':[489.11,157.51],'Steinhaufen klein':[336.71,159.68],'Steinhaufen Klein Winter':[336.03,160.06]};
 const LS_BMP={},LS_PRE={};let LS_N=0;
 function lsSeason(sn){return sn>=0.3?3:Math.max(0,['Frühling','Sommer','Herbst','Winter'].indexOf(env.season||'Sommer'))}
-function lsPre(si){if(LS_PRE[si])return;LS_PRE[si]=1;for(const k in LS_V)img(LS_P+LS_V[k][si],'svg')}
+function lsF(f){return LS_DIM[f]?f:LS_P+f}
+function lsPre(si){if(LS_PRE[si])return;LS_PRE[si]=1;for(const k in LS_V)img(lsF(LS_V[k][si]),'svg')}
 function lsBmp(file,dim){
   const step=Math.round(NM_*4),key=file+'|'+(dim?1:0)+'|'+step;
   let c=LS_BMP[key];if(c)return c;
-  const im=img(LS_P+file,'svg');if(!im)return null;
+  const im=img(lsF(file),'svg');if(!im)return null;
   if(LS_N++>240){for(const k in LS_BMP)delete LS_BMP[k];LS_N=0}
-  c=document.createElement('canvas');c.width=c.height=224;const x=c.getContext('2d');
-  x.drawImage(im,0,0,224,224);x.globalCompositeOperation='source-atop';
-  if(dim){x.fillStyle='rgba(0,0,0,0.16)';x.fillRect(0,0,224,224)}
-  if(step>0){x.globalAlpha=Math.min(1,step/4);x.fillStyle=rgb(NIGHT);x.fillRect(0,0,224,224)}
+  const dm=LS_DIM[file],CWd=224,CHt=dm?Math.max(8,Math.round(224*dm[1]/dm[0])):224;
+  c=document.createElement('canvas');c.width=CWd;c.height=CHt;const x=c.getContext('2d');
+  x.drawImage(im,0,0,CWd,CHt);x.globalCompositeOperation='source-atop';
+  if(dim){x.fillStyle='rgba(0,0,0,0.16)';x.fillRect(0,0,CWd,CHt)}
+  if(step>0){x.globalAlpha=Math.min(1,step/4);x.fillStyle=rgb(NIGHT);x.fillRect(0,0,CWd,CHt)}
   return LS_BMP[key]=c;
 }
 function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
@@ -3251,10 +3257,11 @@ function lsDraw(g,kind,sx,y,S,dim,sway,sn,flip){
   const bmp=lsBmp(v[si],dim);if(!bmp)return false;
   g.save();g.translate(sx,y+S*0.004);if(flip)g.scale(-1,1);
   if(sway)g.transform(1,0,-0.8*sway/S,1,0,0);
-  g.drawImage(bmp,-S/2,-S,S,S);g.restore();
+  const dm=LS_DIM[v[si]],Wd=dm?dm[0]*S/100:S,Ht=dm?dm[1]*S/100:S;
+  g.drawImage(bmp,-Wd/2,-Ht,Wd,Ht);g.restore();
   return true;
 }
-const LS_SZ={busch:165,strauch:175,nstr:165,nstein:155,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
+const LS_SZ={busch:165,strauch:175,nstr:165,nstein:155,s1:50,s2:46,s3:48,s4:48,s5:56,s6:44,hg:32,hk:34,bgras:150,nbgras:150,ngras:150,hgras:150,mgras:150};
 const LS_MIX={ /* Bewuchs je Biom: [Anteil der Zellen, [[Art, Gewicht], …]] */
   wald:[0.34,[['mgras',.22],['hgras',.12],['nbgras',.16],['bgras',.1],['nstr',.14],['strauch',.12],['busch',.14]]],
   tal:[0.36,[['ngras',.24],['mgras',.16],['nbgras',.14],['strauch',.16],['nstr',.12],['busch',.1],['hgras',.08]]],
@@ -3264,13 +3271,15 @@ const LS_MIX={ /* Bewuchs je Biom: [Anteil der Zellen, [[Art, Gewicht], …]] */
   kies:[0.1,[['nstein',.5],['ngras',.5]]],
   schnee:[0.1,[['nstein',.5],['ngras',.5]]],
   sand:[0.1,[['bgras',.6],['hgras',.4]]]};
+{const STN=(w,h)=>['s1','s2','s3','s4','s5','s6'].map(k=>[k,w]).concat([['hg',h],['hk',h*1.4]]);
+ for(const [b,w,h,m] of [['berg',.07,.02,.28],['fjaell',.04,.012,.38],['kies',.12,.03,.3],['schnee',.06,.02,.2],['wald',.012,0,0],['tal',.012,0,0],['wiese',.008,0,0],['sand',.01,0,0]]){const M=LS_MIX[b];M[1].push(...STN(w,h));if(m)M[0]=m}}
 function lsGround(g,biome,cx,sx,y,sn,sway,dim){
   const M=LS_MIX[biome];if(!M)return;
   if(hash(cx*29+4)>=M[0])return;
   let a=hash(cx*31+17)*M[1].reduce((t,q)=>t+q[1],0),k=M[1][0][0];
   for(const q of M[1]){a-=q[1];if(a<0){k=q[0];break}}
   const S=LS_SZ[k]*(0.78+0.55*hash(cx*5+3));
-  lsDraw(g,k,sx+(hash(cx*41+2)-0.5)*14,y+1,S,dim,/gras/.test(k)?sway*1.6:sway*0.5,sn,hash(cx*43+9)<0.5);
+  lsDraw(g,k,sx+(hash(cx*41+2)-0.5)*14,y+1,S,dim,/gras/.test(k)?sway*1.6:/^(s\d|hg|hk)$/.test(k)?0:sway*0.5,sn,hash(cx*43+9)<0.5);
 }
 function stumpCell(x0){ /* Baum der vorderen Reihe, der beim Holzholen gefällt wird */
   let best=null,bd=1e9;const c0=Math.floor((x0-220)/26),c1=Math.floor((x0+220)/26);
@@ -3471,7 +3480,8 @@ function drawPackDown(g,tm){
 function blowAway(){
   const sh=H.g.shelter;if(!sh)return;
   H.tentFly={x:H.camp.x-70,id:sh.id,t0:0,closed:!!H.tarpClosed};
-  if(H.sleep.active)wakeUp(true);
+  H.wake=H.sleep.active?{x:H.camp.x-70,t0:tm}:null;
+  if(H.sleep.active){wakeUp(true);H.walking=false}
   const c=condOf(sh.id)-(15+Math.random()*25);
   H.cond[sh.id]=Math.max(0,c);
   H.g.shelter=null;H.camp.pitched=false;
@@ -3513,6 +3523,7 @@ function drawCamp(g,tm,dt){
     const tim=sh.img?img(sh.id==='tarp'&&H.tarpClosed&&sh.imgClosed?sh.imgClosed:sh.img,'svg'):null;
     if(tim){
       const w=140*(sh.sc||1),h=w*230/512,flap=Math.sin(tm*(3+(H.windStress||0)*4)+sx*0.01)*env.wind*0.0016*(1+Math.max(0,(H.windStress||0)-0.6)*3);
+      if(sh.id==='tarp'&&H.sleep.active&&!H.tarpClosed)drawHiker(g,sx-4,y+2,1.2,{look:lookNow(),phase:0,mode:'sleep',tm});
       g.save();g.translate(sx,y+2);g.transform(1,0,flap,1,0,0);g.drawImage(tim,-w/2,-h,w,h);g.restore();
     }else if(sh.id==='tarp'){ // Notbehelf, falls die Grafik nicht lädt
       g.fillStyle=tc('#5f7f55');g.beginPath();g.moveTo(sx-46,y);g.lineTo(sx-30,y-42);g.lineTo(sx+52,y-24);g.lineTo(sx+52,y);g.closePath();g.fill();
@@ -3902,7 +3913,13 @@ g.restore();
     }
   }
   const inTent=H.sleep.active&&H.camp.pitched&&g0.shelter;
-  if(!inTent){
+  const WK=H.wake&&tm-H.wake.t0<2.9?H.wake:null;if(H.wake&&!WK)H.wake=null;
+  if(WK){ /* Zelt/Tarp weggeweht: erst im Freien liegen, dann aufstehen */
+    const a=tm-WK.t0,lk=lookNow();
+    if(a<1.5)drawHiker(g,WK.x-camX,groundY(WK.x)+2,1.2,{look:lk,phase:0,mode:'sleep',tm});
+    else{const u=clamp((a-1.5)/1.4,0,1),wx=lerp(WK.x,H.x,u);drawHiker(g,wx-camX,groundY(wx)+2,1.2,{look:lk,phase:a*7,mode:u<1?'walk':'idle',packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),tm})}
+  }
+  if(!inTent&&!WK){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
@@ -3911,7 +3928,7 @@ drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSourc
 g.restore();
   }
 
-  if(!inTent&&!H.sleep.active&&!(H.action&&H.action.kind!=='live'))drawThought(g,sx,heroY(H.x)+sideOff(H.x)-74);
+  if(!inTent&&!WK&&!H.sleep.active&&!(H.action&&H.action.kind!=='live'))drawThought(g,sx,heroY(H.x)+sideOff(H.x)-74);
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
   if((H.action&&H.action.kind!=='live')||H.sleep.active){
     const A=H.action,em={climb:'🧗',tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',wood:'🪵',feed:'🪵',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉'};
@@ -4265,10 +4282,13 @@ function travelText(hk){const t=travelInfo(hk);if(t.mode==='Zu Fuß')return 'Sta
 let SELHIKE=null;
 let HIKECTRY=null;
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
+const HS={km:(a,b)=>a.km-b.km,diff:(a,b)=>a.diff-b.diff||a.km-b.km,cost:(a,b)=>travelInfo(a).cost-travelInfo(b).cost||a.km-b.km};
+let HIKESORT=(function(){try{const v=localStorage.getItem('wk_hs');return HS[v]?v:'km'}catch(e){return 'km'}})();
 function hikeCard(hk){
+  const fee=travelInfo(hk).cost,poor=G.money<fee;
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
-  return `<div class="card hike"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
+  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
       <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} </span>
       <span>🚆 ${esc(travelText(hk))}</span>
@@ -4280,23 +4300,25 @@ function hikeCard(hk){
       <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
       ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
       <span>Risiko jetzt: <span class="risk" style="background:${b.col}">${b.lbl}</span>${bad?` <span class="badtxt">${bad}× Warnung</span>`:''}</span></div>
-      <button class="primary" data-hk="${hk.id}">Briefing & Start</button></div>`;
+      ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing & Start</button>`}</div>`;
 }
 function renderHikes(){
   let body='';
   if(HIKEVIEW==='land'){
     const groups={};HIKES.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
     body=`<div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>🌍 ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
-      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">🌍 ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
-  }else body=`<div class="grid">${[...HIKES].sort((a,b)=>a.km-b.km).map(hikeCard).join('')}</div>`;
+      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">🌍 ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
+  }else body=`<div class="grid">${[...HIKES].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
-   <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📏 Nach Länge</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
+   <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📋 Alle Routen</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
+   <div class="seg" style="margin-bottom:10px"><button data-hs="km" class="${HIKESORT==='km'?'on':''}">📏 Sortiert nach Länge</button><button data-hs="diff" class="${HIKESORT==='diff'?'on':''}">⛰️ nach Schwierigkeit</button><button data-hs="cost" class="${HIKESORT==='cost'?'on':''}">💶 nach Kosten</button></div>
    <div class="card" style="margin-bottom:12px"><h3>⏳ Zeit vergehen lassen</h3><p class="hint">Die Jahreszeit ändert Wetter, Kälte und Tageslicht der Touren, und Einnahmen deiner Videos kommen erst über Wochen. ${G.pendCur+G.pendPrev>0?'Nächste Auszahlung in '+daysToPayout()+' Tagen (21. des Monats).':'Kein Guthaben ausstehend.'} Wenn du wartest, ändert sich also das Risiko in den Karten unten.</p>
     <div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div></div>
    ${body}</div>`;
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
+  $$('[data-hs]').forEach(b=>b.onclick=()=>{HIKESORT=b.dataset.hs;try{localStorage.setItem('wk_hs',HIKESORT)}catch(e){}renderHikes()});
   $$('[data-hv]').forEach(b=>b.onclick=()=>{HIKEVIEW=b.dataset.hv;try{localStorage.setItem('wk_hv',HIKEVIEW)}catch(e){}renderHikes()});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
@@ -4517,14 +4539,50 @@ function playIntro(hk,done){
       sky(p,'#87b8e0','#e6f1f6');clouds(el);
       hills(sc,'#9db7c9',70,0.12,gy);hills(sc,'#6f9a6a',55,0.3,gy+4);trees(sc,0.6,gy+8,'#2f5d3a');
       g.fillStyle=isBus?'#555a60':'#6a6f73';g.fillRect(0,gy+8,W,Hh);
-      if(!isBus){g.fillStyle='#444';g.fillRect(0,gy+22,W,6);g.fillStyle='#7a6a55';for(let x=-30;x<W+30;x+=30){const sx=x-(sc%30);g.fillRect(sx,gy+26,14,6)}}
-      else{g.fillStyle='#ddd';for(let x=-80;x<W+80;x+=80){const sx=x-(sc%80);g.fillRect(sx,gy+Hh*0.12,40,4)}}
+      if(!isBus){g.fillStyle='#5b5f63';g.fillRect(0,gy+8,W,24);g.fillStyle='#7a6a55';for(let x=-30;x<W+30;x+=26){const sx=x-(sc%26);g.fillRect(sx,gy+13,16,6)}g.fillStyle='#9aa0a7';g.fillRect(0,gy+8,W,3);g.fillStyle='#464a4f';g.fillRect(0,gy+11,W,2)}
+      else{g.fillStyle='#8a8f94';g.fillRect(0,gy+8,W,4);g.fillStyle='#e6e6e6';for(let x=-80;x<W+80;x+=80){const sx=x-(sc%80);g.fillRect(sx,gy+Hh*0.12,40,4)}}
       const px0=D+W*0.12-sc;
       if(px0<W+10){g.fillStyle='#b9bcc0';g.fillRect(px0,gy+4,W*0.82,16);g.fillStyle='#9a9ea3';g.fillRect(px0,gy+20,W*0.82,8);g.fillStyle='#d9a010';g.fillRect(px0+W*0.55,gy-76,6,80);g.fillStyle='#ffd23c';g.fillRect(px0+W*0.55-24,gy-96,54,30);g.fillStyle='#222';g.font='bold 24px sans-serif';g.textAlign='center';g.fillText('H',px0+W*0.55+3,gy-72);g.textAlign='left'}
       const bob=Math.sin(el*24)*(1-ease(p))*1.6,ry=gy+8-bob;g.save();g.translate(0,gy+8);g.scale(K,K);g.translate(0,-(gy+8));
-      if(isBus){const bx=W*0.2/K;g.save();g.translate(0,bob);carr(bx,ry-76,300,70,'#f2f3f5','#2a6db0');win(bx+16,ry-66,34,26,6);g.fillStyle='#bfe3f5';g.fillRect(bx+250,ry-66,38,34);wheel(bx+60,ry-6,14,sc*0.05);wheel(bx+240,ry-6,14,sc*0.05);g.restore()}
-      else{const n=ice?4:2,cw=ice?170:150,bx=W*0.1/K;for(let i=0;i<n;i++){const x=bx+i*(cw+6);carr(x,ry-82,cw,78,i===n-1&&ice?'#f2f3f5':(ice?'#f2f3f5':'#c8362d'),ice?'#d0242c':'#f2f3f5');win(x+14,ry-70,22,22,Math.floor((cw-24)/28));wheel(x+30,ry-2,8,sc*0.06);wheel(x+cw-30,ry-2,8,sc*0.06)}
-        if(ice){g.fillStyle='#f2f3f5';g.beginPath();g.moveTo(bx+n*(cw+6),ry-82);g.quadraticCurveTo(bx+n*(cw+6)+60,ry-70,bx+n*(cw+6)+80,ry-8);g.lineTo(bx+n*(cw+6),ry-4);g.fill();g.fillStyle='#d0242c';g.fillRect(bx+n*(cw+6),ry-50,70,6)}}
+      const rr2=(x,y,w,h,r)=>{g.beginPath();if(g.roundRect)g.roundRect(x,y,w,h,r);else g.rect(x,y,w,h)};
+      const wh=(x,y,r,a)=>{g.fillStyle='#1d1e21';g.beginPath();g.arc(x,y,r,0,7);g.fill();g.fillStyle='#c9ced4';g.beginPath();g.arc(x,y,r*0.55,0,7);g.fill();g.strokeStyle='#6b7077';g.lineWidth=1.6;g.beginPath();for(let k=0;k<4;k++){const aa=a+k*Math.PI/2;g.moveTo(x,y);g.lineTo(x+Math.cos(aa)*r*0.55,y+Math.sin(aa)*r*0.55)}g.stroke()};
+      g.fillStyle='rgba(0,0,0,0.22)';
+      if(isBus){
+        const bx=W*0.2/K,wa=sc*0.05;
+        g.save();g.translate(0,bob);
+        g.fillStyle='rgba(0,0,0,0.22)';g.beginPath();g.ellipse(bx+150,ry+bob+1,152,5,0,0,7);g.fill();
+        g.fillStyle='#f2f3f5';rr2(bx,ry-86,300,76,11);g.fill();
+        g.fillStyle='#2a6db0';g.fillRect(bx+1,ry-36,298,9);g.fillStyle='#d5d9de';rr2(bx+86,ry-93,84,8,3);g.fill();
+        g.fillStyle='#8fc4e0';for(let i=0;i<5;i++){rr2(bx+14+i*38,ry-76,31,29,4);g.fill()}
+        g.fillStyle='#7ab3d1';rr2(bx+206,ry-76,26,54,3);g.fill();g.fillStyle='#4f7f99';g.fillRect(bx+218,ry-76,2,54);
+        g.fillStyle='#8fc4e0';g.beginPath();g.moveTo(bx+244,ry-76);g.lineTo(bx+288,ry-76);g.quadraticCurveTo(bx+298,ry-74,bx+298,ry-60);g.lineTo(bx+298,ry-42);g.lineTo(bx+244,ry-42);g.closePath();g.fill();
+        g.fillStyle='#222';g.fillRect(bx+248,ry-84,40,6);g.fillStyle='#ffb02e';g.fillRect(bx+252,ry-83,22,4);
+        g.fillStyle='#ffe28a';g.fillRect(bx+291,ry-30,8,9);g.fillStyle='#d9382c';g.fillRect(bx,ry-31,4,9);
+        g.fillStyle='#4b4f55';g.fillRect(bx-2,ry-17,304,7);
+        for(const wx of [bx+62,bx+238]){g.fillStyle='#2b2f35';g.beginPath();g.arc(wx,ry-12,19,Math.PI,0);g.lineTo(wx+19,ry-12);g.fill();wh(wx,ry-13,13,wa)}
+        g.restore();
+      }else{
+        const n=ice?3:2,cw=ice?160:150,gap=6,nose=ice?96:34,bx=W*0.08/K,wa=sc*0.06;
+        const body=ice?'#f2f3f5':'#c8362d',band=ice?'#d0242c':'#f2f3f5';
+        g.fillStyle='rgba(0,0,0,0.22)';g.beginPath();g.ellipse(bx+(n*(cw+gap)+nose)/2,ry+2,(n*(cw+gap)+nose)/2+8,5,0,0,7);g.fill();
+        for(let i=0;i<n;i++){
+          const x=bx+i*(cw+gap),front=i===n-1;
+          if(i>0){g.fillStyle='#2b2f35';g.fillRect(x-gap-1,ry-60,gap+2,40)}
+          g.fillStyle=body;g.beginPath();g.moveTo(x,ry-18);g.lineTo(x,ry-80);g.quadraticCurveTo(x,ry-88,x+8,ry-88);
+          if(front){g.lineTo(x+cw,ry-88);g.quadraticCurveTo(x+cw+nose*0.62,ry-82,x+cw+nose,ry-40);g.quadraticCurveTo(x+cw+nose,ry-24,x+cw+nose-8,ry-18)}
+          else{g.lineTo(x+cw-8,ry-88);g.quadraticCurveTo(x+cw,ry-88,x+cw,ry-80);g.lineTo(x+cw,ry-18)}
+          g.closePath();g.fill();
+          g.fillStyle=ice?'#c9ced4':'#9aa0a6';g.fillRect(x+6,ry-90,cw-10,3);
+          g.fillStyle=band;g.fillRect(x,ry-44,cw+(front?nose*0.9:0),ice?5:7);
+          if(ice){g.fillStyle='#d0242c';g.fillRect(x,ry-26,cw+(front?nose*0.7:0),3)}
+          g.fillStyle='#3a3d44';g.fillRect(x+10,ry-18,cw-20,11);
+          g.fillStyle='#8fc4e0';const nw=Math.floor((cw-(front?52:34))/30);for(let k=0;k<nw;k++){rr2(x+(front?12:14)+k*30,ry-76,24,24,3);g.fill()}
+          g.fillStyle='#6f9fb8';rr2(x+(front?cw-34:cw-26),ry-72,18,52,3);g.fill();g.fillStyle='#4f7f99';g.fillRect(x+(front?cw-26:cw-18),ry-72,2,52);
+          if(front){g.fillStyle='#2d4a5e';g.beginPath();g.moveTo(x+cw+4,ry-80);g.quadraticCurveTo(x+cw+nose*0.5,ry-76,x+cw+nose*0.86,ry-48);g.lineTo(x+cw+4,ry-48);g.closePath();g.fill();g.fillStyle='#ffe28a';g.beginPath();g.arc(x+cw+nose-6,ry-34,3.2,0,7);g.fill()}
+          if(i===1&&ice||(!ice&&front)){g.strokeStyle='#3b3f45';g.lineWidth=2;g.beginPath();g.moveTo(x+cw*0.3,ry-90);g.lineTo(x+cw*0.45,ry-104);g.lineTo(x+cw*0.6,ry-90);g.moveTo(x+cw*0.38,ry-104);g.lineTo(x+cw*0.52,ry-104);g.stroke()}
+          wh(x+30,ry-6,6,wa);wh(x+48,ry-6,6,wa);wh(x+cw-48,ry-6,6,wa);wh(x+cw-30,ry-6,6,wa);
+        }
+      }
       g.restore();
     }
     const fa=Math.min(1,lt/0.35,(st.d-lt)/0.3);
@@ -4783,7 +4841,7 @@ function frame(ts){
   const cv=$('#cv');if(!cv)return;
   if(H.speed>4)H.speed=4;
   if(!H.ended&&!MODAL){
-    let mult=SPEEDS[H.speed];
+    let mult=SPEEDS[H.speed]*3;
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
     accum+=dt*TIME_SCALE*mult;
     let n=0;const x0=H.x,ph0=H.phase;
