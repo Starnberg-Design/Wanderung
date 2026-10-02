@@ -643,7 +643,8 @@ const RARE_COMMENTS=[];
 /* =====================================================================
    Teil 2: Profil, Kalender, Sonne, Route, Umwelt, Wetter
    ===================================================================== */
-const PPK=400;                 // Pixel pro Kilometer
+const STRETCH=3;               // Strecken-Dehnung: Wege sind 3x länger (mehr Pixel pro km); Gehtempo am Bildschirm und km-Angaben bleiben gleich
+const PPK=400*STRETCH;                 // Pixel pro Kilometer
 const SAVE_KEY='wanderkanal_v2';
 let G=null;                    // Spielerprofil (bleibt über Touren erhalten)
 let H=null;                    // aktuelle Wanderung
@@ -756,7 +757,7 @@ function buildRoute(hk,seed){
     const x=i*10;while(si<stages.length-1&&x>=stages[si].x1)si++;
     const st=stages[si];const t=clamp((x-st.x0)/(st.x1-st.x0),0,1);const s=t*t*(3-2*t);
     const amp=BIOMES[st.b].noise*rough;
-    elev[i]=lerp(st.a0,st.a1,s)+amp*(0.6*Math.sin(x*0.0055+ph[0])+0.3*Math.sin(x*0.0135+ph[1])+0.1*Math.sin(x*0.03+ph[2]));
+    elev[i]=lerp(st.a0,st.a1,s)+amp*(0.6*Math.sin(x/STRETCH*0.0055+ph[0])+0.3*Math.sin(x/STRETCH*0.0135+ph[1])+0.1*Math.sin(x/STRETCH*0.03+ph[2]));
   }
   const feats=[];let fid=0;const add=o=>{o.id=fid++;feats.push(o);return o};
   const reg=hk.regD;
@@ -1210,7 +1211,7 @@ function elevAt(x){
   const S=H.side;
   if(S&&S.R&&x>S.x0){const lx=x-S.x0,r=S.R.elev,f=clamp(lx,0,(r.length-2)*10)/10,i=Math.floor(f),u=clamp(lx/S.len,0,1);return lerp(r[i],r[i+1],f-i)+S.off+S.corr*u*u*(3-2*u)+climbLift(x)}
   return mainElevAt(x)+climbLift(x)}
-function gradeAt(x){return (elevAt(x+10)-elevAt(x-10))/(20*1000/PPK)}
+function gradeAt(x){const d=10*STRETCH;return (elevAt(x+d)-elevAt(x-d))/(2*d*1000/PPK)}
 function stageAt(x){const SD=H.side;if(SD&&SD.R&&x>SD.x0){const S=SD.R.stages;return S[stageIndexAt(S,x-SD.x0)]}const S=H.route.stages;return S[stageIndexAt(S,x)]}
 function netAt(x){
   if(featNear('village',x,900))return true;
@@ -4843,6 +4844,7 @@ function frame(ts){
   if(H.speed>4)H.speed=4;
   if(!H.ended&&!MODAL){
     let mult=SPEEDS[H.speed]*3;
+    if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork&&!H.sleep.active)mult/=STRETCH; // beim Gehen läuft die Uhr langsamer, damit der längere Weg gleich schnell vorbeizieht
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
     accum+=dt*TIME_SCALE*mult;
     let n=0;const x0=H.x,ph0=H.phase;
