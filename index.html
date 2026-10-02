@@ -3901,7 +3901,7 @@ function hintSay(txt,secs){TH.cur={txt,say:true,t0:tm,dur:secs||Math.max(4,3.8+t
 function injuryAlert(txt){
   const kit=H.g.tools.kit&&H.kit>0;
   hintSay(txt+(kit?' Mein Erste-Hilfe-Set hilft jetzt.':' Ohne Erste-Hilfe-Set hilft nur Rast.'),7);
-  if(kit)pushAlert('aid','🩹','Erste Hilfe',()=>actClick('aid'),45,()=>isInjured());
+  if(kit)pushAlert('aid','🩹','Erste Hilfe',()=>actClick('aid'),10,()=>isInjured());
 }
 function villageHint(f,d){
   if(d<460&&!f.hinted){f.hinted=true;
