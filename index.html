@@ -618,7 +618,7 @@ const EXCLUSIVE=['pack','shelter','bag','mat','mid','shell','shoes'];
 const GEAR=[
   {id:'pack_school',cat:'pack',name:'Schul-Rucksack 18 L',e:'🎒',price:15,kg:0.6,max:9,comfort:-0.3,vol:18,wbig:1.5,wcap:1.5,imgs:['Rucksäcke_Schul-Rucksack 1','Rucksäcke_Schul-Rucksack 2'],cols:['#e8b410','#c75b14'],color:'#e8b410',desc:'Winzig und leicht, nur für Tagesausflüge. Ein Wassersack passt nicht hinein, höchstens eine Flasche.'},
   {id:'pack_day',cat:'pack',name:'Ausflugsrucksack 28 L',e:'🎒',price:30,kg:0.9,max:13,comfort:-0.1,vol:28,wbig:2,wcap:3,imgs:['Rucksäcke_Ausflugsrucksack 1','Rucksäcke_Ausflugsrucksack 2'],cols:['#e8902a','#5ea842'],color:'#e8902a',desc:'Handlich für Tagestouren. Eine Trinkblase passt hinein, mehr nicht.'},
-  {id:'pack_basic',cat:'pack',name:'Standard-Rucksack 35 L',e:'🎒',price:0,kg:1.4,max:16,comfort:0,vol:35,wbig:2,wcap:3,imgs:['Rucksäcke_Standart-Rucksack 1','Rucksäcke_Standart-Rucksack 2','Rucksäcke_Standart-Rucksack 3','Rucksäcke_Standart-Rucksack 4'],cols:['#8b2a1d','#9b768b','#b32a14','#868a8c'],color:'#8b2a1d',w:40,desc:'Der Starter-Rucksack: trägt wenig, kaum Komfort.'},
+  {id:'pack_basic',cat:'pack',name:'Standard-Rucksack 35 L',e:'🎒',price:25,kg:1.4,max:16,comfort:0,vol:35,wbig:2,wcap:3,imgs:['Rucksäcke_Standart-Rucksack 1','Rucksäcke_Standart-Rucksack 2','Rucksäcke_Standart-Rucksack 3','Rucksäcke_Standart-Rucksack 4'],cols:['#8b2a1d','#9b768b','#b32a14','#868a8c'],color:'#8b2a1d',w:40,desc:'Der günstige Allrounder: trägt wenig, kaum Komfort.'},
   {id:'pack_hike',cat:'pack',name:'Wanderrucksack 45 L',e:'🎒',price:70,kg:1.7,max:24,comfort:0.3,vol:45,wbig:2,wcap:4,imgs:['Rucksäcke_Wander-Rucksack 1','Rucksäcke_Wander-Rucksack 2','Rucksäcke_Wander-Rucksack 3','Rucksäcke_Wander-Rucksack 4'],cols:['#8a8872','#b82c2c','#7b8b3a','#4881ba'],color:'#8a8872',desc:'Solide für Mehrtagestouren; zwei große Flaschen passen in die Seitentaschen.'},
   {id:'pack_trek',cat:'pack',name:'Trekkingrucksack 50 L',e:'🎒',price:95,kg:1.9,max:30,comfort:0.5,vol:50,wbig:4,wcap:6,imgs:['Rucksäcke_Treckingrucksack 1','Rucksäcke_Treckingrucksack 2'],cols:['#8f8c3f','#3f5a22'],color:'#8f8c3f',desc:'Gutes Tragesystem, Platz für Wassersack und Flaschen.'},
   {id:'pack_surv',cat:'pack',name:'Survival-Rucksack 60 L',e:'🎒',price:140,kg:2.5,max:34,comfort:0.45,vol:60,wbig:4,wcap:7,tough:0.5,imgs:['Rucksäcke_Survival-Rucksack 1','Rucksäcke_Survival-Rucksack 2','Rucksäcke_Survival-Rucksack 3','Rucksäcke_Survival-Rucksack 4'],cols:['#615f27','#41571d','#7a7f84','#8e84c4'],color:'#615f27',desc:'Schwer, aber extrem robust – verschleißt nur halb so schnell.'},
@@ -661,6 +661,10 @@ const GEAR=[
   {id:'lamp',cat:'tool',tool:'lamp',kind:'lamp',name:'Stirnlampe (wiederaufladbar)',e:'🔦',price:22,kg:0.12,stby:0,fragile:0.0002,desc:'Nachts fast volles Tempo. Eigener Akku (per Powerbank ladbar). Ohne Licht ist die Nacht sehr zäh.'},
   {id:'torch',cat:'tool',tool:'torch',kind:'torch',name:'Taschenlampe (LED)',e:'💡',price:14,kg:0.25,stby:0,fragile:0.0004,desc:'Breiter, weit reichender Lichtkegel – nachts fast so schnell wie mit Stirnlampe und etwas sicherer. Aber der Akku hält nur ca. 9 h Gehzeit (Stirnlampe ca. 18 h). Wird bevorzugt benutzt, die Stirnlampe dient als Reserve.'},
   {id:'fire',cat:'tool',tool:'fire',name:'Feuerstarter',e:'🔥',price:10,kg:0.05,desc:'Für Lagerfeuer: wärmt, trocknet, kocht.'},
+  {id:'lighter',cat:'tool',tool:'lighter',name:'Feuerzeug',e:'🪔',price:3,kg:0.03,desc:'Zündet zuverlässig und verbraucht nichts außer Gas (ca. 60 Zündungen pro Tour). Wind und Regen machen ihm aber zu schaffen.'},
+  {id:'stormlighter',cat:'tool',tool:'stormlighter',name:'Sturmfeuerzeug',e:'🌬️',price:16,kg:0.09,desc:'Wind- und regenfest: die beste Zündquelle für ein Feuer (ca. 120 Zündungen pro Tour).'},
+  {id:'mnet',cat:'tool',tool:'mnet',name:'Mückennetz fürs Gesicht',e:'🕸️',price:7,kg:0.05,desc:'Feines Netz über Kopf und Gesicht. Hält Mückenschwärme und Gnitzen auf Abstand – vor allem im Sommer und im Norden (Skandinavien, Schottland) sehr nützlich.'},
+  {id:'mtarp',cat:'tool',tool:'mtarp',name:'Moskitonetz fürs Tarp',e:'🪰',price:24,kg:0.3,desc:'Netz-Erweiterung, die du ans Tarp hängst. Damit schläfst du auch bei Mückenschwärmen ruhig. Zelte haben bereits ein Netz eingebaut.'},
   {id:'stove',cat:'tool',tool:'stove',name:'Gaskocher',e:'🍳',price:45,kg:0.45,desc:'Kocht Essen und Wasser, schmilzt Schnee (braucht Gaskartuschen).'},
   {id:'filter',cat:'tool',tool:'filter',name:'Wasserfilter',e:'🚰',price:35,kg:0.3,desc:'Macht Flusswasser trinkbar.'},
   {id:'rod',cat:'tool',tool:'rod',name:'Angelset',e:'🎣',price:38,kg:0.45,desc:'Fische fangen an Flüssen und Seen. Mit Geschick: Biss abpassen, anschlagen und den Fisch mit Gefühl einholen. Nur an Flüssen und Seen; Fisch muss gegart werden.'},
@@ -712,8 +716,10 @@ const FOODS=[
 const GAS={id:'gas',cat:'gas',name:'Gaskartusche (5 Einsätze)',e:'🛢️',price:6,kg:0.22,uses:5,shop:1};
 const DOGFOOD={id:'dogfood',cat:'dogfood',name:'Hundefutter (1 kg)',e:'🦴',price:3.5,kg:1.0,shop:1};
 const FIREWOOD={id:'firewood',cat:'wood',name:'Brennholz-Bündel',e:'🪵',price:4.5,kg:1.6,shop:1};
-const CONS=[...FOODS.filter(f=>!f.wild&&!f.fish),GAS,FIREWOOD,DOGFOOD];
-const gearById=id=>GEAR.find(g=>g.id===id)||FOODS.find(g=>g.id===id)||(id==='gas'?GAS:id==='dogfood'?DOGFOOD:id==='firewood'?FIREWOOD:null);
+const MATCHBOX={id:'matchbox',cat:'wood',name:'Streichhölzer (Schachtel, 38 Stück)',e:'🔥',price:1.5,kg:0.04,shop:1};
+const FCUBE={id:'fcube',cat:'wood',name:'Grillanzünder (8 Würfel)',e:'🧱',price:3,kg:0.1,shop:1};
+const CONS=[...FOODS.filter(f=>!f.wild&&!f.fish),GAS,FIREWOOD,MATCHBOX,FCUBE,DOGFOOD];
+const gearById=id=>GEAR.find(g=>g.id===id)||FOODS.find(g=>g.id===id)||(id==='gas'?GAS:id==='dogfood'?DOGFOOD:id==='firewood'?FIREWOOD:id==='matchbox'?MATCHBOX:id==='fcube'?FCUBE:null);
 const FORAGE={
   beeren:{id:'beeren',name:'Beerensträucher',e:'🫐',months:[5,6,7,8],biomes:['wald','wiese','tal','fjaell'],food:'berries',min:2,max:4,time:12},
   pilze:{id:'pilze',name:'Pilze',e:'🍄',months:[7,8,9],biomes:['wald'],food:'mushroom',min:2,max:4,time:15,risky:1},
@@ -760,10 +766,10 @@ function adminOn(){try{return localStorage.getItem('wk_admin')==='1'}catch(e){re
 function newProfile(){
   return {v:2,home:'Deutschland',growth:false,shaveDay:0,cutDay:0,name:'Wanderer',chan:'Wanderkanal',look:{skin:1,hair:1,style:0,beard:0,glasses:0,build:1,jacket:2,pants:0},talent:'natur',
     stats:{trag:3,aus:3,tempo:3,kalt:3,food:3,water:3,nav:3},xp:{},sp:0,
-    money:(adminOn()?10000:300),owned:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},
-    packed:{pack_basic:1,shoes_basic:1,bottle1:1,phone_cheap:1},cons:{},cond:{},dog:null,
+    money:(adminOn()?10000:300),owned:{shoes_basic:1,bottle1:1,phone_cheap:1},
+    packed:{shoes_basic:1,bottle1:1,phone_cheap:1},cons:{},cond:{},dog:null,
     subs:120,day:0,videos:[],hist:[],comments:[],notes:[],lives:[],vid:0,
-    earned:0,hikes:0,km:0,created:false,begHeat:0,pendCur:0,pendPrev:0,flags:{},pending:null,totalViews:0,liveEarned:0,lastMonth:3,vol:0.7,mute:false};
+    earned:0,hikes:0,km:0,created:false,begHeat:0,pendCur:0,pendPrev:0,flags:{},pending:null,totalViews:0,liveEarned:0,lastMonth:3,vol:0.7,mute:false,walked:{}};
 }
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(G))}catch(e){}}
 function loadSave(){
@@ -953,6 +959,7 @@ function buildRoute(hk,seed){
      lakes.push({xl:a*10,xr:b*10,xc:x,L:Lv,w,boat:rng()<0.45,name});
    }}
   lakes.forEach(L=>add({type:'see',x:L.xl,lake:L}));
+  feats.forEach(f=>{if(f.type==='fluss'&&!f.bridge&&!f.fw){f.fw=Math.round(200+rng()*140);f.x=Math.max(PPK*0.25,f.x-f.fw/2)}});feats.sort((a,b)=>a.x-b.x);
   for(let i=feats.length-1;i>=0;i--){const f=feats[i];if(['quelle','fluss','junction','forage','hiker','animal','village','lodge'].includes(f.type)&&lakes.some(L=>f.x>L.xl-60&&f.x<L.xr+60))feats.splice(i,1)}
   const clean=feats.filter(f=>f.summit?(f.x>300&&f.x<totalPx-100):(f.x>600&&f.x<totalPx-400));
   clean.sort((a,b)=>a.x-b.x);
@@ -1419,7 +1426,7 @@ function startHike(hikeId){
   const ds=dogSize();
   let startRisk=3;try{startRisk=briefing(hk).score}catch(e){}
   const gap0=skillGap(hk);
-  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,carry:G.cons.firewood||0,walkers:[],teaserBoost:0,teaserDay:-1,lodge:null,indoor:false,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
+  H={gap:gap0,startRisk,hk,route,g,dev,food,gas:(G.cons.gas||0)*5,pbs,dogfood:G.cons.dogfood||0,kit:g.tools.kit?3:0,spray:g.tools.spray?2:0,fireUses:g.tools.fire?24:0,matches:(G.cons.matchbox||0)*38+(G.mpart||0),fcubes:(G.cons.fcube||0)*8+(G.fpart||0),lfuel:g.tools.lighter?60:0,sfuel:g.tools.stormlighter?120:0,mWet:0,carry:G.cons.firewood||0,walkers:[],teaserBoost:0,teaserDay:-1,lodge:null,indoor:false,vestMode:2,solarUp:null,fireTarp:null,repairs:g.tools.repair?3:0,
     x:0,km:0,phase:0,t:startH*60,dayIdx:0,awakeSince:startH*60-60,cond,startDay:G.day,
     speed:1,wood:0,woodX:0,thrill:0,flags:{},walking:true,auto:true,autoStop:true,autoNight:hk.km>=60,autoWake:false,sleptTonight:false,
     body:{energy:100,sat:88,hyd:92,warm:100,wet:0,hp:100},fatigue:0,
@@ -1439,7 +1446,7 @@ computeEnv0();
   {let w0=nextWeather('');for(let k=0;k<6&&(w0==='sturm'||w0==='gewitter');k++)w0=nextWeather('');if(w0==='sturm'||w0==='gewitter')w0='wolkig';setWeather(w0)}
   computeEnv();
   H.camElev=env.alt;
-  G.cons={};G.hikes++;
+  G.cons={};G.mpart=0;G.fpart=0;(G.walked=G.walked||{})[hk.id]=(G.walked[hk.id]||0)+1;G.hikes++;
   H.started=true;
   toast('Los geht\'s! '+hk.name+' · '+H.route.totalKm+' km','good');toast('🪧 Wegmarkierung dieser Tour: '+H.markCol[1]+' – folge ihr an Wegscheiden.','good');
   save();
@@ -1452,7 +1459,7 @@ function computeEnv0(){ // erste Umgebung braucht Wetter-Grundwerte
 function loadKg(){ // Last, die der Spieler trägt
   let k=H.g.gearKg;
   for(const id in H.food)k+=gearById(id).kg*H.food[id];
-  k+=H.gas*(GAS.kg/5);
+  k+=H.gas*(GAS.kg/5);k+=(H.matches||0)/38*MATCHBOX.kg+(H.fcubes||0)/8*FCUBE.kg;
   k+=H.water.clean+H.water.dirty;
   k+=H.dogfood;
   return playerLoad(k,H.dogfood);
@@ -1818,18 +1825,30 @@ if(H.camp.pitched){toast('Baue zuerst dein Lager ab.');return}
       if(!H.fire.lit||!nearFire()){toast('Es brennt kein Feuer in der Nähe.');return}
       if(woodAvail()<1){toast('Du hast kein Feuerholz – erst „Holz sammeln“.','bad');return}
       beginAction('feed','Legt Holz nach …',3,()=>{useWood();H.fire.left=Math.min(320,H.fire.left+55);toast('🔥 Das Feuer wird größer.','good');sfx('fire')});break;
-    case 'fire':
-      if(!g.tools.fire||H.fireUses<=0){toast('Kein Feuerstarter.');return}
+    case 'fire':{
+      if(!canIgnite()){toast('Du hast nichts zum Anzünden – Feuerstarter, Feuerzeug oder Streichhölzer fehlen.');return}
       if(H.fire.lit&&nearFire()){toast('Das Feuer brennt bereits. Du kannst Holz nachlegen.');return}
       if(woodAvail()<1){toast('Für ein Feuer brauchst du zuerst Feuerholz – „Holz sammeln“.','bad');return}
-      beginAction('fire','Macht Feuer …',20,()=>{
+      const cube=(H.fcubes||0)>0&&(env.precip||env.wind>7||H.wood<1);
+      beginAction('fire','Macht Feuer …',cube?10:20,()=>{
         const dryWood=H.wood<1&&H.carry>0; // mitgebrachtes Holz ist trocken
-        H.fireUses--;useWood();
+        const src=pickIgniter();let used=0;
+        if(src==='storm')H.sfuel--;else if(src==='lighter')H.lfuel--;else if(src==='steel')H.fireUses--;
+        else if(src==='match'){used=Math.min(H.matches,1+Math.floor(Math.random()*7));if((H.mWet||0)>50)used=Math.min(H.matches,used+1+Math.floor(Math.random()*3));H.matches-=used}
+        useWood();
         let p=env.precip?(H.camp.pitched||env.biome==='wald'?0.6:0.3):0.92;
         if(env.precip&&fireCovered(H.x+70))p=Math.max(p,0.85);
         if(env.precip&&dryWood)p=Math.max(p,0.8);
-        if(Math.random()<p){H.fire={lit:true,left:60,x:H.x+70};H.stats.fires++;toast('🔥 Ein kleines Feuer brennt. Mit mehr Holz wird es größer und hält länger.','good');sfx('fire')}else toast('Das Holz ist zu nass – Feuer fehlgeschlagen.','bad');
-      });break;
+        if(src==='storm')p=p+(1-p)*0.75;
+        else if(src==='lighter')p=p+(1-p)*(env.wind>9?0.25:0.35);
+        else if(src==='match'){if((H.mWet||0)>50)p*=0.25;else p=p+(1-p)*0.2}
+        if(cube){H.fcubes--;p=p+(1-p)*0.7}
+        p=Math.min(0.99,p);
+        sfx('strike');
+        const note=(src==='match'?' ('+used+' Streichhölzer verbraucht)':'')+(cube?' Der Grillanzünder hat geholfen.':'');
+        if(Math.random()<p){H.fire={lit:true,left:60,x:H.x+70};H.stats.fires++;toast('🔥 Ein kleines Feuer brennt. Mit mehr Holz wird es größer und hält länger.'+note,'good');sfx('fire')}
+        else toast((src==='match'&&(H.mWet||0)>50?'Die Streichhölzer sind feucht – sie zünden kaum, das Feuer geht nicht an.':'Das Holz ist zu nass – Feuer fehlgeschlagen.')+note,'bad');
+      });break}
     case 'ftarp':{
       if(H.fireTarp){beginAction('ftarp','Nimmt das Tarp vom Feuer …',4,()=>{H.fireTarp=null;toast('🏕️ Tarp abgebaut.')});break}
       const canTarp=g.tools.firetarp||(g.shelter&&g.shelter.id==='tarp'&&!H.camp.pitched);
@@ -2284,19 +2303,144 @@ function deviceTick(hr,mode){
   }
 }
 const hasWaterProof=()=>false;
+/* ---------- Zündquellen, Mücken, Pollen, Thumbnail, Flaggen ---------- */
+function pickIgniter(){const g=H.g,wet=(H.mWet||0)>50;
+ if(g.tools.stormlighter&&H.sfuel>0)return 'storm';
+ if(g.tools.lighter&&H.lfuel>0)return 'lighter';
+ if((H.matches||0)>0&&!wet)return 'match';
+ if(g.tools.fire&&H.fireUses>0)return 'steel';
+ if((H.matches||0)>0)return 'match';
+ return null}
+const canIgnite=()=>!!pickIgniter();
+function fireItemsTick(mode,hr){
+  if(!H||H.matches===undefined)return;
+  const g=H.g,dry=g.tools.drybag?0.15:1;let d=0;
+  const out=!H.indoor&&!(H.sleep.active&&H.camp.pitched&&g.shelter);
+  if(env.precip&&out){d+=(env.precip==='snow'?10:24*(env.rainI||1)*(g.shell?0.6:1))*dry*hr}
+  if(H.crossing&&(H.crossing.kind==='swim'||H.crossing.kind==='wade'))d+=(H.crossing.kind==='swim'?400:120)*dry*hr;
+  if(nearFire())d-=40*hr;else if(H.indoor)d-=25*hr;else if(!env.precip&&env.sun>0.35)d-=4*hr;
+  H.mWet=clamp((H.mWet||0)+d,0,100);
+  if(H.mWet>50&&!H.mWetW&&H.matches>0){H.mWetW=true;toast('💧 Deine Streichhölzer sind feucht geworden – sie zünden jetzt schlecht. Am Feuer oder im Trockenen werden sie wieder brauchbar.','warn');sfx('warn')}
+  if(H.mWet<25)H.mWetW=false;
+}
+function pestKind(hk){const c=String(hk&&hk.country||'');if(/Schweden|Norwegen|Finnland|Island/.test(c))return 'n';if(/Spanien|Italien|Korsika|Frankreich/.test(c))return 's';return 'c'}
+function pestRegion(hk){const c=String(hk&&hk.country||'');if(/Schottland/.test(c))return 1.5;if(/Schweden|Norwegen|Finnland/.test(c))return 1.8;if(/Island/.test(c))return 1.2;return 1}
+function pestMonthW(m,k){const W={n:[0,0,0,0.05,0.25,0.9,1,0.9,0.4,0.05,0,0],c:[0,0,0.02,0.1,0.35,0.7,1,1,0.75,0.25,0.03,0],s:[0,0.02,0.1,0.25,0.5,0.8,1,1,0.9,0.5,0.15,0.02]};return W[k][((m%12)+12)%12]}
+function pollenBase(hk,m){const k=pestKind(hk),i=k==='n'?(m+11)%12:k==='s'?(m+1)%12:m%12;return [0,0.05,0.35,0.85,1,0.5,0.15,0.05,0.05,0,0,0][i]}
+function pestWord(v){return v<0.12?'kaum':v<0.4?'mäßig':v<0.8?'stark':'Schwärme'}
+function mosqLabel(hk){const m=dateOf(G.day).m;return pestWord(pestMonthW(m,pestKind(hk))*pestRegion(hk)*0.8)}
+function pollenLabel(hk){const v=pollenBase(hk,dateOf(G.day).m);return v<0.15?'kaum':v<0.5?'mäßig':'stark'}
+function pestTick(mode,hr){
+  if(!H||!H.hk||!H.g)return;
+  const hk=H.hk,g=H.g,B=H.body,m=env.month,alt=env.alt||0,hour=env.hour||0;
+  const bio={wald:1.2,tal:1.1,wiese:1,sumpf:1.6,fjaell:0.9,berg:0.5,kies:0.5,sand:0.35,schnee:0}[env.biome];
+  let I=pestMonthW(m,pestKind(hk))*pestRegion(hk)*clamp((env.temp-7)/12,0,1)*((hour>=18||hour<8)?1:0.55)*(bio===undefined?1:bio)*clamp(1-env.wind/9,0.05,1)*(env.precip?0.35:1)*(alt>1800?0.15:alt>1200?0.5:1)*(1-clamp(env.snow||0,0,1));
+  I=clamp(I,0,1.3);
+  const sleeping=H.sleep.active;let E=1;
+  if(H.indoor)E=0;
+  else if(sleeping&&H.camp.pitched&&g.shelter)E=g.shelter.id==='tarp'?(g.tools.mtarp?0.08:1):0.05;
+  else E=g.tools.mnet?0.25:1;
+  if(nearFire())E*=0.6;
+  const pb={wald:0.9,wiese:1.1,tal:1,berg:0.4,fjaell:0.3,sand:0.3,kies:0.2,sumpf:0.7,schnee:0}[env.biome];
+  let P=pollenBase(hk,m)*(alt>1800?0.2:alt>1200?0.5:1)*(pb===undefined?1:pb)*(env.precip?0.1:(env.wind>2?1.15:1))*clamp((env.sun||0)*1.4,0.25,1);
+  P=clamp(H.indoor?0:P,0,1.2);
+  H.pest={I,E,P};
+  const ie=I*E;
+  if(ie>0.05&&B)B.energy=Math.max(0,B.energy-(sleeping?5:7)*ie*hr);
+  if(ie>0.32&&!sleeping&&H.t-(H.pestMsgT||-9999)>200){H.pestMsgT=H.t;toast(g.tools.mnet?'🦟 Mückenschwärme – dein Netz hält sie vom Gesicht fern, lästig bleibt es trotzdem.':'🦟 Mückenschwärme! Sie stechen überall. Ein Mückennetz würde jetzt helfen.','warn')}
+  if(sleeping&&ie>0.3&&H.t-(H.pestMsgT||-9999)>300){H.pestMsgT=H.t;toast('🦟 Mücken am Schlafplatz – kaum Erholung.'+(g.shelter&&g.shelter.id==='tarp'?' Ein Moskitonetz fürs Tarp würde helfen.':''),'warn')}
+  G.flags=G.flags||{};if(G.flags.allergy===undefined)G.flags.allergy=Math.random()<0.3?1:0;
+  if(G.flags.allergy&&P>0.2&&B){B.energy=Math.max(0,B.energy-4*P*hr);if(mode==='walk'&&Math.random()<0.5*P*hr&&H.t-(H.sneezeT||-999)>40){H.sneezeT=H.t;toast('🤧 Hatschi! Der Pollenflug macht dir zu schaffen.');sfx('sneeze')}}
+  else if(P>0.35&&!H.pollenMsg){H.pollenMsg=1;toast('🌼 Pollenflug – die Luft ist gelb vom Blütenstaub.')}
+}
+function drawPest(g,tm,sx,gy){
+  const Pt=H&&H.pest;if(!Pt)return;
+  if(Pt.P>0.15){const n=Math.round(clamp(Pt.P,0,1)*28);g.save();for(let i=0;i<n;i++){const x=((i*97.3+tm*(10+(i%5)*5))%(CW+40))-20,y=CH*0.12+((i*53.7)%(CH*0.62))+Math.sin(tm*0.9+i)*9;g.globalAlpha=0.35+0.3*((i%3)/2);g.fillStyle=(i%4)?'#e8cf4a':'#f4e58a';g.beginPath();g.arc(x,y,1.1+(i%3)*0.5,0,7);g.fill()}g.restore()}
+  const ie=Pt.I*Pt.E;
+  if(Pt.I>0.2){const n=Math.round(clamp(Pt.I,0,1)*12*(0.3+0.7*Pt.E))+(ie>0.25?2:0);g.save();g.fillStyle='rgba(20,20,20,0.85)';g.strokeStyle='rgba(40,40,40,0.5)';g.lineWidth=0.8;
+   for(let i=0;i<n;i++){const a=tm*(2.6+(i%4)*0.7)+i*1.9,r=(Pt.E<0.3?36:20)+(i%5)*8+Math.sin(tm*3+i)*4;const x=sx+10+Math.cos(a)*r,y=gy-70+Math.sin(a*1.3)*r*0.6;g.beginPath();g.arc(x,y,1.5,0,7);g.fill();g.beginPath();g.moveTo(x-2,y-1.5);g.lineTo(x+2,y-1.5);g.stroke()}
+   g.restore()}
+}
+function dogRunAhead(D){
+  const dir=(H.dir||1)<0?-1:1,free=(dir>0?H.route.totalPx-H.x:H.x)/PPK;
+  if(free<0.9)return false;
+  let km=rnd(0.9,2.0);const rare=0.03+0.04*Math.pow((100-D.trust)/100,2);
+  if(Math.random()<rare)km=rnd(3,5.2);
+  km=Math.min(km,free-0.3);
+  D.away=true;D.ahead={x:H.x+dir*km*PPK,cur:H.x+dir*130,t0:H.t,ret:false,km,wh:2,nextWh:H.t+rnd(1,2.5)};H.dogR=null;
+  const nm=G.dog.name;
+  if(km>=3)toast('🐕 Verdammt, '+nm+' ist abgehauen und schon weit voraus – das werden locker '+fmtN(km,0)+' Kilometer sein! So ein Pech …','bad');
+  else toast('🐕 '+nm+' ist abgehauen und läuft voraus …','warn');
+  sfx('bark');return true;
+}
+function dogAheadTick(mode,hr,dkm){
+  const D=H.dog,A=D&&D.ahead;
+  if(!A){D.away=false;return}
+  const nm=G.dog.name,sg=v=>v<0?-1:1,sp=12*PPK*hr;
+  if(A.ret){A.x+=sg(H.x-A.x)*Math.min(Math.abs(H.x-A.x),sp);A.cur+=sg(H.x-A.cur)*Math.min(Math.abs(H.x-A.cur),sp)}
+  else if(Math.abs(A.x-A.cur)>1){A.cur+=sg(A.x-A.cur)*Math.min(Math.abs(A.x-A.cur),sp)}
+  const vis=Math.abs(A.cur-H.x)<Math.min(CW*0.62,640);
+  if(!A.ret&&vis&&A.wh>0&&H.t>=A.nextWh&&mode==='walk'){
+    A.wh--;A.nextWh=H.t+rnd(2,4);sfx('whistle');
+    if(Math.random()<0.25+0.5*(D.trust||0)/100){A.ret=true;toast('🐕 *pfeift* – '+nm+' hört und kommt zurück.','good')}
+    else toast('🐕 *pfeift* – '+nm+' tut so, als hätte er nichts gehört.','warn');
+  }
+  if(!A.ret&&(mode==='sleep'||H.t-A.t0>150))A.ret=true;
+  if(Math.abs(A.cur-H.x)<75&&(A.ret||Math.abs(A.x-A.cur)<2)){
+    D.away=false;D.ahead=null;H.dogR=null;D.mood=Math.max(0,(D.mood||50)-(A.ret?2:4));D.trust=Math.min(100,(D.trust||0)+0.5);
+    toast(A.ret?'🐕 '+nm+' ist wieder bei dir.':'🐕 '+nm+' sitzt am Wegesrand und wartet – er schließt sich dir wieder an.','good');sfx('success');
+  }
+}
+function drawAheadDog(g,tm,sx){
+  const D=H&&H.dog,A=D&&D.ahead;if(!D||!A||!D.away||!G.dog)return;
+  const dx=sx+(A.cur-H.x);if(dx<-140||dx>CW+140)return;
+  const gy=groundY(A.cur)+2,runs=Math.abs(A.x-A.cur)>2||A.ret;
+  const face=(runs&&!A.ret)?(A.x>=H.x?1:-1):(H.x>=A.cur?1:-1);
+  g.save();if(face<0){g.translate(dx,0);g.scale(-1,1);g.translate(-dx,0)}
+  drawDog(g,dx,gy,D.def,G.dog,runs?'walk':'sit',tm*8,tm,null);
+  g.restore();
+}
+function thumbShot(){
+  const dev=phoneDev();if(!dev){toast('📱 Kein funktionierendes Handy oder keine Kamera dabei.','bad');return}
+  let img=null;
+  try{const src=document.getElementById('cv'),c=document.createElement('canvas');c.width=320;c.height=180;c.getContext('2d').drawImage(src,0,0,src.width,src.height,0,0,320,180);img=c.toDataURL('image/jpeg',0.7)}catch(e){}
+  if(!img){toast('Das Foto ist leider nichts geworden.','bad');return}
+  const q=clamp(shotQ(dev.def,1),0.3,1.35),bio=env.biome;
+  beginAction('thumb','Macht ein Thumbnail-Foto …',3,()=>{
+    H.thumbShot={img,q,biome:bio};
+    toast('🖼️ Thumbnail-Foto aufgenommen. Beim Veröffentlichen kannst du „Eigenes Foto“ wählen (kleiner Bonus bei den Aufrufen).','good');sfx('shutter');
+  },{resume:true});
+}
+function walkedSet(){const s=new Set(Object.keys(G.walked||{}));(G.videos||[]).forEach(v=>{if(v.thumb&&v.thumb.hikeId)s.add(v.thumb.hikeId);else if(v.tour){const h=HIKES.find(x=>x.name===v.tour);if(h)s.add(h.id)}});if(G.pending&&G.pending.hikeId)s.add(G.pending.hikeId);if(H&&H.hk&&!H.ended)s.add(H.hk.id);return s}
+const FLAGU={};
+function flagURL(name){const n=flagCode(name);if(FLAGU[n]===undefined){try{FLAGU[n]=flagBmp(name).toDataURL()}catch(e){FLAGU[n]=''}}return FLAGU[n]}
+function flagsHTML(country){return String(country||'').split('·').map(p=>p.trim()).filter(Boolean).map(p=>{const u=flagURL(p);return u?'<img src="'+u+'" alt="" style="height:15px;vertical-align:-3px;border-radius:2px;margin-right:3px;border:1px solid rgba(0,0,0,.35)">':''}).join('')}
+function drawFord(g,f,sx,tm){
+  const w=f.fw,x0=Math.max(-24,sx),x1=Math.min(CW+24,sx+w);if(x1<=x0)return;
+  const fr=env.frozen,gyAt=x=>groundY(f.x+(x-sx)),dep=x=>3+17*Math.sin(Math.PI*clamp((x-sx)/w,0,1));
+  g.save();g.beginPath();g.moveTo(x0,gyAt(x0)-1);
+  for(let x=x0;x<=x1;x+=8)g.lineTo(x,gyAt(x)-1);
+  g.lineTo(x1,gyAt(x1)-1);
+  for(let x=x1;x>=x0;x-=8)g.lineTo(x,gyAt(x)+dep(x));
+  g.closePath();
+  const y0=gyAt(sx+w/2),gr=g.createLinearGradient(0,y0-2,0,y0+22);
+  if(fr){gr.addColorStop(0,tc('#e6f3fb'));gr.addColorStop(1,tc('#a9cbe0'))}else{gr.addColorStop(0,tc('#62b6ea'));gr.addColorStop(1,tc('#2b79bd'))}
+  g.fillStyle=gr;g.fill();
+  if(!fr){g.strokeStyle='rgba(255,255,255,0.5)';g.lineWidth=1.4;for(let k=0;k<Math.floor(w/42);k++){const wx=sx+10+((k*42+tm*16)%(w-20));if(wx<-20||wx>CW+20)continue;const wy=gyAt(wx)+4+(k%3)*4;g.beginPath();g.moveTo(wx,wy);g.quadraticCurveTo(wx+6,wy-3,wx+12,wy);g.stroke()}}
+  const n=Math.max(4,Math.round(w/62));
+  for(let i=0;i<n;i++){const t2=(i+0.5+((((f.x*7+i*131)%100)+100)%100/100-0.5)*0.6)/n,wx=sx+10+t2*(w-20);if(wx<-20||wx>CW+20)continue;const rx=9+Math.floor(f.x+i*53)%6,wy=gyAt(wx)-1;g.fillStyle=tc('#98a0a6');g.beginPath();g.ellipse(wx,wy,rx,5,0,Math.PI,0);g.fill();g.fillStyle=tc('#bcc3c8');g.beginPath();g.ellipse(wx-2,wy-1.5,rx*0.5,1.6,0,0,7);g.fill();g.fillStyle='rgba(255,255,255,0.35)';g.beginPath();g.ellipse(wx+rx*0.6,wy+1.5,rx*0.6,1.1,0,0,7);g.fill()}
+  g.strokeStyle=tc('#4f7a35');g.lineWidth=1.6;for(const e of [0,w]){for(let k=0;k<4;k++){const bx=sx+e+(e?6:-6)+(k-1.5)*4,by=gyAt(sx+e)+1;if(bx<-10||bx>CW+10)continue;g.beginPath();g.moveTo(bx,by);g.lineTo(bx+Math.sin(tm*1.6+k)*2,by-14-k*2);g.stroke()}}
+  {const cx=sx+w/2;if(cx>-40&&cx<CW+40){g.fillStyle='rgba(255,255,255,0.9)';g.font='bold 12px sans-serif';g.textAlign='center';g.fillText('Furt',cx,gyAt(cx)-16)}}
+  g.restore();
+}
 /* ---------- Hund ---------- */
 function dogBark(force){const D=H&&H.dog;if(!D||!G.dog||D.away||H.sleep.active)return;if(!force&&H.t-(H.dogBarkT||-999)<25)return;H.dogBarkT=H.t;H.dogBarkUntil=tm+1.8;H.barkTxt=pick(['Wuff!','Wuff wuff!','Wau!']);sfx('bark')}
 function dogTick(mode,hr,dkm){
   const D=H.dog;if(!D)return;const def=D.def;
-  if(D.away)return;
+  if(D.away){dogAheadTick(mode,hr,dkm);return}
   if(mode==='walk'&&Math.random()<0.35*hr)dogBark();
   D.trust=Math.min(100,(D.trust||0)+(D.leash?0.5:0.3)*hr);
-  if(mode==='walk'&&!D.leash&&!H.action&&D.trust<90&&Math.random()<(0.03+0.45*(90-D.trust)/90)*hr){
-    D.away=true;const mins=Math.round(20+(90-D.trust)*1.1+rnd(0,30));
-    toast('🐕 '+G.dog.name+' ist abgehauen! Du musst ihn suchen …','bad');sfx('bad');
-    beginAction('search','Sucht '+G.dog.name+' …',mins,()=>{D.away=false;D.leash=true;D.mood=Math.max(0,D.mood-10);D.trust=Math.max(0,D.trust-2);toast('🐕 '+G.dog.name+' ist wieder da – du legst ihm die Leine an.','good');sfx('success')},{resume:true});
-    return;
-  }
+  if(mode==='walk'&&!D.leash&&!H.action&&!H.crossing&&!H.side&&D.trust<90&&Math.random()<(0.008+0.18*Math.pow((100-D.trust)/100,2))*hr){if(dogRunAhead(D))return}
   D.hunger=clamp(D.hunger-(mode==='walk'?6.4:3.2)*hr,0,100);
   D.thirst=clamp(D.thirst-(mode==='walk'?7:3)*hr,0,100);
   if(mode==='walk'){let mul=1;const sw=H.crossing&&H.crossing.kind==='swim',cl=H.side&&H.side.kind==='climb',steep=env.grade>0.15;if(sw||cl||steep)mul+=0.10;else if(env.grade<=0.04)mul-=0.05;D.fat=Math.min(100,D.fat+dkm*100/(def.stam*1.8)*(D.leash?1.4:1)*mul)}
@@ -2370,24 +2514,27 @@ function lakeDialog(L){
   showModal({title:'🏞️ '+esc(L.name),text:'Vor dir liegt ein See mit etwa '+fmtN(km,2)+' km Breite, der den Weg unterbricht.'+(frozen?' Er ist zugefroren, aber wie dick ist das Eis?':' Im Wasser wirst du nass, dein Proviant und das Handy sind gefährdet'+(dry?' – der Seesack schützt sie.':'.')),buttons:btns,wide:true});
 }
 function startCross(L,kind,dur,done){
-  const x0=H.x,x1=Math.min(H.route.totalPx,L.xr+70),label={detour:'Umrundet den See …',swim:'Schwimmt durch den See …',boat:'Rudert über den See …',ice:'Geht über das Eis …'}[kind];
+  const x0=H.x,x1=Math.min(H.route.totalPx,L.xr+70),label={detour:'Umrundet den See …',swim:'Schwimmt durch den See …',boat:'Rudert über den See …',ice:'Geht über das Eis …',wade:'Springt von Stein zu Stein …'}[kind];
   H.crossing={kind,x0,x1,L};
   const fin=()=>{H.crossing=null;H.detourDy=0;H.x=x1;H.km=H.x/PPK;if(done)done();H.walking=true};
   beginAction('ford',label,dur,fin,{tick:h=>{const pr=clamp(1-H.action.left/dur,0,1);H.x=lerp(x0,x1,pr);H.km=H.x/PPK;H.phase+=h*0.35;
     H.detourDy=kind==='detour'?34*Math.sin(Math.PI*pr):kind==='swim'?8:0}});
 }
 function riverFord(f){
+  if((H.dir||1)<0)return;
   H.walking=false;
-  showModal({title:'🌊 Flussfurt',text:'Kein Steg in Sicht. Du kannst durchwaten (10 Min., nass werden, Ausrutschgefahr) oder einen Umweg um die Furt gehen (35 Min., trocken).'+(env.frozen?' Das Wasser ist eiskalt – Durchwaten kühlt dich stark aus.':''),buttons:[
-    {label:'Durchwaten',fn:()=>beginAction('ford','Durchquert die Furt …',10,()=>{
+  const w=f.fw||260,L={xl:f.x,xr:f.x+w,L:elevAt(f.x),name:'Furt'};
+  const dur=Math.round(9+w/40),det=Math.round(24+w/9);
+  showModal({title:'🌊 Flussfurt',text:'Kein Steg in Sicht – nur eine breite Furt mit einzelnen Steinen im Wasser. Du kannst von Stein zu Stein hüpfen und durchwaten ('+dur+' Min., nass werden, Ausrutschgefahr) oder nach einer besseren Überquerung suchen und außen um die Furt herumgehen (ca. '+det+' Min., trocken, kostet Zeit und Kraft).'+(env.frozen?' Das Wasser ist eiskalt – Durchwaten kühlt dich stark aus.':''),buttons:[
+    {label:'Über die Steine hüpfen',fn:()=>startCross(L,'wade',dur,()=>{
       const wr=H.g.shoes?H.g.shoes.wetRes:0;
-      H.body.wet=clamp(H.body.wet+35*(1-wr*0.6)*(H.g.tools.drybag?0.85:1),0,100);
+      H.body.wet=clamp(H.body.wet+26*(1-wr*0.6)*(H.g.tools.drybag?0.85:1),0,100);
       if(env.frozen||env.temp<3)H.body.warm=clamp(H.body.warm-25,0,100);
-      if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.14:0.06)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist ausgerutscht und hast dir den Fuß verstaucht.','bad');injuryAlert('Ausgerutscht! Mein Fuß tut weh.');
+      if(Math.random()<(H.weather.type==='regen'||H.weather.type==='gewitter'?0.12:0.05)*(H.g.tools.poles?0.5:1)){H.inj.sprain=H.t+1440;toast('🌊 Du bist von einem Stein abgerutscht und hast dir den Fuß verstaucht.','bad');injuryAlert('Ausgerutscht! Mein Fuß tut weh.');
         if(!H.g.tools.drybag&&Math.random()<0.15){const ph=H.g.phones.find(p=>H.dev[p.id]&&!H.dev[p.id].broken);if(ph){H.dev[ph.id].broken=true;H.cond[ph.id]=0;toast('💥 Das Smartphone hat Wasser abbekommen und ist defekt!','bad')}}}
-      else toast('Du bist durch – die Beine sind nass.');
-      H.walking=true},{resume:false})},
-    {label:'Umweg gehen',fn:()=>beginAction('ford','Geht um die Furt herum …',35,()=>{H.body.energy=clamp(H.body.energy-8,0,100);toast('Trockenen Fußes drüber.');H.walking=true})}]});
+      else toast('Du bist drüben – die Schuhe sind nass geworden.');
+    })},
+    {label:'Bessere Überquerung suchen',fn:()=>startCross(L,'detour',det,()=>{H.body.energy=clamp(H.body.energy-8,0,100);toast('Trockenen Fußes drüber.')})}]});
 }
 function navCheck(){
   if(H.safeJunction){H.safeJunction=false;toast('🪧 Wegkreuzung – der Tipp des Wanderers war richtig.');return}
@@ -2473,7 +2620,7 @@ function villagePrice(it){return it.price*1.35*priceMod()*HUTMUL}
 function buyVillage(id,qty){
   const it=gearById(id);const p=villagePrice(it)*qty;if(G.money<p)return false;
   G.money-=p;
-  if(id==='gas')H.gas+=5*qty;else if(id==='dogfood')H.dogfood+=qty;else H.food[id]=(H.food[id]||0)+qty;
+  if(id==='matchbox')H.matches=(H.matches||0)+38*qty;else if(id==='fcube')H.fcubes=(H.fcubes||0)+8*qty;else if(id==='gas')H.gas+=5*qty;else if(id==='dogfood')H.dogfood+=qty;else H.food[id]=(H.food[id]||0)+qty;
   sfx('coin');return true;
 }
 function cafeCharge(id){
@@ -2530,6 +2677,7 @@ function openPhone(){
     {label:'🏨 Herberge buchen',fn:()=>bookLodgeDialog()},
     {label:'📦 Proviant vorbestellen',fn:()=>orderParcelDialog()},
     {label:'📝 Beitrag im Kanal posten',fn:()=>teaserDialog()},
+    {label:'🖼️ Thumbnail-Foto aufnehmen',fn:()=>thumbShot()},
     {label:'Schließen'}]});
 }
 const CLASS_NAMES=['','Klasse 3 · Mehrbettzimmer/Lager','Klasse 2 · Zweibettzimmer','Klasse 1 · Einzelzimmer, Frühstück'];
@@ -2835,7 +2983,7 @@ let mode='rest',dkm=0;
   if(H.camp.pitched&&H.g.shelter)windTent(hr);
   if(H.camp.pitched&&H.g.shelter){wear(H.g.shelter.id,0.05*hr*(1+env.wind/8+(env.precip?1:0)+(env.precip==='snow'?1.2:0))+(env.wind>13&&Math.random()<0.01*hr?12:0))}
   trackFeatures();trackSky(hr);updateWalkers(h);snowTick(hr);spoilTick();
-  deviceTick(hr,mode);dogTick(mode,hr,dkm);
+  deviceTick(hr,mode);dogTick(mode,hr,dkm);try{fireItemsTick(mode,hr);pestTick(mode,hr)}catch(e){}
   bodyTick(mode,hr);
   {const F=H.flags,Bd=H.body;
    if((H.weather.type==='gewitter'||H.weather.type==='sturm')&&!H.sleep.active&&H.moving){H.stormT=(H.stormT||0)+hr;if(H.stormT<12)H.thrill+=0.35*hr}
@@ -2891,11 +3039,14 @@ function endHike(reason){
     const gs=Math.floor(H.gas/5+0.4);if(gs>0){keep.gas=gs;kept.push(gs+'× Gaskartusche')}
     const df=Math.floor((H.dogfood||0)+0.3);if(df>0){keep.dogfood=df;kept.push(df+' kg Hundefutter')}
     if(H.carry>0){keep.firewood=H.carry;kept.push(H.carry+'× Brennholz')}
+    {const mb=Math.floor((H.matches||0)/38);G.mpart=(H.matches||0)%38;if(mb>0){keep.matchbox=mb;kept.push(mb+'× Streichhölzer')}if(G.mpart>0)kept.push(G.mpart+' lose Streichhölzer');const fb=Math.floor((H.fcubes||0)/8);G.fpart=(H.fcubes||0)%8;if(fb>0){keep.fcube=fb;kept.push(fb+'× Grillanzünder')}if(G.fpart>0)kept.push(G.fpart+' lose Grillanzünder')}
     G.cons=keep;H.kept=kept;H.keptLost=lost;
   }
-  if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/30))}
+  if(H.dog&&H.dog.away){H.dog.away=false;H.dog.ahead=null}
+  if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/8)+1)}
   const days=Math.floor(H.t/1440)+1;
-  G.pending={teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
+  (G.videos||[]).slice(0,-8).forEach(v=>{if(v.thumb&&v.thumb.img)delete v.thumb.img});
+  G.pending={thumbImg:H.thumbShot?H.thumbShot.img:null,thumbQ:H.thumbShot?H.thumbShot.q:0,teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
     thrill:H.thrill,risk:H.startRisk,flags:H.flags,lostN:H.stats.junctionsLost,hadDog:!!H.dog,evs:(H.evLog||[]).map(e=>e.k),clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
   H.pendingSummary={clips:H.clips.length};
   save();
@@ -2959,7 +3110,7 @@ function sfx(name,arg){
     case 'notify':tone(880,0.14,'sine',0.14);tone(1175,0.16,'sine',0.1,0.08);break;
     case 'discover':tone(660,0.25,'sine',0.16);tone(990,0.4,'sine',0.14,0.12);break;
     case 'warn':tone(440,0.14,'square',0.08);tone(330,0.2,'square',0.08,0.16);break;
-    case 'bad':tone(300,0.3,'sawtooth',0.1,0,-150);break;case 'batt':[880,660,440].forEach((f,i)=>tone(f,0.13,'square',0.11,i*0.16));break;case 'bark':tone(420,0.08,'sawtooth',0.13,0,-160);burst(0.06,'bandpass',1100,0.12);tone(360,0.1,'sawtooth',0.12,0.15,-140);break;
+    case 'bad':tone(300,0.3,'sawtooth',0.1,0,-150);break;case 'batt':[880,660,440].forEach((f,i)=>tone(f,0.13,'square',0.11,i*0.16));break;case 'whistle':tone(1500,0.16,'sine',0.11,0,600);tone(2100,0.26,'sine',0.1,0.2,-500);break;case 'sneeze':burst(0.05,'bandpass',900,0.2);burst(0.14,'highpass',2600,0.28,0.12);break;case 'strike':burst(0.18,'bandpass',2600,0.22);break;case 'bark':tone(420,0.08,'sawtooth',0.13,0,-160);burst(0.06,'bandpass',1100,0.12);tone(360,0.1,'sawtooth',0.12,0.15,-140);break;
     case 'coin':tone(1250,0.06,'square',0.07);tone(1680,0.18,'square',0.07,0.06);break;
     case 'tent':burst(0.35,'bandpass',2800,0.18,0,0.8);break;
     case 'fire':burst(0.5,'lowpass',300,0.35,0,0.7,1200);break;
@@ -3651,7 +3802,7 @@ const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finis
       g.fillStyle=tc('#8a8d90');g.beginPath();g.ellipse(sx,y-6,20,10,0,Math.PI,0);g.fill();
       g.fillStyle=fr?tc('#dbeaf3'):tc('#4aa8e8');g.beginPath();g.ellipse(sx+16,y+2,20,5,0,0,7);g.fill();
       emoji(g,fr?'🧊':'💧',sx-2,y-16,22+(fr?0:Math.sin(tm*3)*1.5));
-    }else if(f.type==='fluss'){
+    }else if(f.type==='fluss'&&f.fw){drawFord(g,f,sx,tm)}else if(f.type==='fluss'){
       g.fillStyle=env.frozen?tc('#cfe3ef'):tc('#3d8fd6');g.fillRect(sx-46,y-1,92,18);
       if(!env.frozen){g.strokeStyle='rgba(255,255,255,0.55)';g.lineWidth=1.5;
         for(let k=0;k<4;k++){const wx=sx-40+k*24+((tm*20)%24);g.beginPath();g.moveTo(wx,y+4+k%2*6);g.quadraticCurveTo(wx+6,y+1+k%2*6,wx+12,y+4+k%2*6);g.stroke()}}
@@ -3868,6 +4019,7 @@ const LIGHT={t:0,next:8,flash:0,bolt:null};
 function heroY(x){
   const c=H&&H.crossing;if(!c)return groundY(x);
   const ys=380-(c.L.L-H.camElev)*VS;
+  if(c.kind==='wade'){return groundY(x)+1-Math.abs(Math.sin((x-c.x0)/68*Math.PI))*7}
   if(c.kind==='detour'){const pr=clamp((x-c.x0)/Math.max(1,c.x1-c.x0),0,1);return lerp(groundY(c.x0),groundY(c.x1),pr)+8+30*Math.sin(Math.PI*pr)}
   return Math.min(groundY(x),ys)+(c.kind==='boat'?10:c.kind==='swim'?14:2);
 }
@@ -4148,7 +4300,7 @@ row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),tru
   if(resting&&H.g.tools.fire){
     if(H.wood<6)row.push(['🪵',H.wood>0?'Holz +'+H.wood:'Holz sammeln',()=>actClick('wood'),true]);
     if(H.fire.lit&&nearFire()&&woodAvail()>0)row.push(['🔥','Nachlegen',()=>actClick('feed'),true]);
-    else if(!H.fire.lit&&H.fireUses>0&&woodAvail()>0)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
+    else if(!H.fire.lit&&canIgnite()&&woodAvail()>0)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
     if((H.g.tools.firetarp||(H.g.shelter&&H.g.shelter.id==='tarp'&&!H.camp.pitched))&&(H.fire.lit?nearFire():true))row.push(['🏕️',H.fireTarp?'Tarp ab':'Tarp',()=>actClick('ftarp'),true]);
   }
   if(resting&&H.g.solarBig){
@@ -4325,19 +4477,21 @@ g.restore();
       g.strokeStyle='#c0392b';g.lineWidth=1.8;g.beginPath();g.moveTo(hx0,hy0);g.quadraticCurveTo((hx0+cx)/2,Math.max(hy0,cy)+9,cx,cy);g.stroke();
     }
   }
+  try{drawAheadDog(g,tm,sx)}catch(e){}
+  if(!H.sleep.active){try{drawPest(g,tm,sx,heroY(H.x))}catch(e){}}
   const inTent=H.sleep.active&&H.camp.pitched&&g0.shelter;
   const WK=H.wake&&tm-H.wake.t0<2.9?H.wake:null;if(H.wake&&!WK)H.wake=null;
   if(WK){ /* Zelt/Tarp weggeweht: erst im Freien liegen, dann aufstehen */
     const a=tm-WK.t0,lk=lookNow();
     if(a<1.5)drawHiker(g,WK.x-camX,groundY(WK.x)+2,1.2,{look:lk,phase:0,mode:'sleep',tm});
-    else{const u=clamp((a-1.5)/1.4,0,1),wx=lerp(WK.x,H.x,u);drawHiker(g,wx-camX,groundY(wx)+2,1.2,{look:lk,phase:a*7,mode:u<1?'walk':'idle',packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),tm})}
+    else{const u=clamp((a-1.5)/1.4,0,1),wx=lerp(WK.x,H.x,u);drawHiker(g,wx-camX,groundY(wx)+2,1.2,{look:lk,phase:a*7,mode:u<1?'walk':'idle',packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,tm})}
   }
   if(!inTent&&!WK&&!(H.sleep.active&&H.indoor==='lodge')){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
-drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(lightSource()==='lamp'||lightSource()==='torch')&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(lightSource()==='lamp'||lightSource()==='torch')&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
 
@@ -4497,7 +4651,7 @@ function renderChar(){
    </div></div></div>`;
   const cv=$('#prev'),g=cv.getContext('2d');
   const paint=(t)=>{if(!cv.isConnected)return;g.clearRect(0,0,240,260);const gr=g.createLinearGradient(0,0,0,260);gr.addColorStop(0,'#9fd3f0');gr.addColorStop(1,'#d9f0d8');g.fillStyle=gr;g.fillRect(0,0,240,260);g.fillStyle='#5f9e46';g.fillRect(0,220,240,40);
-    drawHiker(g,120,222,2.3,{look:G.look,phase:0,mode:'idle',packColor:packCol(slotOf('pack'))||'#c0392b',packScale:(slotOf('pack')&&slotOf('pack').vol)?clamp(0.72+slotOf('pack').vol*0.0085,0.85,1.5):1,tent:true,tm:t/1000});requestAnimationFrame(paint)};
+    drawHiker(g,120,222,2.3,{look:G.look,phase:0,mode:'idle',nopack:!slotOf('pack'),packColor:packCol(slotOf('pack'))||'#c0392b',packScale:(slotOf('pack')&&slotOf('pack').vol)?clamp(0.72+slotOf('pack').vol*0.0085,0.85,1.5):1,tent:true,tm:t/1000});requestAnimationFrame(paint)};
   requestAnimationFrame(paint);
   $$('[data-k]').forEach(el=>el.onclick=()=>{G.look[el.dataset.k]=+el.dataset.i;const n=$('#c-name').value,c=$('#c-chan').value;G.name=n;G.chan=c;renderChar()});
   const hs=$('#c-home');if(hs)hs.onchange=()=>{G.home=hs.value};
@@ -5032,6 +5186,8 @@ function briefing(hk){
   const stockDays=satStock/perDay;
   const gapKm=TOWNS[hk.id]?(()=>{const k=[0,...TOWNS[hk.id].filter(t=>t[1]<hk.km-3).map(t=>t[1]),hk.km];let m=0;for(let i=1;i<k.length;i++)m=Math.max(m,k[i]-k[i-1]);return m})():hk.villageEvery>0?hk.villageEvery*1.15:hk.km,gapDays=gapKm/ (hk.diff>=5?15:17);
   if(stockDays<Math.min(gapDays,days)*0.85){w.push({l:stockDays<1?'bad':'warn',t:`Proviant reicht für ca. ${fmtN(stockDays,1)} Tage – ohne Laden brauchst du für die längste Strecke etwa ${fmtN(Math.min(gapDays,days),0)} Tage.`});score+=0.6}
+  if(!pk)w.push({l:'warn',t:'Du hast keinen Rucksack – ohne kannst du nur sehr wenig tragen (ca. 8 kg). Rucksäcke gibt es im Ausrüstungs-Shop.'});
+  {const mq=pestMonthW(dateOf(G.day).m,pestKind(hk))*pestRegion(hk)*0.8;if(mq>=0.4)w.push({l:'info',t:'🦟 In dieser Region und Jahreszeit sind Mücken zu erwarten'+(mq>=0.8?' (Schwärme)':'')+'. Ein Mückennetz fürs Gesicht und – falls du im Tarp schläfst – ein Moskitonetz fürs Tarp lohnen sich.'})}
   // Gewicht
   const load=playerLoad(gearKg()+consKg(),(G.cons.dogfood||0));
   if(pk&&load>pk.max)w.push({l:'bad',t:`Rucksack überladen: ${fmtN(load)} kg bei max. ${pk.max} kg. Größeren Rucksack wählen oder Ballast abwerfen.`});
@@ -5078,6 +5234,7 @@ function travelInfo(hk){
 function travelText(hk){const t=travelInfo(hk);if(t.mode==='Zu Fuß')return 'Start direkt vor der Haustür – keine Anreisekosten';return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
 let SELHIKE=null;
 let HIKECTRY=null;
+let HIKEFLT=(function(){try{const v=localStorage.getItem('wk_hf');return (v==='new'||v==='done')?v:'all'}catch(e){return 'all'}})();
 let HIKEVIEW=(function(){try{return localStorage.getItem('wk_hv')||'km'}catch(e){return 'km'}})();
 const HS={km:(a,b)=>a.km-b.km,diff:(a,b)=>a.diff-b.diff||a.km-b.km,cost:(a,b)=>travelInfo(a).cost-travelInfo(b).cost||a.km-b.km};
 let HIKESORT=(function(){try{const v=localStorage.getItem('wk_hs');return HS[v]?v:'km'}catch(e){return 'km'}})();
@@ -5085,7 +5242,7 @@ function hikeCard0(hk){
   const fee=travelInfo(hk).cost,poor=G.money<fee;
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
-  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
+  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}${walkedSet().has(hk.id)?' <small title="schon gegangen">✅</small>':''}</h3><small>${flagsHTML(hk.country)} ${esc(hk.country)}</small>
       <p class="hint">${esc(hk.desc)}</p>
       <div class="facts"><span>📏 ${hk.km} km · ${dayLbl(hk)} </span>
       <span>🚆 ${esc(travelText(hk))}</span>
@@ -5093,6 +5250,7 @@ function hikeCard0(hk){
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
       <span>💪 Empfohlene Fähigkeiten Ø ${SKILL_REQ[hk.diff]} · du: Ø ${fmtN(skillAvg(hk),1)}</span>
       <span>🏪 ${f.towns?esc(f.towns):'keine Läden am Weg'}</span>
+      <span>🦟 Mücken: ${mosqLabel(hk)} · 🌼 Pollen: ${pollenLabel(hk)}</span>
       <span>🚰 ${f.wi.lbl}${f.wi.dry?' · '+f.wi.dry+' trockene Abschnitte (bis '+fmtN(f.wi.maxDry,0)+' km)':''}</span>
       <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
       ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
@@ -5114,7 +5272,7 @@ function hikeCard(hk){
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
   const stat=(top,sub,cls='')=>`<div class="hk-stat ${cls}">${top}<small>${sub}</small></div>`;
   const low=skillAvg(hk)<SKILL_REQ[hk.diff];
-  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
+  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}${walkedSet().has(hk.id)?' <small title="schon gegangen">✅</small>':''}</h3><small>${flagsHTML(hk.country)} ${esc(hk.country)}</small>
     ${hikeHist(hk)}<div class="hk-top">
       ${stat('<b>📏 '+hk.km+' km</b>',dayLbl(hk))}
       ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück'+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
@@ -5127,6 +5285,7 @@ function hikeCard(hk){
       <span>🌡️ ${Math.round(b.tNight)} … ${Math.round(b.tDay)} °C · ☀️ ${fmtN(b.dl,0)} h Licht</span>
       <span>💪 Empfohlene Fähigkeiten Ø ${SKILL_REQ[hk.diff]} · du: Ø ${fmtN(skillAvg(hk),1)}</span>
       <span>🏪 ${f.towns?esc(f.towns):'keine Läden am Weg'}</span>
+      <span>🦟 Mücken: ${mosqLabel(hk)} · 🌼 Pollen: ${pollenLabel(hk)}</span>
       <span>🚰 ${f.wi.lbl}${f.wi.dry?' · '+f.wi.dry+' trockene Abschnitte (bis '+fmtN(f.wi.maxDry,0)+' km)':''}</span>
       <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
       ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
@@ -5134,22 +5293,25 @@ function hikeCard(hk){
     ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing &amp; Start</button>`}</div>`;
 }
 function renderHikes(){
+  const wkS=walkedSet(),fl=HIKES.filter(hk=>HIKEFLT==='all'||(HIKEFLT==='new'?!wkS.has(hk.id):wkS.has(hk.id)));
   let body='';
   if(HIKEVIEW==='land'){
-    const groups={};HIKES.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
-    body=`<div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>🌍 ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
-      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">🌍 ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
-  }else body=`<div class="grid">${[...HIKES].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
+    const groups={};fl.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
+    body=`<div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>${flagsHTML(c)} ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
+      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">${flagsHTML(HIKECTRY)} ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
+  }else body=`<div class="grid">${[...fl].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
    <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📋 Alle Routen</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
    <div class="seg" style="margin-bottom:10px"><button data-hs="km" class="${HIKESORT==='km'?'on':''}">📏 Sortiert nach Länge</button><button data-hs="diff" class="${HIKESORT==='diff'?'on':''}">⛰️ nach Schwierigkeit</button><button data-hs="cost" class="${HIKESORT==='cost'?'on':''}">💶 nach Kosten</button></div>
+   <div class="seg" style="margin-bottom:10px"><button data-hf="all" class="${HIKEFLT==='all'?'on':''}">🗺️ Alle</button><button data-hf="new" class="${HIKEFLT==='new'?'on':''}">🆕 Noch nicht gegangen</button><button data-hf="done" class="${HIKEFLT==='done'?'on':''}">✅ Schon gegangen</button></div>
    <div class="seasonbar hasbar slim sb-${seasonOfM(dateOf(G.day).m)}"><div class="sb-e">${SEASON_E[seasonOfM(dateOf(G.day).m)]}</div><div class="sb-t"><small>Jahreszeit</small><b>${seasonOfM(dateOf(G.day).m)}</b></div><div class="sb-d">${dateStr(G.day)}</div></div><div class="timebar"><span>⏳ Zeit vergehen lassen</span><div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div><small class="hint">${G.pendCur+G.pendPrev>0?'Auszahlung in '+daysToPayout()+' Tagen':''}</small></div>
    ${body}</div>`;
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
   $$('[data-hs]').forEach(b=>b.onclick=()=>{HIKESORT=b.dataset.hs;try{localStorage.setItem('wk_hs',HIKESORT)}catch(e){}renderHikes()});
   $$('canvas[data-hvt]').forEach(cv=>{const v=(G.videos||[]).find(x=>x.id==cv.dataset.hvt);if(v){try{drawThumb(cv,v)}catch(e){}}});
+  $$('[data-hf]').forEach(b=>b.onclick=()=>{HIKEFLT=b.dataset.hf;try{localStorage.setItem('wk_hf',HIKEFLT)}catch(e){}renderHikes()});
   $$('[data-hv]').forEach(b=>b.onclick=()=>{HIKEVIEW=b.dataset.hv;try{localStorage.setItem('wk_hv',HIKEVIEW)}catch(e){}renderHikes()});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
@@ -5329,7 +5491,7 @@ function playIntro(hk,done){
   document.body.appendChild(ov);
   let W=cv.width=Math.max(320,ov.clientWidth||innerWidth),Hh=cv.height=Math.max(240,ov.clientHeight||innerHeight);const g=cv.getContext('2d');
   let gy=Hh*0.8,K=Math.min(1.7,W/760,Hh/400);
-  const fit=()=>{const nw=Math.max(320,ov.clientWidth||innerWidth),nh=Math.max(240,ov.clientHeight||innerHeight);if(cv.width!==nw||cv.height!==nh){cv.width=nw;cv.height=nh}W=nw;Hh=nh;gy=Hh*0.8;K=Math.min(1.7,W/760,Hh/400)};let fin=false,t0=performance.now(),total=steps.reduce((a,s)=>a+s.d,0);
+  const fit=()=>{const dpr=Math.min(2,window.devicePixelRatio||1),nw=Math.max(200,ov.clientWidth||innerWidth),nh=Math.max(150,ov.clientHeight||innerHeight),bw=Math.round(nw*dpr),bh=Math.round(nh*dpr);if(cv.width!==bw||cv.height!==bh){cv.width=bw;cv.height=bh}cv.style.width=nw+'px';cv.style.height=nh+'px';g.setTransform(dpr,0,0,dpr,0,0);W=nw;Hh=nh;gy=Hh*0.8;K=Math.min(1.7,W/760,Hh/400)};let fin=false,t0=performance.now(),total=steps.reduce((a,s)=>a+s.d,0);
   const end=()=>{if(fin)return;fin=true;ov.remove();done()};
   sk.onclick=end;
   const ease=p=>1-Math.pow(1-p,2.4);
@@ -5340,11 +5502,7 @@ function playIntro(hk,done){
   const wheel=(x,y,r,a)=>{g.fillStyle='#222';g.beginPath();g.arc(x,y,r,0,7);g.fill();g.strokeStyle='#999';g.lineWidth=2;g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*r*0.8,y+Math.sin(a)*r*0.8);g.stroke()};
   const win=(x,y,w,h,n)=>{g.fillStyle='#bfe3f5';for(let i=0;i<n;i++)g.fillRect(x+i*(w+6),y,w,h)};
   const carr=(x,y,w,h,col,stripe,roof)=>{g.fillStyle=col;g.beginPath();g.roundRect?g.roundRect(x,y,w,h,8):g.rect(x,y,w,h);g.fill();g.fillStyle=stripe;g.fillRect(x,y+h*0.62,w,h*0.1)};
-  const person=(x,y,s,walk,tt)=>{g.save();g.translate(x,y);g.scale(s,s);const sw=Math.sin(tt*9)*walk*7;
-    g.strokeStyle='#4a4f5c';g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(0,-26);g.lineTo(sw,0);g.moveTo(0,-26);g.lineTo(-sw,0);g.stroke();
-    g.fillStyle='#b8402e';g.fillRect(-15,-62,12,34);g.fillStyle='#3d7ab5';g.fillRect(-6,-64,15,40);
-    g.fillStyle='#e8b896';g.beginPath();g.arc(3,-72,8,0,7);g.fill();g.fillStyle='#6b4a2b';g.beginPath();g.arc(3,-75,8,Math.PI,0);g.fill();
-    g.restore()};
+  const person=(x,y,s,walk,tt)=>{const pk=slotOf('pack');drawHiker(g,x,y,s*1.5,{look:G.look,phase:walk?tt*6:0,mode:walk?'walk':'idle',nopack:!pk,packColor:packCol(pk)||'#c0392b',packScale:(pk&&pk.vol)?clamp(0.72+pk.vol*0.0085,0.85,1.5):1,tm:tt})};
   function frame(now){
     if(fin)return;fit();const el=(now-t0)/1000;if(el>=total){end();return}
     let acc=0,st=steps[0],lt=0;for(const s of steps){if(el<acc+s.d){st=s;lt=el-acc;break}acc+=s.d}
@@ -5355,8 +5513,8 @@ function playIntro(hk,done){
       g.fillStyle='#4a4d52';g.fillRect(0,gy,W,Hh-gy);
       g.fillStyle='#e8e8e8';const sp=(1-ease(Math.max(0,(p-0.8)/0.2)))*(p<0.8?0:1)*0+ (p<0.8?0:(1-(p-0.8)/0.2));
       const off=(el*W*0.9*(p<0.8?0.15:sp))%90;for(let x=-90;x<W+90;x+=90)g.fillRect(x-off,gy+Hh*0.07,48,5);
-      const px=W*(0.92-0.52*p),land=Math.max(0,(p-0.78)/0.22),py=(Hh*0.08)+(gy-26*K-Hh*0.08)*Math.pow(Math.min(1,p/0.8),1.7);
-      g.save();g.translate(px,py);g.scale(K,K);g.rotate(-(1-Math.min(1,p/0.8))*0.07+0.01);
+      const px=W*(0.08+0.52*p),land=Math.max(0,(p-0.78)/0.22),py=(Hh*0.08)+(gy-26*K-Hh*0.08)*Math.pow(Math.min(1,p/0.8),1.7);
+      g.save();g.translate(px,py);g.scale(-K,K);g.rotate(-(1-Math.min(1,p/0.8))*0.07+0.01);
       g.fillStyle='#f2f4f7';g.beginPath();g.ellipse(0,0,95,15,0,0,7);g.fill();
       g.fillStyle='#c9ced6';g.beginPath();g.moveTo(70,2);g.lineTo(104,-2);g.lineTo(98,4);g.lineTo(66,6);g.fill();
       g.fillStyle='#e4e8ed';g.beginPath();g.moveTo(58,-10);g.lineTo(86,-54);g.lineTo(104,-54);g.lineTo(96,-6);g.closePath();g.fill();
@@ -5763,6 +5921,9 @@ function openPack(rep){
   const tools=[];
   if(H.g.tools.stove)tools.push(`🍳 Gas: ${fmtN(H.gas/5,1)} Kartuschen (${Math.floor(H.gas)} Einsätze)`);
   if(H.g.tools.fire)tools.push(`🔥 Feuerstarter: ${H.fireUses}× übrig · 🪵 Holz vor Ort: ${H.wood}${H.carry?' · 🎒 Mitgebrachtes Holz: '+H.carry:''}`);
+  if((H.matches||0)>0||H.g.tools.lighter||H.g.tools.stormlighter||(H.fcubes||0)>0)tools.push(`🔥 Zündquellen: ${H.g.tools.stormlighter?'Sturmfeuerzeug ('+H.sfuel+') · ':''}${H.g.tools.lighter?'Feuerzeug ('+H.lfuel+') · ':''}${H.matches||0} Streichhölzer${(H.mWet||0)>50?' (feucht!)':''}${(H.fcubes||0)>0?' · '+H.fcubes+' Grillanzünder':''}`);
+  if(H.g.tools.mnet)tools.push('🕸️ Mückennetz');if(H.g.tools.mtarp)tools.push('🪰 Tarp-Moskitonetz');
+  if(H.pest&&(H.pest.I>0.2||H.pest.P>0.2))tools.push(`${H.pest.I>0.2?'🦟 Mücken: '+pestWord(H.pest.I*(H.pest.E>0.3?1:0.6)):''}${H.pest.I>0.2&&H.pest.P>0.2?' · ':''}${H.pest.P>0.2?'🌼 Pollen: '+pestWord(H.pest.P):''}`);
   if(H.g.tools.kit)tools.push(`🩹 Erste Hilfe: ${H.kit}× übrig`);
   if(H.g.tools.spray)tools.push(`🧴 Bärenspray: ${H.spray}× übrig`);
   if(H.g.tools.repair)tools.push(`🧵 Reparaturset: ${H.repairs}× übrig`);
@@ -5838,9 +5999,9 @@ function openVillageShop(f){
   {const si=shopOpenInfo(f);if(!si.open){H.walking=false;const wt=si.wait>=60?Math.floor(si.wait/60)+' Std. '+(si.wait%60)+' Min.':si.wait+' Min.';showModal({title:'🔒 '+esc(f.name||'Laden')+' ist geschlossen',text:'Der Laden öffnet wieder um '+si.txt+' (in '+wt+'). Öffnungszeiten: '+String(si.a).padStart(2,'0')+':00 – '+String(si.b).padStart(2,'0')+':00 Uhr.',buttons:[{label:'⏳ Bis zur Öffnung warten ('+wt+')',primary:1,fn:()=>beginAction('wait','Wartet vor dem Laden …',si.wait,()=>{toast('🏪 '+(f.name||'Der Laden')+' hat jetzt geöffnet.','good');openVillageShop(f)})},{label:'Weiterwandern',fn:()=>{if(!H.camp.pitched&&!H.sleep.active)H.walking=true}}]});return}}
   H.walking=false;
   HUTMUL=f.type==='lodge'?2.3:1;
-  const items=f.type==='lodge'?[...FOODS.filter(x=>['bar','choc','nuts','dry','noodles','coffee','bread'].includes(x.id)),GAS,...(H.dog?[DOGFOOD]:[])]:[...FOODS.filter(x=>x.shop),GAS,...(H.dog?[DOGFOOD]:[])];
+  const items=f.type==='lodge'?[...FOODS.filter(x=>['bar','choc','nuts','dry','noodles','coffee','bread'].includes(x.id)),GAS,MATCHBOX,FCUBE,...(H.dog?[DOGFOOD]:[])]:[...FOODS.filter(x=>x.shop),GAS,MATCHBOX,FCUBE,...(H.dog?[DOGFOOD]:[])];
   const kg=loadKg(),cap=H.g.pack?H.g.pack.max:capacityKg();
-  const row=it=>{const p=villagePrice(it),n=it.id==='gas'?fmtN(H.gas/5,1)+' Kart.':it.id==='dogfood'?fmtN(H.dogfood)+' kg':(H.food[it.id]||0);
+  const row=it=>{const p=villagePrice(it),n=it.id==='matchbox'?(H.matches||0)+' Stk.':it.id==='fcube'?(H.fcubes||0)+' Stk.':it.id==='gas'?fmtN(H.gas/5,1)+' Kart.':it.id==='dogfood'?fmtN(H.dogfood)+' kg':(H.food[it.id]||0);
     return `<div class="stat"><div style="flex:1">${it.e} <b>${it.name.replace(/ \((kochen|garen)\)/,'')}</b><br><small>${it.sat?'Nahrung +'+it.sat+' · ':''}${fmtN(it.kg,2)} kg · dabei: ${n}</small></div><button data-vb="${it.id}" ${G.money<p?'disabled':''}>+1 · ${eur(p)}</button></div>`};
   const devs=Object.keys(H.dev).filter(id=>!H.dev[id].broken&&H.dev[id].batt<95);
   showModal({replace:!!MODAL,wide:true,title:(f.type==='lodge'?'🍲 ':'🏪 ')+esc(f.name),html:`<p>Du hast <b>${eur(G.money)}</b>. Gewicht: <b>${fmtN(kg)} kg</b> / max. ${cap} kg. ${f.type==='lodge'?'Hüttenpreise: alles gut doppelt so teuer, weil der Nachschub getragen oder geflogen wird.':'Preise sind hier etwas höher als daheim.'}</p>
@@ -5910,7 +6071,7 @@ const CMT_GOOD=['Mega Video, danke fürs Mitnehmen! 🥾','Die Aufnahmen sind de
 const CMT_MEH=['Etwas lang, aber ok.','Der Ton war stellenweise schwach.','Kannst du das nächste Mal mehr Karte zeigen?','Das Bild war teilweise verwackelt.'];
 const CMT_DIS=['Das war jetzt schwächer als sonst… bin raus.','Habe mir mehr erhofft. Unsubscribed.','Früher war der Kanal spannender.','Schade, das war dieses Mal enttäuschend.','Ich komme wegen guter Touren, nicht wegen sowas. Tschüss.'];
 const CMT_BAD=['Der Titel/Thumbnail versprach mehr…','Zu wenig Material für so eine Tour.','Alter Kram, war doch schon vor Wochen…'];
-const THUMBS=[{id:'pano',n:'🏞️ Panorama',d:'Weite Landschaft'},{id:'face',n:'😮 Gesicht',d:'Du im Bild'},{id:'text',n:'🔤 Große Schrift',d:'Titelwort im Bild'},{id:'drama',n:'⚡ Dramatisch',d:'Grelle Farben & Pfeil'}];
+const THUMBS=[{id:'pano',n:'🏞️ Panorama',d:'Weite Landschaft'},{id:'face',n:'😮 Gesicht',d:'Du im Bild'},{id:'text',n:'🔤 Große Schrift',d:'Titelwort im Bild'},{id:'drama',n:'⚡ Dramatisch',d:'Grelle Farben & Pfeil'},{id:'shot',n:'📸 Eigenes Foto',d:'Dein Thumbnail von unterwegs (kleiner Bonus)'}];
 function clipScore(clips){
   const v=clips.map(c=>c.value).sort((a,b)=>b-a);let s=0;v.slice(0,30).forEach((x,i)=>s+=x*Math.pow(0.94,i));
   const types=new Set(clips.map(c=>c.type)),rar=clips.filter(c=>c.rar>=3).length;
@@ -6079,13 +6240,13 @@ function maxEps(p){const km=p.km,n=km<40?1:km<120?2:km<250?3:km<500?4:6;return M
 function openPublish(){
   const p=G.pending;if(!p){toast('');return}
   if(!p.clips.length){showModal({title:'Kein Material',text:'Du hast keine Clips aufgenommen. Daraus lässt sich kein Video machen.',buttons:[{label:'Material verwerfen',fn:()=>{G.pending=null;save();renderHub();show('hub')}},{label:'Zurück'}]});return}
-  PUB={title:p.name+(p.reason==='goal'?' – Komplett wandern':' – die ganze Wahrheit'),thumb:'pano',eps:1,ad:0};
+  PUB={title:p.name+(p.reason==='goal'?' – Komplett wandern':' – die ganze Wahrheit'),thumb:p.thumbImg?'shot':'pano',eps:1,ad:0};
   const me=maxEps(p);
   const stale=clamp((G.day-p.day-10)*0.01,0,0.4);
   const avgQ=p.clips.reduce((a,c)=>a+c.q,0)/p.clips.length;
   showModal({wide:true,title:'🎬 Video veröffentlichen',html:`<p><b>${p.clips.length} Clips</b> aus ${esc(p.name)} · Ø Bildqualität ${Math.round(avgQ*100)} %${stale>0?' · <span class="badtxt">Material ist '+(G.day-p.day)+' Tage alt (−'+Math.round(stale*100)+' %)</span>':''}</p>
    <div class="row"><span class="lbl">Titel</span><input id="p-title" style="flex:1" maxlength="80" value="${esc(PUB.title)}"></div>
-   <div class="row"><span class="lbl">Thumbnail</span><div class="seg" id="p-th">${THUMBS.map(t=>`<button data-th="${t.id}" class="${PUB.thumb===t.id?'on':''}" title="${t.d}">${t.n}</button>`).join('')}</div></div>
+   <div class="row"><span class="lbl">Thumbnail</span><div class="seg" id="p-th">${THUMBS.filter(t=>t.id!=='shot'||(p&&p.thumbImg)).map(t=>`<button data-th="${t.id}" class="${PUB.thumb===t.id?'on':''}" title="${t.d}">${t.n}</button>`).join('')}</div></div>
    <div class="row"><span class="lbl">Folgen</span><div class="seg" id="p-ep">${Array.from({length:me},(_,i)=>`<button data-ep="${i+1}" class="${PUB.eps===i+1?'on':''}">${i+1}${i?' Teile':' Video'}</button>`).join('')}</div></div>
    <p class="hint">Mehrere Teile erscheinen im Abstand von 3 Tagen – die Serie lockt mehr Zuschauer, aber jedes Video hat weniger Material.</p>
    <div class="row"><span class="lbl">Werbung</span><div class="seg" id="p-ad">${[0,10,25,50,100].map(v=>`<button data-ad="${v}" class="${PUB.ad===v?'on':''}" ${v>G.money?'disabled':''}>${v?eur0(v):'Keine'}</button>`).join('')}</div></div>
@@ -6113,13 +6274,14 @@ function publishVideos(){
     if(th==='face')tm2=cl.some(c=>c.type==='selfie'||c.type==='hund')?1.08:0.97;
     if(th==='text')tm2=rnd(0.92,1.15);
     if(th==='drama')tm2=S>60?1.16:0.9;
+    if(th==='shot')tm2=(cl.some(c=>c.type==='sight'||c.type==='landschaft'||c.type==='drone')?1.08:0.98)*(1.025+0.02*clamp(p.thumbQ||0.7,0.3,1.35)/1.35);
     const tl=title.length>62?0.95:title.length<8?0.93:1;
     const promo=adEach>0?1+0.5*Math.sqrt(adEach/10)*rnd(0.5,1.5):1;
     const exc=(p.thrill||0)>=3;
     const luck=Math.exp(rnd(-0.5,exc?0.6:0.15));   // außergewöhnlich gut nur bei spannenden Ereignissen
     const V=(2500+G.subs*12)*Math.pow(Math.max(S,2)/45,0.8)*(exc?1:0.85)*luck*(1+0.08*(n-1))*tm2*tl*promo*(1+(p.teaser||0));
     const v={id:++G.vid,title:n>1?title+' – Teil '+(i+1)+'/'+n:title,day:G.day+i*3,tour:p.name,S,V,tau:rnd(5,9),views:0,likes:0,dislikes:0,rev:0,subsG:0,h:[],
-      thumb:{id:th,biome:thumbBiome(p.hikeId),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
+      thumb:{id:th,biome:thumbBiome(p.hikeId),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId,img:th==='shot'?p.thumbImg:null},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
     if(exc&&Math.random()<0.05+(cl.some(c=>c.rar>=3)?0.05:0)+Math.min(0.08,(p.thrill-3)*0.02)){v.hype={start:rnd(1,3)|0,len:Math.round(rnd(5,11)),mul:rnd(6,16)};v.hyped=1}
     (G.videos=G.videos||[]).push(v);
     if(i===0)feedbackComments(p,v);
@@ -6133,8 +6295,11 @@ function publishVideos(){
 /* ---------- Studio ---------- */
 let STUDIOTAB='Übersicht';
 function thumbBiome(id){const hk=HIKES.find(h=>h.id===id);const ok=['wald','berg','tal','wiese','fjaell','sand','kies','sumpf'];const bs=(hk?hk.stages.map(s=>s.b):[]).filter(b=>ok.indexOf(b)>=0);return bs.length?bs[Math.floor(Math.random()*bs.length)]:'wald'}
+const THUMB_IM={};
 function drawThumb(cv,v){
   const g=cv.getContext('2d'),w=cv.width,h=cv.height,r=mulberry32(v.thumb.seed);
+  if(v.thumb.img){const key=(v.id||'p')+':'+v.thumb.img.length;let im=THUMB_IM[key];if(!im){im=THUMB_IM[key]=new Image();im.onload=()=>{try{drawThumb(cv,v)}catch(e){}};im.src=v.thumb.img}
+    if(im.complete&&im.naturalWidth){g.drawImage(im,0,0,w,h);return}}
   const pal={wald:['#5b9bd5','#2f6a2d'],berg:['#7aa6d6','#7f8794'],tal:['#8fc0e6','#4f8f3d'],wiese:['#8ec9f0','#8dbf4a'],fjaell:['#9cb6c8','#9a9a6a'],sand:['#8fc4e8','#e0cf9c'],sumpf:['#a9b8a0','#7a6a43'],kies:['#9cb6c8','#9d9b95'],schnee:['#b5c9de','#eef2f7']}[v.thumb.biome]||['#8fc0e6','#4f8f3d'];
   const sunset=r()<0.4;
   const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,sunset?'#f6a35c':pal[0]);gr.addColorStop(1,sunset?'#ffd9a0':'#e6f2fb');g.fillStyle=gr;g.fillRect(0,0,w,h);
