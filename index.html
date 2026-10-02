@@ -53,7 +53,9 @@ input[type=range]{accent-color:var(--acc)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .seg{display:flex;gap:4px;flex-wrap:wrap}.seg button{padding:5px 10px;min-height:32px}
 /* Shop */
-.shopgrid{display:grid;grid-template-columns:1fr 350px;gap:14px}@media(max-width:699px){.shopgrid{grid-template-columns:1fr}}
+.shopgrid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:14px}@media(max-width:699px){.shopgrid{grid-template-columns:minmax(0,1fr)}}
+.shopgrid>*,.items,.item,.inf{min-width:0}.item{max-width:100%}.inf small,.inf b{overflow-wrap:anywhere}.item .seg,.item .ctl{flex-shrink:0}
+@media(max-width:560px){.item{flex-wrap:wrap;gap:8px}.item .inf{flex:1 1 130px}.item .seg,.item .ctl{margin-left:auto}.ico.sq{width:56px}.ico.sq img{width:52px;height:52px}.ico.wide{width:84px}.ico.wide img{width:80px;height:36px}.ico.pk{width:50px}.ico.pk img{width:46px;height:58px}#s-shop .wrap{overflow-x:hidden}}
 .items{display:flex;flex-direction:column;gap:8px}
 .item{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px}
 .item.packed{border-color:var(--acc)}.item.broken{border-color:var(--bad)}
@@ -806,6 +808,7 @@ const MD=[31,28,31,30,31,30,31,31,30,31,30,31];
 const START_DOY0=90;           // Spielstart: 1. April
 function dateOf(day){const t=START_DOY0+day;const year=Math.floor(t/365);let d=t%365,m=0;while(d>=MD[m]){d-=MD[m];m++}return{doy0:t%365,m,dom:d+1,year:year+1}}
 const dateStr=day=>{const d=dateOf(day);return d.dom+'. '+MN[d.m]+(d.year>1?' (Jahr '+d.year+')':'')};
+let HOFF=0;function hday(){return G.day+HOFF} // Tag für Jahreszeit/Wetter während einer Tour (bei gemeinsamer Tour: Admin-Datum)
 const seasonOfM=m=>(m===11||m<2)?'Winter':m<5?'Frühling':m<8?'Sommer':'Herbst';
 const SEASON_E={Winter:'❄️',Frühling:'🌷',Sommer:'☀️',Herbst:'🍂'};
 /* ---- Sonne ---- */
@@ -974,7 +977,7 @@ function buildRoute(hk,seed){
   // Wanderer, Dörfer, Sammelstellen, Sonderereignisse
   // Begegnungen: auf leichten Touren öfter, auf schweren selten bis sehr selten (Winter seltener, Sommer etwas häufiger)
   const hSpacing=[18,18,32,55,90,140,200][Math.min(hk.diff,6)]||18;
-  const hSeason=(()=>{const m=dateOf(G.day).m;return (m===11||m<2)?0.45:(m>=5&&m<=7)?1.2:1})();
+  const hSeason=(()=>{const m=dateOf(hday()).m;return (m===11||m<2)?0.45:(m>=5&&m<=7)?1.2:1})();
   const expH=totalKm/hSpacing*hSeason*((totalKm<=30&&(hk.diff<=2||TOWNS[hk.id]||hk.villageEvery>0))?1.2:1),nH=Math.floor(expH)+(rng()<expH-Math.floor(expH)?1:0);
   for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.08+0.84*((k+0.2+rng()*0.6)/nH))});
   if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0],town:true})})}
@@ -1421,7 +1424,7 @@ function netAt(x){
 /* ---- Wetter ---- */
 function wxRand(){if(typeof COOP!=='undefined'&&COOP&&COOP.seed&&H){H.wxN=(H.wxN||0)+1;return hash(COOP.seed*0.0137+H.wxN*7.331+0.5)}return Math.random()}
 function nextWeather(prev){
-  const d=dateOf(G.day),w=wxWeights(H.hk.regD,d.m,H.hk.ext);let tot=0;
+  const d=dateOf(hday()),w=wxWeights(H.hk.regD,d.m,H.hk.ext);let tot=0;
   const ent=Object.entries(w).map(([k,v])=>{v=k===prev?v*2.4:v;tot+=v;return [k,v]});
   let r=wxRand()*tot;for(const [k,v] of ent){r-=v;if(r<=0)return k}return 'wolkig';
 }
@@ -1442,7 +1445,7 @@ function updateWeather(){
   }
 }
 function computeEnv(){
-  const hk=H.hk,R=hk.regD;const d=dateOf(G.day);const hour=(H.t/60)%24;
+  const hk=H.hk,R=hk.regD;const d=dateOf(hday());const hour=(H.t/60)%24;
   const st=stageAt(H.x),B=BIOMES[st.b];
   env.hour=hour;env.stage=st;env.biome=st.b;env.alt=elevAt(H.x);env.grade=gradeAt(H.x);
   env.doy0=d.doy0;env.month=d.m;env.season=seasonOfM(d.m);
@@ -1501,6 +1504,7 @@ const cf=id=>{const c=condOf(id);return c<=0?0:0.55+0.45*c/100};
 function startHike(hikeId){
   const hk=HIKES.find(h=>h.id===hikeId);
   if(COOP&&COOP.hike!==hikeId)COOP=null;
+  HOFF=(COOP&&COOP.day!==undefined)?COOP.day-G.day:0;
   const route=buildRoute(hk,(COOP&&COOP.seed!=null)?COOP.seed:(Date.now()&0xfffffff)+7);
   const gear=packedGear();
   const g={pack:slotOf('pack'),shelter:slotOf('shelter'),bag:slotOf('bag'),mat:slotOf('mat'),mid:slotOf('mid'),shell:slotOf('shell'),shoes:slotOf('shoes'),
@@ -1517,7 +1521,7 @@ function startHike(hikeId){
   const handhelds=gear.filter(x=>x.kind==='phone'||x.kind==='cam').sort((a,b)=>b.q-a.q);
   const food={};FOODS.forEach(f=>{if(G.cons[f.id])food[f.id]=G.cons[f.id]});
   const pbs=gear.filter(x=>x.pb).map(x=>({id:x.id,cap:x.pb,left:x.pb,name:x.name}));
-  const d0=dateOf(G.day);
+  const d0=dateOf(hday());
   let startH=10;for(let h=6;h<=11.5;h+=0.5){if(lightOf(sunAltDeg(hk.regD.lat,d0.doy0,h))>0.55){startH=h;break}}
   const cond={};gear.forEach(x=>{cond[x.id]=G.cond[x.id]===undefined?100:G.cond[x.id]});
   const ds=dogSize();
@@ -2435,8 +2439,8 @@ function pestRegion(hk){const c=String(hk&&hk.country||'');if(/Schottland/.test(
 function pestMonthW(m,k){const W={n:[0,0,0,0.05,0.25,0.9,1,0.9,0.4,0.05,0,0],c:[0,0,0.02,0.1,0.35,0.7,1,1,0.75,0.25,0.03,0],s:[0,0.02,0.1,0.25,0.5,0.8,1,1,0.9,0.5,0.15,0.02]};return W[k][((m%12)+12)%12]}
 function pollenBase(hk,m){const k=pestKind(hk),i=k==='n'?(m+11)%12:k==='s'?(m+1)%12:m%12;return [0,0.05,0.35,0.85,1,0.5,0.15,0.05,0.05,0,0,0][i]}
 function pestWord(v){return v<0.12?'kaum':v<0.4?'mäßig':v<0.8?'stark':'Schwärme'}
-function mosqLabel(hk){const m=dateOf(G.day).m;return pestWord(pestMonthW(m,pestKind(hk))*pestRegion(hk)*0.8)}
-function pollenLabel(hk){const v=pollenBase(hk,dateOf(G.day).m);return v<0.15?'kaum':v<0.5?'mäßig':'stark'}
+function mosqLabel(hk){const m=dateOf(hday()).m;return pestWord(pestMonthW(m,pestKind(hk))*pestRegion(hk)*0.8)}
+function pollenLabel(hk){const v=pollenBase(hk,dateOf(hday()).m);return v<0.15?'kaum':v<0.5?'mäßig':'stark'}
 function waterNear(x){ // 0..1: Nähe zu Seen, Flüssen, Quellen, Moor – Mücken lieben Wasser
   const R=H&&H.route;if(!R)return 0;let w=0;
   if(BIOMES[env.biome]&&(env.biome==='sumpf'))w=0.7;
@@ -2825,7 +2829,7 @@ function lodgeFreeKind(f){return f.type==='lodge'&&(f.kind==='shelter'||f.kind==
 function lodgeFull(f,tier,dayIdx,walkin){
   let h=5381;for(const ch of H.hk.id+':'+f.id+':'+tier+':'+dayIdx)h=((h*33)^ch.charCodeAt(0))>>>0;
   const r=mulberry32(h)();
-  const m=dateOf(G.day).m,seas=(m>=5&&m<=8)?1.6:(m===4||m===9)?1.1:(m>=10||m<=2)?0.4:0.8;
+  const m=dateOf(hday()).m,seas=(m>=5&&m<=8)?1.6:(m===4||m===9)?1.1:(m>=10||m<=2)?0.4:0.8;
   const base=f.type==='village'?0.10:f.kind==='stuga'?0.22:f.kind==='huette'?0.28:f.kind==='bothy'?0.32:0.28;
   const pop=H.hk.diff>=4?1.15:1;
   const p=clamp(base*seas*pop+(tier===1?0.07:0)+(walkin?0.12:0),0.03,0.85);
@@ -3182,7 +3186,7 @@ function endHike(reason){
   if(G.dog){G.dog.bond=Math.min(100,(H.dog?H.dog.trust:(G.dog.bond||0))+Math.round(H.km/8)+1)}
   const days=Math.floor(H.t/1440)+1;
   (G.videos||[]).slice(0,-8).forEach(v=>{if(v.thumb&&v.thumb.img)delete v.thumb.img});
-  G.pending={thumbImg:H.thumbShot?H.thumbShot.img:null,thumbQ:H.thumbShot?H.thumbShot.q:0,teaser:Math.min(0.06,H.teaserBoost||0),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
+  G.pending={thumbImg:H.thumbShot?H.thumbShot.img:null,thumbQ:H.thumbShot?H.thumbShot.q:0,teaser:Math.min(0.06,H.teaserBoost||0)+takeTeaser(hk.id),hikeId:hk.id,name:hk.name,mult:hk.mult,diff:hk.diff,km:H.km,total:H.route.totalKm,days,reason,day:G.day,
     thrill:H.thrill,risk:H.startRisk,flags:H.flags,lostN:H.stats.junctionsLost,hadDog:!!H.dog,evs:(H.evLog||[]).map(e=>e.k),clips:H.clips.map(c=>({key:c.key,type:c.type,name:c.name,e:c.e,q:c.q,value:c.value,rar:c.rar,biome:c.biome,day:c.day,t:c.t||0}))};
   H.pendingSummary={clips:H.clips.length};
   save();
@@ -4784,7 +4788,7 @@ const DIFF_COL=['','#4caf50','#8bc34a','#f7c948','#ff9800','#f4511e','#c2185b'];
 function show(id){
   document.documentElement.dataset.scr=id;
   $$('.screen').forEach(s=>s.classList.toggle('active',s.id==='s-'+id));
-  screen=id;window.scrollTo(0,0);
+  screen=id;if(id==='hub'||id==='menu'||id==='hikes')HOFF=0;window.scrollTo(0,0);
   if(id==='hike')document.body.style.overflow='hidden';else document.body.style.overflow='';
 }
 function showModal(o){
@@ -5036,7 +5040,7 @@ function showFriends(){
 function frCoopHTML(){
   const gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
   const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
-  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p>'+lobbyLine()+'<div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
+  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p>'+lobbyLine()+'<div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><select id="co-sea" style="flex:1;min-width:0"><option value="">Jahreszeit: wie mein Kalender ('+esc(seasonOfM(dateOf(G.day).m))+')</option><option value="3">🌷 Frühling (April)</option><option value="6">☀️ Sommer (Juli)</option><option value="9">🍂 Herbst (Oktober)</option><option value="0">❄️ Winter (Januar)</option></select></div><p class="hint">Als Admin legst du die Jahreszeit der Tour fest. Alle Mitwandernden gehen in dieser Jahreszeit – egal, welches Datum ihr eigener Kalender gerade zeigt.</p><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
 }
 function frRender(){
   const S=FR_ST,on=!!G.pubOn;
@@ -5069,7 +5073,7 @@ function frRender(){
       const cl=q('#co-leave');if(cl)cl.onclick=()=>{lobbyLeave();S.msg='Lobby verlassen.';frRender()};
       const cn=q('#co-new');if(cn)cn.onclick=()=>{
         const id=q('#co-hike').value;S.err='';S.msg='Raum wird angelegt …';frRender();
-        coopHost(id).then(code=>coopBriefingModal({code,hike:id,day:COOP.day,name:G.name},true)).catch(er=>{S.err=er.message||String(er);S.msg='';frRender()});
+        coopHost(id,seasonDay(q('#co-sea')?q('#co-sea').value:'')).then(code=>coopBriefingModal({code,hike:id,day:COOP.day,name:G.name},true)).catch(er=>{S.err=er.message||String(er);S.msg='';frRender()});
       };
       const cj=q('#co-join');if(cj)cj.onclick=()=>{
         const v=q('#co-in').value;S.err='';S.msg='';
@@ -5117,14 +5121,15 @@ function lobbyInvite(){
   const hk=HIKES.find(h=>h.id===m.hike);if(!hk){LOBBY_PEND=null;return}
   const done=()=>{LOBBY.gen=m.gen||0;lobbySave();LOBBY_PEND=null};
   sfx('notify');
-  showModal({title:'👥 Lobby: neue Tour',text:(m.name||'Der Admin')+' startet eine neue gemeinsame Tour: '+hk.name+' ('+hk.km+' km) am '+dateStr(m.day)+'. Möchtest du mitwandern?',buttons:[{label:'🥾 Mitwandern',primary:1,fn:()=>{done();coopJoinFlow(m.code).catch(er=>toast(er.message||String(er),'bad'))}},{label:'Später',fn:done}]});
+  showModal({title:'👥 Lobby: neue Tour',text:(m.name||'Der Admin')+' startet eine neue gemeinsame Tour: '+hk.name+' ('+hk.km+' km) in der Jahreszeit '+seasonOfM(dateOf(m.day).m)+' ('+dateStr(m.day)+'). Möchtest du mitwandern?',buttons:[{label:'🥾 Mitwandern',primary:1,fn:()=>{done();coopJoinFlow(m.code).catch(er=>toast(er.message||String(er),'bad'))}},{label:'Später',fn:done}]});
 }let HIKE_SNAP=null;let SHOP_RE=null,SHOP_SC=null;
-async function coopHost(hikeId){
+function seasonDay(v){if(v===''||v==null)return null;const M=+v;for(let d=G.day;d<G.day+370;d++){const dd=dateOf(d);if(dd.m===M&&dd.dom===15)return d}return null}
+async function coopHost(hikeId,dayPick){const hDay=(dayPick==null)?(G.day|0):(dayPick|0);
   const db=await fbLoad();let code='',ok=false;
-  if(LOBBY&&LOBBY.host&&LOBBY.room){try{const mr=db.ref('rooms/'+LOBBY.room+'/meta');const old=(await mr.get()).val();if(old&&old.host===FB_UID){await mr.update({hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:G.day|0,gen:(old.gen||0)+1,name:String(G.name||'Wanderer').slice(0,40)});code=LOBBY.room;ok=true}}catch(e){}}
+  if(LOBBY&&LOBBY.host&&LOBBY.room){try{const mr=db.ref('rooms/'+LOBBY.room+'/meta');const old=(await mr.get()).val();if(old&&old.host===FB_UID){await mr.update({hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:hDay,gen:(old.gen||0)+1,name:String(G.name||'Wanderer').slice(0,40)});code=LOBBY.room;ok=true}}catch(e){}}
   for(let i=0;i<6&&!ok;i++){
     code=fbRandCode();
-    try{await db.ref('rooms/'+code+'/meta').set({host:FB_UID,hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:G.day|0,name:String(G.name||'Wanderer').slice(0,40),created:firebase.database.ServerValue.TIMESTAMP});ok=true}catch(e){}
+    try{await db.ref('rooms/'+code+'/meta').set({host:FB_UID,hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:hDay,name:String(G.name||'Wanderer').slice(0,40),created:firebase.database.ServerValue.TIMESTAMP});ok=true}catch(e){}
   }
   if(!ok)throw new Error('Der Raum konnte nicht angelegt werden.');
   const m=(await db.ref('rooms/'+code+'/meta').get()).val();
@@ -5145,18 +5150,11 @@ function coopArm(m,host){
 }
 function coopBriefingModal(m,host){
   const hk=HIKES.find(h=>h.id===m.hike);
-  showModal({replace:true,title:'🥾 Gemeinsame Tour',html:'<p><b>'+esc(hk.name)+'</b> · '+hk.km+' km</p><p>Raumcode: <span class="fr-code" style="display:inline-flex"><span>'+esc(m.code)+'</span></span></p><p class="hint">'+(host?'Gib diesen Code deinem Freund. Ihr startet beide dieselbe Tour am selben Kalendertag ('+esc(dateStr(m.day))+'). ':'Du wanderst mit '+esc(m.name||'deinem Freund')+' am '+esc(dateStr(m.day))+'. ')+'Unterwegs seht ihr euch auf der Strecke. Zeitraffer gibt es nur, wenn alle zustimmen.</p>',
+  showModal({replace:true,title:'🥾 Gemeinsame Tour',html:'<p><b>'+esc(hk.name)+'</b> · '+hk.km+' km</p><p>Raumcode: <span class="fr-code" style="display:inline-flex"><span>'+esc(m.code)+'</span></span></p><p class="hint">'+(host?'Gib diesen Code deinem Freund. Ihr wandert in derselben Jahreszeit ('+esc(seasonOfM(dateOf(m.day).m))+', '+esc(dateStr(m.day))+') – dein Kalender läuft unabhängig vom Kalender deines Freundes. ':'Du wanderst mit '+esc(m.name||'deinem Freund')+' in '+esc(seasonOfM(dateOf(m.day).m))+' ('+esc(dateStr(m.day))+'), so wie der Admin es eingestellt hat. Dein eigener Kalender bleibt unabhängig. ')+'Unterwegs seht ihr euch auf der Strecke. Zeitraffer gibt es nur, wenn alle zustimmen.</p>',
     buttons:[{label:'📋 Weiter zum Briefing',primary:1,fn:()=>openBriefing(m.hike)},{label:'Abbrechen',fn:()=>{COOP=null}}]});
 }
 async function coopJoinFlow(code){
   const m=await coopRead(code);
-  if(G.day>m.day)throw new Error('Dein Spielkalender steht schon auf '+dateStr(G.day)+'. Die Tour ist für '+dateStr(m.day)+' angesetzt – ihr müsst am selben Tag starten.');
-  if(G.day<m.day){
-    const n=m.day-G.day;
-    showModal({replace:true,title:'📅 Gleicher Starttag',text:'Die Tour ist für '+dateStr(m.day)+' angesetzt, dein Kalender steht auf '+dateStr(G.day)+'. Jetzt '+n+(n===1?' Tag':' Tage')+' vorspulen und mitwandern?',
-      buttons:[{label:'⏩ Vorspulen & weiter',primary:1,fn:()=>{WAITCTX='hub';waitDays(n);coopArm(m,false);coopBriefingModal(m,false)}},{label:'Abbrechen'}]});
-    return;
-  }
   coopArm(m,false);coopBriefingModal(m,false);
 }
 function coopBegin(){
@@ -5384,10 +5382,10 @@ function avgAlt(hk){return hk.stages.reduce((a,s)=>a+s.alt*s.km,0)/hk.km}
 function dayLbl(hk){const f=hk.km/18;return f<0.75?'ca. ½ Tag':f<1.25?'ca. 1 Tag':f<1.75?'ca. 1,5 Tage':'ca. '+Math.ceil(f)+' Tage'}
 function estDays(hk){return Math.max(1,Math.ceil(hk.km/(hk.diff>=5?15:hk.diff>=4?16:18)))}
 function briefing(hk){
-  const R=hk.regD,days=estDays(hk),midDay=G.day+days/2,dm=dateOf(midDay);
+  const R=hk.regD,days=estDays(hk),midDay=hday()+days/2,dm=dateOf(midDay);
   const maxAlt=Math.max(...hk.stages.map(s=>s.alt)),mid=avgAlt(hk);
   const sT=seasonalT(R,dm.doy0,mid),tDay=sT+R.dAmp*0.55,tNight=seasonalT(R,dm.doy0,mid*0.7+maxAlt*0.3)-R.dAmp*0.8-R.syn*0.6;
-  const dl=dayLightHours(R.lat,dm.doy0),d0=dateOf(G.day);
+  const dl=dayLightHours(R.lat,dm.doy0),d0=dateOf(hday());
   const w=[];let score=hk.diff*1.0;
   const bag=slotOf('bag'),mat=slotOf('mat'),sh=slotOf('shelter'),mid_=slotOf('mid'),shell=slotOf('shell'),pk=slotOf('pack');
   const tools=new Set(packedGear().map(x=>x.tool).filter(Boolean));
@@ -5424,7 +5422,7 @@ function briefing(hk){
   const gapKm=TOWNS[hk.id]?(()=>{const k=[0,...TOWNS[hk.id].filter(t=>t[1]<hk.km-3).map(t=>t[1]),hk.km];let m=0;for(let i=1;i<k.length;i++)m=Math.max(m,k[i]-k[i-1]);return m})():hk.villageEvery>0?hk.villageEvery*1.15:hk.km,gapDays=gapKm/ (hk.diff>=5?15:17);
   if(stockDays<Math.min(gapDays,days)*0.85){w.push({l:stockDays<1?'bad':'warn',t:`Proviant reicht für ca. ${fmtN(stockDays,1)} Tage – ohne Laden brauchst du für die längste Strecke etwa ${fmtN(Math.min(gapDays,days),0)} Tage.`});score+=0.6}
   if(!pk)w.push({l:'warn',t:'Du hast keinen Rucksack – ohne kannst du nur sehr wenig tragen (ca. 8 kg). Rucksäcke gibt es im Ausrüstungs-Shop.'});
-  {const mq=pestMonthW(dateOf(G.day).m,pestKind(hk))*pestRegion(hk)*0.8;if(mq>=0.4)w.push({l:'info',t:'🦟 In dieser Region und Jahreszeit sind Mücken zu erwarten'+(mq>=0.8?' (Schwärme)':'')+'. Ein Mückennetz fürs Gesicht und – falls du im Tarp schläfst – ein Moskitonetz fürs Tarp lohnen sich.'})}
+  {const mq=pestMonthW(dateOf(hday()).m,pestKind(hk))*pestRegion(hk)*0.8;if(mq>=0.4)w.push({l:'info',t:'🦟 In dieser Region und Jahreszeit sind Mücken zu erwarten'+(mq>=0.8?' (Schwärme)':'')+'. Ein Mückennetz fürs Gesicht und – falls du im Tarp schläfst – ein Moskitonetz fürs Tarp lohnen sich.'})}
   // Gewicht
   const load=playerLoad(gearKg()+consKg(),(G.cons.dogfood||0));
   if(pk&&load>pk.max)w.push({l:'bad',t:`Rucksack überladen: ${fmtN(load)} kg bei max. ${pk.max} kg. Größeren Rucksack wählen oder Ballast abwerfen.`});
@@ -5442,8 +5440,8 @@ function briefing(hk){
 const START_C={nordkalott:'Schweden',gr20:'Frankreich',camino:'Spanien'};
 function startCountry(hk){return START_C[hk.id]||hk.country.split(' · ')[0]}
 function routeFacts(hk){
-  const days=estDays(hk),ms=new Set();for(let d=0;d<=days;d++)ms.add(dateOf(G.day+d).m);
-  const R=hk.regD,dm=dateOf(G.day+days/2),tDay=seasonalT(R,dm.doy0,avgAlt(hk))+R.dAmp*0.55;
+  const days=estDays(hk),ms=new Set();for(let d=0;d<=days;d++)ms.add(dateOf(hday()+d).m);
+  const R=hk.regD,dm=dateOf(hday()+days/2),tDay=seasonalT(R,dm.doy0,avgAlt(hk))+R.dAmp*0.55;
   const km=b=>hk.stages.filter(s=>s.b===b).reduce((a,s)=>a+s.km,0);
   const wi=waterInfo(hk);
   const fishOK=tDay>1&&hk.stages.some(s=>s.b!=='berg'&&s.b!=='schnee');
@@ -5555,6 +5553,7 @@ function renderHikes(){
 }
 let BACKHIKE=null;
 function openBriefing(id){
+  HOFF=(COOP&&COOP.hike===id&&COOP.day!==undefined)?COOP.day-G.day:0;
   const hk=HIKES.find(h=>h.id===id),b=briefing(hk);
   const tr=travelInfo(hk),fee=tr.cost;
   const blocked=b.w.some(x=>x.t.startsWith('Rucksack überladen'))||G.money<fee;
@@ -5958,8 +5957,8 @@ function updateHUD(force){
   const inj=[];if(H.inj.blister>H.t)inj.push('🩹Blase');if(H.inj.sprain>H.t)inj.push('🦶');if(H.sick>H.t)inj.push('🤢');
   if(H.t<H.stim.boostEnd)inj.push('⚡Koffein');else if(H.t>=H.stim.crashStart&&H.t<H.stim.crashEnd&&H.stim.crash>1)inj.push('📉Tief');
   if(H.stalker)inj.push('👤Verfolger');
-  const dd=dateOf(G.day),se=seasonOfM(dd.m);
-  $('#tc').innerHTML=`<div class="dl">${dateStr(G.day)} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${H.snowDepth>=2?' · ❄️ '+Math.round(H.snowDepth)+' cm':''}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
+  const dd=dateOf(hday()),se=seasonOfM(dd.m);
+  $('#tc').innerHTML=`<div class="dl">${dateStr(hday())} <span class="se se-${se}">${SEASON_E[se]} ${se}</span></div><b>${fmtTime(H.t)}</b> · ${W.e} ${W.name} ${Math.round(env.temp)}°C${env.wind>8?' 💨':''}<br><small>${BIOMES[st.b].name} · ${Math.round(env.alt)} m${H.snowDepth>=2?' · ❄️ '+Math.round(H.snowDepth)+' cm':''}${H.lost.on?' · <span class="badtxt">verirrt</span>':''}${lightSource()&&env.dark>0.5?' · '+(lightSource()==='lamp'?'🔦':'📱💡'):''} ${inj.join(' ')}</small>`;
   const allIds=Object.keys(H.dev);
   const phIds=allIds.filter(id=>H.dev[id].def.kind==='phone').sort((a,b)=>(H.dev[b].def.price||0)-(H.dev[a].def.price||0));
   const showPh=phIds.find(id=>H.dev[id].batt>0&&!H.dev[id].broken)||phIds[0];
@@ -6452,11 +6451,93 @@ function renameChannel(nm){
   if(G.comments.length>80)G.comments.length=80;
   save();
 }
+/* ---------- Livestream von zu Hause: Equipment bewerben, Tour anteasern ---------- */
+const LOAN_MAP={'AlpenTrail Outdoor':['tent1','tentUL','tentW','pack_trek','pack_pro'],'TrekLight':['lamp_x','torch_hd','spot'],'KlarWasser':['filter'],'KompassKontor':['gps']};
+const CHAT_AD1=['Mal Werbung – okay, aber danach bitte wieder Tour! 😄','Sieht ja ganz nett aus …','Wie schwer ist das Ding?','Hast du das schon unterwegs benutzt?','Gibt es einen Rabattcode?','Gutes Teil – aber bitte nicht jeden Abend Werbung.'];
+const CHAT_AD2=['Schon wieder Werbung? Mach lieber mal wieder eine Tour!','Dauerwerbesendung … ich bin raus. 😒','Wann kommt endlich wieder ein Wandervideo?','Geh lieber wandern, statt zu verkaufen.','Noch ein Verkaufsstream? Unsubscribed.'];
+const CHAT_TEASE=['Oh ja, die Tour will ich sehen! 🔥','Wann geht es los?','Da war ich auch schon – mega Strecke!','Bin gespannt aufs Video!','Nimm genug Wasser mit 😄'];
+const CHAT_HOME=['Hallo aus dem Wohnzimmer 👋','Wie war die letzte Tour?','Erzähl mal von deiner Ausrüstung!','Wo geht es als Nächstes hin?','Schönen Abend zusammen!'];
+const HL={items:{},hike:''};
+function poisson(l){const L=Math.exp(-l);let k=0,p=1;do{k++;p*=Math.random()}while(p>L&&k<14);return k-1}
+function homeRec(){let b=null;for(const g of GEAR){if(g.cat==='rec'&&G.owned[g.id]&&(G.cond[g.id]===undefined||G.cond[g.id]>0)&&(!b||(g.q||0)>(b.q||0)))b=g}return b}
+function adSync(){if(G.adHikes!==G.hikes){G.adSpam=0;G.adHikes=G.hikes}}
+function hlItems(){return GEAR.filter(g=>G.owned[g.id]&&g.price>0&&g.cat!=='dogpack').sort((a,b)=>b.price-a.price)}
+function homeLiveCard(){
+  adSync();const can=G.homeLiveDay!==G.day,rec=homeRec();
+  return `<div class="cmt"><b>🏠 Livestream von zu Hause</b><br><small>Stelle Ausrüstung vor (Provision über Partnerlinks), kündige deine nächste Tour an oder plaudere mit der Community. Werbesendungen wirken nur, wenn zwischendurch auch wieder gewandert wird.</small>${(G.adSpam||0)>=1?'<div class="warnbox warn">🛍️ Seit deiner letzten Werbesendung warst du nicht mehr wandern – die nächste würde als Dauerwerbung ankommen.</div>':''}<div class="seg" style="margin-top:6px"><button class="primary" id="hl-start" ${rec&&can?'':'disabled'}>📡 Stream starten</button></div>${!can?'<small>Heute hast du schon gestreamt.</small>':!rec?'<small>Du brauchst ein funktionierendes Handy oder eine Kamera.</small>':''}${G.affEarned?'<br><small>Provisionen bisher: '+eur(G.affEarned)+'</small>':''}</div>`;
+}
+function homeLiveDialog(){
+  adSync();HL.items={};HL.hike='';
+  const its=hlItems(),gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
+  const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
+  const spam=G.adSpam||0;
+  showModal({wide:true,title:'🏠 Livestream von zu Hause',html:`<p class="hint">Ein Streamer-Abend im Wohnzimmer. Mit Equipment-Vorstellung verdienst du über Partnerlinks einen kleinen Teil des Warenwerts – aber kleine Kanäle verkaufen damit fast nie etwas. Hin und wieder Käufe gibt es erst ab etwa 10.000 Abonnenten, selten hat man auch früher Glück. Zuschauer mögen keine Dauerwerbung: Nach einer Werbesendung solltest du erst wieder wandern.</p>${spam>=1?'<div class="warnbox bad">⚠️ Deine letzte Werbesendung ist noch frisch und seitdem war keine Tour. Eine weitere Verkaufssendung wird die Zuschauer verärgern.</div>':''}
+    <h4>🛍️ Equipment vorstellen (bis zu 3)</h4><div style="max-height:190px;overflow:auto">${its.map(g=>{const ln=(G.loans||[]).find(l=>l.gear===g.id);return `<label class="chk"><input type="checkbox" data-hli="${g.id}"> ${esc(g.name)} <small>(${eur0(g.price)}${ln?' · Leihgabe von '+esc(ln.brand):''})</small></label>`}).join('')||'<small>Du besitzt noch keine Ausrüstung mit Wert.</small>'}</div>
+    <h4>🗺️ Nächste Tour anteasern</h4><select id="hl-hike" style="width:100%"><option value="">– keine –</option>${opts}</select>
+    <p class="hint">Ohne Auswahl plauderst du einfach mit deiner Community.</p>`,
+    buttons:[{label:'📡 Live gehen',primary:1,fn:()=>homeLiveRun()},{label:'Abbrechen'}],
+    onOpen:m=>{m.querySelectorAll('[data-hli]').forEach(c=>c.onchange=()=>{const id=c.dataset.hli;if(c.checked){if(Object.keys(HL.items).length>=3){c.checked=false;return}HL.items[id]=1}else delete HL.items[id]});const sl=m.querySelector('#hl-hike');if(sl)sl.onchange=()=>{HL.hike=sl.value}}});
+}
+function homeLiveRun(){
+  adSync();const rec=homeRec();if(!rec)return;
+  const ids=Object.keys(HL.items).filter(id=>G.owned[id]),ad=ids.length>0,hk=HL.hike?HIKES.find(h=>h.id===HL.hike):null;
+  G.homeLiveDay=G.day;
+  const q=clamp((rec.q||0.45)*1.05,0.3,1.2),heat=clamp(G.begHeat*0.06,0,0.6),spam=G.adSpam||0;
+  const fat=ad?(spam===0?1:spam===1?0.55:0.3):1;
+  const peak=Math.max(1,(G.subs*0.017+1.2)*1.4*(1-heat)*(0.65+0.35*q)*fat*rnd(0.85,1.15)),avg=peak*0.8;
+  const chat=[];let sold=[],comm=0,bonus=0,loss=0,gain=0,tease=0;
+  if(ad){
+    if(spam===0){
+      for(const id of ids){
+        const g=gearById(id),ln=(G.loans||[]).find(l=>l.gear===id),att=clamp(Math.sqrt((g.price||10)/40),0.3,1.6)*(ln?1.25:1);
+        const lam=G.subs>=10000?avg*0.0016*att:avg*0.00004*att;
+        let n=poisson(lam);if(!n&&G.subs<10000&&Math.random()<0.03*att)n=1;
+        if(n>0){const c=n*g.price*rnd(0.03,0.08);comm+=c;sold.push({name:g.name,n,c})}
+        if(ln&&!ln.shown){ln.shown=true;const sp=(G.sponsors||[]).find(x=>x.name===ln.brand);if(sp)bonus+=Math.round(sp.fee*0.4)}
+      }
+      gain=Math.round(peak*0.06*q*(1-heat));
+      for(let i=0;i<3;i++)chat.push(pick(CHAT_AD1));
+      if(Math.random()<0.5)G.comments.unshift({day:G.day,vid:null,user:pick(NAMES),text:'Netter Ausrüstungs-Stream! Aber geh bitte bald mal wieder wandern. 🥾'});
+    }else{
+      loss=Math.max(G.subs>20?1:0,Math.round(G.subs*(spam===1?0.012:0.03)*rnd(0.8,1.3)));
+      G.subs=Math.max(0,G.subs-loss);
+      for(let i=0;i<4;i++)chat.push(pick(CHAT_AD2));
+      for(let i=0;i<(spam>=2?3:2);i++)G.comments.unshift({day:G.day,vid:null,user:pick(NAMES),text:pick(CHAT_AD2)});
+    }
+    G.adSpam=spam+1;
+  }else{
+    gain=Math.round(peak*0.09*q*(1-heat)*(hasT('charme')?1.25:1));
+    for(let i=0;i<4;i++)chat.push(pick(CHAT_HOME));
+  }
+  if(hk){
+    const b=clamp(0.025+0.03*q*Math.min(1,Math.sqrt(peak)/6),0.02,0.06);
+    G.teasers=G.teasers||{};const t=G.teasers[hk.id]||{boost:0};t.boost=Math.min(0.12,t.boost+b);t.day=G.day;G.teasers[hk.id]=t;
+    tease=b;gain+=Math.round(peak*0.05*q);for(let i=0;i<2;i++)chat.push(pick(CHAT_TEASE));
+  }
+  if(G.comments.length>80)G.comments.length=80;
+  G.subs+=gain;G.pendCur+=comm+bonus;G.affEarned=(G.affEarned||0)+comm;
+  G.lives.push({day:G.day,avg,peak,don:0,gain,loss,begs:0,home:true,aff:comm+bonus});if(G.lives.length>40)G.lives.shift();
+  save();
+  const sl=sold.length?'<p>🛒 <b>Käufe über deinen Partnerlink:</b><br>'+sold.map(x=>x.n+'× '+esc(x.name)+' → Provision '+eur(x.c)).join('<br>')+'</p>':(ad&&spam===0?'<p class="hint">🛒 Niemand hat über deinen Link gekauft. '+(G.subs<10000?'Bei einem kleinen Kanal ist das normal – erst ab etwa 10.000 Abonnenten gibt es hin und wieder Käufe.':'Diesmal hat es nicht gereicht – das ist Zufall.')+'</p>':'');
+  showModal({wide:true,title:'📡 Stream beendet',html:`<p>Ø Zuschauer: <b>${fmtN(avg)}</b> · Spitze: <b>${Math.round(peak)}</b><br>Abonnenten: <b class="goodtxt">+${gain}</b>${loss?' · <b class="badtxt">−'+loss+' (genervt)</b>':''}</p>${sl}${bonus?'<p>🤝 Sponsoren-Bonus fürs Vorstellen der Leihgabe: <b>'+eur(bonus)+'</b></p>':''}${comm+bonus>0?'<p class="hint">Provisionen und Boni kommen mit der nächsten Auszahlung am 21. auf dein Konto (unter „Ausstehend“).</p>':''}${hk?'<p>🗺️ Du hast <b>'+esc(hk.name)+'</b> angeteasert: Das Tourvideo bekommt später etwas mehr Aufmerksamkeit.</p>':''}<h4>Chat</h4><div class="cmt">${chat.map(x=>esc(x)).join('<br>')}</div>${loss?'<div class="warnbox bad">'+(spam>=2?'Die Community ist sauer: Dauerwerbung! ':'Die Zuschauer wollen keine Dauerwerbesendung. ')+'Geh bald wieder auf Tour, sonst springen mehr ab.</div>':''}`,
+    buttons:[{label:'OK',fn:()=>{try{renderStudio()}catch(e){}}}]});
+  sfx('success');
+}
+function takeTeaser(id){const t=(G.teasers||{})[id];if(t&&G.day-t.day<=90){delete G.teasers[id];return t.boost}if(t)delete G.teasers[id];return 0}
+function loanHTML(){
+  const lo=G.loanOffers||[],ln=G.loans||[];
+  return '<h4>🎁 Leihgaben</h4>'+lo.map(o=>{const g=gearById(o.gear);return `<div class="cmt"><b>${esc(o.brand)}</b> leiht dir <b>${esc(g.name)}</b> (${eur0(g.price)}) für 3 Monate.<br><small>Zeige es in einem Stream von zu Hause, sonst ist der Partner enttäuscht. Nach drei Monaten geht es zurück. Angebot gilt noch ${o.until-G.day} Tage.</small><div class="seg" style="margin-top:6px"><button class="primary" data-lo="${o.id}" data-ok="1">Annehmen</button><button data-lo="${o.id}">Ablehnen</button></div></div>`}).join('')
+   +ln.map(l=>{const g=gearById(l.gear);return `<div class="cmt"><b>${esc(g.name)}</b> von ${esc(l.brand)}<br><small>noch ${Math.max(0,l.until-G.day)} Tage · ${l.shown?'im Stream gezeigt ✔':'noch nicht im Stream gezeigt'}</small></div>`}).join('')
+   +((!lo.length&&!ln.length)?'<p class="hint">Aktive Partner leihen dir hin und wieder Ausrüstung für drei Monate – etwa Zelte, Lampen oder einen Filter.</p>':'');
+}
 /* ---------- Werbepartner ---------- */
 const BRANDS=[['AlpenTrail Outdoor','Rucksäcke & Zelte'],['Nordlicht Riegel','Energieriegel'],['TrekLight','Stirnlampen'],['KlarWasser','Wasserfilter'],['FjällFood','Trekking-Mahlzeiten'],['KompassKontor','Karten & Navigation']];
 function sponsorTick(notes){
   G.offers=G.offers||[];G.sponsors=G.sponsors||[];
   G.offers=G.offers.filter(o=>o.until>=G.day);
+  G.loanOffers=(G.loanOffers||[]).filter(o=>o.until>=G.day);G.loans=G.loans||[];
+  for(const l of [...G.loans]){if(G.day>=l.until){G.loans=G.loans.filter(x=>x!==l);delete G.owned[l.gear];delete G.packed[l.gear];const sp=G.sponsors.find(x=>x.name===l.brand),gg=gearById(l.gear)||{name:'Leihgabe'};notes.push('📦 Die Leihgabe von '+l.brand+' („'+gg.name+'“) geht zurück.'+(l.shown?'':' '+l.brand+' ist enttäuscht, dass du sie nie im Stream gezeigt hast.'));if(!l.shown&&sp)sp.strikes=(sp.strikes||0)+1}}
+  for(const sp of G.sponsors){const M=LOAN_MAP[sp.name];if(M&&!G.loans.some(l=>l.brand===sp.name)&&!G.loanOffers.some(o=>o.brand===sp.name)&&G.day-(sp.loanAt===undefined?-999:sp.loanAt)>120&&Math.random()<0.03){const cand=M.filter(id=>!G.owned[id]);if(cand.length){const id=pick(cand);G.loanOffers.push({id:++G.vid,brand:sp.name,gear:id,until:G.day+14});sp.loanAt=G.day;notes.push('🎁 '+sp.name+' möchte dir „'+gearById(id).name+'“ für drei Monate leihen (Studio → Partner).')}}}
   if(G.subs>=2000&&G.offers.length<2&&G.sponsors.length<2&&Math.random()<0.02){
     const b=pick(BRANDS.filter(x=>!G.sponsors.some(s=>s.name===x[0])&&!G.offers.some(s=>s.name===x[0])));
     if(b){const vids=(G.videos||[]).slice(-5).filter(v=>v.S);const avg=vids.length?vids.reduce((a,v)=>a+v.S,0)/vids.length:30;
@@ -6562,7 +6643,7 @@ function renderStudio(){
   const vids=G.videos||[],live=vids.filter(v=>v.day<=G.day);
   const last=G.hist.slice(-28),v28=last.reduce((a,x)=>a+x.views,0),r28=last.reduce((a,x)=>a+x.rev,0);
   const sub0=last.length?last[0].subs:G.subs,sub28=G.subs-sub0;
-  const tabs=['Übersicht','Videos','Analytics','Community','Live'].concat(G.subs>=2000||(G.sponsors&&G.sponsors.length)||(G.offers&&G.offers.length)?['Partner']:[]);
+  const tabs=['Übersicht','Videos','Analytics','Community','Live'].concat(G.subs>=2000||(G.sponsors&&G.sponsors.length)||(G.offers&&G.offers.length)||(G.loans&&G.loans.length)||(G.loanOffers&&G.loanOffers.length)?['Partner']:[]);
   const jk=LOOKS.jacket[G.look.jacket];
   let body='';
   if(STUDIOTAB==='Übersicht'){
@@ -6583,9 +6664,9 @@ function renderStudio(){
     const of=G.offers||[],sp=G.sponsors||[];
     body=`<h4>Anfragen</h4>${of.length?of.map(o=>`<div class="cmt"><b>${esc(o.name)}</b> · ${esc(o.what)}<br><small>${eur0(o.fee)} pro Monat · verlangt mindestens ein Video pro Monat mit gutem Material · Angebot gilt noch ${o.until-G.day} Tage</small><div class="seg" style="margin-top:6px"><button class="primary" data-of="${o.id}" data-ok="1">Annehmen</button><button data-of="${o.id}">Ablehnen</button></div></div>`).join(''):'<p class="hint">Aktuell keine Anfragen. Werbepartner melden sich bei größeren Kanälen von selbst.</p>'}
       <h4>Laufende Partnerschaften</h4>${sp.length?sp.map(s=>`<div class="cmt"><b>${esc(s.name)}</b> · ${eur0(s.fee)} pro Monat<br><small>Nächste Prüfung in ${Math.max(0,s.next-G.day)} Tagen${s.strikes?' · <span class="badtxt">unzufrieden</span>':''}</small></div>`).join(''):'<p class="hint">Keine aktiven Partner.</p>'}
-      <p class="hint">Partner erwarten regelmäßig Videos mit gutem Material. Bleiben Videos aus oder sind sie zu schwach, springen sie wieder ab.</p>`;
+      ${loanHTML()}<p class="hint">Partner erwarten regelmäßig Videos mit gutem Material. Bleiben Videos aus oder sind sie zu schwach, springen sie wieder ab.</p>`;
   }else{
-    body=G.lives.length?`<div class="kpis"><div class="kpi">Livestreams<b>${G.lives.length}</b></div><div class="kpi">Spenden gesamt<b>${eur(G.liveEarned)}</b></div><div class="kpi">Ruf<b>${G.begHeat>4?'😠 schlecht':G.begHeat>1.5?'😐 angekratzt':'😊 gut'}</b></div></div>`+[...G.lives].reverse().map(l=>`<div class="cmt"><b>${dateStr(l.day)}</b> · Ø ${fmtN(l.avg,0)} Zuschauer (Spitze ${Math.round(l.peak)}) · Spenden ${eur(l.don)} · +${l.gain}${l.loss?' / −'+l.loss:''} Abos${l.begs>1?' · <span class="badtxt">'+l.begs+'× gebettelt</span>':''}</div>`).join(''):'<p class="hint">Noch kein Livestream. Beim Rasten unterwegs: Menü ☰ → Livestream. Kleine Kanäle haben sehr wenige Zuschauer. Ein Spendenaufruf pro Stream reicht.</p>';
+    body=homeLiveCard()+(G.lives.length?`<div class="kpis"><div class="kpi">Livestreams<b>${G.lives.length}</b></div><div class="kpi">Spenden gesamt<b>${eur(G.liveEarned)}</b></div><div class="kpi">Ruf<b>${G.begHeat>4?'😠 schlecht':G.begHeat>1.5?'😐 angekratzt':'😊 gut'}</b></div></div>`+[...G.lives].reverse().map(l=>`<div class="cmt"><b>${dateStr(l.day)}</b> · Ø ${fmtN(l.avg,0)} Zuschauer (Spitze ${Math.round(l.peak)}) ${l.home?'· 🏠 Studio'+(l.aff?' · Provision '+eur(l.aff):''):'· Spenden '+eur(l.don)} · +${l.gain}${l.loss?' / −'+l.loss:''} Abos${l.begs>1?' · <span class="badtxt">'+l.begs+'× gebettelt</span>':''}</div>`).join(''):'<p class="hint">Noch kein Livestream. Beim Rasten unterwegs: Menü ☰ → Livestream. Kleine Kanäle haben sehr wenige Zuschauer. Ein Spendenaufruf pro Stream reicht.</p>');
   }
   $('#s-studio').innerHTML=`<div class="wrap"><div class="topbar"><h2>📺 Studio</h2><button id="st-back">◀ Zentrale</button></div>
    <div class="yt"><div class="ytban" style="${G.banner?`background:#000 url(${G.banner}) 50% ${G.bannerPos==null?50:G.bannerPos}%/${G.bannerFit||'cover'} no-repeat`:''}"></div><div class="ythead"><div class="ytav" style="${G.avatar?`background:url(${G.avatar}) center/cover`:`background:${jk}`}">${G.avatar?'':esc((G.chan||'W')[0].toUpperCase())}</div><div><h3 style="margin:0"><span id="ch-rn" style="cursor:pointer;border-bottom:1px dashed #ffffff66" title="Zum Umbenennen anklicken">${esc(G.chan)}</span> </h3><small>@${esc(G.chan.replace(/\s+/g,'').toLowerCase())} · ${fmtInt(G.subs)} Abonnenten · ${live.length} Videos</small><div class="imgbtns" style="margin-top:6px">${imgBtns()}</div></div></div>
@@ -6595,6 +6676,8 @@ function renderStudio(){
   bindImgBtns($('#s-studio'),()=>renderStudio());
   const rnb=$('#ch-rn');if(rnb)rnb.onclick=()=>showModal({title:'Kanal umbenennen',html:'<p class="hint">Die Community reagiert darauf – je nachdem, wie gut der Name klingt.</p><input id="ch-new" maxlength="30" style="width:100%" value="'+esc(G.chan)+'">',buttons:[{label:'Umbenennen',primary:1,fn:()=>{const v=(RNV||'').trim();if(v.length<3||v===G.chan){toast('Bitte einen anderen Namen mit mindestens 3 Zeichen eingeben.');return}renderStudioAfterRename(v)}},{label:'Abbrechen'}],onOpen:m=>{RNV=G.chan;$('#ch-new',m).oninput=e=>RNV=e.target.value}});
   $$('[data-of]').forEach(b=>b.onclick=()=>{const id=+b.dataset.of,o=(G.offers||[]).find(x=>x.id===id);if(!o)return;G.offers=G.offers.filter(x=>x!==o);if(b.dataset.ok){if((G.sponsors||[]).length>=2){toast('Mehr als zwei Partner gleichzeitig sind nicht möglich.');G.offers.push(o);return}(G.sponsors=G.sponsors||[]).push({name:o.name,what:o.what,fee:o.fee,minS:o.minS,next:G.day+30,strikes:0});sfx('coin')}save();renderStudio()});
+  const hlb=$('#hl-start');if(hlb)hlb.onclick=()=>homeLiveDialog();
+  $$('[data-lo]').forEach(b=>b.onclick=()=>{const id=+b.dataset.lo,o=(G.loanOffers||[]).find(x=>x.id===id);if(!o)return;G.loanOffers=G.loanOffers.filter(x=>x!==o);if(b.dataset.ok&&!G.owned[o.gear]){G.owned[o.gear]=1;G.cond[o.gear]=100;(G.loans=G.loans||[]).push({id:o.id,brand:o.brand,gear:o.gear,until:G.day+90,shown:false});sfx('coin')}save();renderStudio()});
   $$('[data-stt]').forEach(b=>b.onclick=()=>{STUDIOTAB=b.dataset.stt;renderStudio()});
   $$('canvas[data-v]').forEach(cv=>{const v=vids.find(x=>x.id==cv.dataset.v);if(v)drawThumb(cv,v)});
   const tt=$('#th-top');if(tt){const top=[...live].sort((a,b)=>b.views-a.views)[0];drawThumb(tt,top)}
