@@ -216,6 +216,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 #drawer details.moreacts{margin:6px 0}#drawer details.moreacts summary{cursor:pointer;color:var(--dim);font-size:.9em;padding:4px 0}
 .hk-hist{display:flex;gap:8px;align-items:center;margin:6px 0 2px}.hk-th{position:relative;flex:none;line-height:0}.hk-th canvas{width:84px;height:47px;border-radius:6px;border:1px solid #ffffff22}.hk-th i{position:absolute;left:0;right:0;bottom:0;background:#a82f22dd;color:#fff;font:700 9px/14px sans-serif;text-align:center;font-style:normal;border-radius:0 0 6px 6px}.hk-chips{display:flex;flex-wrap:wrap;gap:4px}.hk-chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#ffffff14;font-size:.76rem}.hk-chip.ok{background:#1f5a34;color:#c9f5d8}.hk-chip.ab{background:#8a2f24;color:#ffd9d2}
 .fr h4{margin:12px 0 6px}.fr-code{display:flex;gap:8px;align-items:center}.fr-code span{font:700 1.7rem/1 ui-monospace,Menlo,monospace;letter-spacing:.18em;background:#ffffff12;padding:8px 14px;border-radius:10px}.fr-add{display:flex;gap:8px}.fr-add input{flex:1;text-transform:uppercase;letter-spacing:.12em;font-size:1rem}.fr-err{color:#ffb4a8}.fr-ok{color:#9be7b2}.fr-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #ffffff14}.fr-av{width:42px;height:42px;flex:none;border-radius:50%;overflow:hidden;background:#ffffff18;display:flex;align-items:center;justify-content:center;font-size:1.3rem}.fr-av img{width:100%;height:100%;object-fit:cover;display:block}.fr-av.big{width:64px;height:64px;margin-top:-34px;border:3px solid #1b2b22;background:#1b2b22}.fr-nm{flex:1;min-width:0}.fr-nm b,.fr-head b{display:block}.fr-nm small,.fr-head small{opacity:.75}.fr-ban{height:120px;border-radius:10px}.fr-head{display:flex;gap:12px;align-items:flex-start;padding:0 8px 8px}.fr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}.fr-v{position:relative;font-size:.85rem}.fr-v canvas{width:100%;border-radius:8px;display:block}.fr-v b{display:block;margin-top:4px;line-height:1.2}.fr-v small{opacity:.75}.fr-v i{position:absolute;left:0;top:0;background:#a82f22dd;color:#fff;font:700 10px/16px sans-serif;padding:0 6px;border-radius:8px 0 8px 0;font-style:normal}
+#coop{position:absolute;left:10px;top:104px;z-index:20;max-width:230px;background:rgba(10,24,16,.78);border:1px solid #ffffff22;border-radius:12px;padding:8px 10px;font-size:.78rem;line-height:1.35;color:#fff;backdrop-filter:blur(4px)}#coop .coop-h{opacity:.8;margin-bottom:2px}#coop button{margin-top:6px;width:100%;font-size:.78rem;padding:6px 8px;min-height:32px}#coop button.on{background:#1f5a34;border-color:#2f8a52}
 </style>
 </head>
 <body>
@@ -1388,7 +1389,8 @@ const cf=id=>{const c=condOf(id);return c<=0?0:0.55+0.45*c/100};
 /* ---------- Start ---------- */
 function startHike(hikeId){
   const hk=HIKES.find(h=>h.id===hikeId);
-  const route=buildRoute(hk,(Date.now()&0xfffffff)+7);
+  if(COOP&&COOP.hike!==hikeId)COOP=null;
+  const route=buildRoute(hk,(COOP&&COOP.seed!=null)?COOP.seed:(Date.now()&0xfffffff)+7);
   const gear=packedGear();
   const g={pack:slotOf('pack'),shelter:slotOf('shelter'),bag:slotOf('bag'),mat:slotOf('mat'),mid:slotOf('mid'),shell:slotOf('shell'),shoes:slotOf('shoes'),
     tools:{},phones:gear.filter(x=>x.kind==='phone'),cam:gear.find(x=>x.kind==='cam')||null,drone:gear.find(x=>x.kind==='drone')||null,
@@ -1613,6 +1615,7 @@ function spawnWalker(){
   H.walkers.push({x:H.x+rnd(780,900),v:rnd(3.2,5),look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
 }
 function updateWalkers(h){
+  coopStep(h);
   const w=H.walkers;if(!w.length)return;
   for(const W of w){
     if(!W.wait)W.x-=W.v*PPK*h/60;
@@ -2781,6 +2784,7 @@ function autoConsume(){
 }
 function endHike(reason){
   if(H.ended)return;
+  try{coopStop()}catch(e){}
   H.ended=true;H.live=null;
   const hk=H.hk;
   if(reason!=='goal'){
@@ -3821,6 +3825,7 @@ function drawLakes(g,tm){
   }
 }
 function drawWalkers(g,tm){
+  coopDraw(g,tm);
   if(H.crossing&&H.crossing.kind==='boat'){const sx=CHAR_SX(),gy=heroY(H.x);emoji(g,'🛶',sx,gy+14+Math.sin(tm*3)*2,54)}
   if(H.crossing&&H.crossing.kind==='swim'){const sx=CHAR_SX(),gy=heroY(H.x);g.fillStyle='rgba(255,255,255,0.5)';for(let k=0;k<4;k++){g.beginPath();g.arc(sx-16+k*11+Math.sin(tm*6+k)*3,gy+10+Math.sin(tm*5+k*2)*2,3,0,7);g.fill()}}
   for(const W of H.walkers){
@@ -4526,6 +4531,11 @@ function showFriends(){
     .then(l=>{FR_ST.friends=l;FR_ST.busy=false;frRender()})
     .catch(e=>{FR_ST.busy=false;FR_ST.err=(e&&e.message)||String(e);frRender()});
 }
+function frCoopHTML(){
+  const gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
+  const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
+  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p><div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
+}
 function frRender(){
   const S=FR_ST,on=!!G.pubOn;
   const list=S.friends?(S.friends.length?S.friends.map(f=>{const c=f.c;
@@ -4540,7 +4550,7 @@ function frRender(){
       '<p class="hint">Freunde mit deinem Code sehen dann Kanalname, Profilbild, Banner und deine letzten Videos mit Zahlen. Dein Spielstand bleibt auf diesem Gerät.</p>'+
       '<h4>Freund hinzufügen</h4><div class="fr-add"><input id="fr-in" placeholder="Code des Freundes" maxlength="12" autocomplete="off"><button id="fr-add" class="primary">Hinzufügen</button></div>'+
       (S.err?'<p class="fr-err">'+esc(S.err)+'</p>':'')+(S.msg?'<p class="fr-ok">'+esc(S.msg)+'</p>':'')+
-      '<h4>Deine Freunde</h4>'+list+'</div>',
+      '<h4>Deine Freunde</h4>'+list+frCoopHTML()+'</div>',
     buttons:[{label:'Schließen'}],
     onOpen:m=>{
       const q=s=>m.querySelector(s);
@@ -4553,6 +4563,14 @@ function frRender(){
       q('#fr-add').onclick=()=>{
         const v=q('#fr-in').value;S.err='';S.msg='';
         fbAddFriend(v).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='✅ Freund hinzugefügt.';frRender()}).catch(er=>{S.err=er.message||String(er);frRender()});
+      };
+      const cn=q('#co-new');if(cn)cn.onclick=()=>{
+        const id=q('#co-hike').value;S.err='';S.msg='Raum wird angelegt …';frRender();
+        coopHost(id).then(code=>coopBriefingModal({code,hike:id,day:COOP.day,name:G.name},true)).catch(er=>{S.err=er.message||String(er);S.msg='';frRender()});
+      };
+      const cj=q('#co-join');if(cj)cj.onclick=()=>{
+        const v=q('#co-in').value;S.err='';S.msg='';
+        coopJoinFlow(v).catch(er=>{S.err=er.message||String(er);frRender()});
       };
       m.querySelectorAll('[data-frx]').forEach(b=>b.onclick=()=>{
         fbLoad().then(db=>db.ref('friends/'+FB_UID+'/'+b.dataset.frx).remove()).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='Freund entfernt.';frRender()}).catch(er=>{S.err=er.message;frRender()});
@@ -4578,7 +4596,116 @@ function friendChannel(f){
       });
     }});
 }
+/* ---------- Gemeinsame Tour (Firebase) ---------- */
+let COOP=null;
+async function coopHost(hikeId){
+  const db=await fbLoad();let code='',ok=false;
+  for(let i=0;i<6&&!ok;i++){
+    code=fbRandCode();
+    try{await db.ref('rooms/'+code+'/meta').set({host:FB_UID,hike:hikeId,seed:Math.floor(Math.random()*0xfffffff)+7,day:G.day|0,name:String(G.name||'Wanderer').slice(0,40),created:firebase.database.ServerValue.TIMESTAMP});ok=true}catch(e){}
+  }
+  if(!ok)throw new Error('Der Raum konnte nicht angelegt werden.');
+  const m=(await db.ref('rooms/'+code+'/meta').get()).val();
+  COOP={room:code,seed:m.seed,hike:hikeId,host:true,live:false,peers:{},vis:{},ok:false,unlocked:false,day:m.day};
+  return code;
+}
+async function coopRead(code){
+  code=String(code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<4)throw new Error('Bitte einen gültigen Raumcode eingeben.');
+  const db=await fbLoad(),m=(await db.ref('rooms/'+code+'/meta').get()).val();
+  if(!m||!m.hike)throw new Error('Diesen Raum gibt es nicht (mehr).');
+  if(!HIKES.find(h=>h.id===m.hike))throw new Error('Diese Tour kennt dein Spiel nicht.');
+  return Object.assign({code},m);
+}
+function coopArm(m,host){
+  COOP={room:m.code,seed:m.seed,hike:m.hike,host:!!host,live:false,peers:{},vis:{},ok:false,unlocked:false,day:m.day};
+}
+function coopBriefingModal(m,host){
+  const hk=HIKES.find(h=>h.id===m.hike);
+  showModal({replace:true,title:'🥾 Gemeinsame Tour',html:'<p><b>'+esc(hk.name)+'</b> · '+hk.km+' km</p><p>Raumcode: <span class="fr-code" style="display:inline-flex"><span>'+esc(m.code)+'</span></span></p><p class="hint">'+(host?'Gib diesen Code deinem Freund. Ihr startet beide dieselbe Tour am selben Kalendertag ('+esc(dateStr(m.day))+'). ':'Du wanderst mit '+esc(m.name||'deinem Freund')+' am '+esc(dateStr(m.day))+'. ')+'Unterwegs seht ihr euch auf der Strecke. Zeitraffer gibt es nur, wenn alle zustimmen.</p>',
+    buttons:[{label:'📋 Weiter zum Briefing',primary:1,fn:()=>openBriefing(m.hike)},{label:'Abbrechen',fn:()=>{COOP=null}}]});
+}
+async function coopJoinFlow(code){
+  const m=await coopRead(code);
+  if(G.day>m.day)throw new Error('Dein Spielkalender steht schon auf '+dateStr(G.day)+'. Die Tour ist für '+dateStr(m.day)+' angesetzt – ihr müsst am selben Tag starten.');
+  if(G.day<m.day){
+    const n=m.day-G.day;
+    showModal({replace:true,title:'📅 Gleicher Starttag',text:'Die Tour ist für '+dateStr(m.day)+' angesetzt, dein Kalender steht auf '+dateStr(G.day)+'. Jetzt '+n+(n===1?' Tag':' Tage')+' vorspulen und mitwandern?',
+      buttons:[{label:'⏩ Vorspulen & weiter',primary:1,fn:()=>{WAITCTX='hub';waitDays(n);coopArm(m,false);coopBriefingModal(m,false)}},{label:'Abbrechen'}]});
+    return;
+  }
+  coopArm(m,false);coopBriefingModal(m,false);
+}
+function coopBegin(){
+  if(!COOP||!H||!H.hk)return;
+  if(COOP.hike!==H.hk.id){COOP=null;return}
+  COOP.live=true;COOP.ok=false;COOP.unlocked=false;COOP.peers={};COOP.vis={};COOP.t0=0;
+  fbLoad().then(db=>{
+    if(!COOP||!COOP.live)return;
+    const me=db.ref('rooms/'+COOP.room+'/players/'+FB_UID);
+    COOP.me=me;me.onDisconnect().remove();
+    COOP.pref=db.ref('rooms/'+COOP.room+'/players');
+    COOP.pcb=COOP.pref.on('value',s=>{const v=s.val()||{};delete v[FB_UID];COOP.peers=v;coopCheck()});
+    coopPush();COOP.timer=setInterval(()=>{if(!H||H.ended||!COOP||!COOP.live){coopStop();return}coopPush()},1500);
+  }).catch(e=>{toast('👥 Verbindung zum Freund nicht möglich: '+((e&&e.message)||e),'bad')});
+  coopChip();
+}
+function coopPush(){
+  if(!COOP||!COOP.me||!H)return;
+  const look={};for(const k in G.look)look[k]=+G.look[k]||0;
+  let pk='#c0392b';try{pk=packCol(H.g.pack)||pk}catch(e){}
+  COOP.me.set({n:String(G.name||'Wanderer').slice(0,30),x:Math.round(H.x),km:+(H.km||0).toFixed(2),mv:(H.walking&&!H.action&&!H.sleep.active)?1:0,look,pk:String(pk).slice(0,16),t:firebase.database.ServerValue.TIMESTAMP,sk:COOP.ok?1:0}).catch(()=>{});
+  coopChip();
+}
+function coopCheck(){
+  if(!COOP)return;
+  const now=Date.now(),live=Object.values(COOP.peers).filter(p=>p&&now-(p.t||0)<60000);
+  const all=live.length>0&&COOP.ok&&live.every(p=>p.sk);
+  if(all&&!COOP.unlocked){COOP.unlocked=true;toast('⏩ Zeitraffer freigegeben – alle sind einverstanden.','good')}
+  if(!all&&COOP.unlocked){COOP.unlocked=false;if(H&&H.speed>1)H.speed=1;toast('⏸ Zeitraffer wieder gesperrt.')}
+  coopChip();
+}
+function coopStep(h){
+  if(!COOP||!COOP.live)return;
+  if(!COOP.unlocked&&H.speed>1){H.speed=1;const t=Date.now();if(t-(COOP.tw||0)>6000){COOP.tw=t;toast('👥 Zeitraffer nur, wenn alle Mitwanderer zustimmen (Knopf oben links).')}}
+}
+function coopChip(){
+  const st=document.getElementById('s-hike');if(!st)return;
+  let el=document.getElementById('coop');
+  if(!COOP||!COOP.live){if(el)el.remove();return}
+  if(!el){el=document.createElement('div');el.id='coop';st.appendChild(el);
+    el.addEventListener('click',e=>{if(e.target&&e.target.id==='coop-sk'&&COOP){COOP.ok=!COOP.ok;coopPush();coopCheck()}})}
+  const now=Date.now(),ps=Object.entries(COOP.peers).filter(([u,p])=>p&&now-(p.t||0)<60000);
+  const rows=ps.length?ps.map(([u,p])=>{const d=(p.km||0)-(H?H.km:0);return '<div>🥾 <b>'+esc(p.n||'Freund')+'</b> · '+(Math.abs(d)<0.05?'direkt neben dir':fmtN(Math.abs(d),1)+' km '+(d>0?'vor':'hinter')+' dir')+(p.sk?' · ⏩':'')+'</div>'}).join(''):'<div class="hint">Warte auf Mitwanderer …</div>';
+  el.innerHTML='<div class="coop-h">👥 Raum <b>'+esc(COOP.room)+'</b></div>'+rows+'<button id="coop-sk" class="'+(COOP.unlocked?'on':'')+'">'+(COOP.unlocked?'⏩ Zeitraffer frei':(COOP.ok?'✔ Zeitraffer: warte auf Freunde':'⏩ Zeitraffer vorschlagen'))+'</button>';
+}
+function coopStop(){
+  if(!COOP)return;
+  try{if(COOP.timer)clearInterval(COOP.timer)}catch(e){}
+  try{if(COOP.pref&&COOP.pcb)COOP.pref.off('value',COOP.pcb)}catch(e){}
+  try{if(COOP.me){COOP.me.remove();COOP.me.onDisconnect().cancel()}}catch(e){}
+  COOP=null;const el=document.getElementById('coop');if(el)el.remove();
+}
+function coopDraw(g,tm){
+  if(!COOP||!COOP.live)return;
+  const now=Date.now(),dt=Math.min(0.1,Math.max(0,tm-(COOP.lt||tm)));COOP.lt=tm;
+  for(const u in COOP.peers){
+    const p=COOP.peers[u];if(!p||now-(p.t||0)>60000)continue;
+    let v=COOP.vis[u];if(!v)v=COOP.vis[u]={x:p.x,ph:0,mode:'idle',lx:p.x};
+    const dx=p.x-v.x;v.x+=dx*Math.min(1,dt*2.5);
+    v.mode=Math.abs(dx)>1.5||p.mv&&Math.abs(dx)>0.3?'walk':'idle';
+    v.ph+=(v.mode==='walk'?0.25:0)*dt*60*0.35;
+    const sx=v.x-camX;if(sx<-90||sx>CW+90)continue;
+    const gy=groundY(v.x);
+    drawHiker(g,sx,gy,1.15,{look:p.look||G.look,phase:v.ph,mode:v.mode,packColor:p.pk||'#2e86c1',tm,poles:false});
+    g.save();g.font='600 13px system-ui,sans-serif';g.textAlign='center';
+    const nm=String(p.n||'Freund'),w=g.measureText(nm).width+14;
+    g.fillStyle='rgba(10,20,15,0.65)';g.fillRect(sx-w/2,gy-112,w,20);
+    g.fillStyle='#fff';g.fillText(nm,sx,gy-97);g.restore();
+  }
+}
 function renderHub(){
+  try{coopStop()}catch(e){}
   H=null;
   const d=dateOf(G.day),s=seasonOfM(d.m),pend=G.pending;
   const stalePct=pend?clamp((G.day-pend.day-10)*1,0,40):0;
@@ -5117,7 +5244,7 @@ function startHikeUI2(id){
   try{const se=env.season||'Sommer';LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,se),'svg'));LEAF_PRE[se]=1}catch(e){}
   try{lsPre(lsSeason(snowAmt()))}catch(e){}
   MODALQ=[];
-  buildHikeDOM();show('hike');resizeStage();try{startOptsDialog()}catch(e){console.error(e)}
+  buildHikeDOM();show('hike');resizeStage();try{startOptsDialog()}catch(e){console.error(e)}try{coopBegin()}catch(e){console.error(e)}
   accum=0;lastTs=performance.now();hudT=0;livePanelOn=false;LIGHT.next=8;FX.sparks=[];FX.smoke=[];BIRDS.length=0;
   try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(w=>{wake=w}).catch(()=>{})}catch(e){}
   if('ontouchstart' in window&&!document.fullscreenElement)toast('Tipp: Im Menü ☰ kannst du Vollbild aktivieren.');
