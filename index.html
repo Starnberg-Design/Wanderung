@@ -904,7 +904,7 @@ function buildRoute(hk,seed){
   // Begegnungen: auf leichten Touren öfter, auf schweren selten bis sehr selten (Winter seltener, Sommer etwas häufiger)
   const hSpacing=[18,18,32,55,90,140,200][Math.min(hk.diff,6)]||18;
   const hSeason=(()=>{const m=dateOf(G.day).m;return (m===11||m<2)?0.45:(m>=5&&m<=7)?1.2:1})();
-  const expH=totalKm/hSpacing*hSeason,nH=Math.floor(expH)+(rng()<expH-Math.floor(expH)?1:0);
+  const expH=totalKm/hSpacing*hSeason*((totalKm<=30&&(hk.diff<=2||TOWNS[hk.id]||hk.villageEvery>0))?1.2:1),nH=Math.floor(expH)+(rng()<expH-Math.floor(expH)?1:0);
   for(let k=0;k<nH;k++)add({type:'hiker',x:totalPx*(0.08+0.84*((k+0.2+rng()*0.6)/nH))});
   if(TOWNS[hk.id]){TOWNS[hk.id].forEach(t=>{if(t[1]<totalKm-3)add({type:'village',x:t[1]*PPK,name:t[0],town:true})})}
   else if(hk.villageEvery>0){
@@ -1642,7 +1642,7 @@ const WALK_NAMES=['Jonas','Lena','Mats','Ingrid','Felix','Sofie','Erik','Hanna',
 function spawnWalker(){
   const look={skin:Math.floor(rnd(0,5)),hair:Math.floor(rnd(0,7)),style:Math.floor(rnd(0,6)),beard:Math.random()<0.3?Math.floor(rnd(1,3)):0,glasses:Math.random()<0.2?Math.floor(rnd(1,3)):0,build:Math.floor(rnd(0,3)),jacket:Math.floor(rnd(0,8)),pants:Math.floor(rnd(0,5))};
   const fw=Math.random()<0.4;
-  H.walkers.push({x:fw?H.x-rnd(520,700):H.x+rnd(780,900),v:fw?rnd(3.0,4.3)*0.85:rnd(1.7,2.9)*0.75,dg:Math.random()<0.2?{s:pick(DOG_SIZES).id,c:Math.floor(rnd(0,DOG_COLORS.length)),p:Math.random()<0.5,side:Math.random()<0.5?-1:1}:null,dir:fw?1:-1,look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
+  H.walkers.push({x:fw?H.x-rnd(520,700):H.x+rnd(780,900),v:fw?rnd(3.0,4.3)*0.85:rnd(1.7,2.9)*0.75,dg:Math.random()<0.2?{s:pick(DOG_SIZES).id,c:Math.floor(rnd(0,DOG_COLORS.length)),p:Math.random()<0.5,side:Math.random()<0.5?-1:1}:null,grp:Math.random()<0.05?Array.from({length:1+Math.floor(Math.random()*2)},()=>({look:{skin:Math.floor(rnd(0,5)),hair:Math.floor(rnd(0,7)),style:Math.floor(rnd(0,6)),beard:Math.random()<0.3?Math.floor(rnd(1,3)):0,glasses:Math.random()<0.2?Math.floor(rnd(1,3)):0,build:Math.floor(rnd(0,3)),jacket:Math.floor(rnd(0,8)),pants:Math.floor(rnd(0,5))},pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])})):null,dir:fw?1:-1,look,ph:rnd(0,6),met:false,wait:false,pack:pick(['#c0392b','#2e86c1','#27ae60','#f39c12','#34495e','#8e44ad'])});
 }
 function updateWalkers(h){
   coopStep(h);
@@ -3904,7 +3904,8 @@ function drawWalkers(g,tm){
     const sx=W.x-camX;if(sx<-80||sx>CW+80)continue;const gy=groundY(W.x);
     g.save();g.translate(sx,0);g.scale(W.dir>0?1:-1,1);
     drawHiker(g,0,gy,1.15,{look:W.look,phase:W.ph,mode:W.wait?'idle':'walk',packColor:W.pack,tm,poles:false});
-    if(W.dg){const ds=DOG_SIZES.find(x=>x.id===W.dg.s);if(ds){try{drawDog(g,W.dg.side<0?-64:72,gy+2,ds,{color:W.dg.c,patch:W.dg.p,name:'Hund'},W.wait?'sit':'walk',W.ph*1.15,tm,null)}catch(e){}}}
+    if(W.grp)W.grp.forEach((m,i)=>drawHiker(g,-(i+1)*46,gy,1.15,{look:m.look,phase:W.ph+(i+1)*1.3,mode:W.wait?'idle':'walk',packColor:m.pack,tm,poles:false}));
+    if(W.dg){const ds=DOG_SIZES.find(x=>x.id===W.dg.s);if(ds){try{drawDog(g,W.dg.side<0?-64-46*(W.grp?W.grp.length:0):72,gy+2,ds,{color:W.dg.c,patch:W.dg.p,name:'Hund'},W.wait?'sit':'walk',W.ph*1.15,tm,null)}catch(e){}}}
     g.restore();
   }
 }
