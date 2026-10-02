@@ -4409,7 +4409,7 @@ function goFullscreen(){
   try{
     if(fs){const p=document.exitFullscreen?document.exitFullscreen():(document.webkitExitFullscreen&&document.webkitExitFullscreen());Promise.resolve(p).then(()=>{try{window.screen.orientation.unlock()}catch(e){}}).catch(()=>{});return}
     const p=el.requestFullscreen?el.requestFullscreen():(el.webkitRequestFullscreen&&el.webkitRequestFullscreen());
-    Promise.resolve(p).then(()=>{try{window.screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{});
+    Promise.resolve(p).then(()=>{try{window.screen.orientation.unlock()}catch(e){}}).catch(()=>{});
   }catch(e){}
 }
 function showHowTo(){
@@ -4487,7 +4487,15 @@ function pickChannelImg(kind,cb){
     fr.readAsDataURL(f)};
   inp.click();
 }
-const imgBtns=()=>`<button data-img="avatar">📷 Profilbild</button> <button data-img="banner">🖼️ Banner</button>${G.avatar?' <button data-img="x-avatar" title="Profilbild entfernen">✕ Profilbild</button>':''}${G.banner?' <button data-img="adj-banner">✂️ Banner anpassen</button> <button data-img="x-banner" title="Banner entfernen">✕ Banner</button>':''}`;
+const imgBtns=()=>`<button data-imgmenu="1">⚙️ Einstellungen</button>`;
+function imgMenu(cb){
+  const bt=[{label:'📷 Profilbild wählen',fn:()=>pickChannelImg('avatar',cb)},{label:'🖼️ Banner wählen',fn:()=>pickChannelImg('banner',cb)}];
+  if(G.banner)bt.push({label:'✂️ Banner anpassen',fn:()=>bannerAdjust(cb)});
+  if(G.avatar)bt.push({label:'✕ Profilbild entfernen',fn:()=>{G.avatar=null;save();cb()}});
+  if(G.banner)bt.push({label:'✕ Banner entfernen',fn:()=>{G.banner=null;save();cb()}});
+  bt.push({label:'Schließen'});
+  showModal({title:'⚙️ Kanal-Einstellungen',text:'Profilbild und Banner deines Kanals.',buttons:bt});
+}
 function bannerAdjust(cb){
   if(!G.banner)return;
   const pos=()=>G.bannerPos==null?50:G.bannerPos;
@@ -4498,6 +4506,7 @@ function bannerAdjust(cb){
     onOpen:m=>{draw(m);$$('[data-bf]',m).forEach(b=>b.onclick=()=>{G.bannerFit=b.dataset.bf;draw(m)});$('#bn-pos',m).oninput=e=>{G.bannerPos=+e.target.value;draw(m)}}});
 }
 function bindImgBtns(root,cb){
+  $$('[data-imgmenu]',root).forEach(b=>b.onclick=()=>imgMenu(cb));
   $$('[data-img]',root).forEach(b=>b.onclick=()=>{const k=b.dataset.img;
     if(k==='adj-banner'){bannerAdjust(cb);return}if(k.startsWith('x-')){G[k.slice(2)]=null;save();cb();return}
     pickChannelImg(k,cb)});
@@ -5439,7 +5448,7 @@ function buildHikeDOM(){
      <button class="rb" id="b-menu"><span>☰</span><small>Menü</small></button></div></div>
    <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
-   <div id="rot">📱<br>Bitte das Gerät quer halten</div></div>`;
+   <div id="rot" onclick="this.style.display='none'">📱<br>Bitte das Gerät quer halten<br><small style="opacity:.75">Tippen, um trotzdem hochkant zu spielen</small></div></div>`;
   const cv=$('#cv');
   cv.addEventListener('pointerdown',e=>{
     auUnlock();if(!H||MODAL)return;
