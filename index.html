@@ -214,6 +214,7 @@ html[data-scr="studio"]{--bg:#141414;--panel:#212121;--panel2:#2b2b2b;--line:#3d
 #b-walk.rb small{font-size:15px;font-weight:700;margin:0;white-space:nowrap}
 #spdctl{justify-content:center}
 #drawer details.moreacts{margin:6px 0}#drawer details.moreacts summary{cursor:pointer;color:var(--dim);font-size:.9em;padding:4px 0}
+.hk-hist{display:flex;gap:8px;align-items:center;margin:6px 0 2px}.hk-th{position:relative;flex:none;line-height:0}.hk-th canvas{width:84px;height:47px;border-radius:6px;border:1px solid #ffffff22}.hk-th i{position:absolute;left:0;right:0;bottom:0;background:#a82f22dd;color:#fff;font:700 9px/14px sans-serif;text-align:center;font-style:normal;border-radius:0 0 6px 6px}.hk-chips{display:flex;flex-wrap:wrap;gap:4px}.hk-chip{display:inline-block;padding:2px 8px;border-radius:999px;background:#ffffff14;font-size:.76rem}.hk-chip.ok{background:#1f5a34;color:#c9f5d8}.hk-chip.ab{background:#8a2f24;color:#ffd9d2}
 </style>
 </head>
 <body>
@@ -307,6 +308,11 @@ const RARITY=[
 const ANIMALS=[
   {id:'squirrel',name:'Eichhörnchen',e:'🐿️',r:0,b:['wald'],w:1.6},
   {id:'hare',name:'Feldhase',e:'🐇',r:0,b:['wiese','wald','tal'],w:1.6},
+  {id:'gull',name:'Silbermöwe',e:'🐦',r:0,b:['sand','kies'],w:2.2},
+  {id:'duck',name:'Stockente',e:'🦆',r:0,b:['sumpf'],w:2},
+  {id:'frog',name:'Grasfrosch',e:'🐸',r:0,b:['sumpf'],w:1.6},
+  {id:'heron',name:'Graureiher',e:'🦢',r:1,b:['sumpf','sand'],w:1.0},
+  {id:'seal',name:'Seehund',e:'🦭',r:2,b:['kies','sand'],w:0.5,tags:['nord','scot','de']},
   {id:'marmot',name:'Murmeltier',e:'🐹',r:0,b:['berg'],w:2,tags:['alpen']},
   {id:'ptarmigan',name:'Schneehuhn',e:'🐦',r:1,b:['berg','fjaell'],w:1.2,tags:['nord','isl','alpen','scot']},
   {id:'boar',name:'Wildschwein',e:'🐗',r:1,b:['wald','wiese'],w:1.4,tags:['de','scot']},
@@ -332,6 +338,7 @@ const BIOMES={
   fjaell:{name:'Fjäll',wind:1.4,net:0.3,rain:1,scenic:1.4,tree:0.04,ground:'#98996a',far:'#7b8a86',noise:22,water:7},
   sand:{name:'Sandstrand',wind:1.3,net:0.6,rain:1,scenic:1.25,tree:0,ground:'#e0cf9c',far:'#8fb0c4',noise:3,water:14,spd:0.78,bare:1},
   kies:{name:'Steinstrand',wind:1.2,net:0.5,rain:1,scenic:1.2,tree:0,ground:'#9d9b95',far:'#7d8fa0',noise:6,water:13,spd:0.86,rock:1},
+  sumpf:{name:'Moor & Sumpf',wind:0.5,net:0.35,rain:1.2,scenic:1.05,tree:0.1,ground:'#7a6a43',far:'#8a8f72',noise:4,water:7,spd:0.88,feet:6},
   schnee:{name:'Schneefeld',wind:1.7,net:0.15,rain:1,scenic:1.5,tree:0,ground:'#eef2f7',far:'#a9b6c9',noise:14,water:12,spd:0.74,snowfield:1,rock:1}};
 
 /* ---- Wetter ---- */
@@ -372,7 +379,7 @@ const REGIONS={
   nordkalott:{name:'Nordkalotte',lat:68.9,meanT:-3.4,sAmp:14,dAmp:4.5,syn:6,wind:1.35,ref:650,mod:{sturm:1.5},tags:['nord']}};
 
 /* ---- Wanderungen ---- */
-const BL={w:'wald',m:'wiese',t:'tal',b:'berg',f:'fjaell',s:'sand',k:'kies',e:'schnee'};
+const BL={w:'wald',m:'wiese',t:'tal',b:'berg',f:'fjaell',s:'sand',k:'kies',e:'schnee',p:'sumpf'};
 // P: erzeugt Etappen aus Muster (Buchstabe = Biom, Zahl = km), Höhe linear a0→a1 plus Schwankung
 function P(spec,total,a0,a1,wig,seed){
   const tk=spec.split(' ').map(s=>({b:BL[s[0]],w:+s.slice(1)}));
@@ -438,7 +445,7 @@ const HIKES=[
  {id:'hoga',name:'Höga Kustenleden',country:'Schweden',reg:'hoga',km:129,diff:3,mult:1.7,permit:35,hard:1.15,ext:1.0,villageEvery:48,startAlt:20,
   desc:'Steile Küstenwälder, Aussichtsberge und Fjordblicke an Schwedens Höga Kusten. Schutzhütten, aber wenige Läden.',
   sights:[S_('Skuleberget-Gipfel','⛰️',70),S_('Ulvön-Fjord','🏞️',76),S_('Höga-Kusten-Brücke','🌉',80)],
-  stages:P('w13 b5 w10 k3 w12 t6 w10 s2 f5',129,20,320,110,11)},
+  stages:P('w13 b5 w10 k3 w12 t6 w10 k3 f5',129,20,320,110,11)},
  {id:'whw',name:'West Highland Way',country:'Schottland',reg:'scot',km:154,diff:3,mult:1.8,permit:30,hard:1.15,ext:1.2,villageEvery:34,startAlt:60,
   desc:'Von Milngavie nach Fort William: Lochs, Moore, Glencoe. Wechselhaft, oft nass, mit Dörfern in Abständen.',
   sights:[S_('Loch Lomond','🏞️',72),S_('Rannoch Moor','🌫️',60),S_('Glencoe','⛰️',88),S_('Ben Nevis','⛰️',100)],
@@ -458,7 +465,7 @@ const HIKES=[
  {id:'laugavegur',name:'Laugavegur & Fimmvörðuháls',country:'Island',reg:'island',km:80,diff:4,mult:2.3,permit:110,hard:1.4,ext:1.5,villageEvery:0,startAlt:600,
   desc:'Rhyolithberge, Schneefelder, Flussfurten und heiße Quellen. Kein Laden, kaum Bäume, wildes Wetter.',
   sights:[S_('Landmannalaugar-Thermen','♨️',80),S_('Hrafntinnusker','⛰️',76),S_('Álftavatn','🏞️',68),S_('Skógafoss','🏞️',92)],
-  stages:P('f9 b8 e5 f10 t7 f12 b7 e4 f9 k3 s3 t10 w4',80,600,120,220,29)},
+  stages:P('f9 b8 e5 f10 t7 f12 b7 e4 f9 k3 k3 t10 w4',80,600,120,220,29)},
  {id:'kungs_n',name:'Kungsleden Nord (Abisko – Nikkaluokta)',country:'Schweden',reg:'lappland',km:105,diff:4,mult:2.5,permit:95,hard:1.4,ext:1.5,villageEvery:0,startAlt:380,
   desc:'Die berühmteste Fjäll-Route: weite Täler, Renntiere, Samische Hütten, Kebnekaise voraus. Kaum Netz, Furten, plötzlicher Sturm.',
   sights:[S_('Abisko-Schlucht','🏞️',72),S_('Tjäktja-Pass','⛰️',85),S_('Kebnekaise','⛰️',95),S_('Samische Hütte','🛖',60)],
@@ -470,7 +477,7 @@ const HIKES=[
  {id:'nordkalott',name:'Nordkalottleden',country:'Norwegen · Schweden · Finnland',reg:'nordkalott',km:800,diff:6,mult:7.5,permit:260,hard:1.9,ext:1.85,villageEvery:112,startAlt:450,
   desc:'800 km über drei Länder, oberhalb des Polarkreises. Die härteste Tour im Spiel: Winterstürme, Polarnacht oder Mitternachtssonne, wenige Läden.',
   sights:[S_('Treriksröset (Dreiländereck)','🗿',98),S_('Halti – höchster Punkt Finnlands','⛰️',96),S_('Kilpisjärvi','🏞️',72),S_('Lyngenfjord-Blick','🏞️',88),S_('Reisa-Canyon','🏞️',82),S_('Samisches Dorf','🛖',66),S_('Kebnekaise-Blick','⛰️',90),S_('Pältsa-Fjäll','⛰️',80)],
-  stages:P('f14 w9 f16 e3 t8 f15 b8 f14 e4 t9 f13 k3 s2 w8',800,450,640,360,41)}
+  stages:P('f14 w9 f16 e3 t8 f15 b8 f14 e4 t9 f13 k3 k2 w8',800,450,640,360,41)}
   ,{id:'besseggen',name:'Besseggen-Grat',country:'Norwegen',reg:'norwegen',km:14,diff:3,mult:1.3,permit:15,hard:1.2,ext:1.25,villageEvery:0,startAlt:990,lodgeKind:'huette',
   desc:'Der berühmteste Grat Norwegens zwischen zwei Seen: schmal, ausgesetzt und mit Blick auf Gjende und Bessvatnet.',
   sights:[S_('Besseggen-Grat','⛰️',92),S_('Gjende-See','🏞️',80)],
@@ -482,7 +489,7 @@ const HIKES=[
  {id:'kerry',name:'Kerry Way',country:'Irland',reg:'irland',km:214,diff:3,mult:1.75,permit:15,hard:1.15,ext:1.2,villageEvery:0,startAlt:40,
   desc:'Rund um die Iveragh-Halbinsel: Moor, Küstenklippen und Wolkenlöcher mit Blick auf die Skelligs. Regen ist Standard.',
   sights:[S_('Torc-Wasserfall','🏞️',74),S_('Skellig-Blick','🏝️',82),S_('Ring-of-Kerry-Küste','🏞️',78)],
-  stages:P('w6 b6 m8 f7 k2 t9 m7 b7 w5',214,40,50,300,53)},
+  stages:P('w6 b6 p5 m8 f7 k2 s2 t9 m7 b7 w5',214,40,50,300,53)},
  {id:'gr20',name:'GR20 – Korsika',country:'Frankreich (Korsika)',reg:'korsika',km:180,diff:5,mult:3.3,permit:45,hard:1.55,ext:1.4,villageEvery:0,startAlt:290,
   desc:'Der härteste Fernwanderweg Europas: Granitgrate, Ketten, Schneefelder, Gewitter am Nachmittag und Hütten an den Pässen.',
   sights:[S_('Cirque de la Solitude','⛰️',90),S_('Lac de Melo','🏞️',80),S_('Bavella-Nadeln','⛰️',86)],
@@ -493,13 +500,13 @@ const HIKES=[
   stages:P('t8 m10 m12 w6 m14 b5 m10 t8 m16',780,170,260,260,59)},
 {id:'brockenrunde',name:'Brocken-Dreitagestour',country:'Deutschland',reg:'harz',km:45,diff:2,mult:1.3,permit:10,hard:1.0,ext:0.8,villageEvery:0,startAlt:250,
 desc:'Drei Tage durch Harzer Wälder, Moore und über den Brockengipfel – eine gute Mitteltour zum Einstieg in längere Strecken.',
-sights:[S_('Brocken-Gipfel','⛰️',85)],stages:P('w8 b5 w9 t6 w7 m5',45,250,800,250,87)},
+sights:[S_('Brocken-Gipfel','⛰️',85)],stages:P('w8 b5 p3 w9 t6 w7 m5',45,250,800,250,87)},
 {id:'zugspitzrunde',name:'Zugspitz-Umrundung',country:'Deutschland',reg:'alpen',km:52,diff:3,mult:1.55,permit:20,hard:1.2,ext:1.2,villageEvery:0,startAlt:1000,lodgeKind:'huette',
 desc:'Mehrtägige Runde um das Zugspitzmassiv mit Hüttenübernachtung: Eibsee, Geröllfelder und Schneereste.',
 sights:[S_('Eibsee','🏞️',80),S_('Zugspitz-Gipfel','⛰️',90)],stages:P('t6 w5 b8 e2 b6 t5',52,1000,2200,800,89)},
 {id:'hoga_nord',name:'Höga Kustenleden Nordabschnitt',country:'Schweden',reg:'hoga',km:52,diff:3,mult:1.5,permit:15,hard:1.1,ext:1.0,villageEvery:26,startAlt:20,
 desc:'Steile Küstenwälder, Aussichtsberge und Strandabschnitte im Norden der Höga Kusten.',
-sights:[S_('Ulvön-Fjord','🏞️',76),S_('Aussichtsberg','⛰️',66)],stages:P('w10 b4 k3 w9 s2 t5',52,20,260,110,63)},
+sights:[S_('Ulvön-Fjord','🏞️',76),S_('Aussichtsberg','⛰️',66)],stages:P('w10 b4 k3 w9 k3 t5',52,20,260,110,63)},
 {id:'dolo_rosen',name:'Rosengarten-Höhenweg',country:'Italien',reg:'dolo',km:48,diff:3,mult:1.6,permit:14,hard:1.2,ext:1.2,villageEvery:0,startAlt:1850,lodgeKind:'huette',
 desc:'Mehrere Tage über die Felsbastionen des Rosengartens, mit Rifugios und starker Sonne.',
 sights:[S_('Rosengarten','⛰️',84),S_('Vajolet-Türme','🪨',78)],stages:P('m6 b8 e2 b7 t5 b9',48,1850,2100,350,65)},
@@ -508,7 +515,7 @@ desc:'Von Les Houches über den Col de la Seigne nach Courmayeur: Gletscherblick
 sights:[S_('Col de la Seigne','⛰️',70),S_('Refuge Elisabetta','🛖',60)],stages:P('t6 b8 w5 b9 e2 t5',62,1010,1900,600,71)},
 {id:'hornstrandir',name:'Hornstrandir – Hornvík',country:'Island',reg:'island',km:55,diff:4,mult:1.9,permit:40,hard:1.35,ext:1.5,villageEvery:0,startAlt:20,
 desc:'Unbewohntes Nordwest-Island: Klippen, Strand, Nebel und Polarfüchse, ohne Läden.',
-sights:[S_('Hornbjarg-Klippen','🏞️',88),S_('Fuchsbucht','🦊',70)],stages:P('k4 f8 b6 s3 f9 k3',55,20,300,160,73)},
+sights:[S_('Hornbjarg-Klippen','🏞️',88),S_('Fuchsbucht','🦊',70)],stages:P('k4 f8 b6 k3 f9 k3',55,20,300,160,73)},
 {id:'abisko_alesjaure',name:'Kungsleden Abisko – Alesjaure',country:'Schweden',reg:'lappland',km:66,diff:3,mult:1.8,permit:30,hard:1.3,ext:1.4,villageEvery:0,startAlt:390,
 desc:'Der Einstiegsabschnitt der Kungsleden ins Fjäll: Birkenwald, weite Täler und Samische Hütten.',
 sights:[S_('Abisko-Schlucht','🏞️',72),S_('Alesjaure-Hütte','🛖',62)],stages:P('w9 f12 t8 f14 e3 f10',66,390,500,200,75)},
@@ -520,16 +527,19 @@ desc:'Hochalpine Hüttenrunde im Stubaital mit Gletschern, Jöchern und langen E
 sights:[S_('Sulzenauferner','🏞️',80),S_('Peiljoch','⛰️',74)],stages:P('t6 w5 b9 e3 b8 t5 b9 e3',80,1000,2200,700,67)},
 {id:'affric',name:'Affric Kintail Way',country:'Schottland',reg:'scot',km:71,diff:2,mult:1.4,permit:12,hard:1.0,ext:1.1,villageEvery:35,startAlt:60,
 desc:'Von Drumnadrochit durch Glen Affric zur Westküste: Kiefernwald, Lochs und Moor. Meist nass.',
-sights:[S_('Loch Affric','🏞️',74),S_('Plodda Falls','💧',66)],stages:P('w8 m6 f9 t6 w6',71,60,110,70,69)},
+sights:[S_('Loch Affric','🏞️',74),S_('Plodda Falls','💧',66)],stages:P('w8 p4 m6 f9 t6 w6',71,60,110,70,69)},
 {id:'peddars',name:'Peddars Way',country:'England',reg:'eng',km:77,diff:1,mult:1.15,permit:0,hard:0.9,ext:0.7,villageEvery:20,startAlt:40,lodgeKind:'none',
 desc:'Römerstraße durch Norfolk: flach, weit und mit vielen Dörfern. Ideal für lange, ruhige Tage.',
-sights:[S_('Castle Acre Priory','🏰',58)],stages:P('m10 w4 m8 t3 m9',77,40,10,25,79)},
+sights:[S_('Castle Acre Priory','🏰',58)],stages:P('m10 w4 m8 t3 p4 m5 s4',77,40,10,25,79)},
 {id:'sheepshead',name:'Sheep\'s Head Way',country:'Irland',reg:'irland',km:93,diff:2,mult:1.5,permit:10,hard:1.05,ext:1.1,villageEvery:30,startAlt:20,
 desc:'Rund um die Sheep\'s Head Halbinsel: Klippen, Moor und Atlantikwind.',
-sights:[S_('Leuchtturm','🗼',70),S_('Dunmanus Bay','🌊',66)],stages:P('k4 m8 b5 m9 w4 k3',93,20,150,100,81)},
+sights:[S_('Leuchtturm','🗼',70),S_('Dunmanus Bay','🌊',66)],stages:P('k4 s2 m8 b5 p5 m9 w4 k3',93,20,150,100,81)},
+{id:'camino_norte',name:'Camino del Norte – Baskenküste',country:'Spanien',reg:'camino',km:88,diff:2,mult:1.6,permit:10,hard:1.0,ext:1.1,villageEvery:25,startAlt:10,
+ desc:'Küstenpilgerweg von Irun entlang der baskischen Küste: Strände, Klippen, Fischerorte und grüne Hügel. Viele Herbergen und Bars.',
+ sights:[S_('Playa de Zarautz','🏖️',72),S_('Hafen von Getaria','⛵',70)],stages:P('s3 k2 m7 w5 s2 m6 t4 k2 s3',88,10,120,80,91)},
 {id:'mareemonti',name:'Mare e Monti Nord',country:'Frankreich',reg:'korsika',km:95,diff:3,mult:1.8,permit:25,hard:1.2,ext:1.2,villageEvery:30,startAlt:40,
 desc:'Von der Küste Korsikas in die Berge und zurück ans Meer: Macchia, Granit und Badebuchten.',
-sights:[S_('Girolata-Bucht','🏖️',84),S_('Calanche von Piana','🪨',90)],stages:P('k3 w8 b9 t5 w8 b8 m4',95,40,150,500,83)},
+sights:[S_('Girolata-Bucht','🏖️',84),S_('Calanche von Piana','🪨',90)],stages:P('s3 k2 w8 b9 t5 w8 b8 k2 s3',95,40,150,500,83)},
 {id:'forststeig',name:'Forststeig Elbsandstein',country:'Deutschland',reg:'sachsen',km:100,diff:2,mult:1.45,permit:20,hard:1.0,ext:0.9,villageEvery:30,startAlt:140,
 desc:'Sieben Etappen durch Sandsteinwälder, Schluchten und Felsen mit Biwakplätzen.',
 sights:[S_('Kuhstall','🪨',58),S_('Schrammsteine','⛰️',66)],stages:P('w9 t5 b4 w8 m5 t6',100,140,380,110,61)},
@@ -645,10 +655,11 @@ const GEAR=[
   {id:'vest',cat:'tool',tool:'vest',kind:'vest',name:'Beheizbare Weste',e:'🦺',price:290,kg:0.8,stby:0,fragile:0.00008,desc:'Heizt von innen, Stufe am Gerät einstellbar: stark +8 °C (Akku ca. 10 h), mittel +5 °C (ca. 16 h), schwach +3 °C (ca. 24 h). Akku an Ladestation oder per Powerbank laden. Leer = keine Wärme.'},
   {id:'firetarp',cat:'tool',tool:'firetarp',name:'Feuer-Tarp',e:'🏕️',price:22,kg:0.45,desc:'Kleines Tarp, das du über die Feuerstelle spannst, damit Regen und Sturm das Feuer nicht löschen. Zum Abspannen brauchst du Bäume oder Wanderstöcke.'},
   {id:'lamp',cat:'tool',tool:'lamp',kind:'lamp',name:'Stirnlampe (wiederaufladbar)',e:'🔦',price:22,kg:0.12,stby:0,fragile:0.0002,desc:'Nachts fast volles Tempo. Eigener Akku (per Powerbank ladbar). Ohne Licht ist die Nacht sehr zäh.'},
+  {id:'torch',cat:'tool',tool:'torch',kind:'torch',name:'Taschenlampe (LED)',e:'💡',price:14,kg:0.25,stby:0,fragile:0.0004,desc:'Breiter, weit reichender Lichtkegel – nachts fast so schnell wie mit Stirnlampe und etwas sicherer. Aber der Akku hält nur ca. 9 h Gehzeit (Stirnlampe ca. 18 h). Wird bevorzugt benutzt, die Stirnlampe dient als Reserve.'},
   {id:'fire',cat:'tool',tool:'fire',name:'Feuerstarter',e:'🔥',price:10,kg:0.05,desc:'Für Lagerfeuer: wärmt, trocknet, kocht.'},
   {id:'stove',cat:'tool',tool:'stove',name:'Gaskocher',e:'🍳',price:45,kg:0.45,desc:'Kocht Essen und Wasser, schmilzt Schnee (braucht Gaskartuschen).'},
   {id:'filter',cat:'tool',tool:'filter',name:'Wasserfilter',e:'🚰',price:35,kg:0.3,desc:'Macht Flusswasser trinkbar.'},
-  {id:'rod',cat:'tool',tool:'rod',name:'Angelset',e:'🎣',price:38,kg:0.45,desc:'Fische fangen an Flüssen und Seen. Glückssache und zeitintensiv; Fisch muss gegart werden.'},
+  {id:'rod',cat:'tool',tool:'rod',name:'Angelset',e:'🎣',price:38,kg:0.45,desc:'Fische fangen an Flüssen und Seen. Mit Geschick: Biss abpassen, anschlagen und den Fisch mit Gefühl einholen. Nur an Flüssen und Seen; Fisch muss gegart werden.'},
   {id:'bottle1',cat:'water',cap:1,name:'Wasserflasche 1 L',e:'🍶',price:0,w:6,kg:0.15,desc:'1 Liter Fassungsvermögen.'},
   {id:'bottle15',cat:'water',cap:1.5,name:'Trinkflasche 1,5 L',e:'🍶',price:9,kg:0.2,desc:'1,5 Liter, robust.'},
   {id:'bladder2',cat:'water',cap:2,name:'Trinkblase 2 L',e:'💧',price:25,kg:0.25,desc:'+2 Liter Fassungsvermögen.'},
@@ -1386,6 +1397,7 @@ function startHike(hikeId){
   const dev={};
   gear.filter(x=>x.cat==='rec').forEach(x=>{dev[x.id]={batt:100,broken:false,def:x}});
   if(g.gps)dev.gps={batt:100,broken:false,def:g.gps};
+  if(g.tools.torch)dev.torch={batt:100,broken:false,def:gear.find(x=>x.id==='torch')};
   if(g.tools.lamp)dev.lamp={batt:100,broken:false,def:gear.find(x=>x.id==='lamp')};
   if(g.tools.vest)dev.vest={batt:100,broken:false,def:gear.find(x=>x.id==='vest')};
   const handhelds=gear.filter(x=>x.kind==='phone'||x.kind==='cam').sort((a,b)=>b.q-a.q);
@@ -1450,6 +1462,7 @@ function fillContainers(){ // Verteilt Wasser auf Flaschen (sauber zuerst, dann 
 }
 function deviceOK(id){const d=H.dev[id];return !!d&&!d.broken&&d.batt>0}
 function lightSource(){
+  if(deviceOK('torch'))return 'torch';
   if(deviceOK('lamp'))return 'lamp';
   if(H.g.phones.some(p=>deviceOK(p.id)))return 'phone';
   return null;
@@ -1463,7 +1476,7 @@ function navPhone(){ // Smartphone, das gerade zur Navigation genutzt wird
 }
 function navInfo(){
   const g=H.g;let best={q:0.12,label:'Kein Navi – nach Gefühl',src:null,live:false,note:''};
-  const light=lightSource()==='lamp';
+  const light=lightSource()==='lamp'||lightSource()==='torch';
   if(g.map){let q=0.6;if(env.fog)q-=0.15;if(env.dark>0.6&&!light)q-=0.2;if(H.body.wet>70)q-=0.1;if(q>best.q)best={q,label:'Landkarte & Kompass',src:'map',live:false,note:''}}
   let note='';
   const anyPhone=g.phones.length>0;
@@ -1637,6 +1650,7 @@ function trackFeatures(){
       const F=FORAGE[f.f];
       if(!f.done&&d<380*forageMul()&&F.months.includes(env.month)&&!hasIcon('forage',f.id))
         spawnIcon({kind:'forage',fid:f.id,f,x:f.x,e:F.e,label:F.name,life:1e9});
+    }else if(f.type==='see'&&H.g.tools.rod&&!H.side){if(d<380&&d>-80&&!hasIcon('fish',f.id))spawnIcon({kind:'fish',fid:f.id,f:f,x:f.lake.xl-30,e:'🎣',label:'Angeln',life:1e9});
     }else if(f.type==='fluss'&&H.g.tools.rod){
       if(d<300&&!hasIcon('fish',f.id))spawnIcon({kind:'fish',fid:f.id,f,x:f.x,e:'🎣',label:'Angeln',life:1e9});
     }else if(f.type==='special'){
@@ -1901,25 +1915,116 @@ function doForage(f){
     }
   });
 }
+function fishSpot(){
+  if(featNear('fluss',H.x,90))return 'fluss';
+  if(!H.side)for(const l of (H.route.lakes||[]))if(H.x>l.xl-140&&H.x<l.xr+140)return 'see';
+  return null;
+}
+function fishPick(w){
+  const mul=w==='fluss'?{trout:1.6,salmon:1.4,perch:0.7,pike:0.4}:{perch:1.4,pike:1.8,trout:0.7,salmon:0.1};
+  const pool=FOODS.filter(x=>x.fish),wt=x=>x.w*(mul[x.id]||1);
+  let r=Math.random()*pool.reduce((a,x)=>a+wt(x),0),fish=pool[0];
+  for(const x of pool){r-=wt(x);if(r<=0){fish=x;break}}
+  return fish;
+}
+function fishLand(fish){
+  const nm=fish.name.replace(/ \((kochen|garen)\)/,'');
+  H.food[fish.id]=(H.food[fish.id]||0)+1;H.stats.fish++;
+  toast('🎣 Gefangen! '+fish.e+' '+nm+' – zum Essen musst du ihn garen.','good');sfx('success');
+  const dev=handheld();if(dev&&H.rec>0)addClip({key:'fang:'+fish.id,type:'fang',name:'Fang: '+nm,e:fish.e,q:shotQ(dev.def,1),value:fish.clip*shotQ(dev.def,1),rar:-1});
+}
+function fishSession(w,mins){
+  const seasonF={Sommer:1.15,Herbst:1.0,Frühling:0.85,Winter:0.4}[env.season]||1;
+  const luck=rnd(0.5,1.5)*seasonF*(hasT('natur')?1.25:1)*(w==='fluss'?1.1:1);
+  let bite=false;
+  beginAction('fish','Angelt …',mins,()=>{if(!bite)toast('🎣 Nichts gebissen – heute ist wohl nichts los.')},{tick:h=>{
+    if(!H.action||bite)return;
+    if(Math.random()<0.0105*luck*h*1.5){bite=true;const rem=H.action.left;H.action.left=0;setTimeout(()=>fishFight(w,fishPick(w),rem),60)}
+  }});
+}
+function fishFight(w,fish,rem){
+  const str={perch:0.45,trout:0.75,pike:1.0,salmon:1.15}[fish.id]||0.7,wide=hasT('natur')?1.25:1;
+  let ph='wait',pt=rnd(1.8,4.5),fake=Math.random()<0.5,T=35,P=18,pull=0.1,pullT=1,surge=false,slack=0,hold=false,msg='Warte auf einen Biss …',endT=0,result=null,t0=0,done=false,lt=0,lbl='';
+  const html='<canvas id="fg" width="340" height="190" style="width:100%;max-width:340px;display:block;margin:0 auto 8px;border-radius:10px;background:#0e3a52;touch-action:none"></canvas><p id="fg-msg" class="hint" style="text-align:center;min-height:2.6em"></p><button id="fg-btn" class="primary" style="width:100%;height:56px;font-size:1.05rem;touch-action:none;user-select:none">🪝 Anschlagen!</button><p class="hint" style="text-align:center">Biss abwarten, dann anschlagen. Beim Drill gedrückt halten = einholen, loslassen = Schnur entlasten. Zeiger im grünen Bereich halten!</p>';
+  const kd=e=>{if(e.code==='Space'&&!e.repeat){e.preventDefault();press()}},ku=e=>{if(e.code==='Space'){e.preventDefault();hold=false}};
+  const finish=res=>{
+    if(done)return;done=true;document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku);
+    if(MODAL===me)closeModal();
+    setTimeout(()=>{
+      if(res==='win')fishLand(fish);
+      else if(res==='lost'){toast('🎣 '+msg,'bad');sfx('bad');if(rem>=10)fishSession(w,rem)}
+      else toast('🎣 Du packst die Angel ein.');
+    },80);
+  };
+  const press=()=>{
+    if(done)return;
+    if(ph==='bite'){ph='fight';T=42;P=20;surge=false;pullT=0.5;pull=0.1*str;hold=true;msg='Hängt! Halte gedrückt zum Einholen.'}
+    else if(ph==='wait'||ph==='nibble'){ph='over';result='lost';msg='Zu früh angeschlagen – der Fisch ist verschreckt.';endT=1.4}
+    else if(ph==='fight')hold=true;
+  };
+  const draw=()=>{
+    const c=document.getElementById('fg');if(!c)return;const x=c.getContext('2d'),W=340,Hh=190;
+    x.fillStyle='#bfe3f5';x.fillRect(0,0,W,70);
+    const wg=x.createLinearGradient(0,70,0,Hh);wg.addColorStop(0,'#3d95b8');wg.addColorStop(1,'#0e3a52');x.fillStyle=wg;x.fillRect(0,70,W,Hh-70);
+    x.fillStyle='#4f7a3a';x.fillRect(0,56,70,16);x.strokeStyle='#5b3b1f';x.lineWidth=3;x.beginPath();x.moveTo(8,60);x.lineTo(78,18);x.stroke();
+    let bx=200+Math.sin(t0*1.3)*3,by=72+Math.sin(t0*2.1)*1.5;
+    if(ph==='nibble')by+=Math.abs(Math.sin(t0*14))*3;
+    if(ph==='bite')by+=10+Math.sin(t0*22)*2;
+    if(ph==='fight'){bx=250-P*1.55;by=74+Math.sin(t0*9)*pull*4}
+    x.strokeStyle='rgba(255,255,255,0.8)';x.lineWidth=1;x.beginPath();x.moveTo(78,18);x.quadraticCurveTo((78+bx)/2,Math.min(by,18)+(ph==='fight'&&T>70?-4:10),bx,by-4);x.stroke();
+    x.fillStyle='#e74c3c';x.beginPath();x.arc(bx,by-4,5,Math.PI,0);x.fill();x.fillStyle='#fff';x.beginPath();x.arc(bx,by-4,5,0,Math.PI);x.fill();
+    if(ph==='fight'||ph==='bite'){const fx=bx+(ph==='fight'?10+pull*14:0),fy=by+36+Math.sin(t0*(4+pull*10))*10*(ph==='fight'?pull+0.2:0.3),sz=9+str*7;
+      x.fillStyle='rgba(20,40,60,0.55)';x.beginPath();x.ellipse(fx,fy,sz*1.6,sz*0.7,0,0,Math.PI*2);x.fill();x.beginPath();x.moveTo(fx+sz*1.4,fy);x.lineTo(fx+sz*2.3,fy-sz*0.7);x.lineTo(fx+sz*2.3,fy+sz*0.7);x.fill()}
+    if(ph==='fight'){
+      x.fillStyle='rgba(0,0,0,0.45)';x.fillRect(312,20,16,150);x.fillStyle='rgba(60,200,90,0.55)';x.fillRect(312,20+150*0.3,16,150*0.4);
+      const ty=170-150*T/100;x.fillStyle=T>85||T<12?'#ff5a4a':'#fff';x.fillRect(308,ty-2,24,4);
+      x.fillStyle='rgba(0,0,0,0.45)';x.fillRect(20,176,260,8);x.fillStyle='#f1c40f';x.fillRect(20,176,260*P/100,8);
+      x.fillStyle='#fff';x.font='11px sans-serif';x.fillText('Schnurspannung',250,14);
+    }
+    document.getElementById('fg-msg').textContent=msg;
+    const b=document.getElementById('fg-btn'),nl=ph==='fight'?'⚙️ Einholen (gedrückt halten)':'🪝 Anschlagen!';if(b&&lbl!==nl){lbl=nl;b.textContent=nl}
+  };
+  const step=ts=>{
+    if(done)return;
+    if(MODAL!==me){finish('quit');return}
+    const dt=Math.min(0.05,(ts-(lt||ts))/1000);lt=ts;t0+=dt;
+    if(ph==='wait'){pt-=dt;if(pt<=0){if(fake){fake=false;ph='nibble';pt=rnd(0.7,1.3);msg='Da zupft was …'}else{ph='bite';pt=rnd(0.85,1.15)*wide*(1.1-0.2*Math.min(str,1.3));msg='BISS! Jetzt anschlagen!';sfx('success')}}}
+    else if(ph==='nibble'){pt-=dt;if(pt<=0){ph='wait';pt=rnd(1.2,3);msg='Nur ein Zupfer – abwarten …'}}
+    else if(ph==='bite'){pt-=dt;if(pt<=0){msg='Zu spät angeschlagen – der Fisch ist weg.';ph='over';result='lost';endT=1.4}}
+    else if(ph==='fight'){
+      pullT-=dt;if(pullT<=0){surge=!surge;pullT=surge?rnd(0.7,1.5):rnd(0.8,1.8);pull=surge?str*rnd(0.7,1):0.12*str}
+      if(hold){T+=(24+24*pull)*dt;P+=(13-7*Math.min(1,pull))*dt}
+      else{T-=(28-6*pull)*dt;P-=(pull>0.4?9*pull:1.2)*dt}
+      T=clamp(T,0,100);
+      if(T>=100){msg='Die Schnur ist gerissen!';ph='over';result='lost';endT=1.4}
+      else{
+        if(T<6)slack+=dt;else slack=Math.max(0,slack-dt);
+        if(slack>1.4||P<=0){msg='Der Fisch hat sich losgeschüttelt.';ph='over';result='lost';endT=1.4}
+        else if(P>=100){msg='Gefangen! '+fish.e;ph='over';result='win';endT=0.9}
+        else msg=surge?'Er zieht! Nachlassen!':'Er ruht – jetzt einholen!';
+      }
+      P=clamp(P,0,100);
+    }
+    else if(ph==='over'){endT-=dt;if(endT<=0){finish(result);return}}
+    draw();requestAnimationFrame(step);
+  };
+  const me={title:'🎣 Angeln – '+(w==='fluss'?'am Fluss':'am See'),html,buttons:[{label:'Angel einpacken',fn:()=>finish('quit')}],
+    onOpen:m=>{
+      const b=m.querySelector('#fg-btn');
+      b.addEventListener('pointerdown',e=>{e.preventDefault();press()});
+      ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{hold=false}));
+      document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);
+      requestAnimationFrame(step);
+    }};
+  showModal(me);
+}
 function startFishDialog(){
   if(!H.g.tools.rod){toast('Du hast kein Angelset dabei.');return}
-  const w=nearWater();
-  if(!w||w.type!=='fluss'&&!(w.type==='quelle'&&(env.biome==='tal'||env.biome==='fjaell'||env.biome==='wald'))){toast('Zum Angeln brauchst du einen Fluss oder Bach in der Nähe.');return}
+  const w=fishSpot();
+  if(!w){toast('Angeln geht nur an einem Fluss, Bach oder See.');return}
   if(env.frozen){toast('Das Wasser ist zugefroren – kein Angeln möglich.','bad');return}
-  const seasonF={Sommer:1.15,Herbst:1.0,Frühling:0.85,Winter:0.4}[env.season];
-  const luck=rnd(0.35,1.65)*seasonF*(hasT('natur')?1.25:1)*(w.type==='fluss'?1.15:0.8);
-  const go=mins=>()=>beginAction('fish','Angelt …',mins,()=>{toast('🎣 Nichts gebissen – Angeln ist eben Glückssache.')},{tick:h=>{
-    if(!H.action)return;
-    if(Math.random()<0.0105*luck*h){
-      const tot=FOODS.filter(x=>x.fish).reduce((a,x)=>a+x.w,0);let r=Math.random()*tot,fish=FOODS.find(x=>x.fish);
-      for(const x of FOODS.filter(x=>x.fish)){r-=x.w;if(r<=0){fish=x;break}}
-      H.food[fish.id]=(H.food[fish.id]||0)+1;H.stats.fish++;
-      toast('🎣 Angebissen! '+fish.e+' '+fish.name.replace(/ \((kochen|garen)\)/,'')+' gefangen – zum Essen musst du ihn garen.','good');sfx('success');
-      const dev=handheld();if(dev&&H.rec>0)addClip({key:'fang:'+fish.id,type:'fang',name:'Fang: '+fish.name.replace(/ \((kochen|garen)\)/,''),e:fish.e,q:shotQ(dev.def,1),value:fish.clip*shotQ(dev.def,1),rar:-1});
-      H.action.left=0;
-    }}});
-  showModal({title:'🎣 Angeln',text:'Angeln ist Glückssache und kostet Zeit. Wie lange willst du es versuchen? Bei einem Fang hörst du sofort auf. Fisch muss gegart werden (Kocher oder Feuer). Bei Kälte/im Winter beißt kaum etwas.',
-    buttons:[{label:'30 Minuten',fn:go(30)},{label:'1 Stunde',fn:go(60)},{label:'2 Stunden',fn:go(120)},{label:'Abbrechen'}]});
+  showModal({title:'🎣 Angeln',text:'Wirf die Angel aus und warte auf einen Biss. Bei einem Biss musst du im richtigen Moment anschlagen und den Fisch mit Gefühl einholen – zu viel Zug reißt die Schnur, zu wenig lässt ihn entkommen. Wie lange willst du es versuchen? Fisch muss gegart werden.',
+    buttons:[{label:'30 Minuten',fn:()=>fishSession(w,30)},{label:'1 Stunde',fn:()=>fishSession(w,60)},{label:'2 Stunden',fn:()=>fishSession(w,120)},{label:'Abbrechen'}]});
 }
 
 /* ---------- Orientierung ---------- */
@@ -2066,7 +2171,7 @@ function bodyTick(mode,hr){
   B.sat=clamp(B.sat,0,100);B.hyd=clamp(B.hyd,0,100);
   // Nässe
   const sh=H.camp.pitched?g.shelter:null;
-  let gain=0;
+  let gain=(mode==='walk'&&BIOMES[env.biome].feet)?BIOMES[env.biome].feet*(1-(g.shoes?g.shoes.wetRes*0.2:0)):0;
   if(env.precip){
     const protect=sh?sh.rain*cf(sh.id):(g.shell?g.shell.rain*cf(g.shell.id):0);
     gain=22*env.rainI*(1-protect)*BIOMES[env.biome].rain*(1-(g.shoes?g.shoes.wetRes*0.2:0));
@@ -2088,7 +2193,7 @@ function bodyTick(mode,hr){
     const shoeF=g.shoes?g.shoes.blister*(1+(1-cf(g.shoes.id))*1.2):1.8;
     if(!blister&&Math.random()<0.02*shoeF*(1+B.wet/50)*(0.85+0.15*hk.hard)*hr){H.inj.blister=H.t+(hasT('zaeh')?900:1440);toast('🩹 Du hast dir eine Blase gelaufen – das kostet spürbar Energie und Tempo.','bad');injuryAlert('Aua – ich glaub, ich hab mir eine Blase gelaufen.');sfx('bad')}
     const ls=lightSource();
-    const risky=(gr<-0.12?1:0)+(env.dark>0.6?(ls==='lamp'?0.2:ls==='phone'?0.9:1.8):0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
+    const risky=(gr<-0.12?1:0)+(env.dark>0.6?(ls==='torch'?0.15:ls==='lamp'?0.2:ls==='phone'?0.9:1.8):0)+(B.wet>60?0.5:0)+(env.precip?0.3:0)+env.snow*0.4;
     if(!sprain&&Math.random()<0.018*risky*(1+0.12*H.gap)*(g.tools.poles?0.5:1)*hk.hard*hr){H.inj.sprain=H.t+1440;toast('🦶 Du bist umgeknickt – langsameres Gehen.','bad');injuryAlert('Autsch, umgeknickt!');if(g.tools.poles&&Math.random()<0.2)wear('poles',60)}
   }
   let dhp=0;
@@ -2116,7 +2221,8 @@ function deviceTick(hr,mode){
       if(walking&&np&&np.id===id)drain+=0.9;
       if(walking&&env.dark>0.55&&!deviceOK('lamp')&&lightSource()==='phone'&&H.g.phones.find(p=>deviceOK(p.id)).id===id)drain+=13;
     }else if(id==='gps'){if(walking)drain=0.8}
-    else if(id==='lamp'){if(walking&&env.dark>0.55)drain=5.5}
+    else if(id==='lamp'){if(walking&&env.dark>0.55&&lightSource()==='lamp')drain=5.5}
+    else if(id==='torch'){if(walking&&env.dark>0.55)drain=11}
     else if(id==='vest'){drain=VEST_DRAIN[H.vestMode]||0}
     d.batt=Math.max(0,d.batt-drain*hr);
     if(d.batt<=0&&!d.warned){d.warned=true;toast('🪫 Akku leer: '+def.name,'bad');sfx('bad')}
@@ -2575,7 +2681,7 @@ function walkSpeedKmh(){
   m*=g.shoes?g.shoes.spd*(0.9+0.1*cf(g.shoes.id)):0.85;
   if(H.inj.blister>H.t)m*=0.86;if(H.inj.sprain>H.t)m*=0.75;if(H.sick>H.t)m*=0.9;
   if(env.dark>0.3){
-    const ls=lightSource(),f=ls==='lamp'?0.96:ls==='phone'?0.6:0.3;
+    const ls=lightSource(),f=ls==='torch'?0.97:ls==='lamp'?0.96:ls==='phone'?0.6:0.3;
     m*=lerp(1,f,clamp((env.dark-0.3)/0.4,0,1));
   }
   if(B.energy<15)m*=0.6;if(B.warm<35)m*=0.9;
@@ -2686,6 +2792,8 @@ function endHike(reason){
   }
   H.reason=reason;
   const frac=H.km/H.route.totalKm;
+  G.routeOk=G.routeOk||{};G.routeAb=G.routeAb||{};
+  if(reason==='goal')G.routeOk[hk.id]=(G.routeOk[hk.id]||0)+1;else if(frac>=0.05)G.routeAb[hk.id]=(G.routeAb[hk.id]||0)+1;
   G.km+=H.km;
   if(frac>=0.3){G.routeN=G.routeN||{};G.regN=G.regN||{};G.routeN[hk.id]=(G.routeN[hk.id]||0)+1;G.regN[hk.reg]=(G.regN[hk.reg]||0)+1;xpAdd('nav',H.km*0.1)}
   // Zustand der Ausrüstung dauerhaft speichern – nach kleinen Wanderungen entsteht kein Schaden
@@ -2693,7 +2801,7 @@ function endHike(reason){
     for(const id in H.cond)G.cond[id]=Math.round(H.cond[id]*10)/10;
     for(const id in H.dev){
       if(H.dev[id].broken)G.cond[id]=0;
-      else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
+      else if(H.dev[id].def.cat==='rec'||id==='gps'||id==='lamp'||id==='torch')G.cond[id]=Math.max(1,Math.round(((G.cond[id]===undefined?100:G.cond[id])-rnd(1,4))*10)/10);
     }
   }
   H.damaged=Object.keys(G.cond).filter(id=>G.owned[id]&&G.cond[id]<60).map(id=>gearById(id).name);
@@ -3413,7 +3521,7 @@ function drawDecor(g,tm,pass){
       if(pass===1&&H.stumps&&H.stumps.includes(cx)){drawStump(g,sx,y,cx,sn,false)}
       else if(st.b==='wald'){
         const k=hash(cx*3+pass);tree(g,sx,y,sc*(1+0.25*hash(cx)),k<leafP(wx,false)?'leaf':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
-      }else if(st.b==='fjaell')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
+      }else if(st.b==='fjaell'||st.b==='sumpf')tree(g,sx,y,sc*0.8,'birch',sway,sn,false);
       else tree(g,sx,y,sc,hash(cx*3)<leafP(wx,true)?'leafo':'con',sway,sn,pass===0,hash(cx*17+pass*3+5));
     }else if(pass===1){
       if(B.bare){ if(r<0.05){g.fillStyle=tc('#a89870',sn);g.beginPath();g.ellipse(sx,y-2,9*sc,4,0,Math.PI,0);g.fill()} }
@@ -3829,7 +3937,7 @@ function drawLighting(g,tm,dt){
   const dark=clamp(env.dark*0.78+(H.weather.type==='gewitter'?0.08:0),0,0.86);
   const gold=env.gold*(1-SKYG[H.weather.type]*0.7);
   const sx0=CHAR_SX();
-  const lamp=lightSource()==='lamp'&&env.dark>0.5&&(H.moving||H.walking),phone=!lamp&&lightSource()==='phone'&&env.dark>0.55&&H.moving;
+  const torch=lightSource()==='torch'&&env.dark>0.5&&(H.moving||H.walking),lamp=lightSource()==='lamp'&&env.dark>0.5&&(H.moving||H.walking),phone=!lamp&&!torch&&lightSource()==='phone'&&env.dark>0.55&&H.moving;
   // Wärmeschein vor Sonnenuntergang/-aufgang
   if(gold>0.05){
     const sp=sunPos();
@@ -3849,7 +3957,7 @@ function drawLighting(g,tm,dt){
     // Zelt-Glimmen
     if(H.camp.pitched&&(H.sleep.active||env.dark>0.5)&&H.g.shelter){const tx=H.camp.x-70-camX;punch(tx,groundY(H.camp.x-70)-24,H.sleep.active?70:110,0.5)}
     // Stirnlampe: Lichtkegel nach vorn
-    if(lamp){
+    if(torch){const y=groundY(H.x)-52;punch(sx0+205,y+30,380,0.97,0.22);punch(sx0+20,y+10,84,0.62)}else if(lamp){
       const y=groundY(H.x)-58;
       punch(sx0+120,y+22,230,0.95,0.3);punch(sx0+16,y+8,70,0.6);
     }else if(phone){const y=groundY(H.x)-40;punch(sx0+34,y+16,90,0.75,0.3)}
@@ -3992,22 +4100,105 @@ if(H.moving)return 'walk';
   if(H.camp.pitched||!H.walking)return 'sit';
   return 'idle';
 }
+var SEA_=0,BOG_=0,ENVB_=null;
+function envBlend(dt,st){
+  const sT=(st.b==='sand'||st.b==='kies')?1:0,bT=st.b==='sumpf'?1:0;
+  if(ENVB_!==H){ENVB_=H;SEA_=sT;BOG_=bT}
+  const k=Math.min(1,(dt||0.016)*1.3);SEA_+=(sT-SEA_)*k;BOG_+=(bT-BOG_)*k;
+}
+function drawSea(g,tm,a){
+  if(a<0.01)return;
+  const nordic=['hoga','norwegen','lappland','nordkalott','island'].indexOf(H.hk.reg)>=0;
+  const sk=skyCols(),hy=CH*0.6,nm=NM_*1.25;
+  const top=mix(mix(hex(nordic?'#8fb0c0':'#8fd0e0'),sk.bot,0.35+env.fog*0.4),NIGHT,nm);
+  const bot=mix(mix(hex(nordic?'#3c6a82':'#1f86ad'),sk.bot,env.fog*0.3),NIGHT,nm);
+  g.save();g.globalAlpha=a;
+  const gr=g.createLinearGradient(0,hy,0,CH*0.9);gr.addColorStop(0,rgb(top));gr.addColorStop(1,rgb(bot));
+  g.fillStyle=gr;g.fillRect(0,hy,CW,CH*0.4);
+  g.fillStyle=rgb(mix(top,[255,255,255],0.4),0.55);g.fillRect(0,hy,CW,1.5);
+  if(nordic){
+    const cell=230,par=0.05,c0=Math.floor((camX*par-120)/cell),c1=Math.floor((camX*par+CW+120)/cell);
+    const rc=mix(mix(hex('#5f6d6a'),sk.bot,0.28+env.fog*0.4),NIGHT,nm),tcn=mix(mix(hex('#3b5648'),sk.bot,0.3+env.fog*0.4),NIGHT,nm);
+    for(let c=c0;c<=c1;c++){
+      if(hash(c*7+2)>0.8)continue;
+      const w=46+hash(c*5+1)*130,h=8+hash(c*3+4)*20,x=c*cell+hash(c*11+6)*cell*0.7-camX*par,y=hy+4;
+      g.fillStyle=rgb(rc);g.beginPath();g.ellipse(x,y,w/2,h,0,Math.PI,0);g.fill();
+      const np=Math.floor(hash(c*13+8)*4);g.fillStyle=rgb(tcn);
+      for(let i=0;i<np;i++){const px=x+(hash(c*17+i)-0.5)*w*0.6,ph=8+hash(c*19+i)*9;g.beginPath();g.moveTo(px-3,y-h*0.7);g.lineTo(px,y-h*0.7-ph);g.lineTo(px+3,y-h*0.7);g.fill()}
+    }
+  }
+  g.strokeStyle='rgba(255,255,255,'+(0.22*(1-NM_)).toFixed(3)+')';g.lineWidth=1.2;
+  for(let k=0;k<9;k++){
+    const y=hy+8+k*k*1.3+k*4,sp=34+k*9,off=(((camX*(0.04+k*0.012)+tm*(5+k*2.2))%sp)+sp)%sp,w=8+k*2.5;
+    for(let x=-sp+off;x<CW;x+=sp){g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+w/2,y-1.6,x+w,y);g.stroke()}
+  }
+  if(!nordic){
+    const span=CW+500,bx=((900-camX*0.03+tm*4)%span+span)%span-250,by=hy+5;
+    g.fillStyle=rgb(mix([240,240,235],NIGHT,nm));g.beginPath();g.moveTo(bx,by-30);g.lineTo(bx+16,by-3);g.lineTo(bx,by-3);g.fill();
+    g.fillStyle=rgb(mix([120,70,50],NIGHT,nm));g.fillRect(bx-10,by-3,28,3);
+  }
+  g.strokeStyle=rgb(mix([245,245,245],NIGHT,nm));g.lineWidth=1.6;
+  for(let i=0;i<3;i++){const gx=(((i*430+tm*(16+i*5)-camX*0.1)%(CW+240))+CW+240)%(CW+240)-120,gy=hy-34-i*24+Math.sin(tm*2+i*2)*6,fl=Math.sin(tm*7+i)*3;
+    g.beginPath();g.moveTo(gx-7,gy+fl);g.quadraticCurveTo(gx-3,gy-3,gx,gy);g.quadraticCurveTo(gx+3,gy-3,gx+7,gy+fl);g.stroke()}
+  g.fillStyle='rgba(255,255,255,'+(0.5*(1-NM_*0.7)).toFixed(3)+')';
+  for(let x=0;x<=CW;x+=12){const wx=camX+x,fy=groundY(clamp(wx,0,H.route.totalPx))-3+Math.sin(tm*1.6+wx*0.02)*1.6;g.beginPath();g.ellipse(x,fy,8,2.2,0,0,Math.PI*2);g.fill()}
+  g.restore();
+}
+function bogDecor(g,tm,pass){
+  const CELL=36,c0=Math.floor((camX-100)/CELL),c1=Math.floor((camX+CW+100)/CELL),sn=snowAmt();
+  for(let cx=c0;cx<=c1;cx++){
+    const wx=cx*CELL+hash(cx*7+3)*CELL*0.8;if(wx<80||wx>H.route.totalPx+300)continue;
+    const st=stageAt(clamp(wx,0,H.route.totalPx)),b=st.b;
+    if(b!=='sumpf'&&b!=='sand'&&b!=='kies')continue;
+    if(featsIn(wx-70,wx+70).some(f=>f.type!=='animal'&&f.type!=='hiker'))continue;
+    if(inLake(wx))continue;
+    const sx=wx-camX,y=groundY(wx),r=hash(cx*13+1),sway=Math.sin(tm*1.4+wx*0.03)*env.wind*0.28;
+    if(b==='sumpf'){
+      if(pass===0){
+        if(r<0.55){const w=16+hash(cx*5+9)*34;
+          g.fillStyle=tc('#8a7a4a',sn);g.beginPath();g.ellipse(sx,y+11,w*1.3+3,8,0,0,Math.PI*2);g.fill();
+          g.fillStyle=tc('#3d4630',sn);g.beginPath();g.ellipse(sx,y+12,w*1.3,6.6,0,0,Math.PI*2);g.fill();
+          g.fillStyle='rgba(230,235,220,'+(0.16*(1-NM_)).toFixed(3)+')';g.beginPath();g.ellipse(sx-w*0.35,y+10,w*0.5,1.8,0,0,Math.PI*2);g.fill();
+        }
+      }else if(r>0.3){
+        const n=3+Math.floor(hash(cx*3+2)*5);g.lineWidth=1.4;
+        for(let i=0;i<n;i++){const rx=sx+(i-n/2)*4+hash(cx*9+i)*3,h=16+hash(cx*11+i)*20,tx=rx+sway*h*0.12;
+          g.strokeStyle=tc('#6f7a3d',sn);g.beginPath();g.moveTo(rx,y+3);g.quadraticCurveTo(rx+sway*2,y-h*0.5,tx,y-h);g.stroke();
+          if(hash(cx*5+i)<0.5){g.fillStyle=tc('#5a3b22',sn);g.beginPath();g.ellipse(tx,y-h-2,1.8,5,0,0,Math.PI*2);g.fill()}}
+      }
+    }else if(pass===1){
+      if(b==='sand'){
+        if(r<0.3){g.strokeStyle=tc('#a89b4a',sn);g.lineWidth=1.3;
+          for(let k=-2;k<=2;k++){g.beginPath();g.moveTo(sx+k*3,y+1);g.quadraticCurveTo(sx+k*4+sway,y-8,sx+k*7+sway*1.5,y-12+Math.abs(k)*2);g.stroke()}}
+        else if(r<0.4){g.fillStyle=tc('#f3e6d8',sn);g.beginPath();g.ellipse(sx,y-1,3,2,0,0,Math.PI*2);g.fill()}
+      }else if(r<0.5){g.fillStyle=tc(r<0.25?'#8d8a85':'#a7a49d',sn);g.beginPath();g.ellipse(sx,y-1,2+r*7,1.6+r*3,0,0,Math.PI*2);g.fill()}
+    }
+  }
+}
+function bogMist(g){
+  if(BOG_<0.02)return;
+  const a=0.22*BOG_*(1-NM_*0.6),gr=g.createLinearGradient(0,CH*0.5,0,CH*0.85);
+  gr.addColorStop(0,'rgba(205,212,190,0)');gr.addColorStop(0.7,'rgba(205,212,190,'+a.toFixed(3)+')');gr.addColorStop(1,'rgba(205,212,190,'+(a*0.4).toFixed(3)+')');
+  g.fillStyle=gr;g.fillRect(0,CH*0.5,CW,CH*0.35);
+}
 function drawScene(g,tm,dt){
   NM_=clamp(env.dark*0.62,0,0.7);
   camX=H.x-CHAR_SX();
   // Himmel & Ferne
   drawSky(g,tm);updateBirds(dt,tm);drawBirds(g,tm);
-  const st=stageAt(H.x);
-  drawRange(g,0.06,CH*0.56,190,st.b==='berg'||st.b==='fjaell'?'#7f8aa0':'#8ea3b2',1.3,0.35);
+  const st=stageAt(H.x);envBlend(dt,st);
+  if(SEA_<0.985){g.globalAlpha=1-SEA_;drawRange(g,0.06,CH*0.56,190,st.b==='berg'||st.b==='fjaell'?'#7f8aa0':'#8ea3b2',1.3,0.35);
   drawRange(g,0.13,CH*0.62,150,st.b==='berg'?'#66738a':'#6f8e8a',4.1,0.22);
   drawTreeBand(g,0.2,CH*0.68,90,2.2,26,'#456b55',0.22);
   drawRange(g,0.3,CH*0.73,80,st.b==='berg'?'#5b6572':'#4f7357',7.3,0.1);
   drawTreeBand(g,0.42,CH*0.76,60,5.5,34,'#2f5c3a',0.06);
-  drawTerrain(g,tm);
+  g.globalAlpha=1}
+  drawSea(g,tm,SEA_);
+  drawTerrain(g,tm);bogDecor(g,tm,0);
   CROWNS.length=0;
   drawDecor(g,tm,0);
   drawFeatures(g,tm);
-  drawDecor(g,tm,1);
+  drawDecor(g,tm,1);bogDecor(g,tm,1);bogMist(g);
 drawForksTop(g,tm);drawStartFlag(g,tm);
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
@@ -4043,7 +4234,7 @@ g.restore();
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
-drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:lightSource()==='lamp'&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,limp,lamp:(lightSource()==='lamp'||lightSource()==='torch')&&env.dark>0.4,packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown(),energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
 
@@ -4345,7 +4536,7 @@ function briefing(hk){
   if(sT<0.5&&!tools.has('snowshoes')&&hk.diff>=3){w.push({l:'warn',t:'Schnee zu erwarten – Schneeschuhe helfen enorm.'});score+=0.5}
   if(sT<-4){w.push({l:'warn',t:'Quellen sind zugefroren: Du brauchst Kocher + Gas (oder Feuer), um Schnee zu schmelzen.'});if(!tools.has('stove'))score+=0.8}
   if(sT<-1&&hk.diff>=4)w.push({l:'info',t:'Winterbedingungen: Stürme und Kälteeinbrüche möglich. Beste Ausrüstung (Winterschlafsack/Parka/Winterzelt) ist Pflicht.'});
-  if(dl<9&&!tools.has('lamp'))w.push({l:'bad',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht – ohne Stirnlampe kommst du kaum voran.`});
+  if(dl<9&&!(tools.has('lamp')||tools.has('torch')))w.push({l:'bad',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht – ohne Stirnlampe kommst du kaum voran.`});
   else if(dl<9)w.push({l:'info',t:`Nur ca. ${fmtN(dl,0)} h Tageslicht: viel Nachtwanderung, Lampen-Akku beachten.`});
   if(R.lat>66&&dl>20)w.push({l:'info',t:'Mitternachtssonne: kaum Dunkelheit, dafür schlechter Schlaf.'});
   if(R.lat>66&&dl<4)w.push({l:'warn',t:'Polarnacht: fast kein Tageslicht. Stirnlampe und Powerbank sind lebenswichtig.'});
@@ -4369,7 +4560,7 @@ function briefing(hk){
   if(hk.regD.lat>65&&(dm.m>=10||dm.m<=2)&&hk.diff>=5){score+=1.5}
   if(sT<-8)score+=1.2;else if(sT<-2)score+=0.6;
   const cheap=packedGear().some(g=>g.id==='phone_cheap')&&!packedGear().some(g=>g.kind==='phone'&&g.id!=='phone_cheap');
-  if(!tools.has('lamp')&&dl<12)score+=0.5;
+  if(!(tools.has('lamp')||tools.has('torch'))&&dl<12)score+=0.5;
   const lbl=score<2.2?'Entspannt':score<3.4?'Machbar':score<4.8?'Fordernd':score<6.2?'Sehr hart':score<7.6?'Extrem':'Lebensgefährlich';
   const col=score<2.2?'#4caf50':score<3.4?'#8bc34a':score<4.8?'#f7c948':score<6.2?'#ff9800':score<7.6?'#f4511e':'#c2185b';
   return {tDay,tNight,dl,days,w,score,lbl,col,start:dateStr(G.day),end:dateStr(G.day+days),load,sT};
@@ -4428,6 +4619,15 @@ function hikeCard0(hk){
       <span>Risiko jetzt: <span class="risk" style="background:${b.col}">${b.lbl}</span>${bad?` <span class="badtxt">${bad}× Warnung</span>`:''}</span></div>
       ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing & Start</button>`}</div>`;
 }
+function hikeHist(hk){
+  const n=(G.routeN||{})[hk.id]||0,ok=(G.routeOk||{})[hk.id]||0;
+  const vids=(G.videos||[]).filter(v=>v.thumb&&v.thumb.hikeId===hk.id).sort((a,b)=>b.id-a.id);
+  const ab=Math.max((G.routeAb||{})[hk.id]||0,vids.some(v=>v.reason&&v.reason!=='goal')?1:0);
+  const tv=vids[0],tvAb=tv&&tv.reason&&tv.reason!=='goal';
+  const chips='<span class="hk-chip">🥾 '+n+'× gegangen</span>'+(ok?'<span class="hk-chip ok">✅ '+ok+'× am Ziel</span>':'')+(ab?'<span class="hk-chip ab">⚠️ '+ab+'× abgebrochen</span>':'');
+  const th=tv?'<span class="hk-th"><canvas data-hvt="'+tv.id+'" width="168" height="94"></canvas>'+(tvAb?'<i>abgebrochen</i>':'')+'</span>':'';
+  return '<div class="hk-hist">'+th+'<div class="hk-chips">'+chips+'</div></div>';
+}
 function hikeCard(hk){
   const t=travelInfo(hk),fee=t.cost,poor=G.money<fee,walk=t.mode==='Zu Fuß';
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
@@ -4435,7 +4635,7 @@ function hikeCard(hk){
   const stat=(top,sub,cls='')=>`<div class="hk-stat ${cls}">${top}<small>${sub}</small></div>`;
   const low=skillAvg(hk)<SKILL_REQ[hk.diff];
   return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}</h3><small>${esc(hk.country)}</small>
-    <div class="hk-top">
+    ${hikeHist(hk)}<div class="hk-top">
       ${stat('<b>📏 '+hk.km+' km</b>',dayLbl(hk))}
       ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück'+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
       ${stat('<span class="risk" style="background:'+DIFF_COL[hk.diff]+'">'+DIFF_NAMES[hk.diff]+'</span>','Erlös ×'+hk.mult)}
@@ -4469,6 +4669,7 @@ function renderHikes(){
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
   $$('[data-hs]').forEach(b=>b.onclick=()=>{HIKESORT=b.dataset.hs;try{localStorage.setItem('wk_hs',HIKESORT)}catch(e){}renderHikes()});
+  $$('canvas[data-hvt]').forEach(cv=>{const v=(G.videos||[]).find(x=>x.id==cv.dataset.hvt);if(v){try{drawThumb(cv,v)}catch(e){}}});
   $$('[data-hv]').forEach(b=>b.onclick=()=>{HIKEVIEW=b.dataset.hv;try{localStorage.setItem('wk_hv',HIKEVIEW)}catch(e){}renderHikes()});
   $('#hk-back').onclick=()=>{renderHub();show('hub')};
   $$('[data-hk]').forEach(b=>b.onclick=()=>openBriefing(b.dataset.hk));
@@ -4757,12 +4958,32 @@ function startHikeUI(id){
   const hk0=HIKES.find(h=>h.id===id);
   if(hk0&&!window.__introOff){playIntro(hk0,()=>startHikeUI2(id));return}
   startHikeUI2(id)}
+function startOptsDialog(){
+  const P=G.pre;
+  if(P){H.auto=P.auto;H.autoStop=P.stop;H.autoNight=P.night;if(H.g.drone)H.droneOn=P.drone}
+  if(P&&P.skip)return;
+  H.walking=false;
+  const ck=(id,on,t)=>'<label class="chk"><input type="checkbox" id="'+id+'"'+(on?' checked':'')+'> '+t+'</label>';
+  showModal({title:'⚙️ Einstellungen für diese Tour',
+    html:'<p class="hint">Kurz festlegen, wie das Spiel unterwegs für dich mitdenkt. Im Menü ☰ jederzeit änderbar.</p>'+
+      ck('sp-stop',H.autoStop,'💧 An Wasserstellen automatisch anhalten')+
+      ck('sp-auto',H.auto,'🍽️ Automatisch essen &amp; trinken')+
+      ck('sp-night',H.autoNight,'🌙 Nachts automatisch rasten &amp; schlafen')+
+      (H.g.drone?ck('sp-drone',H.droneOn,'🛸 Drohne automatisch einsetzen'):'')+
+      '<hr style="border:0;border-top:1px solid #ffffff22;margin:10px 0">'+ck('sp-skip',false,'Nicht mehr nachfragen (diese Auswahl für alle weiteren Touren übernehmen)'),
+    buttons:[{label:'🥾 Los geht\'s',primary:1,keep:1,fn:()=>{
+      const v=id=>{const e=document.getElementById(id);return e?e.checked:false};
+      const o={stop:v('sp-stop'),auto:v('sp-auto'),night:v('sp-night'),drone:H.g.drone?v('sp-drone'):true,skip:v('sp-skip')};
+      H.autoStop=o.stop;H.auto=o.auto;H.autoNight=o.night;if(H.g.drone)H.droneOn=o.drone;
+      G.pre=o;save();closeModal();H.walking=true;updateHUD(true);
+    }}]});
+}
 function startHikeUI2(id){
   startHike(id);
   try{const se=env.season||'Sommer';LAUB_TREES.forEach(q=>img('Laubwald_'+leafFile(q,se),'svg'));LEAF_PRE[se]=1}catch(e){}
   try{lsPre(lsSeason(snowAmt()))}catch(e){}
   MODALQ=[];
-  buildHikeDOM();show('hike');resizeStage();
+  buildHikeDOM();show('hike');resizeStage();try{startOptsDialog()}catch(e){console.error(e)}
   accum=0;lastTs=performance.now();hudT=0;livePanelOn=false;LIGHT.next=8;FX.sparks=[];FX.smoke=[];BIRDS.length=0;
   try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(w=>{wake=w}).catch(()=>{})}catch(e){}
   if('ontouchstart' in window&&!document.fullscreenElement)toast('Tipp: Im Menü ☰ kannst du Vollbild aktivieren.');
@@ -5398,7 +5619,7 @@ function publishVideos(){
     const luck=Math.exp(rnd(-0.5,exc?0.6:0.15));   // außergewöhnlich gut nur bei spannenden Ereignissen
     const V=(2500+G.subs*12)*Math.pow(Math.max(S,2)/45,0.8)*(exc?1:0.85)*luck*(1+0.08*(n-1))*tm2*tl*promo*(1+(p.teaser||0));
     const v={id:++G.vid,title:n>1?title+' – Teil '+(i+1)+'/'+n:title,day:G.day+i*3,tour:p.name,S,V,tau:rnd(5,9),views:0,likes:0,dislikes:0,rev:0,subsG:0,h:[],
-      thumb:{id:th,biome:pick(['wald','berg','tal','wiese','fjaell']),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
+      thumb:{id:th,biome:thumbBiome(p.hikeId),e:bestClip?bestClip.e:'🥾',seed:Math.floor(rnd(1,1e6)),hikeId:p.hikeId},promo:adEach>0?adEach:0,stale:stale>0.15,thrill:p.thrill||0,reason:p.reason,easyAbort:p.reason!=='goal'&&p.diff<=2};
     if(exc&&Math.random()<0.05+(cl.some(c=>c.rar>=3)?0.05:0)+Math.min(0.08,(p.thrill-3)*0.02)){v.hype={start:rnd(1,3)|0,len:Math.round(rnd(5,11)),mul:rnd(6,16)};v.hyped=1}
     (G.videos=G.videos||[]).push(v);
     if(i===0)feedbackComments(p,v);
@@ -5411,9 +5632,10 @@ function publishVideos(){
 }
 /* ---------- Studio ---------- */
 let STUDIOTAB='Übersicht';
+function thumbBiome(id){const hk=HIKES.find(h=>h.id===id);const ok=['wald','berg','tal','wiese','fjaell','sand','kies','sumpf'];const bs=(hk?hk.stages.map(s=>s.b):[]).filter(b=>ok.indexOf(b)>=0);return bs.length?bs[Math.floor(Math.random()*bs.length)]:'wald'}
 function drawThumb(cv,v){
   const g=cv.getContext('2d'),w=cv.width,h=cv.height,r=mulberry32(v.thumb.seed);
-  const pal={wald:['#5b9bd5','#2f6a2d'],berg:['#7aa6d6','#7f8794'],tal:['#8fc0e6','#4f8f3d'],wiese:['#8ec9f0','#8dbf4a'],fjaell:['#9cb6c8','#9a9a6a'],sand:['#8fc4e8','#e0cf9c'],kies:['#9cb6c8','#9d9b95'],schnee:['#b5c9de','#eef2f7']}[v.thumb.biome]||['#8fc0e6','#4f8f3d'];
+  const pal={wald:['#5b9bd5','#2f6a2d'],berg:['#7aa6d6','#7f8794'],tal:['#8fc0e6','#4f8f3d'],wiese:['#8ec9f0','#8dbf4a'],fjaell:['#9cb6c8','#9a9a6a'],sand:['#8fc4e8','#e0cf9c'],sumpf:['#a9b8a0','#7a6a43'],kies:['#9cb6c8','#9d9b95'],schnee:['#b5c9de','#eef2f7']}[v.thumb.biome]||['#8fc0e6','#4f8f3d'];
   const sunset=r()<0.4;
   const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,sunset?'#f6a35c':pal[0]);gr.addColorStop(1,sunset?'#ffd9a0':'#e6f2fb');g.fillStyle=gr;g.fillRect(0,0,w,h);
   g.fillStyle=shade(pal[1],-0.25);g.beginPath();g.moveTo(0,h);for(let x=0;x<=w;x+=10)g.lineTo(x,h*0.55-Math.abs(Math.sin(x*0.03+v.thumb.seed))*h*0.28-r()*3);g.lineTo(w,h);g.fill();
