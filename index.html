@@ -3839,10 +3839,11 @@ setInterval(()=>{if(FS.cur&&(screen!=='hike'||!H||H.ended||!H.speed||MODAL||H.sl
 /* ---------- Einzelschritte (Schnee), exakt am Fußaufsatz der Laufanimation ---------- */
 const STEP_SETS={
   snow:{files:[1,2,3,4,5,6,7,8].map(n=>'0'+n+'_step on snow.mp3'),vol:1},
-  wald:{files:['20948 footsteps in forest leaves and undergrowth loop-full_1_1.mp3','20948 footsteps in forest leaves and undergrowth loop-full_1_1_1.mp3'].concat([2,3,4,5,6,7,8,9,10,11,12,13].map(n=>'20948 footsteps in forest leaves and undergrowth loop-full_1_'+n+'.mp3')),vol:1}
+  wald:{files:['20948 footsteps in forest leaves and undergrowth loop-full_1_1.mp3','20948 footsteps in forest leaves and undergrowth loop-full_1_1_1.mp3'].concat([2,3,4,5,6,7,8,9,10,11,12,13].map(n=>'20948 footsteps in forest leaves and undergrowth loop-full_1_'+n+'.mp3')),vol:1},
+  kies:{files:['00170 steps on a forest road 1 1.mp3'].concat([2,3,4,5,6,7,8,9,10].map(n=>'00170 steps on a forest road '+n+'.mp3')),vol:1}
 };
 const FT={i:undefined,last:{},par:0,on:{}};
-function stepSurface(){return (env.snow>0.35||env.biome==='schnee')?'snow':env.biome==='wald'?'wald':null}
+function stepSurface(){const b=env.biome;return (env.snow>0.35||b==='schnee')?'snow':b==='wald'?'wald':(b==='strasse'||b==='berg'||b==='fjaell'||b==='kies')?'kies':null}
 function footLoad(sf){const S=STEP_SETS[sf||stepSurface()];if(!S)return;S.files.forEach(n=>{if(SB[n]===undefined)sbLoad(n)})}
 function footOnset(n,b){ // erster hörbarer Moment der Datei (Stille am Anfang überspringen)
   if(FT.on[n]!==undefined)return FT.on[n];
@@ -3858,7 +3859,7 @@ function footPlay(){
   const b=SB[n],c=AU.ctx,src=c.createBufferSource();src.buffer=b;
   const g=c.createGain(),pan=c.createStereoPanner?c.createStereoPanner():null;
   const sp=clamp(H.speed||1,1,4),slow=H.shot&&H.shot.type==='video'?0.9:1;
-  g.gain.value=clamp((0.5+Math.random()*0.15)*(0.9+0.06*sp)*slow*S.vol*(sf==='snow'&&env.snow>0.7?1.1:1),0.2,1);
+  g.gain.value=clamp((0.5+Math.random()*0.15)*(0.9+0.06*sp)*slow*S.vol*(sf==='snow'&&env.snow>0.7?1.1:1)*0.25,0.04,0.3);
   src.playbackRate.value=(0.95+Math.random()*0.12)*(1+0.03*(sp-1));
   FT.par^=1;if(pan)pan.pan.value=(FT.par?-0.12:0.12);
   src.connect(g);if(pan){g.connect(pan);pan.connect(AU.master)}else g.connect(AU.master);
@@ -4112,7 +4113,7 @@ function lakeUpdate(dt){
 }
 setInterval(()=>{if(LAKEL.cur&&(screen!=='hike'||!H||H.ended)){try{LAKEL.cur.s.stop()}catch(e){}LAKEL.cur=null}},1500);
 function ambUpdate(dt){
-  try{if(env.snow>0.2||env.biome==='schnee'||env.biome==='wald')footLoad()}catch(e){}
+  try{if(env.snow>0.2||env.biome==='schnee'||env.biome==='wald'||env.biome==='strasse'||env.biome==='berg'||env.biome==='fjaell'||env.biome==='kies')footLoad()}catch(e){}
   try{owlTick(dt)}catch(e){}
   try{wxUpdate(dt)}catch(e){}
   try{lakeUpdate(dt)}catch(e){}
