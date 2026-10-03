@@ -5505,6 +5505,7 @@ const row=[];const y=gy-150;const B=H.body;
   const D=(ok)=>ok?true:false; // nicht Mögliches wird ausgeblendet
   const w=nearWater(),lf=resting?nearLodgeFeat():null;
   const eatList=FOODS.filter(f=>!f.cook&&(H.food[f.id]||0)>0);
+  const noFood=!eatList.length&&!FOODS.some(f=>f.cook&&(H.food[f.id]||0)>0);
   const cats={
     camp:['⛺','Lager',()=>{const r=[];
       if(H.camp.pitched&&H.g.shelter){r.push(['😴','Schlafen',()=>actClick('sleep'),true],['🛌','Ausruhen',()=>actClick('rest'),true],['⛺','Abbauen',()=>actClick('tent'),true])}
@@ -5524,6 +5525,7 @@ const row=[];const y=gy-150;const B=H.body;
       if(w||H.water.dirty>0.05||waterTotal()<H.g.waterCap-0.05)r.push(['🚰','Auffüllen',()=>actClick('refill'),D(!!w&&waterTotal()<H.g.waterCap-0.05)]);
       r.push(['♨️','Behandeln',()=>actClick('treat'),D(H.water.dirty>0.05)]);
       eatList.forEach(f=>r.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,7)+' '+H.food[f.id]+'×',()=>actClick('eat',f.id),true]));
+      if(noFood)r.push(['🥡','Kein Proviant',()=>toast('🎒 Dein Rucksack hat keinen Proviant mehr – kaufe in einem Ort Nachschub, sammle Beeren/Pilze oder angle.','warn'),true]);
       r.push(['🧺','Sammeln',()=>actClick('forage'),canForage()],['🎣','Angeln',()=>actClick('fish'),!!H.g.tools.rod&&!env.frozen&&!!fishSpot()]);
       return r}],
     way:['🧭','Weg',()=>{const r=[];
@@ -5566,7 +5568,7 @@ const row=[];const y=gy-150;const B=H.body;
       row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
     }
     try{nextActs(D,eatList,w).forEach(r=>row.push([r[0],r[1],r[2],r[3],true]))}catch(e){}
-    ['camp','fire','food','way','media','care','dog'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;if(k==='dog'&&!(H.dog&&!H.dog.away))return;try{if(k!=='media'&&!c[2]().some(r=>r[3]!==false))return}catch(e){}row.push([c[0],c[1],()=>{H.ctxCat=k},true,false,k==='media'?(env.net?'📶':'📵'):null])});
+    ['camp','fire','food','way','media','care','dog'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;if(k==='dog'&&!(H.dog&&!H.dog.away))return;try{if(k!=='media'&&k!=='food'&&!c[2]().some(r=>r[3]!==false))return}catch(e){}row.push([c[0],c[1],()=>{H.ctxCat=k},true,false,k==='media'?(env.net?'📶':'📵'):(k==='food'&&noFood?'⚠️':null)])});
   }
   const n=row.length,gap=n>7?64:74;
   CTX_N=n;const US=uiSafe();let yy=y;const need=US.b+40;if(yy<need)yy=Math.min(need,gy-112);
