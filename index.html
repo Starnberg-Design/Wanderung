@@ -755,7 +755,7 @@ GEAR.push(
  {id:'lighterG',cat:'tool',tool:'lighterG',tab:LF,name:'Marken-Feuerzeug',e:'🪔',pics:['Feuerzeug Gut Gelb','Feuerzeug Gut Grün','Feuerzeug Gut Wellen-Design'],cols:['#f2c500','#8fd13a','#a9c7e6'],price:8,kg:0.03,desc:'Zuverlässiges Gasfeuerzeug (ca. 100 Zündungen pro Tour), auch bei Wind deutlich besser als das Billig-Feuerzeug.'},
  {id:'repel1',cat:'tool',tool:'repel1',name:'Mückenspray (einfach)',e:'🧴',pic:SP_+'Mückenspray einfach',price:6,kg:0.15,desc:'Hält Mücken im Freien etwas ab (−40 % Stiche). Wirkt nicht im Zelt – dort brauchst du es nicht.'},
  {id:'repel2',cat:'tool',tool:'repel2',name:'Mückenspray (stark)',e:'🧴',pic:SP_+'Mückenspray stark',price:12,kg:0.2,desc:'Starkes Insektenschutzmittel (−65 % Stiche im Freien). Kombinierbar mit dem Mückennetz.'},
- {id:'uvtrap',cat:'tool',tool:'uvtrap',name:'UV-Insektenfalle',e:'🪰',pic:SP_+'UV-Insektenfalle',price:38,kg:0.9,desc:'Steht im Lager und lockt Mücken mit UV-Licht in ein Gitter: am Rastplatz und beim Schlafen am Tarp spürbar weniger Stiche (−55 %). Sie summt dabei laut.'},
+ {id:'uvtrap',cat:'tool',tool:'uvtrap',name:'UV-Insektenfalle',e:'🪰',pic:SP_+'UV-Insektenfalle',price:38,kg:0.9,desc:'Steht im Lager und lockt Mücken mit UV-Licht in ein Gitter: am Rastplatz und beim Schlafen am Tarp kaum noch Stiche (−90 %). Dafür wiegt sie 0,9 kg und summt laut.'},
  {id:'mat_thin',cat:'mat',name:'Isomatte (dünn)',e:'🟫',pic:SP_+'Isomatte dünn',price:12,kg:0.3,warm:1.2,desc:'Dünn, leicht und billig: dämmt kaum (+1,2 °C), besser als nackter Boden.'},
  {id:'th05',cat:'water',cap:0.5,thermo:1,name:'Thermoskanne 0,5 L',e:'🥤',pics:[SP_+'Thermoskanne Lila 500ml',SP_+'Thermoskanne Silber 500ml'],cols:['#8a56d4','#aeb4ba'],price:12,kg:0.35,desc:'Kleine Isolierflasche (0,5 Liter). Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
  {id:'th1',cat:'water',cap:1,thermo:1,name:'Thermoskanne 1 L',e:'🥤',pics:[SP_+'Thermoskanne Grün 1 Liter',SP_+'Thermoskanne Türkis 1 Liter'],cols:['#8fd13a','#2fb9e0'],price:18,kg:0.55,desc:'Isolierflasche mit 1 Liter. Warmes bleibt warm: bei Kälte wärmt ein Schluck etwas.'},
@@ -2996,7 +2996,7 @@ function pestTick(mode,hr){
   else E=g.tools.mnet?0.25:1;
   if(nearFire())E*=0.6;
   if(!H.indoor&&!(sleeping&&H.camp.pitched&&g.shelter&&g.shelter.id!=='tarp')){if(g.tools.repel2)E*=0.35;else if(g.tools.repel1)E*=0.6}
-  if(g.tools.uvtrap&&H.camp.pitched&&mode!=='walk')E*=0.45;
+  if(g.tools.uvtrap&&H.camp.pitched&&mode!=='walk')E*=0.10;
   const pb={wald:0.9,wiese:1.1,tal:1,berg:0.4,fjaell:0.3,sand:0.3,kies:0.2,sumpf:0.7,schnee:0,strasse:0.6}[env.biome];
   let P=pollenBase(hk,m)*(alt>1800?0.2:alt>1200?0.5:1)*(pb===undefined?1:pb)*(env.precip?0.1:(env.wind>2?1.15:1))*clamp((env.sun||0)*1.4,0.25,1);
   P=clamp(H.indoor?0:P,0,1.2);
