@@ -3793,6 +3793,48 @@ function sfx(name,arg){
     case 'thunder':{const d=arg||0;burst(2.6,'lowpass',260,0.7,d,0.8,-200);burst(1.2,'lowpass',120,0.6,d+0.3,0.8);break}
   }
 }
+/* ---------- Schritt-Loops (Dateien, liegen über der Ambience; Untergrund nach Biom/Schnee) ---------- */
+const FS_F={snow:'walking-in-snow_1.mp3',beach:'Gehen am Strand-FootstepsSandWet_DIGII08-17.mp3',road:'Footsteps Walking On Asphalt_1.mp3',forest:'Mountain Audio - Footsteps On Forest Floor 1_1.mp3',grass:'Walking on Grass_1.mp3'};
+const FS_VOL={snow:1,beach:1,road:0.9,forest:1,grass:1.6};
+const FS={cur:null,key:null,buf:{},vol:0.5};
+function fsLoad(k){
+  if(FS.buf[k]!==undefined||!AU.ctx)return;FS.buf[k]=null;
+  fetch(encodeURI(FS_F[k])).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((ok,no)=>AU.ctx.decodeAudioData(b,ok,no))).then(buf=>{FS.buf[k]=buf}).catch(()=>{FS.buf[k]=false});
+}
+function fsPick(){
+  const b=env.biome;
+  if(env.snow>0.35||b==='schnee')return 'snow';
+  if(b==='sand'||b==='kies')return 'beach';
+  if(b==='strasse')return 'road';
+  if(b==='wald'||b==='berg'||b==='fjaell'||b==='sumpf')return 'forest';
+  return 'grass';
+}
+function fsSet(k){
+  if(!AU.ok||!AU.ctx||k===FS.key)return;
+  const c=AU.ctx,t=c.currentTime;
+  if(k){fsLoad(k);if(!FS.buf[k])return}
+  if(FS.cur){const o=FS.cur;try{o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0.0001,t+0.05);o.s.stop(t+0.08)}catch(e){}FS.cur=null}
+  FS.key=k;if(!k)return;
+  const s=c.createBufferSource();s.buffer=FS.buf[k];s.loop=true;
+  const g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(1,t+0.05);
+  const v=c.createGain();v.gain.value=0;
+  s.connect(g);g.connect(v);v.connect(AU.master);s.start(t,Math.random()*Math.max(0.5,s.buffer.duration-0.5));
+  FS.cur={s,g,v,key:k};
+}
+function fsUpdate(walking){
+  if(!AU.ok||!AU.ctx)return;
+  const k=fsPick();
+  if(FS.buf[k]===undefined)fsLoad(k);
+  if(walking&&k!==FS.key&&FS.buf[k])fsSet(k);
+  if(!FS.cur)return;
+  const t=AU.ctx.currentTime,mute=G&&G.mute;
+  const on=walking&&FS.cur.key===k;
+  const rate=clamp(1+0.1*((H.speed||1)-1),0.9,1.3)*(env.grade>0.12?0.93:1);
+  FS.cur.s.playbackRate.setTargetAtTime(rate,t,0.3);
+  FS.cur.v.gain.setTargetAtTime(mute||!on?0:FS.vol*(FS_VOL[FS.cur.key]||1),t,on?0.25:0.35);
+}
+function fsOk(){return FS.cur&&FS.buf[FS.cur.key]}
+setInterval(()=>{if(FS.cur&&(screen!=='hike'||!H||H.ended||!H.speed||MODAL||H.sleep&&H.sleep.active)){FS.cur.v.gain.setTargetAtTime(0,AU.ctx.currentTime,0.2);if(screen!=='hike'||!H||H.ended){const o=FS.cur;try{o.s.stop(AU.ctx.currentTime+0.5)}catch(e){}FS.cur=null;FS.key=null}}},700);
 function stepSound(){
   const soft=env.snow>0.5?0.5:1;
   if(env.biome==='berg')burst(0.05,'bandpass',1500,0.12*soft,0,2);
@@ -3857,7 +3899,7 @@ function ambSet(key){
   const c=AU.ctx,t=c.currentTime;
   if(key===AMB.key)return;
   if(key){ambLoad(key);const b=AMB.buf[key];if(!b){AMB.want=key;return}}
-  const FADE=4;
+  const FADE=6;
   if(AMB.cur){const o=AMB.cur;try{o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0.0001,t+FADE);o.s.stop(t+FADE+0.1)}catch(e){}AMB.cur=null}
   AMB.key=key;AMB.want=null;
   if(!key)return;
@@ -3893,10 +3935,10 @@ function ambientUpdate(dt){
   if(nf||H.fire.lit&&Math.abs(H.x-H.fire.x)<450){
     AU.popT-=dt;if(AU.popT<=0){AU.popT=0.08+Math.random()*0.5;if(nf)burst(0.03+Math.random()*0.03,'highpass',2500+Math.random()*2500,0.16)}
   }
-  if(H.speed>0&&H.speed<=4&&H.moving){
-    const idx=Math.floor(H.phase/Math.PI);
-    if(idx!==AU.lastStep){AU.lastStep=idx;stepSound()}
-  }
+  {const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active;
+    fsUpdate(walk);
+    if(walk&&!fsOk()){const idx=Math.floor(H.phase/Math.PI);
+    if(idx!==AU.lastStep){AU.lastStep=idx;stepSound()}}}
   AU.birdT-=dt;
   if(AU.birdT<=0){
     AU.birdT=3+Math.random()*(env.biome==='wald'?6:12);
