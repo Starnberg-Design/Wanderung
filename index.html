@@ -1392,19 +1392,19 @@ function drawSideStuff(g,tm){
   }
 }
 /* Pfad-Abzweig: Der gezeichnete Weg spaltet sich an der Wegscheide in einen tieferen (vorderen) Seitenpfad. */
-const FORK_SPLIT=320;
+const FORK_SPLIT=480;
 function forkLane(F,k){const o=F.dirs.filter(d=>d!==F.main);return Math.max(0,o.indexOf(k))}
-function forkDepth(F,k){return 34+forkLane(F,k)*28}
+function forkDepth(F,k){return 84+forkLane(F,k)*30}
 function forkSm(t){t=clamp(t,0,1);return t*t*(3-2*t)}
 function forkM(){const S=H&&H.side;return S?clamp((tm-(S.ct||0))/1.5,0,1):0}
-function laneOff(F,k,dx,m){return forkDepth(F,k)*forkSm(dx/FORK_SPLIT)*(1-m*forkSm((dx-500)/500))}
+function laneOff(F,k,dx,m){return forkDepth(F,k)*forkSm(dx/FORK_SPLIT)*(1-m*forkSm((dx-800)/1000))}
 function sideOff(x){const S=H&&H.side;if(!S||!S.f.fork)return 0;return laneOff(S.f.fork,S.d,x-S.f.x,forkM())}
-function mainTrailA(x){const S=H&&H.side;if(!S)return 1;return 1-forkM()*forkSm((x-S.f.x-400)/500)}
+function mainTrailA(x){const S=H&&H.side;if(!S)return 1;return 1-forkM()*forkSm((x-S.f.x-500)/800)}
 function drawForkPaths(g,tm,f){
   const F=forkOf(f);
   for(const k of F.dirs){
     if(k===F.main)continue;
-    const mine=!!(H.side&&H.side.f===f&&H.side.d===k);if(H.side&&H.side.f===f&&!mine)continue;
+    const mine=!!(H.side&&H.side.f===f&&H.side.d===k);if(H.side&&H.side.f===f)continue;
     const mm=mine?forkM():0;
     const b=F.br[k],len=Math.max(0.3,b.len||1)*PPK;
     const a=Math.max(f.x,camX-24),e=Math.min(f.x+len,camX+CW+24);
@@ -4164,7 +4164,7 @@ const mix=(a,b,t)=>a.map((v,i)=>Math.round(lerp(v,b[i],t)));
 const rgb=(a,al)=>al===undefined?`rgb(${a[0]},${a[1]},${a[2]})`:`rgba(${a[0]},${a[1]},${a[2]},${al})`;
 const shade=(h,amt)=>{const c=hex(h);return rgb(amt>=0?mix(c,[255,255,255],amt):mix(c,[0,0,0],-amt))};
 let camX=0;
-const groundY=x=>380-(elevAt(x)-H.camElev)*VS;
+const groundY=x=>380-(elevAt(x)-H.camElev)*VS+(H.side?sideOff(x):0);
 
 function emoji(g,ch,x,y,size,alpha=1){g.save();g.globalAlpha=alpha;g.font=size+'px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='alphabetic';g.fillText(ch,x,y);g.restore()}
 function sprite(g,path,ch,x,y,size,alpha=1){
@@ -4483,6 +4483,18 @@ function snowAmt(){return env.precip==='snow'?clamp(0.35+env.snow*0.4,0,0.75):cl
 function drawTerrain(g,tm){
   const sn=snowAmt();
   const x0=Math.floor(camX/12)*12;
+  if(H.side&&H.side.f&&H.side.f.fork){ // alter Hauptweg: Hügelband im Hintergrund, verblasst
+    const S=H.side,gc=hex(BIOMES[stageAt(clamp(H.x,0,H.route.totalPx)).b].ground),fa=hex(BIOMES[stageAt(clamp(H.x,0,H.route.totalPx)).b].far);
+    const hz=rgb(mix(mix(mix(gc,fa,0.5),[241,244,248],sn*0.8),NIGHT,NM_));
+    const tr=rgb(mix(mix(mix(hex('#c9b48a'),fa,0.45),[241,244,248],sn*0.6),NIGHT,NM_));
+    const gx0=Math.max(x0,S.f.x-24);
+    g.fillStyle=hz;g.beginPath();let st=false,lastx=gx0;
+    for(let x=gx0;x<camX+CW+12;x+=12){const o=sideOff(x),sx=x-camX,y=groundY(x)-o-4;if(!st){g.moveTo(sx,y);st=true}else g.lineTo(sx,y);lastx=x}
+    if(st){g.lineTo(lastx-camX,CH);g.lineTo(gx0-camX,CH);g.closePath();g.fill();
+      g.strokeStyle=tr;g.lineWidth=3;g.lineCap='round';
+      for(let x=gx0;x<camX+CW;x+=12){const a=(mainTrailA(x)+mainTrailA(x+12))/2;if(a<=0.01)continue;g.globalAlpha=a*0.85;g.beginPath();g.moveTo(x-camX,groundY(x)-sideOff(x)-2);g.lineTo(x+12-camX,groundY(x+12)-sideOff(x+12)-2);g.stroke()}
+      g.globalAlpha=1;g.lineCap='butt'}
+  }
   const wet=(env.precip==='rain'||H.weather.type==='regen')?0.15:0;
   for(let x=x0;x<camX+CW+12;x+=12){
     const st=stageAt(clamp(x,0,H.route.totalPx));let ch=BIOMES[st.b].ground;
@@ -4495,8 +4507,8 @@ function drawTerrain(g,tm){
     g.beginPath();g.moveTo(sx,y1+18);g.lineTo(sx+13,y2+18);g.lineTo(sx+13,CH);g.lineTo(sx,CH);g.closePath();g.fill();
   }
   g.strokeStyle=rgb(mix(mix(hex('#c9b48a'),hex('#f1f4f8'),sn*0.7),NIGHT,NM_));g.lineWidth=5;g.lineJoin='round';g.beginPath();
-  if(!H.side){for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
-  g.stroke()}else{const ba=g.strokeStyle;for(let x=x0;x<camX+CW+12;x+=12){const al=(mainTrailA(x)+mainTrailA(x+12))/2;if(al<=0.01)continue;g.globalAlpha=al;g.strokeStyle=ba;g.beginPath();g.moveTo(x-camX,groundY(x)+2);g.lineTo(x+12-camX,groundY(x+12)+2);g.stroke()}g.globalAlpha=1}
+  {for(let x=x0;x<camX+CW+12;x+=12){const sx=x-camX,y=groundY(x)+2;if(x===x0)g.moveTo(sx,y);else g.lineTo(sx,y)}
+  g.stroke()}
   // Grashalme, die im Wind wehen
   if(sn<0.3&&env.season!=='Winter'){
     g.strokeStyle=tc(env.season==='Herbst'?'#8a7d3a':'#3a7a35');g.lineWidth=1.4;
@@ -5588,7 +5600,7 @@ drawForksTop(g,tm);drawStartFlag(g,tm);try{drawLamps(g,tm)}catch(e){}
     const goal=H.moving?(lash?66+Math.sin(tm*0.9)*4:(R.mode==='near'?100+Math.sin(tm*0.9)*14:R.tgt+Math.sin(tm*0.9)*10)):(H.fire.lit&&nearFire()?-46:-70);
     R.d+=(goal-R.d)*0.05;const off=R.d;
     const dr=(H.dir||1)<0?-1:1,dx=sx-off*dr,px=H.x-off*dr;
-    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px)+sideOff(px))+2;
+    const dgx=H.sleep.active?H.camp.x-camX+20:dx,dgy=(H.sleep.active?groundY(H.camp.x+20):heroY(px))+2;
     g.save();if(dr<0){g.translate(dgx,0);g.scale(-1,1);g.translate(-dgx,0)}
 drawDog(g,dgx,dgy,H.dog.def,G.dog,dm,H.phase*1.15,tm,dogPackCap()>0?'#c0392b':null);
 g.restore();
@@ -5609,7 +5621,7 @@ g.restore();
   }
   if(!inTent&&!WK&&!(H.sleep.active&&H.indoor==='lodge')){
     const ax=H.sleep.active?H.camp.x-camX:sx;
-    const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
+    const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
 if(hm==='walk'||hm==='climb'){try{footTick(H.phase)}catch(e){}}else FT.i=undefined;
@@ -5617,7 +5629,7 @@ drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,cam:!!(H.shot&&H.sho
 g.restore();
   }
 
-  if(!inTent&&!WK&&!H.sleep.active&&!DG&&!(H.action&&H.action.kind!=='live'))drawThought(g,sx,heroY(H.x)+sideOff(H.x)-74);
+  if(!inTent&&!WK&&!H.sleep.active&&!DG&&!(H.action&&H.action.kind!=='live'))drawThought(g,sx,heroY(H.x)-74);
   // Warte-Symbol bei Aktionen (Lager, Wasser, Kochen …)
   if((H.action&&H.action.kind!=='live')||H.sleep.active){
     const A=H.action,em={climb:'🧗',tent:'⛺',refill:'🚰',treat:'♨️',drink:'💧',eat:'🍽️',cook:'🍳',fire:'🔥',wood:'🪵',feed:'🪵',search:'🐕',fix:'🧵',aid:'🩹',forage:'🧺',fish:'🎣',orient:'🧭',charge:'🔌',ford:'🌊',talk:'💬',fans:'🎉',drone:'🛸'};
