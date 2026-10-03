@@ -155,7 +155,7 @@ input[type=range]{accent-color:var(--acc)}
 #modal.open{display:flex}
 #modal .box{background:var(--panel);border:1px solid var(--acc);border-radius:14px;padding:16px;max-width:560px;width:100%;max-height:calc(100vh - 16px);overflow:auto}
 #modal .box.wide{max-width:860px}
-#modal .btns{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+#modal .btns{display:flex;flex-direction:column;gap:7px;margin-top:12px;position:sticky;bottom:-16px;background:var(--panel);padding:8px 0 16px;margin-bottom:-16px;box-shadow:0 -10px 10px -4px var(--panel);z-index:3}
 #modal .btns.rowb{flex-direction:row;flex-wrap:wrap}
 .cliplist{max-height:300px;overflow:auto}.clip{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:.9em}
 .rar{font-style:normal;font-size:.72em;padding:1px 6px;border-radius:8px;color:#fff;margin-left:4px}
@@ -191,7 +191,7 @@ canvas.chart{width:100%;height:140px;display:block}
  .center{min-height:100vh;gap:8px;padding:8px}.center h1{font-size:1.9em}
  .card{padding:10px}.item{padding:6px}.ico{font-size:1.6em;width:38px}
  button{padding:6px 10px;min-height:32px}
- #modal .box{padding:12px}
+ #modal .box{padding:12px}#modal .btns{bottom:-12px;padding-bottom:12px;margin-bottom:-12px}
  h2{font-size:1.15em}
 }
 @media(max-height:430px){.st{width:72px;font-size:12px}.st .ic{font-size:15px;width:17px}.st .tr{height:9px}.pill{font-size:13px;padding:4px 8px}.rb{width:49px;height:49px;font-size:20px}#h-mid{top:calc(82px + var(--st))}#h-bot{gap:5px}#dock{gap:4px}}
@@ -2395,7 +2395,7 @@ function beginAction(kind,label,dur,done,opts={}){
   if(ACTION_CLIPS[kind]){const d0=done;done=()=>{try{actionClip(kind)}catch(e){}if(d0)d0()}}
   if(H.g&&H.g.tools.lantern&&env.dark>0.55&&dur>=5&&!H.moving&&kind!=='sleep')dur=Math.max(1,Math.round(dur*0.9));
   H.lastAct={k:kind,t:H.t};
-  H.action={kind,label,dur,left:dur,done,tick:opts.tick,resume:opts.force?true:(!!opts.resume&&H.walking)};
+  H.action={kind,label,dur,left:dur,done,inside:!!opts.inside,tick:opts.tick,resume:opts.force?true:(!!opts.resume&&H.walking)};
   H.walking=false;
 }
 function canCancel(){const a=H&&H.action;return !!(a&&!H.sleep.active&&!H.ended&&a.kind!=='live'&&a.kind!=='drone'&&a.kind!=='ford')}
@@ -3432,15 +3432,45 @@ function nearLodgeFeat(){
   for(const f of featsIn(H.x-330,H.x+330)){if((f.type==='lodge'||(f.type==='village'&&f.town))&&Math.abs(f.x-H.x)<330)return f}
   return null;
 }
+/* Windschutz/Bothy: andere Wanderer übernachten dort wirklich (abends am Feuer, nachts im Unterstand, morgens ziehen sie weiter, Feuer erlischt) */
+function strHash(t){let h=5381;for(const ch of String(t))h=((h*33)^ch.charCodeAt(0))>>>0;return h}
+function shelterGuests(f){
+  if(!H||!H.hk||!lodgeFreeKind(f))return null;
+  const hr=(H.t/60)%24,d=Math.floor(H.t/1440),dd=hr<10?d-1:d;
+  if(H.shTaken&&H.shTaken[f.id+':'+dd])return null;
+  if(!lodgeFull(f,0,dd,false))return null;
+  const r=mulberry32(strHash(H.hk.id+'|'+f.id+'|g'+dd)),arr=16.5+r()*2,bed=Math.min(arr+3+r()*1.5,23.5),dep=24+7+r()*2.2,n=r()<0.4?2:1;
+  const looks=[];for(let i=0;i<n;i++)looks.push({skin:Math.floor(r()*5),hair:Math.floor(r()*7),style:Math.floor(r()*6),beard:r()<0.3?1+Math.floor(r()*2):0,glasses:r()<0.2?1+Math.floor(r()*2):0,build:Math.floor(r()*3),jacket:Math.floor(r()*8),pants:Math.floor(r()*5)});
+  const h2=(H.t-dd*1440)/60;
+  if(h2<arr||h2>dep+0.7)return null;
+  return {n,looks,arr,bed,dep,h2,dd};
+}
+function drawShelterGuests(g,tm,f,sx,y){
+  const S=shelterGuests(f);if(!S)return;
+  const sd=hash(Math.floor(f.x))<0.5?-1:1,fxw=f.x-sd*84,pk=['#c0392b','#2e86c1','#27ae60','#d68910'];
+  if(S.h2<S.dep){const pr=clamp((S.h2-S.arr)/(S.dep-S.arr),0,1);drawFireGeneric(g,tm,0.016,fxw,Math.max(34,185*(1-pr)))}
+  else{g.fillStyle=tc('#3a3a3a');for(let k=0;k<5;k++){g.beginPath();g.ellipse(fxw-sx+sx-10+k*5,groundY(fxw)+2,3,1.8,0,0,7);g.fill()}}
+  const leaving=S.h2>S.dep-0.4,awake=S.h2<S.bed;
+  if(leaving){
+    const u=clamp((S.h2-(S.dep-0.4))/1.1,0,1);if(u>=1)return;
+    S.looks.forEach((L,i)=>{const wx=f.x+sd*10+i*40+u*760,sx2=wx-camX,gy=groundY(wx);if(sx2<-80||sx2>CW+80)return;g.save();g.translate(sx2,0);drawHiker(g,0,gy,1.15,{look:L,phase:tm*6+i,mode:'walk',packColor:pk[(i+S.dd)%4],tm,poles:false});g.restore()});
+  }else if(awake){
+    S.looks.forEach((L,i)=>{const px=fxw+(i?34:-34)-camX,gy=groundY(fxw)+1;g.save();g.translate(px,0);if(i)g.scale(-1,1);drawHiker(g,0,gy,1.15,{look:L,phase:0,mode:'sit',packColor:pk[(i+S.dd)%4],tm,poles:false});g.restore()});
+  }else{
+    const sc=S.n>1?0.42:0.5;
+    S.looks.forEach((L,i)=>drawHiker(g,sx+(S.n>1?(i?-12:12):8),y-1,sc,{look:L,phase:0,mode:'sleep',tm}));
+    emoji(g,'💤',sx+6,y-52+Math.sin(tm*2)*3,20);
+  }
+}
 function lodgeHere(f){
   if(H.lodge&&H.lodge.fid===f.id)return lodgeStay(f);
   const day=Math.floor(H.t/1440);
   if(lodgeFreeKind(f)){
-    const full=lodgeFull(f,0,day,false);
+    const full=!!shelterGuests(f);
     const nm=({shelter:'Windschutz',bothy:'Bothy'})[f.kind]+' '+f.name;
     if(full){showModal({title:'🛖 '+esc(nm),text:'Leider schon belegt – andere Wanderer haben hier ihr Lager aufgeschlagen. Du musst weiter oder selbst zelten.',buttons:[{label:'OK'}]});return}
     showModal({title:'🛖 '+esc(nm),text:'Frei! Der Unterstand ist kostenlos, nicht buchbar und bietet Schutz vor Wind und Regen – aber keine Heizung und keine Betten.',buttons:[
-      {label:'Hier übernachten',primary:1,fn:()=>{H.indoor='shelter';startSleep()}},{label:'Weiter'}]});
+      {label:'Hier übernachten',primary:1,fn:()=>{H.shTaken=H.shTaken||{};{const hr=(H.t/60)%24,d=Math.floor(H.t/1440);H.shTaken[f.id+':'+(hr<10?d-1:d)]=true}H.indoor='shelter';startSleep()}},{label:'Weiter'}]});
     return;
   }
   // Spontan: nur mit Empfang
@@ -4875,7 +4905,7 @@ const gs=featsIn(camX-320,camX+CW+320).concat([{type:'start',x:120},{type:'finis
         g.fillStyle=tc('#6d4726');g.fillRect(sx-30,y-42,5,42);g.fillRect(sx+26,y-34,5,34);
         g.fillStyle=tc('#8b5e34');g.beginPath();g.moveTo(sx-36,y-42);g.lineTo(sx+36,y-34);g.lineTo(sx+36,y-28);g.lineTo(sx-36,y-36);g.fill();
         g.fillStyle=tc('#5a3c1e');g.fillRect(sx-25,y-30,54,30);g.fillStyle='rgba(0,0,0,0.25)';g.fillRect(sx-22,y-28,48,26);
-        if(f.used)emoji(g,'🏕️',sx+4,y-4,20);
+        try{drawShelterGuests(g,tm,f,sx,y)}catch(e){console.warn(e)}
       }else{
         const col=k==='stuga'?'#b5432e':'#8a6a45',roof=k==='stuga'?'#4a2f22':'#5a5a60';
         g.fillStyle=tc(col);g.fillRect(sx-38,y-40,76,40);
@@ -5621,7 +5651,7 @@ drawForksTop(g,tm);drawStartFlag(g,tm);try{drawLamps(g,tm)}catch(e){}
   drawLeaves(g,tm,dt);
   drawCamp(g,tm,dt);
   try{coopBench(g)}catch(e){}
-  try{if(H.sleep.active&&H.indoor==='lodge')emoji(g,'💤',H.x-camX+10,groundY(H.x)-118+Math.sin(tm*2)*4,34)}catch(e){}
+  try{{const ins=H.sleep.active&&H.indoor,sa=H.action&&H.action.inside;if(ins||sa){const lf=nearLodgeFeat(),ix=lf?lf.x:H.x;emoji(g,ins?'💤':(H.action.kind==='warm'?'🔥':H.action.kind==='drink'?'☕':'🏪'),ix-camX+10,groundY(ix)-118+Math.sin(tm*2)*4,34)}}}catch(e){}
   drawPackDown(g,tm);
   // Hund und Wanderer
   const gy=groundY(H.x),hm=heroMode();
@@ -5656,7 +5686,7 @@ g.restore();
     if(a<1.5)drawHiker(g,WK.x-camX,groundY(WK.x)+2,1.2,{look:lk,phase:0,mode:'sleep',tm});
     else{const u=clamp((a-1.5)/1.4,0,1),wx=lerp(WK.x,H.x,u);drawHiker(g,wx-camX,groundY(wx)+2,1.2,{look:lk,phase:a*7,mode:u<1?'walk':'idle',packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,tm})}
   }
-  if(!inTent&&!WK&&!(H.sleep.active&&H.indoor==='lodge')){
+  if(!inTent&&!WK&&!(H.sleep.active&&H.indoor)&&!(H.action&&H.action.inside)){
     const ax=H.sleep.active?H.camp.x-camX:sx;
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
@@ -7291,7 +7321,7 @@ function openVillageShop(f){
      const sc0=SHOP_SC;SHOP_SC=null;if(sc0)setTimeout(()=>{const bx=$('.box',m),ls=$('.card[style*="max-height"]',m);if(bx)bx.scrollTop=sc0.b;if(ls)ls.scrollTop=sc0.l},20);
      const keepSc=()=>{SHOP_SC={b:($('.box',m)||{}).scrollTop||0,l:($('.card[style*="max-height"]',m)||{}).scrollTop||0}};
      $$('[data-vb]',m).forEach(b=>b.onclick=()=>{if(buyVillage(b.dataset.vb,1)){keepSc();openVillageShop(f)}});
-     const svc=(kind,label,mins,price,fn)=>{if(price&&G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}if(price){G.money-=price;try{save()}catch(e){}}SHOP_RE=f;closeModal();beginAction(kind,label,mins,fn,{})};
+     const svc=(kind,label,mins,price,fn)=>{if(price&&G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}if(price){G.money-=price;try{save()}catch(e){}}SHOP_RE=f;closeModal();beginAction(kind,label,mins,fn,{inside:true})};
      {const e1=$('[data-warm]',m);if(e1)e1.onclick=()=>svc('warm','Wärmt sich im Laden auf …',25,0,()=>{H.body.warm=clamp(H.body.warm+38,0,100);H.body.wet=Math.max(0,H.body.wet-14);toast('🔥 Du hast dich schön aufgewärmt.','good')});
       const e2=$('[data-coffee]',m);if(e2)e2.onclick=()=>svc('drink','Trinkt einen Kaffee …',12,2.5,()=>{H.body.warm=clamp(H.body.warm+14,0,100);H.body.hyd=clamp(H.body.hyd+6,0,100);H.body.energy=Math.min(100-H.fatigue,H.body.energy+6);sfx('drink');toast('☕ Heißer Kaffee – das tut gut.','good')});
       const e3=$('[data-ice]',m);if(e3)e3.onclick=()=>svc('eat','Isst ein Eis …',8,2,()=>{H.body.sat=clamp(H.body.sat+6,0,100);H.body.hyd=clamp(H.body.hyd+4,0,100);H.body.warm=clamp(H.body.warm-5,0,100);sfx('drink');toast('🍦 Lecker – ein Eis zwischendurch.','good')})}
