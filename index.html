@@ -1458,7 +1458,7 @@ function nextWeather(prev){
 function setWeather(type){
   const rnd=(a,b)=>a+wxRand()*(b-a);
   const hk=H.hk,W=WEATHER[type];
-  H.weather={type,until:H.t+rnd(260,760),wind:W.wind*rnd(0.75,1.3)*hk.regD.wind*(0.85+0.15*hk.ext),rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.ext*0.4):0};
+  H.weather={type,start:H.t,until:H.t+rnd(260,760),wind:W.wind*rnd(0.75,1.3)*hk.regD.wind*(0.85+0.15*hk.ext),rainI:W.rain?W.rain*rnd(0.6,1.2)*(0.7+hk.ext*0.4):0};
   H.wdir=wxRand()<0.5?-1:1;
   H.nextW=nextWeather(type);H.wxWarned=false;
   if((type==='gewitter'||type==='sturm')&&H.started)try{comEv('storm')}catch(e){}
@@ -3790,7 +3790,7 @@ function sfx(name,arg){
     case 'coin':tone(1250,0.06,'square',0.07);tone(1680,0.18,'square',0.07,0.06);break;
     case 'tent':burst(0.35,'bandpass',2800,0.18,0,0.8);break;
     case 'fire':burst(0.5,'lowpass',300,0.35,0,0.7,1200);break;
-    case 'thunder':{const d=arg||0;burst(2.6,'lowpass',260,0.7,d,0.8,-200);burst(1.2,'lowpass',120,0.6,d+0.3,0.8);break}
+    case 'thunder':{const d=arg||0;if(thunderFile(d))break;burst(2.6,'lowpass',260,0.7,d,0.8,-200);burst(1.2,'lowpass',120,0.6,d+0.3,0.8);break}
   }
 }
 /* ---------- Schritt-Loops (Dateien, liegen über der Ambience; Untergrund nach Biom/Schnee) ---------- */
@@ -3924,14 +3924,172 @@ function ambSet(key){
   s.start(t,Math.random()*Math.max(1,s.buffer.duration-1));
   AMB.cur={s,g,v,key};
 }
+/* ---------- Eulen: seltene Einzelrufe nachts (in Skandinavien noch seltener) ---------- */
+const OWL_F=[['BirdOwl 6003_21_1.wav',0.2,0.55],['Frightening Owl Hoot.wav',0.4,0.6],['Scary Owl Hoot.mp3',0.4,0.6]];
+const OWL={t:90+Math.random()*200,buf:{}};
+function owlLoad(i){
+  if(OWL.buf[i]!==undefined||!AU.ctx)return;OWL.buf[i]=null;
+  fetch(encodeURI(OWL_F[i][0])).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((ok,no)=>AU.ctx.decodeAudioData(b,ok,no))).then(buf=>{OWL.buf[i]=buf}).catch(()=>{OWL.buf[i]=false});
+}
+function owlTick(dt){
+  if(!AU.ok||!AU.ctx)return;
+  const night=env.dark>0.7&&!env.precip&&env.wind<8&&!(DG);
+  if(!night)return;
+  if(OWL.buf[0]===undefined)OWL_F.forEach((_,i)=>owlLoad(i));
+  OWL.t-=dt;if(OWL.t>0)return;
+  if(!OWL.buf[0]||!OWL.buf[1]||!OWL.buf[2]){OWL.t=5;return}
+  const nordic=['hoga','norwegen','lappland','nordkalott','island'].indexOf(H.hk.reg)>=0;
+  OWL.t=(240+Math.random()*420)*(nordic?2.8:1);
+  let r=Math.random(),i=0;for(;i<OWL_F.length-1;i++){r-=OWL_F[i][1];if(r<=0)break}
+  const b=OWL.buf[i];if(!b||(G&&G.mute))return;
+  const c=AU.ctx,src=c.createBufferSource();src.buffer=b;
+  const g=c.createGain(),pan=c.createStereoPanner?c.createStereoPanner():null;
+  g.gain.value=OWL_F[i][2];if(pan)pan.pan.value=Math.random()*1.6-0.8;
+  src.connect(g);if(pan){g.connect(pan);pan.connect(AU.master)}else g.connect(AU.master);
+  src.start();
+}
+/* ---------- Wetter-Ebene (Gewitter-Bett, überblendet) und Donner-Einzelereignisse ---------- */
+const SB={};
+function sbLoad(name){
+  if(SB[name]!==undefined||!AU.ctx)return;SB[name]=null;
+  fetch(encodeURI(name)).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((ok,no)=>AU.ctx.decodeAudioData(b,ok,no))).then(buf=>{SB[name]=buf}).catch(()=>{SB[name]=false});
+}
+const WX_F={gew1:'leichtes Gewitter.wav',gew2:'leichtes Gewitter zwei.wav',gew3:'Mittelstarkes Gewitter.mp3',rsoft:'Sanfter Regen.wav',rmid:'Mittlerer Regen.mp3',rhard:'Starker Regen.mp3'};
+const WX_VOL={gew1:0.8,gew2:0.8,gew3:0.9,rsoft:0.75,rmid:0.8,rhard:0.85};
+const WXL={cur:null,key:null,t:0,base:0.5};
+function wxPick(){
+  const W=H.weather;if(!W)return null;
+  if(W.type==='gewitter'){
+    const span=Math.max(60,(W.until-(W.start!=null?W.start:H.t-60))),p=clamp((H.t-(W.start!=null?W.start:H.t-60))/span,0,1);
+    return p<0.28?'gew1':p<0.72?'gew3':'gew2';
+  }
+  if(env.precip==='rain'){ // Regenstufe nach Intensität (mit etwas Hysterese)
+    const I=env.rainI,cur=WXL.key;
+    if(cur==='rhard')return I>0.58?'rhard':I>0.34?'rmid':'rsoft';
+    if(cur==='rmid')return I>0.72?'rhard':I>0.3?'rmid':'rsoft';
+    return I>0.66?'rhard':I>0.42?'rmid':'rsoft';
+  }
+  return null;
+}
+function wxSet(key){
+  if(!AU.ok||!AU.ctx||key===WXL.key)return;
+  const c=AU.ctx,t=c.currentTime;
+  if(key){sbLoad(WX_F[key]);if(!SB[WX_F[key]])return}
+  const FADE=7;
+  if(WXL.cur){const o=WXL.cur;try{o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0.0001,t+FADE);o.s.stop(t+FADE+0.1)}catch(e){}WXL.cur=null}
+  WXL.key=key;if(!key)return;
+  const s=c.createBufferSource();s.buffer=SB[WX_F[key]];s.loop=true;
+  const g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(1,t+FADE);
+  const v=c.createGain();v.gain.value=0;
+  s.connect(g);g.connect(v);v.connect(AU.master);s.start(t,Math.random()*Math.max(1,s.buffer.duration-1));
+  WXL.cur={s,g,v,key};
+}
+function wxUpdate(dt){
+  if(!AU.ok||!AU.ctx||!H)return;
+  WXL.t-=dt;
+  if(WXL.t<=0){WXL.t=2;let k=null;try{k=wxPick()}catch(e){}
+    if(k)sbLoad(WX_F[k]);else if(H.nextW==='gewitter'&&H.weather.until-H.t<120){sbLoad(WX_F.gew1);sbLoad('Blitzgewitter kurz.mp3');sbLoad('Donnergrollen.wav')}
+    if(k!==WXL.key&&(!k||SB[WX_F[k]]))wxSet(k)}
+  if(WXL.cur){const mute=G&&G.mute;WXL.cur.v.gain.setTargetAtTime(mute?0:WXL.base*(WX_VOL[WXL.cur.key]||1)*(DG?0.4:1),AU.ctx.currentTime,0.8)}
+}
+setInterval(()=>{if(WXL.cur&&(screen!=='hike'||!H||H.ended))wxSet(null)},1500);
+function thunderFile(dist){
+  if(!AU.ok||!AU.ctx||(G&&G.mute))return false;
+  const near=dist<1.6,name=near?'Blitzgewitter kurz.mp3':'Donnergrollen.wav';
+  sbLoad(name);const b=SB[name];if(!b)return false;
+  const c=AU.ctx,src=c.createBufferSource();src.buffer=b;
+  const g=c.createGain(),t0=c.currentTime+dist*0.9,len=near?b.duration:Math.min(b.duration-1,9+Math.random()*4),off=near?0:Math.random()*Math.max(0,b.duration-len-0.5);
+  const vol=clamp(1.05-dist*0.17,0.25,0.95);
+  g.gain.setValueAtTime(0.0001,t0);g.gain.linearRampToValueAtTime(vol,t0+(near?0.02:1.2));g.gain.setValueAtTime(vol,t0+Math.max(0.1,len-2.5));g.gain.linearRampToValueAtTime(0.0001,t0+len);
+  src.connect(g);g.connect(AU.master);src.start(t0,off,len+0.1);return true;
+}
+/* ---------- Krähen: Einzelrufe tagsüber (im Norden häufiger) ---------- */
+const CROW_F=['Crow.mp3','Crow 01.mp3','Crow 02.mp3','Crow 03.mp3'];
+const CROW={t:40+Math.random()*80};
+function crowTick(dt){
+  if(!AU.ok||!AU.ctx)return;
+  const ok=env.light>0.45&&!env.precip&&env.wind<10&&!DG&&H.speed>0&&H.speed<=4&&env.biome!=='sand'&&env.biome!=='kies'&&!(H.sleep&&H.sleep.active);
+  if(!ok)return;
+  if(SB[CROW_F[0]]===undefined)CROW_F.forEach(sbLoad);
+  CROW.t-=dt;if(CROW.t>0)return;
+  const nordic=['hoga','norwegen','lappland','nordkalott','island'].indexOf(H.hk.reg)>=0||env.biome==='fjaell';
+  const wald=env.biome==='wald'||env.biome==='tal'||env.biome==='wiese';
+  CROW.t=(nordic?70+Math.random()*130:wald?150+Math.random()*250:300+Math.random()*400);
+  const i=Math.floor(Math.random()*CROW_F.length),b=SB[CROW_F[i]];if(!b||(G&&G.mute))return;
+  const c=AU.ctx,src=c.createBufferSource();src.buffer=b;
+  const g=c.createGain(),pan=c.createStereoPanner?c.createStereoPanner():null;
+  g.gain.value=0.35+Math.random()*0.3;if(pan)pan.pan.value=Math.random()*1.6-0.8;
+  src.playbackRate.value=0.94+Math.random()*0.12;
+  src.connect(g);if(pan){g.connect(pan);pan.connect(AU.master)}else g.connect(AU.master);
+  src.start();
+}
+/* ---------- Lagerfeuer: 3 Stufen, weich überblendet, Lautstärke nach Abstand ---------- */
+const FIRE_F={klein:'kleines Campfire.mp3',mittel:'mittleres FireCampfire BSZ01_32.wav',gross:'großes CampfireBurningEx PE1034701.wav'};
+const FIRE_VOL={klein:0.8,mittel:0.85,gross:0.9};
+const FIREL={cur:null,key:null,t:0,fadeOut:[]};
+function fireStage(){if(!H.fire.lit)return null;const l=H.fire.left;return l>110?'gross':l>70?'mittel':'klein'}
+function fireDist(){return Math.abs(H.x-H.fire.x)}
+function fireGain(){const d=fireDist(),k=clamp(1-d/520,0,1);return k*k*(0.35+0.65*k)}
+function fireFilesReady(){return !!(SB[FIRE_F.klein]&&SB[FIRE_F.mittel]&&SB[FIRE_F.gross])}
+function fireSet(key){
+  if(!AU.ok||!AU.ctx||key===FIREL.key)return;
+  const c=AU.ctx,t=c.currentTime,FADE=4;
+  if(key&&!SB[FIRE_F[key]])return;
+  if(FIREL.cur){const o=FIREL.cur;try{o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0.0001,t+FADE);o.s.stop(t+FADE+0.1)}catch(e){}FIREL.cur=null}
+  FIREL.key=key;if(!key)return;
+  const s=c.createBufferSource();s.buffer=SB[FIRE_F[key]];s.loop=true;
+  const g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(1,t+FADE);
+  const v=c.createGain();v.gain.value=0;
+  s.connect(g);g.connect(v);v.connect(AU.master);s.start(t,Math.random()*Math.max(1,s.buffer.duration-1));
+  FIREL.cur={s,g,v,key};
+}
+function fireUpdate(dt){
+  if(!AU.ok||!AU.ctx||!H)return;
+  const st=fireStage(),near=st&&fireDist()<560;
+  if(near&&!fireFilesReady())Object.values(FIRE_F).forEach(sbLoad);
+  FIREL.t-=dt;
+  if(FIREL.t<=0){FIREL.t=1;const want=near&&fireFilesReady()?st:null;if(want!==FIREL.key)fireSet(want)}
+  if(FIREL.cur){const mute=G&&G.mute;FIREL.cur.v.gain.setTargetAtTime(mute||!st?0:0.55*(FIRE_VOL[FIREL.cur.key]||1)*fireGain(),AU.ctx.currentTime,0.5)}
+}
+setInterval(()=>{if(FIREL.cur&&(screen!=='hike'||!H||H.ended||!H.fire.lit)){fireSet(null)}},1500);
+/* ---------- See: Wellen-Loop, Lautstärke nach Abstand zum Ufer (beim Angeln voll) ---------- */
+const LAKE_F='lake-waves-lapping-gently-on-the-beach-01.mp3';
+const LAKEL={cur:null,t:0,d:1e9};
+function lakeDist(){
+  const ls=(H.route&&H.route.lakes)||[];let best=1e9;
+  for(const L of ls){const d=H.x<L.xl?L.xl-H.x:H.x>L.xr?H.x-L.xr:0;if(d<best)best=d}
+  return best;
+}
+function lakeUpdate(dt){
+  if(!AU.ok||!AU.ctx||!H)return;
+  const d=lakeDist(),fish=H.action&&H.action.kind==='fish';LAKEL.d=d;
+  const k=fish?1:clamp(1-d/480,0,1),want=k>0.02;
+  if(d<800&&SB[LAKE_F]===undefined)sbLoad(LAKE_F);
+  const b=SB[LAKE_F];
+  if(want&&b&&!LAKEL.cur){
+    const c=AU.ctx,s=c.createBufferSource();s.buffer=b;s.loop=true;const v=c.createGain();v.gain.value=0;
+    s.connect(v);v.connect(AU.master);s.start(c.currentTime,Math.random()*Math.max(1,b.duration-1));LAKEL.cur={s,v};
+  }
+  if(LAKEL.cur){
+    const mute=G&&G.mute,tgt=mute?0:0.6*k*k*(0.4+0.6*k)*(env.wind>10?0.8:1);
+    LAKEL.cur.v.gain.setTargetAtTime(tgt,AU.ctx.currentTime,0.9);
+    if(!want&&LAKEL.cur.v.gain.value<0.004){try{LAKEL.cur.s.stop()}catch(e){}LAKEL.cur=null}
+  }
+}
+setInterval(()=>{if(LAKEL.cur&&(screen!=='hike'||!H||H.ended)){try{LAKEL.cur.s.stop()}catch(e){}LAKEL.cur=null}},1500);
 function ambUpdate(dt){
+  try{owlTick(dt)}catch(e){}
+  try{wxUpdate(dt)}catch(e){}
+  try{lakeUpdate(dt)}catch(e){}
+  try{fireUpdate(dt)}catch(e){}
+  try{crowTick(dt)}catch(e){}
   if(!AU.ok||!AU.ctx||!H)return;
   AMB.t-=dt;
   if(AMB.t<=0){AMB.t=2;let k=null;try{k=ambPick()}catch(e){}
     if(k&&AMB.buf[k]===undefined)ambLoad(k);
     if(k!==AMB.key&&(!k||AMB.buf[k]))ambSet(k);
     else if(AMB.want&&AMB.buf[AMB.want])ambSet(AMB.want)}
-  if(AMB.cur){const mute=G&&G.mute;const duck=DG?0.35:H.sleep&&H.sleep.active?0.6:1;
+  if(AMB.cur){const mute=G&&G.mute;const duck=(DG?0.35:H.sleep&&H.sleep.active?0.6:1)*(WXL.cur?(String(WXL.cur.key).indexOf('gew')===0?0.45:0.6):1);
     const stormy=env.wind>12?0.75:1;
     AMB.cur.v.gain.setTargetAtTime(mute?0:AMB.base*(AMB_VOL[AMB.cur.key]||1)*duck*stormy,AU.ctx.currentTime,0.6)}
 }
@@ -3944,10 +4102,10 @@ function ambientUpdate(dt){
   const gust=0.75+0.25*Math.sin(tm*0.9)+0.1*Math.sin(tm*2.3);
   setG(AU.loops.wind,clamp(env.wind/24,0,0.55)*0.55*gust);
   AU.loops.wind.fl.frequency.setTargetAtTime(280+env.wind*35,t,0.5);
-  setG(AU.loops.rain,env.precip==='rain'?clamp(0.06+env.rainI*0.2,0,0.3):env.precip==='snow'?0.02:0);
-  const nf=nearFire();setG(AU.loops.fire,nf?0.09:0);
+  setG(AU.loops.rain,WXL.cur?0:env.precip==='rain'?clamp(0.06+env.rainI*0.2,0,0.3):env.precip==='snow'?0.02:0);
+  const nf=nearFire();const ff=fireFilesReady();setG(AU.loops.fire,nf&&!ff?0.09:0);
   if(nf||H.fire.lit&&Math.abs(H.x-H.fire.x)<450){
-    AU.popT-=dt;if(AU.popT<=0){AU.popT=0.08+Math.random()*0.5;if(nf)burst(0.03+Math.random()*0.03,'highpass',2500+Math.random()*2500,0.16)}
+    AU.popT-=dt;if(AU.popT<=0){AU.popT=0.08+Math.random()*0.5;if(nf&&!ff)burst(0.03+Math.random()*0.03,'highpass',2500+Math.random()*2500,0.16)}
   }
   {const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active&&(!H.shot||H.shot.type==='video');
     fsUpdate(walk);
