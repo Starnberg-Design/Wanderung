@@ -3794,6 +3794,7 @@ function sfx(name,arg){
   }
 }
 /* ---------- Schritt-Loops (Dateien, liegen über der Ambience; Untergrund nach Biom/Schnee) ---------- */
+const STEPS_ON=false; // Schritt-Sounds vorerst aus (zum Einschalten: true)
 const FS_F={snow:'walking-in-snow_1.mp3',beach:'Gehen am Strand-FootstepsSandWet_DIGII08-17.mp3',road:'Footsteps Walking On Asphalt_1.mp3',forest:'Mountain Audio - Footsteps On Forest Floor 1_1.mp3',grass:'Walking on Grass_1.mp3'};
 const FS_VOL={snow:1,beach:1,road:0.9,forest:1,grass:1.6};
 const FS={cur:null,key:null,buf:{},vol:0.5};
@@ -4107,7 +4108,7 @@ function ambientUpdate(dt){
   if(nf||H.fire.lit&&Math.abs(H.x-H.fire.x)<450){
     AU.popT-=dt;if(AU.popT<=0){AU.popT=0.08+Math.random()*0.5;if(nf&&!ff)burst(0.03+Math.random()*0.03,'highpass',2500+Math.random()*2500,0.16)}
   }
-  {const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active&&(!H.shot||H.shot.type==='video');
+  if(STEPS_ON){const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active&&(!H.shot||H.shot.type==='video');
     fsUpdate(walk);
     if(walk&&!fsOk()){const idx=Math.floor(H.phase/Math.PI);
     if(idx!==AU.lastStep){AU.lastStep=idx;stepSound()}}}
