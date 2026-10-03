@@ -2533,6 +2533,16 @@ if(H.body.energy<=0){toast('Du bist zu erschöpft – rasten oder schlafen!','ba
       if(!canCook()){toast('Zum Kochen brauchst du Gaskocher + Gas oder ein Feuer in der Nähe.','bad');return}
       if(f.water&&H.water.clean+H.water.dirty<f.water-0.001){toast('💧 Zum Zubereiten fehlen '+fmtN(f.water)+' L Wasser.','bad');return}
       beginAction('cook','Bereitet '+f.name.replace(/ \((kochen|garen)\)/,'')+' zu …',f.fish?20:15,()=>{if(!nearFire())H.gas=Math.max(0,H.gas-1);if(f.water){const c=Math.min(f.water,H.water.clean);H.water.clean-=c;H.water.dirty=Math.max(0,H.water.dirty-(f.water-c))}eatFood(arg)});break}
+    case 'dogfeed':{const D=H.dog;if(!D||D.away)return;const ration=D.def.food*0.5;
+      if(D.hunger>85){toast('🐕 '+G.dog.name+' ist satt.');return}
+      if(H.dogfood<ration){toast('🦴 Du hast kein Hundefutter mehr dabei.','bad');return}
+      beginAction('dogfeed','Füttert '+G.dog.name+' …',4,()=>{if(H.dogfood>=ration){H.dogfood-=ration;D.hunger=Math.min(100,D.hunger+50);D.mood=clamp(D.mood+3,0,100);toast('🐕 '+G.dog.name+' frisst sein Futter.','good');sfx('eat')}});break}
+    case 'dogwater':{const D=H.dog;if(!D||D.away)return;const w=nearWater();
+      if(D.thirst>88){toast('🐕 '+G.dog.name+' hat keinen Durst.');return}
+      if(!w&&H.water.clean<D.def.water*0.25){toast('💧 Du hast kein sauberes Wasser für '+G.dog.name+' übrig.','bad');return}
+      beginAction('dogwater',w?G.dog.name+' trinkt am Wasser …':'Gibt '+G.dog.name+' Wasser …',3,()=>{if(w)D.thirst=100;else if(H.water.clean>=D.def.water*0.25){H.water.clean-=D.def.water*0.25;D.thirst=Math.min(100,D.thirst+60)}D.mood=clamp(D.mood+2,0,100);toast('🐕 '+G.dog.name+' trinkt.','good');sfx('drink')});break}
+    case 'dogpet':{const D=H.dog;if(!D||D.away)return;
+      beginAction('dogpet','Streichelt '+G.dog.name+' …',3,()=>{D.mood=clamp(D.mood+9,0,100);D.trust=Math.min(100,(D.trust||0)+1.5);toast('🐕 '+G.dog.name+' wedelt mit dem Schwanz.','good')});break}
     case 'leash':{const D=H.dog;if(!D||D.away)return;D.leash=!D.leash;toast(D.leash?'🦮 '+G.dog.name+' ist wieder an der Leine.':'🐕 '+G.dog.name+' läuft frei'+(D.trust<90?' – bei wenig Vertrauen kann er weglaufen.':'.'),D.leash||D.trust>=90?'':'warn');break}
     case 'rest':
       if(!H.camp.pitched||!H.g.shelter){toast('Zum Ausruhen brauchst du ein aufgebautes Zelt oder Tarp.','bad');return}
@@ -5524,6 +5534,12 @@ const row=[];const y=gy-150;const B=H.body;
       if(hasDrone)r.push(['🛸','Drohne',()=>actClick('droneFly'),true]);
       r.push(['📡','Livestream',()=>actClick('live'),true]);
       return r}],
+    dog:['🐕','Hund',()=>{const r=[],dd=H.dog;if(!dd)return r;
+      r.push([dd.leash?'🐕':'🦮',dd.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
+      r.push(['🦴','Füttern',()=>actClick('dogfeed'),D(H.dogfood>=dd.def.food*0.5&&dd.hunger<=85)]);
+      r.push(['🥣','Wasser',()=>actClick('dogwater'),D(dd.thirst<=88&&(!!w||H.water.clean>=dd.def.water*0.25))]);
+      r.push(['🤗','Streicheln',()=>actClick('dogpet'),true]);
+      return r}],
     care:['🩹','Versorgung',()=>{const r=[];
       r.push(['🩹','Erste Hilfe',()=>actClick('aid'),D(isInjured()&&!!H.g.tools.kit&&H.kit>0)]);
       r.push(['🧵','Notreparatur',()=>actClick('fix'),true]);
@@ -5547,7 +5563,7 @@ const row=[];const y=gy-150;const B=H.body;
       row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
     }
     try{nextActs(D,eatList,w).forEach(r=>row.push([r[0],r[1],r[2],r[3],true]))}catch(e){}
-    ['camp','fire','food','way','media','care'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;row.push([c[0],c[1],()=>{H.ctxCat=k},true])});
+    ['camp','fire','food','way','media','care','dog'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;if(k==='dog'&&!(H.dog&&!H.dog.away))return;row.push([c[0],c[1],()=>{H.ctxCat=k},true])});
   }
   const n=row.length,gap=n>7?54:62;
   CTX_N=n;const US=uiSafe();let yy=y;const need=US.b+40;if(yy<need)yy=Math.min(need,gy-112);
@@ -5755,6 +5771,21 @@ g.restore();
   if(H.banner&&tm<H.banner.until){const b=H.banner,a=clamp((b.until-tm)/0.8,0,1)*clamp((tm-b.at)/0.4,0,1);g.save();g.globalAlpha=a;g.textAlign='center';g.fillStyle='rgba(10,20,15,0.6)';rr(g,CW/2-190,CH*0.3,380,44,10);g.fill();g.fillStyle='#ffd54a';g.font='bold 20px sans-serif';g.fillText(b.text,CW/2,CH*0.3+29);g.restore()}
 }
 /* ---------- Höhenprofil ---------- */
+function openProfileBig(){
+  if(!H)return;const R=H.route,N=240;let lo=1e9,hi=-1e9,up=0,dn=0,prev=null;
+  for(let i=0;i<=N;i++){const e=mainElevAt(R.totalPx*i/N);lo=Math.min(lo,e);hi=Math.max(hi,e);if(prev!==null){const d=e-prev;if(d>0)up+=d;else dn-=d}prev=e}
+  showModal({wide:true,title:'⛰️ Höhenprofil',html:`<canvas id="profbig" style="width:100%;height:280px;display:block;background:#0006;border-radius:10px"></canvas>
+   <div class="co-stats" style="margin-top:8px"><span>📏 ${fmtN(H.km)} / ${R.totalKm} km</span><span>📍 ${Math.round(elevAt(H.x))} m</span><span>⛰️ höchster Punkt ${Math.round(hi)} m</span><span>⬇️ tiefster ${Math.round(lo)} m</span><span>↗ ca. ${Math.round(up)} m Aufstieg</span><span>↘ ca. ${Math.round(dn)} m Abstieg</span></div>
+   <p class="hint">Weißer Punkt: deine Position · 🟠 Orte · 🔵 Unterkünfte · 🟡 Highlights.</p>`,
+   buttons:[{label:'Schließen',primary:1}],
+   onOpen:m=>{const cv=m.querySelector('#profbig');if(!cv)return;
+     const draw=()=>{try{drawProfile(cv);const w=cv.clientWidth,h=cv.clientHeight,g=cv.getContext('2d');g.setTransform(2,0,0,2,0,0);
+       const span=Math.max(60,hi-lo);g.fillStyle='rgba(255,255,255,0.7)';g.font='11px sans-serif';g.textAlign='left';
+       g.fillText(Math.round(hi)+' m',4,12);g.fillText(Math.round(lo)+' m',4,h-10);
+       g.strokeStyle='rgba(255,255,255,0.12)';g.lineWidth=1;g.textAlign='center';const step=R.totalKm>60?20:R.totalKm>25?10:R.totalKm>10?5:2;
+       for(let k=step;k<R.totalKm;k+=step){const x=k/R.totalKm*w;g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke();g.fillText(k+' km',x,h-2)}}catch(e){console.warn(e)}};
+     setTimeout(draw,30)}});
+}
 function drawProfile(cv){
   if(!H)return;const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
   if(cv.width!==w*2||cv.height!==h*2){cv.width=w*2;cv.height=h*2}
@@ -6985,6 +7016,7 @@ function buildHikeDOM(){
     if(best){if(best.fn)best.fn();else captureIcon(best.ic);updateHUD(true)}
     else if($('#drawer').classList.contains('open'))$('#drawer').classList.remove('open');
   });
+  {const pr=document.querySelector('#h-bot .prow');if(pr){pr.style.cursor='pointer';pr.title='Höhenprofil vergrößern';pr.onclick=()=>{auUnlock();sfx('click');openProfileBig()}}}
   $('#b-walk').onclick=()=>actClick('walk');$('#b-rev').onclick=()=>actClick('reverse');$('#mid').onclick=()=>{if(canCancel()){auUnlock();sfx('click');cancelAction();updateHUD(true)}};
   $('#sp-dn').onclick=()=>{H.speed=Math.max(0,(H.speed>4?4:H.speed)-1);sfx('click');updateHUD(true)};
   $('#sp-up').onclick=()=>{H.speed=Math.min(4,(H.speed<1?0:H.speed)+1);sfx('click');updateHUD(true)};
@@ -7295,7 +7327,7 @@ function openMap(){
   const dW=ahead(f=>f.type==='quelle'||(f.type==='fluss'&&f.bridge)),dV=ahead(f=>f.type==='village'&&!f.left),dS=ahead(f=>f.type==='sight'&&!f.reached);
   const fmtD=v=>known?(v===null?'> 60 km':fmtN(v)+' km'):'unbekannt';
   const goal=R.totalKm-H.km;
-  showModal({wide:true,title:'🗺️ Karte & Navigation',html:`<div class="two"><div><canvas id="mapcv" width="560" height="330" style="width:100%;border-radius:10px;background:#12281d"></canvas></div>
+  showModal({wide:true,title:'🗺️ Karte & Navigation',html:`<div class="warnbox" style="background:#ffffff10;border:1px solid #ffffff22;margin-bottom:8px"><b>🥾 Du wanderst: ${esc(hk.name)}</b><br><small>${flagsHTML(hk.country)} ${esc(hk.country)} · ${hk.km} km · Wegmarkierung: ${esc(H.markCol[1])}${H.side?' · <span class="badtxt">aktuell auf einem Seitenpfad</span>':''}</small></div><div class="two"><div><canvas id="mapcv" width="560" height="330" style="width:100%;border-radius:10px;background:#12281d"></canvas></div>
    <div><p><b>${nav.label}</b>${nav.live?' <span class="goodtxt">· Live-Position</span>':nav.src==='map'?' · <span>Position aus Zeit &amp; Tempo geschätzt</span>':''}</p>
    ${nav.note?`<div class="warnbox warn">${esc(nav.note)}</div>`:''}
    ${H.side&&nav.live?`<div class="warnbox bad">📡 Du bist vom Hauptweg abgekommen – dein Gerät zeigt die Abweichung.</div>`:''}${H.lost.on?`<div class="warnbox bad">🧭 Du bist ca. ${fmtN(H.lost.km)} km vom Weg ab! „Orientieren“ im Menü ☰.</div>`:''}
