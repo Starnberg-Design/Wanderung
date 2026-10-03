@@ -711,13 +711,13 @@ const GEAR=[
   {id:'phone_good',cat:'rec',kind:'phone',name:'Flaggschiff-Smartphone',e:'📱',price:240,kg:0.2,q:0.78,time:1.0,rate:2.6,fragile:0.0006,desc:'Gute Aufnahmen, robust. Filmt in hoher Qualität und braucht dafür etwas mehr Strom.'},
   {id:'camera',cat:'rec',kind:'cam',name:'Systemkamera',e:'📷',price:320,kg:0.9,q:1.0,time:1.5,rate:2.8,fragile:0.0004,desc:'Beste Handaufnahmen, dauert aber länger.'},
   {id:'drone_k',cat:'rec',kind:'drone',name:'Kompaktdrohne',e:'🛸',img:'Kompaktdrone',price:1500,kg:0.6,q:0.65,qr:[0.60,0.70],time:1,rate:0,fragile:0.0004,
-   dr:{hold:4.5,wres:8,sway:0.34,vmax:230,acc:320,setup:2,pack:1.5,dur:100,prem:14,base:0.0006,c:0.012,land:'Drone Landing Kompaktdrohne.mp3',lt:7.9,w:122,vb:[271.37,82.59],rotors:[[0.22,0.23,0.17],[0.177,0.5,0.17],[0.78,0.23,0.17],[0.825,0.5,0.17]]},
+   dr:{hold:4.5,wres:8,sway:0.34,vmax:230,acc:320,setup:2,pack:1.5,dur:100,prem:14,base:0.0006,c:0.012,land:'Drone Landing Kompaktdrohne.mp3',lt:7.9,w:41,vb:[271.37,82.59],rotors:[[0.22,0.23,0.17],[0.177,0.5,0.17],[0.78,0.23,0.17],[0.825,0.5,0.17]]},
    desc:'Klein, leicht und flink: in wenigen Minuten auf- und abgebaut und schneller unterwegs. Die Bildqualität ist eher mittelmäßig. Ideal bei wenig bis mittlerem Wind, bei mehr Wind wird sie leicht abgetrieben. Mit nur 600 g gerade für lange Touren beliebt.'},
   {id:'drone_m',cat:'rec',kind:'drone',name:'Multifunktionsdrohne',e:'🛸',img:'Multifunktionsdrone',price:2000,kg:2.0,q:0.75,qr:[0.70,0.80],time:1,rate:0,fragile:0.0004,
-   dr:{hold:8,wres:13,sway:0.2,vmax:160,acc:230,setup:4,pack:3,dur:130,prem:22,base:0.0008,c:0.016,land:'Drone Landing Multifunktionsdrohne.mp3',lt:5.2,w:116,vb:[254.45,133.7],rotors:[[0.206,0.07,0.2],[0.79,0.07,0.2]]},
+   dr:{hold:8,wres:13,sway:0.2,vmax:160,acc:230,setup:4,pack:3,dur:130,prem:22,base:0.0008,c:0.016,land:'Drone Landing Multifunktionsdrohne.mp3',lt:5.2,w:39,vb:[254.45,133.7],rotors:[[0.206,0.07,0.2],[0.79,0.07,0.2]]},
    desc:'Solider Allrounder mit guter Bildqualität und mittlerer bis starker Windstabilität. Bei Starkwind stürzt sie aber öfter nach kurzer Zeit ab. Wiegt etwa 2 kg.'},
   {id:'drone_u',cat:'rec',kind:'drone',name:'Ultra 8K Drohne',e:'🛸',img:'Ultra 8K Drone',price:4000,kg:3.5,q:0.95,qr:[0.90,1.0],time:1,rate:0,fragile:0.0002,
-   dr:{hold:15,wres:24,sway:0.08,vmax:170,acc:250,setup:5,pack:4,dur:150,prem:48,base:0.00015,c:0.010,land:'Drone Landing 8K Ultra.mp3',lt:7.5,w:140,vb:[307.28,88.96],rotors:[[0.13,0.1,0.12],[0.25,0.085,0.14],[0.75,0.085,0.14],[0.87,0.15,0.12]]},
+   dr:{hold:15,wres:24,sway:0.08,vmax:170,acc:250,setup:5,pack:4,dur:150,prem:48,base:0.00015,c:0.010,land:'Drone Landing 8K Ultra.mp3',lt:7.5,w:47,vb:[307.28,88.96],rotors:[[0.13,0.1,0.12],[0.25,0.085,0.14],[0.75,0.085,0.14],[0.87,0.15,0.12]]},
    desc:'Das Profi-Modell: überragende 8K-Bilder, fliegt auch bei Sturm und stürzt nur sehr selten ab. Dafür wiegt sie 3,5 kg – eher etwas für kürzere Touren mit wenig Proviant.'},
   {id:'pb_small',cat:'power',pb:200,name:'Powerbank 10.000 mAh',e:'🔋',price:30,kg:0.25,desc:'Lädt Geräte insgesamt um 200 % auf.'},
   {id:'pb_big',cat:'power',pb:400,name:'Powerbank 20.000 mAh',e:'🔋',price:60,kg:0.45,desc:'Lädt Geräte insgesamt um 400 % auf.'},
@@ -3590,7 +3590,7 @@ function walkSpeedKmh(){
   if(env.wind>12)m*=0.85;
   if(H.stim.crash>1&&H.t>=H.stim.crashStart&&H.t<H.stim.crashEnd)m*=0.95;
   if(H.dog){if(H.dog.fat>92)m*=0.85;else if(H.dog.fat>75)m*=0.94;if(H.dog.paw>H.t)m*=0.92}
-  if(H.shot)m*=H.shot.type==='drone'?0:0.25;
+  if(H.shot)m*=H.shot.type==='video'?0.5:0; // Fotos/Selfies im Stehen, Video im langsamen Gehen
   return v*m;
 }
 function stepSim(h){
@@ -3940,7 +3940,7 @@ function ambientUpdate(dt){
   if(nf||H.fire.lit&&Math.abs(H.x-H.fire.x)<450){
     AU.popT-=dt;if(AU.popT<=0){AU.popT=0.08+Math.random()*0.5;if(nf)burst(0.03+Math.random()*0.03,'highpass',2500+Math.random()*2500,0.16)}
   }
-  {const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active;
+  {const walk=H.speed>0&&H.speed<=4&&H.moving&&!H.sleep.active&&(!H.shot||H.shot.type==='video');
     fsUpdate(walk);
     if(walk&&!fsOk()){const idx=Math.floor(H.phase/Math.PI);
     if(idx!==AU.lastStep){AU.lastStep=idx;stepSound()}}}
@@ -3973,7 +3973,7 @@ function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);
 function ln(g,x1,y1,x2,y2){g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
 
 /* ---------- Wanderer ---------- */
-function drawTorchHand(g,hd,pic){const im=img(pic,'svg');if(!im)return;const big=/Scheinwerfer|Home Defense/.test(pic),w=big?44:34;g.save();g.translate(hd[0],hd[1]);g.rotate(-0.1);g.drawImage(im,-w*0.2,-w*0.5-1,w,w);g.restore()}
+function drawTorchHand(g,hd,pic){const im=img(pic,'svg');if(!im)return;const big=/Scheinwerfer|Home Defense/.test(pic),w=big?15:11;g.save();g.translate(hd[0],hd[1]);g.rotate(-0.1);g.drawImage(im,-w*0.2,-w*0.5-1,w,w);g.restore()}
 function drawHiker(g,x,y,s,o){
   const L=o.look,ph=o.phase||0,mode=o.mode||'idle';
   const bw=[0.92,1,1.1][L.build||0]*(L.gender?0.94:1);
@@ -4083,12 +4083,13 @@ const hopM=mode==='hop',hp=o.hop||{air:0,c:0,leg:0},walk=mode==='walk'||mode==='
   const phone=(px,py,w=7,h=11,col='#222')=>{g.fillStyle=col;rr(g,px-w/2,py-h/2,w,h,2);g.fill();g.fillStyle='#7ec8ff';g.fillRect(px-w/2+1,py-h/2+1,w-2,h-3)};
   if(mode==='selfie'||mode==='hund'){ln(g,shx,shy,20,hipY-48);phone(22,hipY-52)}
   else if(mode==='landschaft'){ln(g,shx,shy,22,hipY-36);phone(26,hipY-38,11,7)}
-  else if(mode==='video'||mode==='live'){ln(g,shx,shy,18,hipY-30);ln(g,shx,shy,14,hipY-26);g.fillStyle='#222';rr(g,14,hipY-40,15,10,2);g.fill();g.fillStyle='#e33';g.beginPath();g.arc(27,hipY-38,1.6,0,7);g.fill()}
+  else if(mode==='video'||mode==='live'){const bb=Math.sin((o.tm||0)*3.2)*2.2;ln(g,shx,shy,18,hipY-30+bb);ln(g,shx,shy,14,hipY-26+bb);g.fillStyle='#222';rr(g,14,hipY-40+bb,15,10,2);g.fill();g.fillStyle='#e33';g.beginPath();g.arc(27,hipY-38+bb,1.6,0,7);g.fill()}
   else if(mode==='talk'){ln(g,shx,shy,14,hipY-40);phone(15,hipY-44);
     g.fillStyle='#fff';rr(g,20,hipY-78,30,18,6);g.fill();g.fillStyle='#333';g.font='12px sans-serif';g.textAlign='center';g.fillText('…',35,hipY-65)}
   else if(mode==='drone'){ln(g,shx,shy,12,hipY-14);ln(g,shx,shy,8,hipY-12);g.fillStyle='#222';rr(g,4,hipY-20,16,9,3);g.fill()}
   else if(mode==='work'||mode==='sit'){ln(g,shx,shy,12,hipY-12);ln(g,shx,shy,8,hipY-10)}
   else if(hopM){arm(0.95+0.5*hp.air,-0.4);const hd=arm(-0.8-0.4*hp.air,0.3);if(o.torch)drawTorchHand(g,hd,o.torch);if(o.poles){g.strokeStyle='#777';g.lineWidth=2;ln(g,hd[0],hd[1],hd[0]+14,hd[1]+10)}}
+  else if(o.cam&&legs){arm(-legs[1].a1*0.7-0.05,0.4);const bb=Math.sin((o.tm||0)*4.2)*2.6+Math.sin(ph*2)*0.8;ln(g,shx,shy,18,hipY-30+bb);ln(g,shx,shy,14,hipY-26+bb);g.fillStyle='#222';rr(g,14,hipY-40+bb,15,10,2);g.fill();g.fillStyle='#e33';g.beginPath();g.arc(27,hipY-38+bb,1.6,0,7);g.fill()}
   else if(legs){ // gegengleicher Armschwung mit Ellbogen
     const k=climbM?1.1:0.7,bd=climbM?1.0:0.45;
     arm(-legs[1].a1*k-0.05,bd*0.8);const hd=(o.torch&&!climbM)?arm(1.2,-0.2):arm(-legs[0].a1*k+0.1,bd);
@@ -5253,6 +5254,7 @@ function heroMode(){
   if(H.crossing&&H.crossing.kind==='wade'&&H.hop)return 'hop';
 if(H.crossing&&(H.crossing.kind==='detour'||H.crossing.kind==='ice'))return 'walk';
   if(H.live&&H.action&&H.action.kind==='live')return 'live';
+  if(H.shot&&H.shot.type==='video'&&!H.shot.noclip&&H.moving)return 'walk';
   if(H.shot&&!H.shot.noclip||H.shot)return H.shot.type;
   if(H.action){const k=H.action.kind;if(['eat','cook','drink','fire','wood','feed','search','fix','aid','forage','fish','refill','treat','tent','talk','fans','ftarp','solar'].includes(k))return (k==='tent'||k==='forage'||k==='fans'||k==='talk'||k==='refill')?'idle':'work'}
   if(H.moving&&H.side&&H.side.kind==='climb'&&env.grade>0.08)return 'climb';
@@ -5408,7 +5410,7 @@ g.restore();
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
-drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,hop:H.hop,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
+drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,cam:!!(H.shot&&H.shot.type==='video'&&!H.shot.noclip),hop:H.hop,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
 
