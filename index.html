@@ -3836,6 +3836,36 @@ function fsUpdate(walking){
 }
 function fsOk(){return FS.cur&&FS.buf[FS.cur.key]}
 setInterval(()=>{if(FS.cur&&(screen!=='hike'||!H||H.ended||!H.speed||MODAL||H.sleep&&H.sleep.active)){FS.cur.v.gain.setTargetAtTime(0,AU.ctx.currentTime,0.2);if(screen!=='hike'||!H||H.ended){const o=FS.cur;try{o.s.stop(AU.ctx.currentTime+0.5)}catch(e){}FS.cur=null;FS.key=null}}},700);
+/* ---------- Einzelschritte (Schnee), exakt am Fußaufsatz der Laufanimation ---------- */
+const STEP_SNOW=[1,2,3,4,5,6,7,8].map(n=>'0'+n+'_step on snow.mp3');
+const FT={i:undefined,last:-1,par:0,on:{}};
+function stepSurface(){return (env.snow>0.35||env.biome==='schnee')?'snow':null}
+function footLoad(){STEP_SNOW.forEach(n=>{if(SB[n]===undefined)sbLoad(n)})}
+function footOnset(n,b){ // erster hörbarer Moment der Datei (Stille am Anfang überspringen)
+  if(FT.on[n]!==undefined)return FT.on[n];
+  const d=b.getChannelData(0);let k=0;const th=0.04;for(;k<d.length;k++)if(Math.abs(d[k])>th)break;
+  return FT.on[n]=Math.max(0,k/b.sampleRate-0.012);
+}
+function footPlay(){
+  if(!AU.ok||!AU.ctx||(G&&G.mute))return;
+  const sf=stepSurface();if(!sf)return;
+  footLoad();
+  const ready=STEP_SNOW.filter(n=>SB[n]);if(!ready.length)return;
+  let n;do{n=ready[Math.floor(Math.random()*ready.length)]}while(ready.length>1&&n===FT.last);FT.last=n;
+  const b=SB[n],c=AU.ctx,src=c.createBufferSource();src.buffer=b;
+  const g=c.createGain(),pan=c.createStereoPanner?c.createStereoPanner():null;
+  const sp=clamp(H.speed||1,1,4),slow=H.shot&&H.shot.type==='video'?0.9:1;
+  g.gain.value=clamp((0.5+Math.random()*0.15)*(0.9+0.06*sp)*slow*(env.snow>0.7?1.1:1),0.2,1);
+  src.playbackRate.value=(0.95+Math.random()*0.12)*(1+0.03*(sp-1));
+  FT.par^=1;if(pan)pan.pan.value=(FT.par?-0.12:0.12);
+  src.connect(g);if(pan){g.connect(pan);pan.connect(AU.master)}else g.connect(AU.master);
+  src.start(0,footOnset(n,b));
+}
+function footTick(ph){
+  const idx=Math.floor((ph-Math.PI/2)/Math.PI);
+  if(FT.i===undefined){FT.i=idx;return}
+  if(idx!==FT.i){const d=idx-FT.i;FT.i=idx;if(d>0&&d<=2&&H.speed>0&&H.speed<=4&&!H.sleep.active)footPlay()}
+}
 function stepSound(){
   const soft=env.snow>0.5?0.5:1;
   if(env.biome==='berg')burst(0.05,'bandpass',1500,0.12*soft,0,2);
@@ -4079,6 +4109,7 @@ function lakeUpdate(dt){
 }
 setInterval(()=>{if(LAKEL.cur&&(screen!=='hike'||!H||H.ended)){try{LAKEL.cur.s.stop()}catch(e){}LAKEL.cur=null}},1500);
 function ambUpdate(dt){
+  try{if(env.snow>0.2||env.biome==='schnee')footLoad()}catch(e){}
   try{owlTick(dt)}catch(e){}
   try{wxUpdate(dt)}catch(e){}
   try{lakeUpdate(dt)}catch(e){}
@@ -5577,6 +5608,7 @@ g.restore();
     const ay=H.sleep.active?groundY(H.camp.x)+2:heroY(H.x)+sideOff(H.x)+2;
     g.save();if(hm==='climb'){const ca=-Math.atan2(groundY(H.x+24)-groundY(H.x-24),48)*0.15;g.translate(ax,ay);g.rotate(ca);g.translate(-ax,-ay)}
 if((H.dir||1)<0){g.translate(ax,0);g.scale(-1,1);g.translate(-ax,0)}
+if(hm==='walk'||hm==='climb'){try{footTick(H.phase)}catch(e){}}else FT.i=undefined;
 drawHiker(g,ax,ay,1.2,{look:lookNow(),phase:H.phase,mode:hm,cam:!!(H.shot&&H.shot.type==='video'&&!H.shot.noclip),hop:H.hop,limp,lamp:(()=>{const b=lightDev();return !!b&&b.L.kind==='head'&&env.dark>0.4})(),torch:(()=>{const b=lightDev();if(!b||b.L.kind!=='hand'||env.dark<=0.4)return null;const d=GEAR.find(x=>x.id===b.id);return d&&d.pic||null})(),packColor:packCol(g0.pack),packScale:g0.pack&&g0.pack.vol?clamp(0.72+g0.pack.vol*0.0085,0.85,1.5):1,nopack:packIsDown()||!g0.pack,energy:H.body.energy,poles:g0.tools.poles&&H.moving,tent:!!g0.shelter,breath:env.temp<3,tm});
 g.restore();
   }
