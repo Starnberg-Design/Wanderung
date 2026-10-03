@@ -80,7 +80,7 @@ input[type=range]{accent-color:var(--acc)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block}
 .hud{position:absolute;pointer-events:none;z-index:3}
 .pill{background:rgba(8,16,12,.76);border:1px solid #ffffff1c;border-radius:12px;padding:5px 10px;font-size:14px;color:#fff;line-height:1.35}
-#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:4px 7px;display:flex;gap:8px;align-items:center}#h-tl .st{width:56px;font-size:11px}#h-tl .st .tr{min-width:0;flex:1}@media(max-height:430px){#recsl{top:calc(50% - 4px);transform:translateY(-50%) scale(.82);transform-origin:right center}#h-tc .pill{padding:3px 8px}}#h-tl .sb{gap:1px 5px}#h-tl .dogb{margin:0;padding:0 0 0 7px;border-top:0;border-left:1px solid #ffffff22;grid-template-columns:auto;gap:1px}
+#h-tl{left:calc(4px + var(--sl));top:calc(4px + var(--st))}#h-tl .pill{padding:4px 7px;display:flex;gap:8px;align-items:center}#h-tl .st{width:56px;font-size:11px}#h-tl .st .tr{min-width:0;flex:1}@media(max-height:430px){#h-tc .pill{padding:3px 8px}}#h-tl .sb{gap:1px 5px}#h-tl .dogb{margin:0;padding:0 0 0 7px;border-top:0;border-left:1px solid #ffffff22;grid-template-columns:auto;gap:1px}
 #h-tc{left:50%;transform:translateX(-50%);top:calc(6px + var(--st));text-align:center}
 .dl{font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25;margin-bottom:1px}.se{font-size:14px;font-weight:700;margin-left:4px;white-space:nowrap}
 .se-Frühling{color:#8fe388}.se-Sommer{color:#ffd54a}.se-Herbst{color:#ff9a4a}.se-Winter{color:#9fd4ff}
@@ -116,19 +116,14 @@ input[type=range]{accent-color:var(--acc)}
 #drawer h4{margin:8px 0 4px;font-size:.9em;color:var(--dim)}
 .acts{display:grid;grid-template-columns:1fr 1fr;gap:5px}.acts button{font-size:.85em;padding:7px 6px}
 .chk{display:flex;gap:6px;align-items:center;font-size:.9em;margin:5px 0}
-#recsl{right:calc(8px + var(--sr));top:calc(50% + 8px);transform:translateY(-50%);display:flex;align-items:stretch;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:14px;padding:8px 8px 26px 10px;pointer-events:auto;flex-wrap:nowrap}
+#recsl{flex:none;display:flex;align-items:center;gap:6px;background:rgba(8,16,12,.6);border:1px solid #ffffff1c;border-radius:12px;padding:4px 10px 4px 8px;pointer-events:auto;width:min(34vw,236px);height:48px}
+#rwrap{flex:1;min-width:0}
 #spdctl{display:flex;align-items:center;gap:2px;background:#0a1410b0;border:1px solid #ffffff22;border-radius:14px;padding:2px 3px}
 #spdctl button{background:transparent;border:0;color:#fff;font-size:15px;width:26px;height:44px;padding:0;cursor:pointer}
 #sp-v{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:38px;color:#fff;font-size:19px;line-height:1}#sp-v small{font-size:11px;margin-top:2px}
 .ctry{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.cbtn{display:flex;flex-direction:column;align-items:flex-start;padding:8px 14px}.cbtn.on{background:var(--acc);color:#04120a}.cbtn small{opacity:.8}
 .grp{margin:16px 0 6px;font-size:16px;color:var(--acc)}
 .dogb{display:grid;grid-template-columns:repeat(2,auto);gap:2px 6px;margin-top:4px;padding-top:4px;border-top:1px solid #ffffff22}
-#rlab{display:flex;flex-direction:column;justify-content:space-between;height:112px;font-size:12px;text-align:right;color:#fff9}
-#rlab span{cursor:pointer;line-height:1}#rlab span.on{color:#fff;font-weight:700}
-#rtrk{position:relative;width:30px;height:112px;touch-action:none;cursor:pointer;flex:none}
-#rtrk:before{content:"";position:absolute;left:12px;width:6px;top:0;bottom:0;background:#0009;border:1px solid #fff4;border-radius:4px}
-#rknob{position:absolute;left:3px;width:24px;height:24px;margin-top:-12px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:top .12s}
-.rcam{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:17px}
 #livepanel .seg button{font-size:12px;padding:5px 7px;min-height:30px}#livepanel{position:absolute;right:calc(188px + var(--sr));bottom:calc(58px + var(--sb));width:min(42vw,270px);z-index:4;pointer-events:auto}
 #rot{display:none;position:absolute;inset:0;z-index:9;background:#000d;align-items:center;justify-content:center;text-align:center;flex-direction:column;gap:10px;font-size:1.2em}
 @media(orientation:portrait){#s-hike.active #rot{display:flex}}
@@ -137,14 +132,22 @@ input[type=range]{accent-color:var(--acc)}
 #dg-pan{position:absolute;left:calc(8px + var(--sl));top:calc(90px + var(--st));width:min(48vw,250px);font-size:12px;pointer-events:none}
 #dg-ctl{position:absolute;left:calc(8px + var(--sl));right:calc(8px + var(--sr));bottom:calc(8px + var(--sb));display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none}
 #dgui button{pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none}
-.dgs{display:flex;gap:10px;padding:10px;border-radius:30px;background:rgba(8,16,12,.72);border:1px solid #ffffff33}
+.dgs{display:flex;gap:14px;padding:14px;border-radius:38px;background:rgba(8,16,12,.72);border:1px solid #ffffff33}
 .dgs.dgl{flex-direction:column}
-.dgs button{width:62px;height:62px;border-radius:50%;font-size:26px;padding:0;background:rgba(40,60,50,.9)}
+.dgs button{width:88px;height:88px;border-radius:50%;font-size:36px;padding:0;background:rgba(40,60,50,.9)}
 .dgs button.hold{background:var(--acc2);border-color:var(--acc)}
 .dgm{margin-bottom:6px}
-#dg-rth{min-width:150px}
-@media(max-height:430px){.dgs{padding:7px;gap:7px}.dgs button{width:50px;height:50px;font-size:21px}#dg-pan{font-size:11px;top:calc(76px + var(--st));width:min(40vw,220px)}}
+#dg-rth{min-width:180px;height:64px;font-size:1.15em;border-radius:32px}
+@media(max-height:560px){.dgs{padding:9px;gap:9px}.dgs button{width:70px;height:70px;font-size:30px}#dg-rth{min-width:150px;height:54px}}
+@media(max-height:430px){.dgs{padding:7px;gap:7px}.dgs button{width:62px;height:62px;font-size:26px}#dg-pan{font-size:11px;top:calc(76px + var(--st));width:min(40vw,220px)}}
 #s-hike.dg #h-bot,#s-hike.dg #recsl,#s-hike.dg #h-mid,#s-hike.dg #livepanel,#s-hike.dg #sosb,#s-hike.dg #drawer{display:none!important}
+#rlab{position:relative;height:14px;color:#fff9;font-size:10.5px;margin-top:1px}
+#rlab span{position:absolute;top:0;transform:translateX(-50%);cursor:pointer;line-height:14px;white-space:nowrap;padding:0 2px}#rlab span.on{color:#fff;font-weight:700}
+#rlab span[data-l="3"]{transform:translateX(-84%)}#rlab span[data-l="0"]{transform:translateX(-14%)}
+#rtrk{position:relative;height:24px;touch-action:none;cursor:pointer}
+#rtrk:before{content:"";position:absolute;left:12px;right:12px;top:9px;height:6px;background:#0009;border:1px solid #fff4;border-radius:4px}
+#rknob{position:absolute;top:0;left:0;width:24px;height:24px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 6px #0008;transition:left .12s}
+.rcam{font-size:18px;flex:none}
 /* Modal */
 #modal{display:none;position:fixed;inset:0;background:#000a;align-items:center;justify-content:center;z-index:50;padding:8px}
 #modal.open{display:flex}
@@ -708,13 +711,13 @@ const GEAR=[
   {id:'phone_good',cat:'rec',kind:'phone',name:'Flaggschiff-Smartphone',e:'📱',price:240,kg:0.2,q:0.78,time:1.0,rate:2.6,fragile:0.0006,desc:'Gute Aufnahmen, robust. Filmt in hoher Qualität und braucht dafür etwas mehr Strom.'},
   {id:'camera',cat:'rec',kind:'cam',name:'Systemkamera',e:'📷',price:320,kg:0.9,q:1.0,time:1.5,rate:2.8,fragile:0.0004,desc:'Beste Handaufnahmen, dauert aber länger.'},
   {id:'drone_k',cat:'rec',kind:'drone',name:'Kompaktdrohne',e:'🛸',img:'Kompaktdrone',price:1500,kg:0.6,q:0.65,qr:[0.60,0.70],time:1,rate:0,fragile:0.0004,
-   dr:{hold:4.5,wres:8,sway:0.34,vmax:230,acc:320,setup:2,pack:1.5,dur:100,prem:14,base:0.0006,c:0.012,w:122,vb:[271.37,82.59],rotors:[[0.22,0.23,0.17],[0.177,0.5,0.17],[0.78,0.23,0.17],[0.825,0.5,0.17]]},
+   dr:{hold:4.5,wres:8,sway:0.34,vmax:230,acc:320,setup:2,pack:1.5,dur:100,prem:14,base:0.0006,c:0.012,land:'Drone Landing Kompaktdrohne.mp3',lt:7.9,w:122,vb:[271.37,82.59],rotors:[[0.22,0.23,0.17],[0.177,0.5,0.17],[0.78,0.23,0.17],[0.825,0.5,0.17]]},
    desc:'Klein, leicht und flink: in wenigen Minuten auf- und abgebaut und schneller unterwegs. Die Bildqualität ist eher mittelmäßig. Ideal bei wenig bis mittlerem Wind, bei mehr Wind wird sie leicht abgetrieben. Mit nur 600 g gerade für lange Touren beliebt.'},
   {id:'drone_m',cat:'rec',kind:'drone',name:'Multifunktionsdrohne',e:'🛸',img:'Multifunktionsdrone',price:2000,kg:2.0,q:0.75,qr:[0.70,0.80],time:1,rate:0,fragile:0.0004,
-   dr:{hold:8,wres:13,sway:0.2,vmax:160,acc:230,setup:4,pack:3,dur:130,prem:22,base:0.0008,c:0.016,w:116,vb:[254.45,133.7],rotors:[[0.206,0.07,0.2],[0.79,0.07,0.2]]},
+   dr:{hold:8,wres:13,sway:0.2,vmax:160,acc:230,setup:4,pack:3,dur:130,prem:22,base:0.0008,c:0.016,land:'Drone Landing Multifunktionsdrohne.mp3',lt:5.2,w:116,vb:[254.45,133.7],rotors:[[0.206,0.07,0.2],[0.79,0.07,0.2]]},
    desc:'Solider Allrounder mit guter Bildqualität und mittlerer bis starker Windstabilität. Bei Starkwind stürzt sie aber öfter nach kurzer Zeit ab. Wiegt etwa 2 kg.'},
   {id:'drone_u',cat:'rec',kind:'drone',name:'Ultra 8K Drohne',e:'🛸',img:'Ultra 8K Drone',price:4000,kg:3.5,q:0.95,qr:[0.90,1.0],time:1,rate:0,fragile:0.0002,
-   dr:{hold:15,wres:24,sway:0.08,vmax:170,acc:250,setup:5,pack:4,dur:150,prem:48,base:0.00015,c:0.010,w:140,vb:[307.28,88.96],rotors:[[0.13,0.1,0.12],[0.25,0.085,0.14],[0.75,0.085,0.14],[0.87,0.15,0.12]]},
+   dr:{hold:15,wres:24,sway:0.08,vmax:170,acc:250,setup:5,pack:4,dur:150,prem:48,base:0.00015,c:0.010,land:'Drone Landing 8K Ultra.mp3',lt:7.5,w:140,vb:[307.28,88.96],rotors:[[0.13,0.1,0.12],[0.25,0.085,0.14],[0.75,0.085,0.14],[0.87,0.15,0.12]]},
    desc:'Das Profi-Modell: überragende 8K-Bilder, fliegt auch bei Sturm und stürzt nur sehr selten ab. Dafür wiegt sie 3,5 kg – eher etwas für kürzere Touren mit wenig Proviant.'},
   {id:'pb_small',cat:'power',pb:200,name:'Powerbank 10.000 mAh',e:'🔋',price:30,kg:0.25,desc:'Lädt Geräte insgesamt um 200 % auf.'},
   {id:'pb_big',cat:'power',pb:400,name:'Powerbank 20.000 mAh',e:'🔋',price:60,kg:0.45,desc:'Lädt Geräte insgesamt um 400 % auf.'},
@@ -1704,6 +1707,48 @@ function setRec(v){H.rec=v;H.droneTimer=Math.min(H.droneTimer,DRONE_INT[v])}
 
 /* ---------- Drohnen: Wind, Absturz, Versicherung, Flug-Minispiel ---------- */
 let DG=null;
+const DSND_START='Drone Start and Take Off.mp3',DSND_BUF={};
+function dsndLoad(name){
+  if(DSND_BUF[name]!==undefined||!AU.ctx)return;
+  DSND_BUF[name]=null;
+  fetch(encodeURI(name)).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((ok,no)=>AU.ctx.decodeAudioData(b,ok,no))).then(buf=>{DSND_BUF[name]=buf}).catch(()=>{DSND_BUF[name]=false});
+}
+function dronePreload(){auUnlock();dsndLoad(DSND_START);Object.keys(H.dev).forEach(id=>{const d=H.dev[id].def;if(d.kind==='drone')dsndLoad(d.dr.land)})}
+function dsndPlay(name,o){
+  o=o||{};const b=DSND_BUF[name];if(!b||!AU.ok||!AU.ctx)return null;
+  const c=AU.ctx,src=c.createBufferSource();src.buffer=b;
+  const g=c.createGain(),t0=c.currentTime,off=Math.min(Math.max(0,o.off||0),b.duration-0.2),dur=b.duration-off,vol=o.gain||1,fi=o.fadeIn||0,fo=Math.min(o.fadeOut||0.5,dur*0.5);
+  g.gain.setValueAtTime(fi?0.0001:vol,t0);
+  if(fi)g.gain.linearRampToValueAtTime(vol,t0+fi);
+  g.gain.setValueAtTime(vol,t0+Math.max(fi,dur-fo));g.gain.linearRampToValueAtTime(0.0001,t0+dur);
+  src.connect(g);g.connect(AU.master);src.start(t0,off);
+  const h={s:src,g};if(DG)DG.snd.push(h);return h;
+}
+function dsndStopAll(D,fade){
+  if(!D||!AU.ctx)return;fade=fade||0.25;const c=AU.ctx,t=c.currentTime;
+  for(const h of D.snd){try{const v=h.g.gain.value;h.g.gain.cancelScheduledValues(t);h.g.gain.setValueAtTime(v,t);h.g.gain.linearRampToValueAtTime(0.0001,t+fade);h.s.stop(t+fade+0.05)}catch(e){}}
+  D.snd=[];humStop(D,fade);
+}
+function humStart(D){
+  if(!AU.ok||!AU.ctx||D.hum)return;
+  const c=AU.ctx,g=c.createGain();g.gain.value=0;
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=850;
+  const o1=c.createOscillator(),o2=c.createOscillator(),lfo=c.createOscillator(),lg=c.createGain(),am=c.createGain();
+  o1.type='sawtooth';o2.type='sawtooth';o1.frequency.value=90;o2.frequency.value=137;lfo.frequency.value=23;lg.gain.value=0.3;am.gain.value=0.7;
+  lfo.connect(lg);lg.connect(am.gain);o1.connect(lp);o2.connect(lp);lp.connect(am);am.connect(g);g.connect(AU.master);
+  [o1,o2,lfo].forEach(o=>o.start());
+  g.gain.setTargetAtTime(0.04,c.currentTime+0.4,1.3);
+  D.hum={g,o1,o2,lfo};
+}
+function humSet(D){
+  if(!D.hum||!AU.ctx)return;const t=AU.ctx.currentTime,f=86+Math.abs(D.vx)*0.1+Math.max(0,D.y-D.rest)*0.012+(D.wEff||0)*1.1;
+  D.hum.o1.frequency.setTargetAtTime(f,t,0.15);D.hum.o2.frequency.setTargetAtTime(f*1.52,t,0.15);
+}
+function humStop(D,tc){
+  if(!D||!D.hum||!AU.ctx)return;const c=AU.ctx,h=D.hum;D.hum=null;tc=tc||0.5;
+  h.g.gain.cancelScheduledValues(c.currentTime);h.g.gain.setTargetAtTime(0,c.currentTime,tc);
+  setTimeout(()=>{[h.o1,h.o2,h.lfo].forEach(o=>{try{o.stop()}catch(e){}})},tc*5000+300);
+}
 const kmh=v=>Math.round(v*3.6);
 const windWord=ms=>{const k=ms*3.6;return k<6?'Windstill':k<20?'Leichter Wind':k<39?'Mäßiger Wind':k<61?'Starker Wind':k<89?'Sturm':'Orkan'};
 function windHUD(){const k=Math.round((env.wind||0)*3.6);return ' · <span title="Windrichtung und Stärke">'+((H.wdir||1)>0?'➡️':'⬅️')+' '+k+' km/h</span>'}
@@ -1828,6 +1873,7 @@ function droneAct(){
     buttons:ready.map(id=>{const d=H.dev[id].def;return {label:d.name+' · stabil bis '+kmh(droneHold(d))+' km/h · Akku '+Math.round(H.dev[id].batt)+' %',fn:()=>droneConfirm(id)}}).concat([{label:'Abbrechen'}])});
 }
 function droneConfirm(id){
+  dronePreload();
   const def=H.dev[id].def,dr=def.dr,hold=droneHold(def),lim=droneLimit(def),w=env.wind;
   const go=()=>{beginAction('drone','Baut '+def.name+' auf …',dr.setup,()=>droneBegin(id))};
   if(w<=hold){go();return}
@@ -1843,9 +1889,10 @@ function droneBegin(id){
   const vh=dr.w*dr.vb[1]/dr.vb[0];
   DG={h:H,id,def,dr,dev,off,dir,padGY,vh,rest:vh*0.5,x:0,y:vh*0.5,vx:0,vy:60,tilt:0,mode:'fly',ph:'',t:0,rot:rnd(0,6.28),
     inp:{x:0,y:0},ptc:[],rings:[],ringT:0,targets:null,caught:[],gust:0,gT:1,gTarget:0,wph:rnd(0,6.28),wEff:env.wind,stress:0,
-    msg:'',msgT:0,flash:0,air:false,endT:0,safeY:0,wsock:0,hudT:0,spin:1,blown:null,warnB:false,bat0:dev.batt,panDirty:true};
+    msg:'',msgT:0,flash:0,air:false,endT:0,safeY:0,wsock:0,hudT:0,spin:0,blown:null,warnB:false,bat0:dev.batt,panDirty:true,snd:[],hum:null,pre:2.4,ft:0,ld:null,ldPlayed:false};
   DG.targets=genTargets(padGY,CHAR_SX()+off);
   H.walking=false;
+  dronePreload();dsndPlay(DSND_START,{off:1.1,gain:0.9,fadeOut:0.8});
   $('#s-hike').classList.add('dg');
   droneUI();sfx('notify');
   droneSay('🛸 Steuere mit ▲ ▼ ◀ ▶ und fliege die Symbole in der Luft an. Mit 🏠 fliegt sie automatisch zurück.');
@@ -1891,10 +1938,18 @@ window.addEventListener('keyup',e=>{
 });
 function droneStep(dt){
   const D=DG;if(!D)return;
-  if(!H||D.h!==H||H.ended){DG=null;droneUIOff();return}
+  if(!H||D.h!==H||H.ended){dsndStopAll(D,0.2);DG=null;droneUIOff();return}
   if(MODAL)return;
   const dr=D.dr,def=D.def,dev=D.dev,wd=(H.wdir||1)>0?1:-1;
-  D.t+=dt;D.rot+=dt*(D.mode==='landed'||D.mode==='crashed'?0:1);
+  D.t+=dt;
+  if(D.pre>0){ // Rotoren laufen an, Abheben passend zum Startsound
+    D.pre-=dt;D.spin=clamp(1-D.pre/2.4,0,1);D.rot+=dt*60*D.spin;
+    if(D.pre<=0){D.pre=0;D.spin=1;D.vy=60;humStart(D)}
+    if(D.msgT>0)D.msgT-=dt;
+    return;
+  }
+  D.ft+=dt;
+  D.rot+=dt*(D.mode==='landed'||D.mode==='crashed'?0:1)*(D.spin||1);
   if(D.msgT>0)D.msgT-=dt;
   if(D.flash>0)D.flash-=dt*2;
   if(D.mode==='landed'||D.mode==='crashed'){D.endT-=dt;if(D.endT<=0)droneConclude();return}
@@ -1931,7 +1986,7 @@ function droneStep(dt){
   const windA=wd*(dr.sway*wEff*20+resid*70);
   if(D.mode==='fly'){
     const ctl=1/(1+resid*0.12);
-    if(D.t<1.1)iy=1;
+    if(D.ft<1.1)iy=1;
     D.vx+=(ix*dr.acc*ctl+windA)*dt;
     D.vy+=(iy*dr.acc*0.85*ctl+Math.sin(D.t*2.3+D.wph)*wEff*0.7-resid*10)*dt;
     D.vx-=D.vx*(ix?0.95:1.7)*dt;D.vy-=D.vy*(iy?1.1:3.2)*dt;
@@ -1939,8 +1994,10 @@ function droneStep(dt){
     const wc=wd*(dr.sway*wEff*20*0.35+resid*70);
     const k=Math.min(1,dt*3);
     if(D.ph==='up'){const e=D.safeY-D.y;D.vy+=(clamp(e*2.4,-dr.vmax*0.55,dr.vmax*0.55)-D.vy)*k;D.vx+=(-D.vx)*k;if(e<10)D.ph='cross'}
-    else if(D.ph==='cross'){const e=-D.x;D.vx+=(clamp(e*1.8,-dr.vmax*0.85,dr.vmax*0.85)-D.vx)*Math.min(1,dt*2.4);D.vy+=(clamp((D.safeY-D.y)*2.4,-60,60)-D.vy)*k;if(Math.abs(e)<14&&Math.abs(D.vx)<45)D.ph='down'}
-    else{D.vx+=(clamp(-D.x*3,-60,60)-D.vx)*Math.min(1,dt*4);D.vy+=(-Math.max(22,Math.min((D.y-D.rest)*0.9,dr.vmax*0.6))-D.vy)*k}
+    else if(D.ph==='cross'){const e=-D.x;D.vx+=(clamp(e*1.8,-dr.vmax*0.85,dr.vmax*0.85)-D.vx)*Math.min(1,dt*2.4);D.vy+=(clamp((D.safeY-D.y)*2.4,-60,60)-D.vy)*k;if(Math.abs(e)<14&&Math.abs(D.vx)<45){D.ph='down';droneLandStart()}}
+    else{D.vx+=(clamp(-D.x*3,-60,60)-D.vx)*Math.min(1,dt*4);
+      const L=D.ld;if(L){L.t+=dt;const u=clamp(L.t/L.Td,0,1);D.vy=-L.h0*1.7*Math.pow(1-u,0.7)/L.Td;if(u>=1)D.vy=-40}
+      else D.vy+=(-Math.max(22,Math.min((D.y-D.rest)*0.9,dr.vmax*0.6))-D.vy)*k}
     D.vx+=wc*dt;D.vy-=resid*8*dt;
   }else if(D.mode==='blown'){
     D.bT+=dt;D.bUp-=dt;D.vx+=wd*260*dt;D.vy+=(D.bUp>0?70:-80)*dt;D.vx=clamp(D.vx,-300,300);
@@ -1948,7 +2005,7 @@ function droneStep(dt){
     D.vy-=300*dt;D.vx-=D.vx*0.6*dt;
   }
   D.vx=clamp(D.vx,-dr.vmax*1.3,dr.vmax*1.3);if(D.mode!=='falling'&&D.mode!=='blown')D.vy=clamp(D.vy,-dr.vmax*0.8,dr.vmax*0.8);
-  D.x+=D.vx*dt;D.y+=D.vy*dt;
+  D.x+=D.vx*dt;D.y+=D.vy*dt;humSet(D);
   const tt=clamp(D.vx/dr.vmax*0.32+wd*Math.min(1,wEff/Math.max(1,hold))*0.1+(D.mode==='blown'?wd*0.5:0),-0.7,0.7);
   D.tilt+=(tt-D.tilt)*Math.min(1,dt*5);
   /* Begrenzung (außer Wegpusten) */
@@ -1963,7 +2020,8 @@ function droneStep(dt){
   if(D.air&&hT<=2){
     const sp=Math.hypot(D.vx*0.6,D.vy);
     if(D.mode==='blown'||D.mode==='falling'||sp>135||stress>1)droneCrashNow(D.cause||(stress>1?'wind':'hit'));
-    else{D.mode='landed';D.endT=0.9;D.vx=D.vy=0;D.y=D.rest+(D.padGY-gT);D.landed=true}
+    else{D.mode='landed';D.endT=1.4;D.vx=D.vy=0;D.y=D.rest+(D.padGY-gT);D.landed=true;humStop(D,0.3);
+      if(!D.ldPlayed){D.ldPlayed=true;dsndPlay(dr.land,{off:Math.max(0,dr.lt-2.6),gain:0.95,fadeIn:0.15,fadeOut:0.7})}}
   }
   if(D.mode==='blown'){
     const px=sxb+D.x;
@@ -1981,7 +2039,13 @@ function droneStep(dt){
     }
   }
 }
-function droneBlow(wd){const D=DG;D.mode='blown';D.cause='wind';D.bUp=rnd(0.4,1.1);D.bT=0;D.vx=wd*rnd(60,120);D.vy=rnd(10,50);droneSay('💨 Eine Böe erfasst die Drohne und trägt sie davon!');sfx('warn')}
+function droneLandStart(){
+  const D=DG,dr=D.dr;if(!D||D.ldPlayed)return;
+  const h0=Math.max(10,D.y-D.rest),Td=clamp(h0/45,1.7,dr.lt);
+  D.ld={t:0,Td,h0};D.ldPlayed=true;humStop(D,0.8);
+  dsndPlay(dr.land,{off:Math.max(0,dr.lt-Td),gain:0.95,fadeIn:0.2,fadeOut:0.7});
+}
+function droneBlow(wd){const D=DG;humStop(D,1.5);D.mode='blown';D.cause='wind';D.bUp=rnd(0.4,1.1);D.bT=0;D.vx=wd*rnd(60,120);D.vy=rnd(10,50);droneSay('💨 Eine Böe erfasst die Drohne und trägt sie davon!');sfx('warn')}
 function droneCapture(t){
   const D=DG,T=t.def;t.done=true;t.cap=1;
   const shake=clamp(D.stress*1.2+D.wEff/Math.max(1,droneHold(D.def))*0.25,0,1);
@@ -1997,12 +2061,13 @@ function droneCrashNow(cause,farAway){
   const blown=cause==='wind';
   const res=droneCrash(D.id,cause);
   D.crash={res,blown,far:!!farAway,why:blown?(farAway?'Der Wind hat die Drohne weggepustet. Sie ist irgendwo auf dem Weg, etwa '+Math.round(rnd(120,520))+' m entfernt, abgestürzt.':'Der Wind hat die Drohne gegen den Boden gedrückt.'):cause==='batt'?'Der Akku war leer – die Drohne ist abgestürzt.':cause==='tech'?'Plötzlicher Antriebsausfall: die Drohne ist abgestürzt.':'Zu harte Landung: die Drohne ist am Boden aufgeschlagen.'};
-  D.mode='crashed';D.endT=farAway?0.3:1.3;D.vx=D.vy=0;
+  D.mode='crashed';D.endT=farAway?0.3:1.3;D.vx=D.vy=0;dsndStopAll(D,0.15);
   if(!farAway){for(let i=0;i<26;i++)D.ptc.push({k:'deb',x:D.x,y:groundY(H.x+D.off+D.x),vx:rnd(-160,160),vy:rnd(-220,-40),life:rnd(0.6,1.6),max:1.6,r:rnd(1.5,3.5),rot:rnd(0,6)})}
   sfx('bad');
 }
 function droneConclude(){
   const D=DG;if(!D)return;
+  humStop(D,0.3);
   DG=null;droneUIOff();
   const fm=Math.round(D.t*0.1);
   if(D.mode==='crashed'&&D.crash){
@@ -2034,7 +2099,7 @@ function droneDraw(g,tm,dt){
   const hT=Math.max(0,D.y-(D.padGY-gT)-D.rest);
   const wd=(H.wdir||1)>0?1:-1,w=D.wEff||env.wind;
   const run=D.mode!=='landed'&&D.mode!=='crashed';
-  const k=run?clamp(1-hT/170,0,1):0,kk=Math.pow(k,1.3);
+  const k=run?clamp(1-hT/170,0,1):0,kk=Math.pow(k,1.3)*(D.spin<1?D.spin*D.spin:1);
   const dcol=dustRGB(),sdt=Math.min(dt,0.05);
   /* Partikel erzeugen */
   if(run&&MODAL==null){
@@ -2115,7 +2180,7 @@ function droneDraw(g,tm,dt){
     if(im)g.drawImage(im,-w0/2,-h0/2,w0,h0);
     else{g.fillStyle='#ddd';rr(g,-w0/2,-h0*0.3,w0,h0*0.5,8);g.fill()}
     /* sichtbare Rotordrehung */
-    const spinF=D.mode==='landed'?Math.max(0,D.endT/0.9):1;
+    const spinF=D.mode==='landed'?Math.max(0,Math.min(1,D.endT/0.9)):Math.min(1,(D.spin||1)*1.4);
     for(const r of dr.rotors){
       const hx=(r[0]-0.5)*w0,hy=(r[1]-0.5)*h0,bl=r[2]*w0,ry=bl*0.15;
       g.fillStyle='rgba(236,242,248,'+(0.5*spinF).toFixed(3)+')';g.beginPath();g.ellipse(hx,hy,bl,ry,0,0,7);g.fill();
@@ -3738,8 +3803,86 @@ function chirp(){
   const base=1900+Math.random()*1800,n=2+Math.floor(Math.random()*4);
   for(let i=0;i<n;i++)tone(base*(1+Math.random()*0.25),0.07,'sine',0.055,i*0.11,base*0.25*(Math.random()>0.5?1:-1));
 }
+/* ---------- Hintergrund-Ambience (Dateien, immer nur EINE gleichzeitig, weiche Überblendung) ---------- */
+const AMB_F={
+  fruehwald:'Forest Spring Ambience - Loop.mp3',
+  tagwald:'forest-daytime-ambience-01_1.mp3',
+  winterwald:'Winter Forest Ambience Loop_1.mp3',
+  regenwald:'34101 Rain in night autumn forest loop-full_1.mp3',
+  nachtwald:'Waldambiente-in-der-Nacht-AmbienceForest MIX64_09.mp3',
+  sommernacht:'Waldambiente-im-Morgengrauen-AMB_JungleVillageNightHeavyCricketsBirds_01_SDLX.mp3',
+  wiese1:'LDj_Audio_MeadowAmbience_V1.mp3',wiese2:'LDj_Audio_MeadowAmbience_V2.mp3',wiese3:'LDj_Audio_MeadowAmbience_V3.mp3',
+  irland:'Frühling und Sommer-Irish Countryside With Distant Dogs 1.wav',
+  reh:'28261 Countryside ambience with barking roe deers loop-full_1.mp3',
+  hunde:'31144 Distant dogs barking on countryside-full_1.mp3',
+  talabend:'Mountain Audio - Countryside Forest Evening_1.mp3',
+  talnacht:'Mountain Audio - Countryside Forest Distant Dog Barking at Night_1.mp3',
+  berg:'Mountain Ambience_1.mp3',
+  bergwind:'Wind_Rocky_Mountain_Steady_Cold_Winter_1_Medium.mp3',
+  sumpf:'SwampAmbienceMix PE012601.mp3'
+};
+const AMB_VOL={fruehwald:1,tagwald:1,winterwald:1,regenwald:0.9,nachtwald:1,sommernacht:0.9,wiese1:1,wiese2:1,wiese3:1,irland:0.9,reh:1,hunde:1,talabend:1,talnacht:0.9,berg:1,bergwind:0.85,sumpf:0.95};
+const AMB={cur:null,key:null,buf:{},want:null,t:0,base:0.42};
+function ambLoad(key){
+  if(AMB.buf[key]!==undefined||!AU.ctx)return;
+  AMB.buf[key]=null;
+  fetch(encodeURI(AMB_F[key])).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((ok,no)=>AU.ctx.decodeAudioData(b,ok,no))).then(buf=>{AMB.buf[key]=buf}).catch(()=>{AMB.buf[key]=false});
+}
+// Wahl nach Biom, Jahreszeit, Tageszeit und Wetter
+function ambPick(){
+  const S=env.season,b=env.biome,night=env.dark>0.62,dusk=!night&&env.dark>0.3&&env.hour>=15,hr=env.hour,rain=env.precip==='rain'&&env.rainI>0.2;
+  const winter=S==='Winter'||env.snow>0.45;
+  const warm=env.temp>11&&(S==='Sommer'||S==='Frühling'||S==='Herbst');
+  const cell=Math.floor(hday())%3;
+  if(b==='sumpf')return 'sumpf';
+  if(b==='berg'||b==='fjaell'||b==='schnee')return (winter||env.wind>9||b==='schnee')?'bergwind':'berg';
+  if(b==='sand'||b==='kies')return null; // Meer-Ambience fehlt noch
+  if(winter)return b==='wald'||b==='tal'?'winterwald':'bergwind';
+  if(b==='wald'){
+    if(rain)return 'regenwald';
+    if(night)return warm&&S!=='Frühling'?'sommernacht':'nachtwald';
+    if(hr<7.5&&warm&&S==='Sommer')return 'sommernacht';
+    return S==='Frühling'?'fruehwald':'tagwald';
+  }
+  // offenes Land, Tal, Straße
+  if(rain&&S==='Herbst'&&b==='tal')return 'regenwald';
+  if(night)return 'talnacht';
+  if(dusk||hr>=19)return 'talabend';
+  if(b==='strasse')return 'hunde';
+  if(b==='tal')return S==='Herbst'?'wiese3':'reh';
+  return (S==='Frühling'||S==='Sommer')?(cell===0?'irland':cell===1?'wiese1':'wiese2'):'wiese3';
+}
+function ambSet(key){
+  if(!AU.ok||!AU.ctx)return;
+  const c=AU.ctx,t=c.currentTime;
+  if(key===AMB.key)return;
+  if(key){ambLoad(key);const b=AMB.buf[key];if(!b){AMB.want=key;return}}
+  const FADE=4;
+  if(AMB.cur){const o=AMB.cur;try{o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0.0001,t+FADE);o.s.stop(t+FADE+0.1)}catch(e){}AMB.cur=null}
+  AMB.key=key;AMB.want=null;
+  if(!key)return;
+  const s=c.createBufferSource();s.buffer=AMB.buf[key];s.loop=true;
+  const g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(1,t+FADE);
+  const v=c.createGain();v.gain.value=0;
+  s.connect(g);g.connect(v);v.connect(AU.master);
+  s.start(t,Math.random()*Math.max(1,s.buffer.duration-1));
+  AMB.cur={s,g,v,key};
+}
+function ambUpdate(dt){
+  if(!AU.ok||!AU.ctx||!H)return;
+  AMB.t-=dt;
+  if(AMB.t<=0){AMB.t=2;let k=null;try{k=ambPick()}catch(e){}
+    if(k&&AMB.buf[k]===undefined)ambLoad(k);
+    if(k!==AMB.key&&(!k||AMB.buf[k]))ambSet(k);
+    else if(AMB.want&&AMB.buf[AMB.want])ambSet(AMB.want)}
+  if(AMB.cur){const mute=G&&G.mute;const duck=DG?0.35:H.sleep&&H.sleep.active?0.6:1;
+    const stormy=env.wind>12?0.75:1;
+    AMB.cur.v.gain.setTargetAtTime(mute?0:AMB.base*(AMB_VOL[AMB.cur.key]||1)*duck*stormy,AU.ctx.currentTime,0.6)}
+}
+setInterval(()=>{if(AMB.cur&&(screen!=='hike'||!H||H.ended))ambSet(null)},1500);
 function ambientUpdate(dt){
   if(!AU.ok||!H||H.ended)return;
+  ambUpdate(dt);
   const t=AU.ctx.currentTime,mute=G&&G.mute,k=0.35;
   const setG=(l,v)=>l.g.gain.setTargetAtTime(mute?0:v,t,k);
   const gust=0.75+0.25*Math.sin(tm*0.9)+0.1*Math.sin(tm*2.3);
@@ -4984,56 +5127,69 @@ function uiSafe(){const now=performance.now();if(now-_US.t<400)return _US;_US.t=
 function drawCtx(g,tm,sx,gy){
   if(DG)return;
   if(H.sleep.active&&!H.ended){const ax=H.camp.x-camX,ay=groundY(H.camp.x);ctxBubble(g,tm,clamp(ax+58,60,CW-60),ay-42,'⏰','Aufwachen',()=>{wakeUp(true);sfx('click');updateHUD(true)},true);return}
-  if(H.action||H.sleep.active||H.ended||H.live){H.eatMenu=false;return}
-  if(H.moving||H.walking){H.eatMenu=false;drawAlerts(g,tm,sx,gy);return}
+  if(H.action||H.sleep.active||H.ended||H.live){H.ctxCat=null;return}
+  if(H.moving||H.walking){H.ctxCat=null;drawAlerts(g,tm,sx,gy);return}
   if(H.fork){drawForkUI(g,tm,sx,gy);return}
 const row=[];const y=gy-150;const B=H.body;
-  if(H.lost.on||H.side)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
-  else if(atSummit())row.push(['🧭','Umschauen',()=>actClick('orient'),true]);
-row.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
-  if(isInjured()&&H.g.tools.kit&&H.kit>0)row.unshift(['🩹','Erste Hilfe',()=>actClick('aid'),true]);
-  const w=nearWater();
-  if(w){
-    const full=waterTotal()>=H.g.waterCap-0.05;
-    row.push(['🚰',full?'Voll':'Auffüllen',()=>actClick('refill'),!full]);
-    if(H.water.dirty>0.05)row.push(['♨️','Behandeln',()=>actClick('treat'),true]);
-  }
-  if(H.water.clean>0.05&&B.hyd<88)row.push(['💧','Trinken',()=>actClick('drink'),true]);
+  const resting=!H.moving,hasDrone=Object.keys(H.dev).some(id=>H.dev[id].def.kind==='drone');
+  const D=(ok)=>ok?true:2; // 2 = gedimmt, aber antippbar (zeigt den Grund)
+  const w=nearWater(),lf=resting?nearLodgeFeat():null;
   const eatList=FOODS.filter(f=>!f.cook&&(H.food[f.id]||0)>0);
-  if(eatList.length)row.push(['🍽️',H.eatMenu?'Schließen':'Essen',()=>{H.eatMenu=!H.eatMenu},true]);else H.eatMenu=false;
-  const resting=!H.moving;
-  if(H.camp.pitched&&H.g.shelter){
-    row.push(['😴','Schlafen',()=>actClick('sleep'),true]);
-    row.push(['🛌','Ausruhen',()=>actClick('rest'),true]);
-    row.push(['⛺','Abbauen',()=>actClick('tent'),true]);
-  }else if(resting&&H.g.shelter&&Math.abs(env.grade)<0.09)row.push(['⛺','Zelt',()=>actClick('tent'),true]);
-  if(resting&&!H.g.shelter&&!H.camp.pitched)row.push(['🌙','Draußen schlafen',()=>actClick('sleepOut'),true]);
-  if(resting&&H.g.tools.fire){
-    if(H.wood<6)row.push(['🪵',H.wood>0?'Holz +'+H.wood:'Holz sammeln',()=>actClick('wood'),true]);
-    if(H.fire.lit&&nearFire()&&woodAvail()>0)row.push(['🔥','Nachlegen',()=>actClick('feed'),true]);
-    else if(!H.fire.lit&&canIgnite()&&woodAvail()>0)row.push(['🔥','Feuer',()=>actClick('fire'),true]);
-    if((H.g.tools.firetarp||(H.g.shelter&&H.g.shelter.id==='tarp'&&!H.camp.pitched))&&(H.fire.lit?nearFire():true))row.push(['🏕️',H.fireTarp?'Tarp ab':'Tarp',()=>actClick('ftarp'),true]);
-  }
-  if(resting&&H.g.solarBig){
-    if(!H.solarUp)row.push(['☀️','Panel auf',()=>actClick('solarSet'),true]);
-    else{row.push(['🧭','Ausrichten',()=>actClick('solarSet'),true]);row.push(['📦','Einpacken',()=>actClick('solarPack'),true])}
-  }
-  if(resting&&H.fire.lit&&nearFire()){
-    FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,3).forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),true]));
-  }
-  if(resting){const lf=nearLodgeFeat();if(lf){
-    if(H.parcels&&H.parcels[lf.id]&&H.parcels[lf.id].length)row.push(['📦','Paket',()=>collectParcels(lf),true]);
-    if(lf.type==='lodge'&&lf.shop)row.push(['🍲','Küche',()=>openVillageShop(lf),true]);
-    if(lf.type==='village'&&lf.town)row.push(['🍴','Essen',()=>restaurantDialog(lf),true]);
-    row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
-  }}
-  if(resting&&handheld())row.push(['📱','Handy',()=>openPhone(),true]);
-  if(resting&&Object.keys(H.dev).some(id=>H.dev[id].def.kind==='drone'))row.push(['🛸','Drohne',()=>actClick('droneFly'),true]);
-  if(H.dog&&!H.dog.away)row.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
-  if(H.eatMenu&&eatList.length){ // Auswahl ersetzt die bisherigen Symbole
-    row.length=0;
-    eatList.forEach(f=>row.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,7)+' '+H.food[f.id]+'×',()=>{H.eatMenu=false;actClick('eat',f.id)},true]));
-    row.push(['↩️','Zurück',()=>{H.eatMenu=false},true]);
+  const cats={
+    camp:['⛺','Lager',()=>{const r=[];
+      if(H.camp.pitched&&H.g.shelter){r.push(['😴','Schlafen',()=>actClick('sleep'),true],['🛌','Ausruhen',()=>actClick('rest'),true],['⛺','Abbauen',()=>actClick('tent'),true])}
+      else{r.push(['⛺','Zelt',()=>actClick('tent'),D(!!H.g.shelter&&Math.abs(env.grade)<0.09)]);if(!H.g.shelter)r.push(['🌙','Draußen schlafen',()=>actClick('sleepOut'),true]);else r.push(['😴','Schlafen',()=>actClick('sleep'),2],['🛌','Ausruhen',()=>actClick('rest'),2])}
+      if(H.g.solarBig){if(!H.solarUp)r.push(['☀️','Panel auf',()=>actClick('solarSet'),true]);else r.push(['🧭','Ausrichten',()=>actClick('solarSet'),true],['📦','Einpacken',()=>actClick('solarPack'),true])}
+      if(H.dog&&!H.dog.away)r.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
+      return r}],
+    fire:['🔥','Feuer',()=>{const r=[];
+      r.push(['🪵',H.wood>0?'Holz +'+H.wood:'Holz sammeln',()=>actClick('wood'),D(!!H.g.tools.fire&&H.wood<6)]);
+      if(H.fire.lit)r.push(['🔥','Nachlegen',()=>actClick('feed'),D(nearFire()&&woodAvail()>0)]);
+      else r.push(['🔥','Entzünden',()=>actClick('fire'),D(!!H.g.tools.fire&&canIgnite()&&woodAvail()>0)]);
+      if(H.g.tools.firetarp||(H.g.shelter&&H.g.shelter.id==='tarp'&&!H.camp.pitched))r.push(['🏕️',H.fireTarp?'Tarp ab':'Tarp',()=>actClick('ftarp'),D(H.fire.lit?nearFire():true)]);
+      FOODS.filter(f=>f.cook&&H.food[f.id]>0).slice(0,4).forEach(f=>r.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,11),()=>actClick('cook',f.id),D(H.fire.lit&&nearFire())]));
+      return r}],
+    food:['🍽️','Essen',()=>{const r=[];
+      r.push(['💧','Trinken',()=>actClick('drink'),D(H.water.clean>0.05&&B.hyd<95)]);
+      if(w||H.water.dirty>0.05||waterTotal()<H.g.waterCap-0.05)r.push(['🚰','Auffüllen',()=>actClick('refill'),D(!!w&&waterTotal()<H.g.waterCap-0.05)]);
+      r.push(['♨️','Behandeln',()=>actClick('treat'),D(H.water.dirty>0.05)]);
+      eatList.forEach(f=>r.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,7)+' '+H.food[f.id]+'×',()=>actClick('eat',f.id),true]));
+      r.push(['🧺','Sammeln',()=>actClick('forage'),true],['🎣','Angeln',()=>actClick('fish'),true]);
+      return r}],
+    way:['🧭','Weg',()=>{const r=[];
+      r.push(['🧭',atSummit()?'Umschauen':'Orientieren',()=>actClick('orient'),true]);
+      r.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
+      r.push(['🏪','Laden',()=>actClick('shop'),true]);
+      r.push(['🆘','Abbrechen',()=>actClick('rescue'),true]);
+      return r}],
+    media:['📱','Medien',()=>{const r=[];
+      if(handheld())r.push(['📱','Handy',()=>openPhone(),true]);
+      if(hasDrone)r.push(['🛸','Drohne',()=>actClick('droneFly'),true]);
+      r.push(['📡','Livestream',()=>actClick('live'),true]);
+      return r}],
+    care:['🩹','Versorgung',()=>{const r=[];
+      r.push(['🩹','Erste Hilfe',()=>actClick('aid'),D(isInjured()&&!!H.g.tools.kit&&H.kit>0)]);
+      r.push(['🧵','Notreparatur',()=>actClick('fix'),true]);
+      return r}]
+  };
+  if(!resting)H.ctxCat=null;
+  if(H.ctxCat&&cats[H.ctxCat]){
+    const cat=H.ctxCat;
+    cats[cat][2]().forEach(r=>row.push([r[0],r[1],()=>{H.ctxCat=null;r[2]()},r[3]]));
+    row.push(['↩️','Zurück',()=>{H.ctxCat=null},true]);
+  }else{
+    H.ctxCat=null;
+    if(H.lost.on||H.side)row.push(['🧭','Orientieren',()=>actClick('orient'),true]);
+    else if(atSummit())row.push(['🧭','Umschauen',()=>actClick('orient'),true]);
+    if(isInjured()&&H.g.tools.kit&&H.kit>0)row.push(['🩹','Erste Hilfe',()=>actClick('aid'),true]);
+    if(w&&waterTotal()<H.g.waterCap-0.05)row.push(['🚰','Auffüllen',()=>actClick('refill'),true]);
+    if(lf){
+      if(H.parcels&&H.parcels[lf.id]&&H.parcels[lf.id].length)row.push(['📦','Paket',()=>collectParcels(lf),true]);
+      if(lf.type==='lodge'&&lf.shop)row.push(['🍲','Küche',()=>openVillageShop(lf),true]);
+      if(lf.type==='village'&&lf.town)row.push(['🍴','Essen',()=>restaurantDialog(lf),true]);
+      row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
+    }
+    ['camp','fire','food','way','media','care'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;row.push([c[0],c[1],()=>{H.ctxCat=k},true])});
   }
   const n=row.length,gap=n>7?54:62;
   CTX_N=n;const US=uiSafe();let yy=y;const need=US.b+40;if(yy<need)yy=Math.min(need,gy-112);
@@ -6382,13 +6538,13 @@ function buildHikeDOM(){
    <div class="hud" id="h-mid"><div class="pill" id="mid" style="display:none"></div></div>
    <div id="toasts"></div><button id="sosb" title="Notruf / Abholung">🆘</button>
    <div class="hud" id="h-bot"><div class="prow"><canvas id="prof"></canvas><span id="ptxt"></span></div>
+<div id="recsl"><span class="rcam">📷</span><div id="rwrap"><div id="rtrk"><i id="rknob"></i></div><div id="rlab"><span data-l="0" style="left:calc(0/3*(100% - 24px) + 12px)">Aus</span><span data-l="1" style="left:calc(1/3*(100% - 24px) + 12px)">Gering</span><span data-l="2" style="left:calc(2/3*(100% - 24px) + 12px)">Mittel</span><span data-l="3" style="left:calc(3/3*(100% - 24px) + 12px)">Intensiv</span></div></div></div>
     <div id="dock">
      
      <button class="rb" id="b-pack"><span>🎒</span><small>Pack</small></button>
      <button class="rb" id="b-map"><span>🗺️</span><small>Karte</small></button>
      <div id="spdwrap"><button class="rb" id="b-walk"><span>▶</span><small>Gehen</small></button><div id="spdctl"><button id="sp-dn">◀</button><div id="sp-v"><span>⏩</span><small>1×</small></div><button id="sp-up">▶</button></div></div>
      <button class="rb" id="b-menu"><span>☰</span><small>Menü</small></button></div></div>
-   <div class="hud" id="recsl"><div class="rlab" id="rlab"><span data-l="3">Intensiv</span><span data-l="2">Mittel</span><span data-l="1">Gering</span><span data-l="0">Aus</span></div><div id="rtrk"><i id="rknob"></i></div><div class="rcam">📷</div></div>
    <div id="livepanel"></div><div id="drawer"></div>
    <div id="rot" onclick="this.style.display='none'">📱<br>Bitte das Gerät quer halten<br><small style="opacity:.75">Tippen, um trotzdem hochkant zu spielen</small></div></div>`;
   const cv=$('#cv');
@@ -6404,7 +6560,7 @@ function buildHikeDOM(){
   $('#sp-dn').onclick=()=>{H.speed=Math.max(0,(H.speed>4?4:H.speed)-1);sfx('click');updateHUD(true)};
   $('#sp-up').onclick=()=>{H.speed=Math.min(4,(H.speed<1?0:H.speed)+1);sfx('click');updateHUD(true)};
   const trk=$('#rtrk');let dragging=false;
-  const setFromY=e=>{const r=trk.getBoundingClientRect();const l=Math.round((1-clamp((e.clientY-r.top)/r.height,0,1))*3);if(l!==H.rec){setRec(l);sfx('click');updateHUD(true)}};
+  const setFromY=e=>{const r=trk.getBoundingClientRect();const l=Math.round(clamp((e.clientX-r.left-12)/Math.max(1,r.width-24),0,1)*3);if(l!==H.rec){setRec(l);sfx('click');updateHUD(true)}};
   trk.addEventListener('pointerdown',e=>{dragging=true;trk.setPointerCapture(e.pointerId);setFromY(e);e.preventDefault()});
   trk.addEventListener('pointermove',e=>{if(dragging)setFromY(e)});
   trk.addEventListener('pointerup',()=>{dragging=false;toast('📷 Aufnahme: '+REC_LEVELS[H.rec]+(H.rec>0?' – mehr Clips, mehr Akkuverbrauch':' – keine Clips, kein Verbrauch'))});
@@ -6496,7 +6652,7 @@ function updateHUD(force){
   $('#b-walk').classList.toggle('act',H.walking&&!H.camp.pitched);
   {const sv=$('#sp-v');if(sv)sv.innerHTML=`<span>${H.speed===0?'⏸':'⏩'}</span><small>${H.speed===0?'Pause':SPEEDS[H.speed]+'×'}</small>`}
   if(H.dog){const D=H.dog;const sd=(k,v,low)=>{const el=$('#st-'+k);if(!el)return;$('.fl',el).style.width=clamp(v,0,100)+'%';el.classList.toggle('low',low);el.title=DOG_BARS.find(b=>b[0]===k)[2]+' ('+G.dog.name+'): '+Math.round(v)+' %'};sd('dh',D.hunger,D.hunger<25);sd('dt',D.thirst,D.thirst<25);sd('de',100-D.fat,D.fat>85)}
-  {const kn=$('#rknob');if(kn)kn.style.top=((3-H.rec)/3*100)+'%';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
+  {const kn=$('#rknob');if(kn)kn.style.left='calc('+(H.rec/3)+' * (100% - 24px))';$$('#rlab span').forEach(s=>s.classList.toggle('on',+s.dataset.l===H.rec));const rc=$('#recsl .rcam');if(rc)rc.style.opacity=H.rec?1:.45}
   
   const bd=H.clips.length;$('#b-pack').innerHTML=`<span>🎒</span><small>Pack</small>`;
   $('#ptxt').innerHTML=`Tag ${H.dayIdx+1} · 🎬 ${bd}`;
@@ -6615,7 +6771,7 @@ function frame(ts){
   if(H.speed>4)H.speed=4;
   if(!H.ended&&!MODAL&&!DG&&!(COOP&&COOP.wait)){
     let mult=SPEEDS[H.speed]*3;
-    if(H.walking&&!H.camp.pitched&&!H.action&&!H.fork&&!H.sleep.active)mult/=STRETCH; // beim Gehen läuft die Uhr langsamer, damit der längere Weg gleich schnell vorbeizieht
+    if(!H.sleep.active)mult/=STRETCH; // beim Gehen und Rasten läuft die Uhr normal; nur Schlafen/Ausruhen spult vor
     if(H.sleep.active&&mult>0)mult=Math.max(mult,14);
     accum+=dt*TIME_SCALE*mult/1.15;
     let n=0;const x0=H.x,ph0=H.phase,hp0=H.hopPr||0;
