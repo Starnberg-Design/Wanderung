@@ -121,7 +121,9 @@ input[type=range]{accent-color:var(--acc)}
 #spdctl{display:flex;align-items:center;gap:2px;background:#0a1410b0;border:1px solid #ffffff22;border-radius:14px;padding:2px 3px}
 #spdctl button{background:transparent;border:0;color:#fff;font-size:15px;width:26px;height:44px;padding:0;cursor:pointer}
 #sp-v{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:38px;color:#fff;font-size:19px;line-height:1}#sp-v small{font-size:11px;margin-top:2px}
-.ctry{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}.cbtn{display:flex;flex-direction:column;align-items:flex-start;padding:8px 14px}.cbtn.on{background:var(--acc);color:#04120a}.cbtn small{opacity:.8}
+.ctry{display:flex;flex-wrap:nowrap;gap:8px;margin-bottom:8px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 9px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#ffffff40 transparent}.ctry::-webkit-scrollbar{height:6px}.ctry::-webkit-scrollbar-thumb{background:#ffffff40;border-radius:3px}.cbtn{display:flex;flex-direction:column;align-items:flex-start;padding:8px 14px;flex:none;scroll-snap-align:start;white-space:nowrap}
+.hk-tz{display:inline-block;margin:4px 0 2px;padding:3px 9px;border-radius:10px;background:#2b4a8a;border:1px solid #6f9bff;color:#fff;font-size:12px;font-weight:600}.card.tz{border-color:#6f9bff88;box-shadow:0 0 0 1px #6f9bff44}.hk-btns{display:flex;gap:8px;flex-wrap:wrap}.hk-btns .primary{flex:1;min-width:140px}
+.co-pick .co-sel{background:#ffffff0d;border:1px solid #ffffff22;border-radius:12px;padding:10px 12px;margin:6px 0 8px}.co-pick .co-sel h5{margin:0 0 2px;font-size:1.05em}.co-stats{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.co-stats span{background:#ffffff14;border-radius:9px;padding:3px 8px;font-size:.82em}.co-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;max-height:210px;overflow:auto;padding:2px}.co-r{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:7px 10px;border-radius:10px}.co-r b{font-size:.88em;line-height:1.2}.co-r span{font-size:.75em;opacity:.8}.co-r.on{background:var(--acc);color:#04120a}.co-r.on span{opacity:.9}.cbtn.on{background:var(--acc);color:#04120a}.cbtn small{opacity:.8}
 .grp{margin:16px 0 6px;font-size:16px;color:var(--acc)}
 .dogb{display:grid;grid-template-columns:repeat(2,auto);gap:2px 6px;margin-top:4px;padding-top:4px;border-top:1px solid #ffffff22}
 #livepanel .seg button{font-size:12px;padding:5px 7px;min-height:30px}#livepanel{position:absolute;right:calc(188px + var(--sr));bottom:calc(58px + var(--sb));width:min(42vw,270px);z-index:4;pointer-events:auto}
@@ -5967,10 +5969,30 @@ function showFriends(){
     .then(l=>{FR_ST.friends=l;FR_ST.busy=false;frRender()})
     .catch(e=>{FR_ST.busy=false;FR_ST.err=(e&&e.message)||String(e);frRender()});
 }
+function coPickInner(){
+  const sel=HIKES.find(h=>h.id===FR_ST.coHike)||HIKES[0];FR_ST.coHike=sel.id;
+  const gr={};HIKES.forEach(h=>{(gr[startCountry(h)]=gr[startCountry(h)]||[]).push(h)});
+  const cs=Object.keys(gr).sort(),cc=FR_ST.coCty&&gr[FR_ST.coCty]?FR_ST.coCty:startCountry(sel);FR_ST.coCty=cc;
+  const sg=(sel.sights||[]).length;
+  return `<div class="ctry">${cs.map(c=>`<button class="cbtn ${c===cc?'on':''}" data-cc="${esc(c)}"><b>${flagsHTML(c)} ${esc(c)}</b><small>${gr[c].length} Routen</small></button>`).join('')}</div>
+  <div class="co-list">${[...gr[cc]].sort((a,b)=>a.km-b.km).map(h=>`<button class="co-r ${h.id===sel.id?'on':''}" data-cr="${esc(h.id)}"><b>${esc(h.name)}</b><span>📏 ${h.km} km · ${DIFF_NAMES[h.diff]}</span></button>`).join('')}</div>
+  <div class="co-sel"><h5>${esc(sel.name)}</h5><small>${flagsHTML(sel.country)} ${esc(sel.country)}</small>
+   <div class="co-stats"><span>📏 <b>${sel.km} km</b></span><span>🕒 ${dayLbl(sel)}</span><span><span class="risk" style="background:${DIFF_COL[sel.diff]}">${DIFF_NAMES[sel.diff]}</span></span><span>💰 Erlös ×${sel.mult}</span>${sel.startAlt?`<span>⛰️ Start ${Math.round(sel.startAlt)} m</span>`:''}${sg?`<span>📸 ${sg} Highlight${sg>1?'s':''}</span>`:''}${sel.permit?'<span>🎫 Genehmigung nötig</span>':''}</div>
+   <p class="hint" style="margin:4px 0 0">${esc(sel.desc||'')}</p></div>`;
+}
+function coPickBind(m){
+  const box=m.querySelector('#co-pick');if(!box)return;
+  const bind=()=>{
+    const redo=()=>{const sc=box.querySelector('.ctry'),l=sc?sc.scrollLeft:0,li=box.querySelector('.co-list'),t=li?li.scrollTop:0;box.innerHTML=coPickInner();bind();const s2=box.querySelector('.ctry');if(s2)s2.scrollLeft=l;const l2=box.querySelector('.co-list');if(l2)l2.scrollTop=t};
+    box.querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{FR_ST.coCty=b.dataset.cc;const f=HIKES.filter(h=>startCountry(h)===b.dataset.cc).sort((a,b)=>a.km-b.km)[0];if(f)FR_ST.coHike=f.id;redo()});
+    box.querySelectorAll('[data-cr]').forEach(b=>b.onclick=()=>{FR_ST.coHike=b.dataset.cr;redo()});
+  };
+  bind();
+}
 function frCoopHTML(){
   const gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
   const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
-  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p>'+lobbyLine()+'<div class="fr-add"><select id="co-hike" style="flex:1;min-width:0">'+opts+'</select><button id="co-new" class="primary">Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><select id="co-sea" style="flex:1;min-width:0"><option value="">Jahreszeit: wie mein Kalender ('+esc(seasonOfM(dateOf(G.day).m))+')</option><option value="3">🌷 Frühling (April)</option><option value="6">☀️ Sommer (Juli)</option><option value="9">🍂 Herbst (Oktober)</option><option value="0">❄️ Winter (Januar)</option></select></div><p class="hint">Als Admin legst du die Jahreszeit der Tour fest. Alle Mitwandernden gehen in dieser Jahreszeit – egal, welches Datum ihr eigener Kalender gerade zeigt.</p><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
+  return '<h4>🥾 Gemeinsame Tour</h4><p class="hint">Zusammen wandern: gleiche Strecke, ihr seht euch unterwegs. Zeitraffer gibt es nur, wenn alle zustimmen.</p>'+lobbyLine()+'<div id="co-pick" class="co-pick">'+coPickInner()+'</div><div class="fr-add" style="margin-top:6px"><button id="co-new" class="primary" style="flex:1">🥾 Diese Tour eröffnen</button></div><div class="fr-add" style="margin-top:6px"><select id="co-sea" style="flex:1;min-width:0"><option value="">Jahreszeit: wie mein Kalender ('+esc(seasonOfM(dateOf(G.day).m))+')</option><option value="3">🌷 Frühling (April)</option><option value="6">☀️ Sommer (Juli)</option><option value="9">🍂 Herbst (Oktober)</option><option value="0">❄️ Winter (Januar)</option></select></div><p class="hint">Als Admin legst du die Jahreszeit der Tour fest. Alle Mitwandernden gehen in dieser Jahreszeit – egal, welches Datum ihr eigener Kalender gerade zeigt.</p><div class="fr-add" style="margin-top:6px"><input id="co-in" placeholder="Raumcode eines Freundes" maxlength="8" autocomplete="off"><button id="co-join">Beitreten</button></div>';
 }
 function frRender(){
   const S=FR_ST,on=!!G.pubOn;
@@ -6000,9 +6022,10 @@ function frRender(){
         const v=q('#fr-in').value;S.err='';S.msg='';
         fbAddFriend(v).then(()=>fbFriendList()).then(l=>{S.friends=l;S.msg='✅ Freund hinzugefügt.';frRender()}).catch(er=>{S.err=er.message||String(er);frRender()});
       };
+      coPickBind(m);
       const cl=q('#co-leave');if(cl)cl.onclick=()=>{lobbyLeave();S.msg='Lobby verlassen.';frRender()};
       const cn=q('#co-new');if(cn)cn.onclick=()=>{
-        const id=q('#co-hike').value;S.err='';S.msg='Raum wird angelegt …';frRender();
+        const id=FR_ST.coHike||HIKES[0].id;S.err='';S.msg='Raum wird angelegt …';frRender();
         coopHost(id,seasonDay(q('#co-sea')?q('#co-sea').value:'')).then(code=>coopBriefingModal({code,hike:id,day:COOP.day,name:G.name},true)).catch(er=>{S.err=er.message||String(er);S.msg='';frRender()});
       };
       const cj=q('#co-join');if(cj)cj.onclick=()=>{
@@ -6500,14 +6523,21 @@ function hikeHist(hk){
   const th=tv?'<span class="hk-th"><canvas data-hvt="'+tv.id+'" width="168" height="94"></canvas>'+(tvAb?'<i>abgebrochen</i>':'')+'</span>':'';
   return '<div class="hk-hist">'+th+'<div class="hk-chips">'+chips+'</div></div>';
 }
+function teasedHikes(){const T=G.teasers||{};return HIKES.filter(h=>T[h.id]&&G.day-T[h.id].day<=90)}
+function tzBadge(hk){const t=(G.teasers||{})[hk.id];if(!t||G.day-t.day>90)return '';return '<span class="hk-tz">📡 Angeteasert · +'+Math.round(t.boost*100)+' % Aufrufe · noch '+Math.max(0,90-(G.day-t.day))+' Tage</span>'}
+function teaseFromHike(id){
+  if(!homeRec()){toast('📡 Zum Anteasern brauchst du eine Aufnahme-Ausrüstung (Handy oder Kamera).','warn');return}
+  if(G.homeLiveDay===G.day){toast('📡 Heute hast du schon gestreamt – morgen wieder.','warn');return}
+  homeLiveDialog(id);
+}
 function hikeCard(hk){
   const t=travelInfo(hk),fee=t.cost,poor=G.money<fee,walk=t.mode==='Zu Fuß';
   const b=briefing(hk),bad=b.w.filter(x=>x.l==='bad').length,f=routeFacts(hk);
   const yn=x=>x?'<b class="goodtxt">ja</b>':'nein';
   const stat=(top,sub,cls='')=>`<div class="hk-stat ${cls}">${top}<small>${sub}</small></div>`;
   const low=skillAvg(hk)<SKILL_REQ[hk.diff];
-  return `<div class="card hike${poor?' dis':''}"><h3>${esc(hk.name)}${walkedSet().has(hk.id)?' <small title="schon gegangen">✅</small>':''}</h3><small>${flagsHTML(hk.country)} ${esc(hk.country)}</small>
-    ${hikeHist(hk)}<div class="hk-top">
+  return `<div class="card hike${poor?' dis':''}${tzBadge(hk)?' tz':''}"><h3>${esc(hk.name)}${walkedSet().has(hk.id)?' <small title="schon gegangen">✅</small>':''}</h3><small>${flagsHTML(hk.country)} ${esc(hk.country)}</small>
+    ${tzBadge(hk)}${hikeHist(hk)}<div class="hk-top">
       ${stat('<b>📏 '+hk.km+' km</b>',dayLbl(hk))}
       ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück'+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
       ${stat('<span class="risk" style="background:'+DIFF_COL[hk.diff]+'">'+DIFF_NAMES[hk.diff]+'</span>','Erlös ×'+hk.mult)}
@@ -6524,16 +6554,17 @@ function hikeCard(hk){
       <span>🎣 Fische: ${yn(f.fishOK)} · 🫐 Beeren: ${yn(f.beeren)} · 🍄 Pilze: ${yn(f.pilze)} · 🌰 Nüsse: ${yn(f.nuesse)} <small>(in dieser Jahreszeit)</small></span>
       ${f.terr.length?`<span>${f.terr.join(' · ')}</span>`:''}
     </div></details>
-    ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<button class="primary" data-hk="${hk.id}">Briefing &amp; Start</button>`}</div>`;
+    ${poor?`<p class="badtxt" style="margin:6px 0">🔒 Anreise zu teuer: ${eur0(fee)} nötig, du hast ${eur0(G.money)}.</p><button disabled>Anreise zu teuer</button>`:`<div class="hk-btns"><button class="primary" data-hk="${hk.id}">Briefing &amp; Start</button><button data-tz="${hk.id}" title="Per Livestream von zu Hause diese Tour ankündigen">📡 Live anteasern</button></div>`}</div>`;
 }
 function renderHikes(){
   const wkS=walkedSet(),fl=HIKES.filter(hk=>HIKEFLT==='all'||(HIKEFLT==='new'?!wkS.has(hk.id):wkS.has(hk.id)));
-  let body='';
+  let body='';const tzl=teasedHikes(),tzHTML=tzl.length?`<h3 class="grp">📡 Angeteaserte Routen <small style="color:var(--dim);font-weight:400">– im Video-Kanal angekündigt</small></h3><div class="grid">${tzl.map(hikeCard).join('')}</div>`:'';
+  const sc0=document.querySelector('#s-hikes .ctry'),scl=sc0?sc0.scrollLeft:0;
   if(HIKEVIEW==='land'){
     const groups={};fl.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
-    body=`<div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>${flagsHTML(c)} ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
+    body=tzHTML+`<h3 class="grp">🌍 Nach Startland</h3><div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>${flagsHTML(c)} ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
       (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">${flagsHTML(HIKECTRY)} ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
-  }else body=`<div class="grid">${[...fl].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
+  }else body=tzHTML+(tzl.length?'<h3 class="grp">🗺️ Alle Routen</h3>':'')+`<div class="grid">${[...fl].filter(h=>!tzl.includes(h)).sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
    <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📋 Alle Routen</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
@@ -6541,6 +6572,8 @@ function renderHikes(){
    <div class="seg" style="margin-bottom:10px"><button data-hf="all" class="${HIKEFLT==='all'?'on':''}">🗺️ Alle</button><button data-hf="new" class="${HIKEFLT==='new'?'on':''}">🆕 Noch nicht gegangen</button><button data-hf="done" class="${HIKEFLT==='done'?'on':''}">✅ Schon gegangen</button></div>
    <div class="seasonbar hasbar slim sb-${seasonOfM(dateOf(G.day).m)}"><div class="sb-e">${SEASON_E[seasonOfM(dateOf(G.day).m)]}</div><div class="sb-t"><small>Jahreszeit</small><b>${seasonOfM(dateOf(G.day).m)}</b></div><div class="sb-d">${dateStr(G.day)}</div></div><div class="timebar"><span>⏳ Zeit vergehen lassen</span><div class="seg"><button data-w="1">1 Tag</button><button data-w="7">1 Woche</button><button data-w="30">1 Monat</button><button data-w="${daysToPayout()||1}">bis Auszahlung</button></div><small class="hint">${G.pendCur+G.pendPrev>0?'Auszahlung in '+daysToPayout()+' Tagen':''}</small></div>
    ${body}</div>`;
+  {const sc1=document.querySelector('#s-hikes .ctry');if(sc1){sc1.scrollLeft=scl;if(!scl){const on=sc1.querySelector('.cbtn.on');if(on)sc1.scrollLeft=Math.max(0,on.offsetLeft-12)}}}
+  $$('[data-tz]').forEach(b=>b.onclick=()=>teaseFromHike(b.dataset.tz));
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
   $$('[data-hs]').forEach(b=>b.onclick=()=>{HIKESORT=b.dataset.hs;try{localStorage.setItem('wk_hs',HIKESORT)}catch(e){}renderHikes()});
@@ -7471,10 +7504,10 @@ function homeLiveCard(){
   adSync();const can=G.homeLiveDay!==G.day,rec=homeRec();
   return `<div class="cmt"><b>🏠 Livestream von zu Hause</b><br><small>Stelle Ausrüstung vor (Provision über Partnerlinks), kündige deine nächste Tour an oder plaudere mit der Community. Werbesendungen wirken nur, wenn zwischendurch auch wieder gewandert wird.</small>${(G.adSpam||0)>=1?'<div class="warnbox warn">🛍️ Seit deiner letzten Werbesendung warst du nicht mehr wandern – die nächste würde als Dauerwerbung ankommen.</div>':''}<div class="seg" style="margin-top:6px"><button class="primary" id="hl-start" ${rec&&can?'':'disabled'}>📡 Stream starten</button></div>${!can?'<small>Heute hast du schon gestreamt.</small>':!rec?'<small>Du brauchst ein funktionierendes Handy oder eine Kamera.</small>':''}${G.affEarned?'<br><small>Provisionen bisher: '+eur(G.affEarned)+'</small>':''}</div>`;
 }
-function homeLiveDialog(){
-  adSync();HL.items={};HL.hike='';
+function homeLiveDialog(pre){
+  adSync();HL.items={};HL.hike=pre||'';
   const its=hlItems(),gr={};HIKES.forEach(h=>{(gr[h.country]=gr[h.country]||[]).push(h)});
-  const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'">'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
+  const opts=Object.keys(gr).sort().map(c=>'<optgroup label="'+esc(c)+'">'+gr[c].sort((a,b)=>a.km-b.km).map(h=>'<option value="'+esc(h.id)+'"'+(h.id===pre?' selected':'')+'>'+esc(h.name)+' ('+h.km+' km)</option>').join('')+'</optgroup>').join('');
   const spam=G.adSpam||0;
   showModal({wide:true,title:'🏠 Livestream von zu Hause',html:`<p class="hint">Ein Streamer-Abend im Wohnzimmer. Mit Equipment-Vorstellung verdienst du über Partnerlinks einen kleinen Teil des Warenwerts – aber kleine Kanäle verkaufen damit fast nie etwas. Hin und wieder Käufe gibt es erst ab etwa 10.000 Abonnenten, selten hat man auch früher Glück. Zuschauer mögen keine Dauerwerbung: Nach einer Werbesendung solltest du erst wieder wandern.</p>${spam>=1?'<div class="warnbox bad">⚠️ Deine letzte Werbesendung ist noch frisch und seitdem war keine Tour. Eine weitere Verkaufssendung wird die Zuschauer verärgern.</div>':''}
     <h4>🛍️ Equipment vorstellen (bis zu 3)</h4><div style="max-height:190px;overflow:auto">${its.map(g=>{const ln=(G.loans||[]).find(l=>l.gear===g.id);return `<label class="chk"><input type="checkbox" data-hli="${g.id}"> ${esc(g.name)} <small>(${eur0(g.price)}${ln?' · Leihgabe von '+esc(ln.brand):''})</small></label>`}).join('')||'<small>Du besitzt noch keine Ausrüstung mit Wert.</small>'}</div>
