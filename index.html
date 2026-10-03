@@ -3862,10 +3862,11 @@ const AMB_F={
   berg:'Mountain Ambience_1.mp3',
   bergwind:'Wind_Rocky_Mountain_Steady_Cold_Winter_1_Medium.mp3',
   sumpf:'SwampAmbienceMix PE012601.mp3',
+  ort:'AMB_ValleyAmbienceMountain_SDLX.mp3',
   meer:'Mountain Audio - Seashore, Ocean, Sea Ambience_1.mp3',
   wellen:'09286 sea waves ambience-full_1.mp3'
 };
-const AMB_VOL={fruehwald:1,tagwald:1,winterwald:1,regenwald:0.9,nachtwald:1,sommernacht:0.9,wiese1:1,wiese2:1,wiese3:1,irland:0.9,reh:1,hunde:1,talabend:1,talnacht:0.9,berg:1,bergwind:0.85,sumpf:0.95,meer:1,wellen:1};
+const AMB_VOL={fruehwald:1,tagwald:1,winterwald:1,regenwald:0.9,nachtwald:1,sommernacht:0.9,wiese1:1,wiese2:1,wiese3:1,irland:0.9,reh:1,hunde:1,talabend:1,talnacht:0.9,berg:1,bergwind:0.85,sumpf:0.95,meer:1,wellen:1,ort:1};
 const AMB={sea:null,cur:null,key:null,buf:{},want:null,t:0,base:0.42};
 function ambLoad(key){
   if(AMB.buf[key]!==undefined||!AU.ctx)return;
@@ -3884,6 +3885,8 @@ function ambPick(){
     if(!AMB.sea)AMB.sea=Math.random()<0.65?'meer':'wellen';
     return night?'wellen':AMB.sea}
   AMB.sea=null;
+  // in Ortsnähe (Dorf, Hütte, Stadt): Tal-Ambience mit Hundegebell, außer nachts
+  if(!night&&featsIn(H.x-650,H.x+650).some(f=>f.type==='village'||f.type==='lodge'))return 'ort';
   if(winter)return b==='wald'||b==='tal'?'winterwald':'bergwind';
   if(b==='wald'){
     if(rain)return 'regenwald';
