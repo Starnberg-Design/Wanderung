@@ -1782,7 +1782,7 @@ function migDrone(o){
 function droneInfo(g){
   const d=g.dr,q=g.qr,own=G.owned[g.id];
   return ' · 📷 Bildqualität '+Math.round(q[0]*100)+'–'+Math.round(q[1]*100)+' %'
-   +' · 📡 Reichweite ca. '+fmtN(droneRange(g)/PPK,1)+' km'
+   
    +' · 💨 stabil bis '+kmh(d.hold)+' km/h, Limit ca. '+kmh(d.wres)+' km/h'
    +' · ⏱ Aufbau '+d.setup+' Min · Abbau '+d.pack+' Min'
    +' · 🛡 Versicherung '+eur0(d.prem)+' / Monat'
@@ -1887,9 +1887,9 @@ function droneGenChunks(){
 }
 /* --- Vögel als Hindernisse --- */
 const BIRD_K={
-  spatz:{n:'Spatzen',r:9,sp:[130,210],wob:10,hit:0.10,flock:[2,4]},
-  kraehe:{n:'Krähe',r:14,sp:[70,130],wob:22,hit:0.22,flock:[1,2]},
-  adler:{n:'Adler',r:24,sp:[38,80],wob:48,hit:0.5,flock:[1,1]}};
+  spatz:{n:'Spatzen',r:11,sp:[120,190],wob:10,hit:0.10,flock:[2,3],sc:1.6},
+  kraehe:{n:'Krähe',r:17,sp:[65,115],wob:20,hit:0.22,flock:[1,2],sc:1.5},
+  adler:{n:'Adler',r:30,sp:[40,75],wob:44,hit:0.5,flock:[1,1],sc:1.2}};
 const BIRD_VULN={drone_k:1.3,drone_m:0.9,drone_u:0.6};
 function birdPos(D,b){return [b.wx-D.cx,groundY(b.wx)-b.h+Math.sin(b.t*b.wf*1.6+b.ph)*b.wob]}
 function droneBirdRate(D){
@@ -1901,14 +1901,16 @@ function droneBirdRate(D){
 }
 function droneBirdSpawn(D){
   const bm=stageAt(clamp(D.padX+D.x,0,H.route.totalPx)).b,mount=bm==='berg'||bm==='fjaell'||bm==='schnee',u=Math.random();
-  const k=mount?(u<0.45?'adler':u<0.7?'kraehe':'spatz'):(u<0.12?'adler':u<0.5?'kraehe':'spatz'),K=BIRD_K[k];
+  let k=u<0.55?'kraehe':'spatz';
+  if(mount&&D.adlerCd<=0&&Math.random()<0.3){k='adler';D.adlerCd=75}   /* Adler: nur im Gebirge und sehr selten */
+  const K=BIRD_K[k];
   const side=Math.random()<0.5?-1:1,dirx=-side;
   const sp=rnd(K.sp[0],K.sp[1])*(Math.random()<0.25?1.35:1);
   const n=Math.round(rnd(K.flock[0],K.flock[1])),wdir=(H.wdir||1)>0?1:-1;
   const vx=dirx*sp+wdir*env.wind*3;
   const x0=D.cx+(side<0?-(300+(sp>150?120:0)):CW+300+(sp>150?120:0));
   const hD=D.y-(D.padGY-groundY(D.padX+D.x));
-  const h0=clamp(Math.random()<0.5?hD+rnd(-45,45):rnd(60,260),45,270);
+  const h0=clamp(Math.random()<0.35?hD+rnd(-45,45):rnd(60,260),45,270);
   for(let i=0;i<n;i++)D.birds.push({k,wx:x0-dirx*i*26,h:clamp(h0+(i?rnd(-14,14):0),40,280),vx:vx*rnd(0.93,1.07),ph:rnd(0,6.3),wob:K.wob*rnd(0.6,1.2),wf:rnd(0.8,1.8),r:K.r,t:0});
 }
 function droneBirdHit(b,bx,by){
@@ -1952,7 +1954,7 @@ function droneBegin(id){
   const def=dev.def,dr=def.dr,dir=(H.dir||1)<0?-1:1,off=dir*56;
   const padGY=groundY(H.x+off);
   const vh=dr.w*dr.vb[1]/dr.vb[0];
-  DG={h:H,id,def,dr,dev,off,dir,padGY,padX:H.x+off,cx:H.x-CHAR_SX(),cx0:H.x-CHAR_SX(),scout:!H.side,birds:[],birdT:rnd(3,5),hitCd:0,stun:0,hints:0,rangeW:0,maxX:0,vh,rest:vh*0.5,x:0,y:vh*0.5,vx:0,vy:60,tilt:0,mode:'fly',ph:'',t:0,rot:rnd(0,6.28),
+  DG={h:H,id,def,dr,dev,off,dir,padGY,padX:H.x+off,cx:H.x-CHAR_SX(),cx0:H.x-CHAR_SX(),scout:!H.side,birds:[],birdT:rnd(6,10),adlerCd:30,retLvl:0,hitCd:0,stun:0,hints:0,rangeW:0,maxX:0,vh,rest:vh*0.5,x:0,y:vh*0.5,vx:0,vy:60,tilt:0,mode:'fly',ph:'',t:0,rot:rnd(0,6.28),
     inp:{x:0,y:0},ptc:[],rings:[],ringT:0,targets:null,caught:[],gust:0,gT:1,gTarget:0,wph:rnd(0,6.28),wEff:env.wind,stress:0,
     msg:'',msgT:0,flash:0,air:false,endT:0,safeY:0,wsock:0,hudT:0,spin:0,blown:null,warnB:false,bat0:dev.batt,panDirty:true,snd:[],hum:null,pre:2.4,ft:0,ld:null,ldPlayed:false};
   {const px0=DG.padX-DG.cx0;DG.lo=Math.min(CW*0.4,px0);DG.hi=Math.max(CW*0.6,px0)}
@@ -2050,10 +2052,11 @@ function droneStep(dt){
   if(D.mode!=='blown'&&D.mode!=='falling'){
     const drain=(100/dr.dur)*(1+0.35*Math.min(2,wEff/Math.max(1,hold))+0.25*Math.min(1,Math.abs(D.vx)/dr.vmax));
     dev.batt=Math.max(0,dev.batt-drain*dt);
-    const need=droneRetNeed(D);
-    if(dev.batt<need+9&&!D.warnB){D.warnB=true;droneSay('🔋 Akku wird knapp – bald zurückfliegen!');sfx('warn')}
-    if(dev.batt<=need&&D.mode==='fly'&&Math.abs(D.x)>60)droneRTH('🔋 Der Akku reicht gerade noch für den Rückweg – automatischer Rückflug.');
-    else if(dev.batt<=14&&D.mode==='fly')droneRTH('🔋 Akku niedrig – automatischer Rückflug.');
+    const need=droneRetNeed(D),lvl=dev.batt<need?2:dev.batt<=need*1.08+3?1:0;
+    D.need=need;
+    if(lvl>D.retLvl&&Math.abs(D.x)>120){D.retLvl=lvl;sfx('warn');
+      droneSay(lvl===2?'⚠️ Der Akku reicht nicht mehr für den ganzen Rückweg!':'🔋 Der Akku reicht gerade noch für den Rückflug – jetzt zurück (🏠), sonst wird es knapp!')}
+    else if(lvl<D.retLvl)D.retLvl=lvl;
     if(dev.batt<=0){D.mode='falling';D.cause='batt';droneSay('🔋 Akku leer – die Drohne fällt!')}
   }
   /* Ausfall / Wegpusten */
@@ -2093,10 +2096,8 @@ function droneStep(dt){
   /* Begrenzung (außer Wegpusten) */
   if(D.mode!=='blown'&&D.mode!=='falling'){
     if(D.scout){
-      const rg=droneRange(def),xmin=Math.max(-rg,80-D.padX),xmax=Math.min(rg,H.route.totalPx-80-D.padX);
+      const xmin=80-D.padX,xmax=H.route.totalPx-80-D.padX;
       if(D.x<xmin){D.x=xmin;D.vx=Math.max(0,D.vx)}else if(D.x>xmax){D.x=xmax;D.vx=Math.min(0,D.vx)}
-      if(Math.abs(D.x)>=rg-2&&!D.rangeW){D.rangeW=1;droneSay('📡 Maximale Reichweite erreicht – weiter geht es nicht.');sfx('warn')}
-      else if(Math.abs(D.x)<rg*0.9)D.rangeW=0;
     }else{
       const xmin=50-sxb,xmax=CW-50-sxb;
       if(D.x<xmin){D.x=xmin;D.vx=Math.max(0,D.vx);if(stress>0.9&&wd<0)droneBlow(wd)}else if(D.x>xmax){D.x=xmax;D.vx=Math.min(0,D.vx);if(stress>0.9&&wd>0)droneBlow(wd)}
@@ -2143,7 +2144,8 @@ function droneStep(dt){
     if(D.targets.length>40){D.targets=D.targets.filter(t=>!t.done||t.fade<1.2)}
     /* Vögel */
     D.birdT-=dt;
-    if(D.birdT<=0&&D.ft>3){D.birdT=rnd(2.2,5)/Math.max(0.4,droneBirdRate(D)/0.25);if(D.birds.length<9)droneBirdSpawn(D)}
+    D.adlerCd-=dt;
+    if(D.birdT<=0&&D.ft>4){D.birdT=rnd(9,18)/Math.max(0.5,droneBirdRate(D)/0.25);if(D.birds.length<3)droneBirdSpawn(D)}
     const dmid=D.cx+CW/2;
     for(const b of D.birds){
       const pulse=1+0.25*Math.sin(b.t*0.9+b.ph);
@@ -2198,7 +2200,7 @@ function droneConclude(){
   const fm=Math.round(D.t*0.1);
   if(D.mode==='crashed'&&D.crash){
     const c=D.crash;
-    beginAction('drone',c.far?'Sucht die Drohne …':'Birgt die Trümmer …',Math.max(5,fm+Math.round(c.far?rnd(25,70):rnd(5,15))),()=>updateHUD(true));
+    beginAction('drone',c.far?'Sucht die Drohne …':'Birgt die Trümmer …',Math.max(5,fm+Math.round(c.far?rnd(25,70):rnd(5,15))+Math.round(Math.abs(D.x)/PPK*12)),()=>updateHUD(true));
     droneCrashModal(c.res,c.why);return;
   }
   let mins=D.dr.pack+fm,label='Packt die Drohne ein …';
@@ -2324,16 +2326,7 @@ function droneDraw(g,tm,dt){
       }
       continue;
     }
-    const s0=b.r/9,dirx=b.vx>=0?1:-1,fl=Math.sin(b.t*(b.k==='adler'?4:b.k==='spatz'?17:9)+b.ph);
-    g.save();g.translate(bx,by);g.scale(dirx,1);
-    g.fillStyle=b.k==='adler'?'#5a3b22':b.k==='kraehe'?'#15191e':'#2b3139';g.strokeStyle=g.fillStyle;g.lineCap='round';
-    g.beginPath();g.ellipse(0,0,6*s0,2.8*s0,0,0,7);g.fill();
-    g.beginPath();g.arc(6*s0,-0.6*s0,2.1*s0,0,7);g.fill();
-    g.fillStyle=b.k==='adler'?'#e0b04a':'#e8a63a';g.beginPath();g.moveTo(8*s0,-0.8*s0);g.lineTo(10.5*s0,0);g.lineTo(8*s0,0.4*s0);g.closePath();g.fill();
-    g.lineWidth=Math.max(2,2.2*s0);g.strokeStyle=b.k==='adler'?'#6b4528':'#20262d';
-    g.beginPath();g.moveTo(1*s0,0);g.quadraticCurveTo(-3*s0,-9*s0*fl-2*s0,-9*s0,-6*s0*fl);g.stroke();
-    g.beginPath();g.moveTo(1*s0,0);g.quadraticCurveTo(5*s0,-8*s0*fl-2*s0,1*s0,-11*s0*fl);g.stroke();
-    g.restore();
+    drawBirdSprite(g,b.k,bx,by,BIRD_K[b.k].sc,b.vx,b.t*(b.k==='spatz'?15:b.k==='adler'?2.4:8)+b.ph,1,b.k==='adler');
   }
   /* Drohne */
   if(D.mode!=='crashed'){
@@ -2362,15 +2355,15 @@ function droneHUD(){
   const def=D.def,hold=droneHold(def),lim=droneLimit(def),w=D.wEff,wd=(H.wdir||1)>0?1:-1;
   const full=lim*1.35,pg=v=>clamp(v/full*100,0,100);
   const st=D.stress>0?'#ff6b5a':w>hold*0.8?'#ffb54a':'#4cc38a';
-  const hm=Math.round(Math.max(0,D.y-D.rest)*0.3),dkm=Math.abs(D.x)/PPK,rkm=droneRange(D.def)/PPK,dwy=D.x>40?' voraus':D.x<-40?' zurück':'';
+  const hm=Math.round(Math.max(0,D.y-D.rest)*0.3),dkm=Math.abs(D.x)/PPK,need=Math.round(D.need||0),low=D.dev.batt<=need*1.08+3,dwy=D.x>40?' voraus':D.x<-40?' zurück':'';
   const ph=D.mode==='rth'?(D.ph==='up'?'⬆ steigt auf sichere Höhe':D.ph==='cross'?'↔ fliegt zum Startpunkt':'⬇ landet'):D.mode==='blown'?'💨 weggepustet!':D.mode==='falling'?'⚠ fällt!':D.mode==='landed'?'✔ gelandet':'';
   const got=D.caught.length,seen=D.targets.filter(t=>!t.done).length;
   p.innerHTML=`<div style="display:flex;align-items:center;gap:8px"><span style="font-size:24px;line-height:1">💨${wd>0?'➡️':'⬅️'}</span>
     <div style="flex:1"><b>${kmh(w)} km/h</b> ${wd>0?'nach rechts':'nach links'} <small>· ${windWord(w)}</small>
     <div class="mbar" style="margin:3px 0 1px"><i style="width:${pg(w)}%;background:${st}"></i><b style="left:${pg(hold)}%;background:#4cc38a"></b><b style="left:${pg(lim)}%;background:#ff6b5a"></b></div>
     <small>stabil bis ${kmh(hold)} · Limit ${kmh(lim)} km/h</small></div></div>
-   <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 8px;margin-top:4px;white-space:nowrap"><span>🔋 ${Math.round(D.dev.batt)} %</span><span>⬆ ${hm} m</span>${D.scout?`<span>↔ ${fmtN(dkm,1)}/${fmtN(rkm,1)} km${dwy}</span>`:''}<span>📷 ${got}${seen?' · '+seen+' offen':''}</span>${D.hints?`<span>💡 ${D.hints}</span>`:''}</div>
-   ${ph?`<div style="color:#ffd54a">${ph}</div>`:''}${D.msgT>0?`<div style="color:#cdeedd;font-size:12px;margin-top:2px">${esc(D.msg)}</div>`:''}`;
+   <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 8px;margin-top:4px;white-space:nowrap"><span style="${low?'color:#ff8a7a;font-weight:700':''}">🔋 ${Math.round(D.dev.batt)} %${D.scout?' <small>(zurück ab '+need+' %)</small>':''}</span><span>⬆ ${hm} m</span>${D.scout?`<span>↔ ${fmtN(dkm,1)} km${dwy}</span>`:''}<span>📷 ${got}${seen?' · '+seen+' offen':''}</span>${D.hints?`<span>💡 ${D.hints}</span>`:''}</div>
+   ${low&&D.mode==='fly'&&Math.abs(D.x)>120?`<div style="color:#ff8a7a;font-weight:700">🔋 ${D.dev.batt<need?'Akku reicht nicht mehr für den Rückweg!':'Akku reicht gerade noch zurück – jetzt zurückfliegen!'}</div>`:''}${ph?`<div style="color:#ffd54a">${ph}</div>`:''}${D.msgT>0?`<div style="color:#cdeedd;font-size:12px;margin-top:2px">${esc(D.msg)}</div>`:''}`;
   const rb=$('#dg-rth');if(rb){rb.textContent=D.mode==='rth'?'✖ Abbrechen':'🏠 Rückflug';rb.disabled=D.mode==='landed'||D.mode==='crashed'||D.mode==='blown'||D.mode==='falling'}
 }
 
@@ -4641,21 +4634,92 @@ function drawSky(g,tm){
   }
 }
 /* ---------- Vögel im Hintergrund ---------- */
-const BIRDS=[];let birdT=4;
+/* ---------- Vogel-Sprites (Seitenansicht, schaut nach rechts) ---------- */
+const BSP={
+  spatz:{rx:7,ry:3.6,head:3,beak:3,wl:12,chord:6,tail:7,col:'#8d6b49',belly:'#eadfca',wing:'#6e4e32',tip:'#463120',cap:'#7a5a3c',fing:0,eye:'#111'},
+  kraehe:{rx:12.5,ry:5,head:4.6,beak:8,wl:24,chord:11,tail:14,col:'#1c2128',belly:'#262d37',wing:'#151a21',tip:'#0b0e12',cap:'#1c2128',fing:5,eye:'#d9dde2',gloss:'#4b5a73'},
+  adler:{rx:21,ry:7.4,head:6.4,beak:10,wl:50,chord:22,tail:22,col:'#5a3b22',belly:'#7b5532',wing:'#4b3019',tip:'#241609',cap:'#ead7a2',fing:7,eye:'#f2c744',gloss:'#8a6238',band:'#e9e2cf'}};
+function drawBirdSprite(g,k,x,y,s,dir,ph,al,glide){
+  const P=BSP[k];if(!P)return;
+  const sc=s||1,fl=glide?0.38+0.14*Math.sin(ph):Math.sin(ph);   // fl: -1 (Schlag nach unten) .. 1 (hoch)
+  g.save();g.translate(x,y);g.scale(dir>=0?sc:-sc,sc);if(al!=null&&al<1)g.globalAlpha=al;
+  g.lineJoin='round';g.lineCap='round';
+  const wingAt=(far)=>{
+    const ang=glide?fl:fl*0.95+0.05,sh=[P.rx*0.1,-P.ry*0.5];
+    const tx=sh[0]-P.wl*0.38*(0.75+0.25*Math.cos(ang)),ty=sh[1]-P.wl*Math.sin(ang)*(far?0.88:1);
+    const dx=tx-sh[0],dy=ty-sh[1],len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;
+    let nx=-uy,ny=ux;if(nx>0){nx=-nx;ny=-ny}                       // Normale nach hinten
+    const ch=P.chord*(far?0.92:1),N=P.fing?9:5;
+    const L=u=>[sh[0]+dx*u-nx*ch*0.18*(1-u)+nx*Math.sin(u*Math.PI)*0,sh[1]+dy*u-ny*ch*0.18*(1-u)];
+    const R=u=>{const w=ch*(0.95*(1-Math.pow(u,1.7))+0.05),sc=Math.sin(u*N*Math.PI)*ch*0.05*(P.fing?1:0.5);return [sh[0]+dx*u+nx*(w+sc),sh[1]+dy*u+ny*(w+sc)]};
+    g.fillStyle=far?P.tip:P.wing;
+    g.beginPath();let p=L(0);g.moveTo(p[0],p[1]);
+    for(let u=0.1;u<=1.001;u+=0.1){p=L(u);g.lineTo(p[0],p[1])}
+    for(let u=1;u>=-0.001;u-=0.05){p=R(clamp(u,0,1));g.lineTo(p[0],p[1])}
+    g.closePath();g.fill();
+    if(P.fing){ // gespreizte Handschwingen am Flügelende
+      g.fillStyle=P.tip;
+      for(let i=0;i<P.fing;i++){
+        const u=0.5+0.5*i/(P.fing-1)*0.95,b=R(u),fl2=ch*(0.75-0.35*i/P.fing),w2=Math.max(1.1,ch*0.1);
+        const ex=b[0]+nx*fl2+ux*fl2*0.55*(i/P.fing),ey=b[1]+ny*fl2+uy*fl2*0.55*(i/P.fing);
+        const px=-ny*w2*0.5,py=nx*w2*0.5;
+        g.beginPath();g.moveTo(b[0]-px,b[1]-py);g.lineTo(ex,ey);g.lineTo(b[0]+px,b[1]+py);g.closePath();g.fill();
+      }
+    }
+    g.strokeStyle='rgba(0,0,0,0.22)';g.lineWidth=0.8;
+    for(let i=1;i<4;i++){const u=i/4,a=L(u),b=R(u);g.beginPath();g.moveTo(lerp(a[0],b[0],0.25),lerp(a[1],b[1],0.25));g.lineTo(lerp(a[0],b[0],0.85),lerp(a[1],b[1],0.85));g.stroke()}
+  };
+  wingAt(true);                                           // ferne Schwinge (dunkler)
+  // Schwanz
+  {const tl=P.tail,tw=P.ry*(k==='adler'?1.3:0.9),sw=Math.sin(ph*0.5)*0.08;
+   g.fillStyle=P.wing;g.beginPath();g.moveTo(-P.rx*0.7,-P.ry*0.2);
+   g.lineTo(-P.rx-tl,-tw*0.9+sw*tl);g.quadraticCurveTo(-P.rx-tl*1.05,sw*tl,-P.rx-tl,tw*0.9+sw*tl);g.lineTo(-P.rx*0.7,P.ry*0.4);g.closePath();g.fill();
+   if(P.band){g.strokeStyle=P.band;g.lineWidth=tl*0.22;g.beginPath();g.moveTo(-P.rx-tl*0.35,-tw*0.45);g.lineTo(-P.rx-tl*0.35,tw*0.55);g.stroke()}}
+  // Körper
+  g.fillStyle=P.col;g.beginPath();g.ellipse(0,0,P.rx,P.ry,0,0,7);g.fill();
+  g.fillStyle=P.belly;g.beginPath();g.ellipse(P.rx*0.1,P.ry*0.35,P.rx*0.82,P.ry*0.55,0,0,Math.PI);g.fill();
+  if(P.gloss){g.strokeStyle=P.gloss;g.globalAlpha*=0.55;g.lineWidth=P.ry*0.35;g.beginPath();g.moveTo(-P.rx*0.5,-P.ry*0.45);g.quadraticCurveTo(0,-P.ry*0.75,P.rx*0.5,-P.ry*0.35);g.stroke();g.globalAlpha=al!=null&&al<1?al:1}
+  // Kopf
+  const hx=P.rx*0.88,hy=-P.ry*0.28;
+  g.fillStyle=k==='adler'?P.cap:P.cap;g.beginPath();g.arc(hx,hy,P.head,0,7);g.fill();
+  if(k==='spatz'){g.fillStyle='#4a3a2a';g.beginPath();g.arc(hx+0.6,hy+1.1,P.head*0.55,0,Math.PI);g.fill()}
+  // Schnabel
+  g.fillStyle=k==='adler'?'#e0b13a':k==='kraehe'?'#101317':'#d9a84a';
+  g.beginPath();g.moveTo(hx+P.head*0.7,hy-P.head*0.38);
+  if(k==='adler'){g.quadraticCurveTo(hx+P.head+P.beak*0.9,hy-P.head*0.2,hx+P.head+P.beak*0.75,hy+P.head*0.55);g.lineTo(hx+P.head*0.65,hy+P.head*0.3)}
+  else{g.lineTo(hx+P.head+P.beak,hy+P.head*0.12);g.lineTo(hx+P.head*0.7,hy+P.head*0.42)}
+  g.closePath();g.fill();
+  // Auge
+  g.fillStyle=P.eye;g.beginPath();g.arc(hx+P.head*0.28,hy-P.head*0.2,Math.max(0.9,P.head*0.2),0,7);g.fill();
+  g.fillStyle='#000';g.beginPath();g.arc(hx+P.head*0.34,hy-P.head*0.2,Math.max(0.5,P.head*0.1),0,7);g.fill();
+  wingAt(false);                                          // nahe Schwinge (vorn)
+  g.restore();
+}
+
+const BIRDS=[];let birdT=12,adlerT=200;
+const BIRD_SC={spatz:1.0,kraehe:1.0,adler:1.15};
 function updateBirds(dt,tm){
   if(env.light>0.4&&!env.precip&&env.wind<10){
-    birdT-=dt;
-    if(birdT<=0){birdT=6+Math.random()*14;const n=1+Math.floor(Math.random()*4),y0=70+Math.random()*130,dir=Math.random()<0.5?1:-1,wx=camX+(dir>0?-40:CW+40)*1;
-      for(let i=0;i<n;i++)BIRDS.push({wx:wx-dir*i*26,y:y0+Math.random()*24+(i%2)*10,vx:dir*(24+Math.random()*10),ph:Math.random()*6,s:0.8+Math.random()*0.5})}
+    birdT-=dt;adlerT-=dt;
+    if(birdT<=0){
+      birdT=rnd(22,55);
+      const mount=['berg','fjaell','schnee'].includes(env.biome);
+      let k=Math.random()<0.55?'kraehe':'spatz';
+      if(mount&&adlerT<=0&&Math.random()<0.45){k='adler';adlerT=rnd(240,420)}
+      const n=k==='adler'?1:k==='kraehe'?1+Math.floor(Math.random()*2):2+Math.floor(Math.random()*3);
+      const dir=Math.random()<0.5?1:-1,sx0=dir>0?-90:CW+90,y0=k==='adler'?rnd(70,150):rnd(60,190);
+      const spd={spatz:rnd(60,85),kraehe:rnd(35,55),adler:rnd(22,34)}[k];
+      for(let i=0;i<n;i++)BIRDS.push({k,wx:camX*0.85+sx0-dir*i*(k==='spatz'?30:55),y:y0+rnd(-14,14)+(i%2)*10,vx:dir*spd*rnd(0.94,1.06),ph:rnd(0,6),wob:rnd(0,6.28)});
+    }
   }
-  for(const b of BIRDS){b.wx+=b.vx*dt;b.ph+=dt*9}
-  for(let i=BIRDS.length-1;i>=0;i--)if(Math.abs(BIRDS[i].wx-camX-CW/2)>CW)BIRDS.splice(i,1);
+  for(const b of BIRDS){b.wx+=b.vx*dt;b.ph+=dt*(b.k==='spatz'?15:b.k==='adler'?2.2:7.5)}
+  for(let i=BIRDS.length-1;i>=0;i--){const b=BIRDS[i],sx=b.wx-camX*0.85;if((b.vx>0&&sx>CW+220)||(b.vx<0&&sx<-220))BIRDS.splice(i,1)}
 }
 function drawBirds(g,tm){
-  g.strokeStyle=`rgba(20,25,35,${0.55*env.light+0.1})`;g.lineWidth=1.6;g.lineCap='round';
+  const al=clamp(0.45+0.5*env.light,0.4,0.95);
   for(const b of BIRDS){
-    const sx=b.wx-camX*0.85,y=b.y+Math.sin(b.ph*0.4)*4,w=7*b.s,f=Math.sin(b.ph)*4*b.s;
-    g.beginPath();g.moveTo(sx-w,y+f*0.3);g.quadraticCurveTo(sx-w*0.4,y-f,sx,y);g.quadraticCurveTo(sx+w*0.4,y-f,sx+w,y+f*0.3);g.stroke();
+    const sx=b.wx-camX*0.85,y=b.y+Math.sin(b.ph*0.12+b.wob)*6;
+    drawBirdSprite(g,b.k,sx,y,BIRD_SC[b.k]*0.9,b.vx,b.ph,al,b.k==='adler');
   }
 }
 /* ---------- Bergketten & Waldbänder ---------- */
