@@ -6727,7 +6727,53 @@ function routeFacts(hk){
 }
 const HOMES={Deutschland:[51,10],Österreich:[47.5,14.5],Schweiz:[46.8,8.2],Schweden:[59.3,18],Norwegen:[59.9,10.7],Schottland:[55.9,-3.2],England:[51.5,-0.1],Irland:[53.3,-6.3],Italien:[45.5,9.2],Frankreich:[48.9,2.4],Spanien:[40.4,-3.7],Island:[64.1,-21.9]};
 const REG_XY={harz:[51.8,10.6],thuer:[50.7,10.7],sachsen:[50.9,14.2],hoga:[63.0,18.3],alpen:[47.4,10.3],dolo:[46.6,12.0],scot:[56.2,-4.6],mtblanc:[45.9,6.9],island:[63.9,-19.3],lappland:[68.4,18.8],nordkalott:[69.3,20.0],norwegen:[61.5,8.8],eng:[51.9,-1.8],irland:[52.05,-9.5],korsika:[42.5,8.9],camino:[43.2,-1.2]};
+/* ---------- Wanderurlaub: einmal ins Land reisen, danach entfallen die Anreisekosten zu den Routen dort ---------- */
+function vacActive(c){const v=G&&G.vac;return !!(v&&G.day<=v.until&&(!c||v.country===c))}
+function vacQuote(c){
+  if(c===(G.home||'Deutschland'))return null;
+  const rs=HIKES.filter(h=>startCountry(h)===c).map(travelInfoBase).filter(t=>t.mode!=='Zu Fuß');
+  if(!rs.length)return null;
+  const cs=rs.map(t=>t.cost).sort((a,b)=>a-b),med=cs[Math.floor(cs.length/2)];
+  if(med<25)return null;
+  return {trip:Math.round(med/5)*5,days:Math.max(...rs.map(t=>t.days)),mode:rs.some(t=>t.mode==='Flug')?'Flug':'Zug'};
+}
+const VAC_DAYS=[7,14,21];
+const VAC_MUL=[1,1.25,1.5];
+function vacPrice(q,d){return Math.round(q.trip*VAC_MUL[Math.max(0,VAC_DAYS.indexOf(d))]/5)*5}
+/* Vor-Ort-Anreise im Wanderurlaub: kurzer Bus/Bahn-Weg von der Urlaubsbasis (Mitte der Routen im Land) zum Startpunkt */
+function vacLocal(hk,base){
+  const c=startCountry(hk),pts=HIKES.filter(h=>startCountry(h)===c).map(h=>REG_XY[h.reg]).filter(Boolean);
+  const b=pts.length?[pts.reduce((a,x)=>a+x[0],0)/pts.length,pts.reduce((a,x)=>a+x[1],0)/pts.length]:null,a=REG_XY[hk.reg];
+  let d=0;if(a&&b){const R=6371,rad=x=>x*Math.PI/180,dl=rad(a[0]-b[0]),dn=rad(a[1]-b[1]),h=Math.sin(dl/2)**2+Math.cos(rad(b[0]))*Math.cos(rad(a[0]))*Math.sin(dn/2)**2;d=2*R*Math.asin(Math.sqrt(h))}
+  const cost=Math.round((4+d*0.06)/5)*5;
+  return Math.max(5,Math.min(cost,Math.max(5,Math.round(base.cost*0.35/5)*5)));
+}
+function vacBook(c,d){
+  const q=vacQuote(c);if(!q)return;
+  if(vacActive()){toast('🏕️ Du bist schon im Wanderurlaub: '+G.vac.country+'.','warn');return}
+  const price=vacPrice(q,d);
+  showModal({title:'🏕️ Wanderurlaub in '+esc(c),wide:true,html:`<p><b>${d} Tage</b> in ${flagsHTML(c)} ${esc(c)}.</p>
+   <p>Anreisegebühr ins Land (${q.mode}, Hin- und Rückfahrt, ${d} Tage Aufenthalt): <b>${eur0(price)}</b>${q.days?' · '+q.days+' Reisetag'+(q.days>1?'e':'')+' für die Hinreise':''}</p>
+   <p class="hint">Solange der Urlaub läuft, zahlst du für <b>alle Routen in ${esc(c)}</b> nur noch eine kleine Vor-Ort-Anreise (meist 5–25 € statt der teuren Einzelreise aus ${esc(G.home||'Deutschland')}). Die Zeit läuft aber weiter: Nach ${d} Tagen ist der Urlaub vorbei.${G.money<price?' <span class="badtxt">Dafür reicht dein Geld nicht.</span>':''}</p>`,
+   buttons:[{label:'🏕️ Buchen für '+eur0(price),primary:1,fn:()=>{
+     if(G.money<price){toast('💶 Dafür reicht dein Geld nicht.','bad');return}
+     G.money-=price;for(let i=0;i<q.days;i++){G.day++;advanceDay()}
+     G.vac={country:c,until:G.day+d,days:d,paid:price};save();
+     toast('🏕️ Wanderurlaub in '+c+' gebucht – bis '+dateStr(G.vac.until)+' ohne Anreisekosten.','good');sfx('success');
+     renderHikes()}},{label:'Abbrechen'}]});
+}
+function vacPanel(c){
+  if(vacActive(c)){const v=G.vac;return `<div class="warnbox info">🏕️ Wanderurlaub in ${esc(c)}: noch <b>${Math.max(0,v.until-G.day)} Tage</b> (bis ${dateStr(v.until)}) – Anreise zu den Routen hier ist stark vergünstigt.</div>`}
+  if(vacActive())return `<div class="warnbox info">🏕️ Du bist gerade im Wanderurlaub in ${esc(G.vac.country)} (noch ${Math.max(0,G.vac.until-G.day)} Tage).</div>`;
+  const q=vacQuote(c);if(!q)return '';
+  return `<div class="card" style="margin:8px 0"><b>🏕️ Wanderurlaub in ${esc(c)}</b><p class="hint">Einmal ins Land reisen, danach kosten die Anreisen zu den einzelnen Routen nur noch wenig – lohnt sich ab etwa zwei Touren.</p><div class="seg">${VAC_DAYS.map(d=>`<button data-vac="${d}" data-vc="${esc(c)}">${d} Tage · ${eur0(vacPrice(q,d))}</button>`).join('')}</div></div>`;
+}
 function travelInfo(hk){
+  const t=travelInfoBase(hk);
+  if(t.mode!=='Zu Fuß'&&vacActive(startCountry(hk)))return {cost:vacLocal(hk,t),days:0,mode:'Wanderurlaub',km:t.km,vac:true,full:t.cost};
+  return t;
+}
+function travelInfoBase(hk){
   if(hk.trav!=null&&startCountry(hk)===(G.home||'Deutschland'))return {cost:hk.trav,days:0,mode:hk.trav?'Bus / Bahn':'Zu Fuß',km:hk.trav?10+hk.trav*3:0};
   const home=G.home||'Deutschland',a=HOMES[home]||HOMES.Deutschland,b=REG_XY[hk.reg]||a;
   const R=6371,rad=x=>x*Math.PI/180,dl=rad(b[0]-a[0]),dn=rad(b[1]-a[1]);
@@ -6741,7 +6787,7 @@ function travelInfo(hk){
   cost=Math.round(Math.max(25,cost)/5)*5;
   return {cost,days:mode==='Flug'?0:Math.floor(d/900),mode,km:d};
 }
-function travelText(hk){const t=travelInfo(hk);if(t.mode==='Zu Fuß')return 'Start direkt vor der Haustür – keine Anreisekosten';return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
+function travelText(hk){const t=travelInfo(hk);if(t.vac)return 'Wanderurlaub in '+startCountry(hk)+': Vor-Ort-Anreise '+eur0(t.cost)+' statt '+eur0(t.full);if(t.mode==='Zu Fuß')return 'Start direkt vor der Haustür – keine Anreisekosten';return `${t.mode} ab ${G.home||'Deutschland'} (${t.km} km, Hin- und Rückfahrt): ${eur0(t.cost)}${t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''}`}
 let SELHIKE=null;
 let HIKECTRY=null;
 let HIKEFLT=(function(){try{const v=localStorage.getItem('wk_hf');return (v==='new'||v==='done')?v:'all'}catch(e){return 'all'}})();
@@ -6792,7 +6838,7 @@ function hikeCard(hk){
   return `<div class="card hike${poor?' dis':''}${tzBadge(hk)?' tz':''}"><h3>${esc(hk.name)}${walkedSet().has(hk.id)?' <small title="schon gegangen">✅</small>':''}</h3><small>${flagsHTML(hk.country)} ${esc(hk.country)}</small>
     ${tzBadge(hk)}${hikeHist(hk)}<div class="hk-top">
       ${stat('<b>📏 '+hk.km+' km</b>',dayLbl(hk))}
-      ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück'+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
+      ${stat('<b>'+(walk?'🚶':'🚆')+' '+(walk?'0 €':eur0(fee))+'</b>',walk?'Start vor der Haustür':(t.vac?'Wanderurlaub-Tarif (sonst '+eur0(t.full)+')':esc(t.mode)+' · '+t.km+' km Hin &amp; zurück')+(t.days?' · '+t.days+' Reisetag'+(t.days>1?'e':''):''),poor?'bad':'')}
       ${stat('<span class="risk" style="background:'+DIFF_COL[hk.diff]+'">'+DIFF_NAMES[hk.diff]+'</span>','Erlös ×'+hk.mult)}
       ${stat('<span class="risk" style="background:'+b.col+'">'+b.lbl+'</span>','Risiko jetzt'+(bad?' · <span class="badtxt">'+bad+'× Warnung</span>':''))}
     </div>
@@ -6816,8 +6862,8 @@ function renderHikes(){
   if(HIKEVIEW==='land'){
     const groups={};fl.forEach(hk=>{(groups[startCountry(hk)]=groups[startCountry(hk)]||[]).push(hk)});
     body=tzHTML+`<h3 class="grp">🌍 Nach Startland</h3><div class="ctry">${Object.keys(groups).sort().map(c=>`<button class="cbtn ${HIKECTRY===c?'on':''}" data-ct="${esc(c)}"><b>${flagsHTML(c)} ${esc(c)}</b><small>${groups[c].length} Routen ${HIKECTRY===c?'▲':'▼'}</small></button>`).join('')}</div>`+
-      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">${flagsHTML(HIKECTRY)} ${esc(HIKECTRY)}</h3><div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
-  }else body=tzHTML+(tzl.length?'<h3 class="grp">🗺️ Alle Routen</h3>':'')+`<div class="grid">${[...fl].filter(h=>!tzl.includes(h)).sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
+      (HIKECTRY&&groups[HIKECTRY]?`<h3 class="grp">${flagsHTML(HIKECTRY)} ${esc(HIKECTRY)}</h3>${vacPanel(HIKECTRY)}<div class="grid">${groups[HIKECTRY].sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`:'<p class="hint">Wähle ein Land, um die Routen zu sehen.</p>');
+  }else body=(vacActive()?vacPanel(G.vac.country):'<p class="hint">🏕️ Tipp: In der Ansicht „Nach Startland“ kannst du einen Wanderurlaub buchen – dann entfallen die Anreisekosten zu den Routen in diesem Land.</p>')+tzHTML+(tzl.length?'<h3 class="grp">🗺️ Alle Routen</h3>':'')+`<div class="grid">${[...fl].filter(h=>!tzl.includes(h)).sort(HS[HIKESORT]).map(hikeCard).join('')}</div>`;
   $('#s-hikes').innerHTML=`<div class="wrap"><div class="topbar"><h2>🗺️ Touren</h2><div class="chips"><span class="chip">📅 ${dateStr(G.day)} ${SEASON_E[seasonOfM(dateOf(G.day).m)]}</span><span class="chip">💶 ${eur(G.money)}</span><button id="hk-back">◀ Zurück</button></div></div>
    <p class="hint">Die Briefing-Angaben gelten für die Jahreszeit deines Starts und die aktuell eingepackte Ausrüstung. Warte in der Zentrale ab oder kaufe Ausrüstung, um das Risiko zu senken.</p>
    <div class="seg" style="margin-bottom:10px"><button data-hv="km" class="${HIKEVIEW==='km'?'on':''}">📋 Alle Routen</button><button data-hv="land" class="${HIKEVIEW==='land'?'on':''}">🌍 Nach Startland</button></div>
@@ -6827,6 +6873,7 @@ function renderHikes(){
    ${body}</div>`;
   {const sc1=document.querySelector('#s-hikes .ctry');if(sc1){sc1.scrollLeft=scl;if(!scl){const on=sc1.querySelector('.cbtn.on');if(on)sc1.scrollLeft=Math.max(0,on.offsetLeft-12)}}}
   $$('[data-tz]').forEach(b=>b.onclick=()=>teaseFromHike(b.dataset.tz));
+  $$('[data-vac]').forEach(b=>b.onclick=()=>vacBook(b.dataset.vc,+b.dataset.vac));
   $$('[data-w]').forEach(b=>b.onclick=()=>{WAITCTX='hikes';waitDays(+b.dataset.w)});
   $$('[data-ct]').forEach(b=>b.onclick=()=>{HIKECTRY=HIKECTRY===b.dataset.ct?null:b.dataset.ct;renderHikes()});
   $$('[data-hs]').forEach(b=>b.onclick=()=>{HIKESORT=b.dataset.hs;try{localStorage.setItem('wk_hs',HIKESORT)}catch(e){}renderHikes()});
@@ -7673,6 +7720,7 @@ function advanceDay(){
    }}
   sponsorTick(notes);
   smallGifts(notes);
+  if(G.vac){if(G.day>G.vac.until){notes.push('🏕️ Dein Wanderurlaub in '+G.vac.country+' ist zu Ende – für weitere Touren dort fällt wieder die volle Anreise an.');G.vac=null}else if(G.vac.until-G.day===2)notes.push('🏕️ Dein Wanderurlaub in '+G.vac.country+' endet in 2 Tagen.')}
   G.pendCur+=rev;
   if(d.m!==G.lastMonth){G.pendPrev+=G.pendCur;G.pendCur=0;G.lastMonth=d.m;droneInsMonth(notes)}
   if(d.dom===21&&G.pendPrev>0.005){paid=Math.round(G.pendPrev*100)/100;G.money+=paid;G.earned+=paid;G.pendPrev=0;notes.push('💶 Auszahlung: '+eur(paid)+' aufs Konto')}
