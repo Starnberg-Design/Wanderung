@@ -5419,15 +5419,16 @@ function ctxSmall(g,tm,x,y,e,cnt,fn){
   g.fillStyle='#2b7a3f';g.beginPath();g.arc(12,-12,8,0,7);g.fill();g.fillStyle='#fff';g.font='bold 10px sans-serif';g.fillText(cnt,12,-11);g.textBaseline='alphabetic';
   g.restore();HITS.push({fn,x,y,r:26,ic:null});
 }
-function ctxBubble(g,tm,x,y,e,label,fn,on=true,hl){
+function ctxBubble(g,tm,x,y,e,label,fn,on=true,hl,badge){
   const pulse=1+Math.sin(tm*5+x)*0.05;
   g.save();g.translate(x,y);g.scale(pulse,pulse);g.globalAlpha=on?1:0.5;
-  g.fillStyle=hl?'rgba(196,245,170,0.97)':'rgba(255,235,150,0.96)';g.beginPath();g.arc(0,0,23,0,7);g.fill();g.strokeStyle=hl?'#2f9a3d':'#c48a10';g.lineWidth=2.5;g.stroke();
-  g.font='21px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#333';g.fillText(e,0,1);g.textBaseline='alphabetic';
+  g.fillStyle=hl?'rgba(196,245,170,0.97)':'rgba(255,235,150,0.96)';g.beginPath();g.arc(0,0,28,0,7);g.fill();g.strokeStyle=hl?'#2f9a3d':'#c48a10';g.lineWidth=3;g.stroke();
+  g.font='26px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='#333';g.fillText(e,0,1);g.textBaseline='alphabetic';
+  if(badge){g.font='13px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(15,25,20,0.88)';g.beginPath();g.arc(19,-19,9,0,7);g.fill();g.fillStyle='#fff';g.fillText(badge,19,-18);g.textBaseline='alphabetic'}
   g.restore();
-  g.font='bold 12px sans-serif';g.textAlign='center';const w=g.measureText(label).width+12;
-  g.fillStyle='rgba(15,25,20,0.8)';rr(g,x-w/2,y+27,w,18,6);g.fill();g.fillStyle='#fff';g.fillText(label,x,y+40);
-  if(on)HITS.push({fn,x,y,r:36,ic:null});
+  g.font='bold 13.5px sans-serif';g.textAlign='center';const w=g.measureText(label).width+14;
+  g.fillStyle='rgba(15,25,20,0.8)';rr(g,x-w/2,y+32,w,20,6);g.fill();g.fillStyle='#fff';g.fillText(label,x,y+46);
+  if(on)HITS.push({fn,x,y,r:42,ic:null});
 }
 /* ---------- Hinweise (Sprechblase) und Schnellaktionen über dem Charakter ---------- */
 const ALERTS=[];
@@ -5466,6 +5467,8 @@ function drawAlerts(g,tm,sx,gy){
 }
 let _US={t:0,r:0,b:0},CTX_N=0;
 function uiSafe(){const now=performance.now();if(now-_US.t<400)return _US;_US.t=now;try{const cv=$('#cv'),cr=cv.getBoundingClientRect();const sc=cr.width/CW;let r=0,b=0;for(const sel of ['#h-tl','#coop']){const e=document.querySelector(sel);if(!e||!e.offsetParent)continue;const q=e.getBoundingClientRect();if(q.width<4)continue;r=Math.max(r,(q.right-cr.left)/sc);b=Math.max(b,(q.bottom-cr.top)/sc)}_US.r=r;_US.b=b}catch(e){}return _US}
+function canForage(){return !!(H.side?(H.side.feats||[]):H.route.feats).find(f=>f.type==='forage'&&!f.done&&Math.abs(f.x-H.x)<190*forageMul()&&FORAGE[f.f].months.includes(env.month))}
+function canFix(){if(!H.g.tools.repair||H.repairs<=0)return false;const ids=repairable();return ids.length>0&&condOf(ids[0])<95}
 function nextActs(D,eatList,w){ // Folgeaktionen nach der letzten Handlung, grün hervorgehoben
   const la=H.lastAct;if(!la||H.t-la.t>90||H.moving||H.walking)return [];
   const B=H.body,wood=['🪵',H.wood>0?'Holz +'+H.wood:'+ Holz',()=>actClick('wood'),D(!!H.g.tools.fire&&H.wood<6)];
@@ -5489,7 +5492,7 @@ function nextActs(D,eatList,w){ // Folgeaktionen nach der letzten Handlung, grü
     case 'forage':r=[['🧺','Sammeln',()=>actClick('forage'),true],eat];break;
     case 'fish':r=[['🎣','Angeln',()=>actClick('fish'),true],fire];break;
   }
-  return r.filter(Boolean).slice(0,3);
+  return r.filter(Boolean).filter(x=>x[3]!==false).slice(0,3);
 }
 function drawCtx(g,tm,sx,gy){
   if(DG)return;
@@ -5499,13 +5502,13 @@ function drawCtx(g,tm,sx,gy){
   if(H.fork){drawForkUI(g,tm,sx,gy);return}
 const row=[];const y=gy-150;const B=H.body;
   const resting=!H.moving,hasDrone=Object.keys(H.dev).some(id=>H.dev[id].def.kind==='drone');
-  const D=(ok)=>ok?true:2; // 2 = gedimmt, aber antippbar (zeigt den Grund)
+  const D=(ok)=>ok?true:false; // nicht Mögliches wird ausgeblendet
   const w=nearWater(),lf=resting?nearLodgeFeat():null;
   const eatList=FOODS.filter(f=>!f.cook&&(H.food[f.id]||0)>0);
   const cats={
     camp:['⛺','Lager',()=>{const r=[];
       if(H.camp.pitched&&H.g.shelter){r.push(['😴','Schlafen',()=>actClick('sleep'),true],['🛌','Ausruhen',()=>actClick('rest'),true],['⛺','Abbauen',()=>actClick('tent'),true])}
-      else{r.push(['⛺','Zelt',()=>actClick('tent'),D(!!H.g.shelter&&Math.abs(env.grade)<0.09)]);if(!H.g.shelter)r.push(['🌙','Draußen schlafen',()=>actClick('sleepOut'),true]);else r.push(['😴','Schlafen',()=>actClick('sleep'),2],['🛌','Ausruhen',()=>actClick('rest'),2])}
+      else{r.push(['⛺','Zelt',()=>actClick('tent'),D(!!H.g.shelter&&Math.abs(env.grade)<0.09)]);if(!H.g.shelter)r.push(['🌙','Draußen schlafen',()=>actClick('sleepOut'),true]);else r.push(['😴','Schlafen',()=>actClick('sleep'),false],['🛌','Ausruhen',()=>actClick('rest'),false])}
       if(H.g.solarBig){if(!H.solarUp)r.push(['☀️','Panel auf',()=>actClick('solarSet'),true]);else r.push(['🧭','Ausrichten',()=>actClick('solarSet'),true],['📦','Einpacken',()=>actClick('solarPack'),true])}
       if(H.dog&&!H.dog.away)r.push(['🦮',H.dog.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
       return r}],
@@ -5521,18 +5524,18 @@ const row=[];const y=gy-150;const B=H.body;
       if(w||H.water.dirty>0.05||waterTotal()<H.g.waterCap-0.05)r.push(['🚰','Auffüllen',()=>actClick('refill'),D(!!w&&waterTotal()<H.g.waterCap-0.05)]);
       r.push(['♨️','Behandeln',()=>actClick('treat'),D(H.water.dirty>0.05)]);
       eatList.forEach(f=>r.push([f.e,f.name.replace(/ \((kochen|garen)\)/,'').slice(0,7)+' '+H.food[f.id]+'×',()=>actClick('eat',f.id),true]));
-      r.push(['🧺','Sammeln',()=>actClick('forage'),true],['🎣','Angeln',()=>actClick('fish'),true]);
+      r.push(['🧺','Sammeln',()=>actClick('forage'),canForage()],['🎣','Angeln',()=>actClick('fish'),!!H.g.tools.rod&&!env.frozen&&!!fishSpot()]);
       return r}],
     way:['🧭','Weg',()=>{const r=[];
       r.push(['🧭',atSummit()?'Umschauen':'Orientieren',()=>actClick('orient'),true]);
       r.push(['🔄',(H.dir||1)<0?'Vorwärts':'Umkehren',()=>actClick('reverse'),true]);
-      r.push(['🏪','Laden',()=>actClick('shop'),true]);
+      r.push(['🏪','Laden',()=>actClick('shop'),!!featNear('village',H.x,330)]);
       r.push(['🆘','Abbrechen',()=>actClick('rescue'),true]);
       return r}],
     media:['📱','Medien',()=>{const r=[];
       if(handheld())r.push(['📱','Handy',()=>openPhone(),true]);
       if(hasDrone)r.push(['🛸','Drohne',()=>actClick('droneFly'),true]);
-      r.push(['📡','Livestream',()=>actClick('live'),true]);
+      r.push(['📡','Livestream',()=>actClick('live'),!!handheld()&&!!env.net]);
       return r}],
     dog:['🐕','Hund',()=>{const r=[],dd=H.dog;if(!dd)return r;
       r.push([dd.leash?'🐕':'🦮',dd.leash?'Leine ab':'Leine an',()=>actClick('leash'),true]);
@@ -5542,13 +5545,13 @@ const row=[];const y=gy-150;const B=H.body;
       return r}],
     care:['🩹','Versorgung',()=>{const r=[];
       r.push(['🩹','Erste Hilfe',()=>actClick('aid'),D(isInjured()&&!!H.g.tools.kit&&H.kit>0)]);
-      r.push(['🧵','Notreparatur',()=>actClick('fix'),true]);
+      r.push(['🧵','Notreparatur',()=>actClick('fix'),canFix()]);
       return r}]
   };
   if(!resting)H.ctxCat=null;
   if(H.ctxCat&&cats[H.ctxCat]){
     const cat=H.ctxCat;
-    cats[cat][2]().forEach(r=>row.push([r[0],r[1],()=>{H.ctxCat=null;r[2]()},r[3]]));
+    cats[cat][2]().filter(r=>r[3]!==false).forEach(r=>row.push([r[0],r[1],()=>{H.ctxCat=null;r[2]()},r[3]]));
     row.push(['↩️','Zurück',()=>{H.ctxCat=null},true]);
   }else{
     H.ctxCat=null;
@@ -5563,13 +5566,13 @@ const row=[];const y=gy-150;const B=H.body;
       row.push([lodgeFreeKind(lf)?'🛖':'🏨',lodgeFreeKind(lf)?'Unterstand':'Unterkunft',()=>lodgeHere(lf),true]);
     }
     try{nextActs(D,eatList,w).forEach(r=>row.push([r[0],r[1],r[2],r[3],true]))}catch(e){}
-    ['camp','fire','food','way','media','care','dog'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;if(k==='dog'&&!(H.dog&&!H.dog.away))return;row.push([c[0],c[1],()=>{H.ctxCat=k},true])});
+    ['camp','fire','food','way','media','care','dog'].forEach(k=>{const c=cats[k];if(k==='media'&&!handheld()&&!hasDrone&&!H.g.tools)return;if(k==='dog'&&!(H.dog&&!H.dog.away))return;try{if(k!=='media'&&!c[2]().some(r=>r[3]!==false))return}catch(e){}row.push([c[0],c[1],()=>{H.ctxCat=k},true,false,k==='media'?(env.net?'📶':'📵'):null])});
   }
-  const n=row.length,gap=n>7?54:62;
+  const n=row.length,gap=n>7?64:74;
   CTX_N=n;const US=uiSafe();let yy=y;const need=US.b+40;if(yy<need)yy=Math.min(need,gy-112);
   const xmin=(yy-34<US.b)?Math.max(US.r+34,H.dog?175:135):(H.dog?175:135);
   const x0=Math.max(xmin,Math.min(sx-(n-1)/2*gap,CW-(n-1)*gap-40));
-  row.forEach((r,i)=>ctxBubble(g,tm,x0+i*gap,yy,r[0],r[1],r[2],r[3],r[4]));
+  row.forEach((r,i)=>ctxBubble(g,tm,x0+i*gap,yy,r[0],r[1],r[2],r[3],r[4],r[5]));
 }
 /* ---------- Gesamtszene ---------- */
 function heroMode(){
